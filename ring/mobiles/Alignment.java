@@ -27,10 +27,7 @@ public class Alignment implements Serializable {
   public static final int CHAOTIC = 2;
   public static final int GOOD = 0;
   public static final int EVIL = 2;
-  //These are used to determine the row.
-  public static final int TYPE = 0;
-  public static final int ALIGNMENT = 1;
-
+ 
   //This constructor constructs a default alignment of true neutral.
   public Alignment() {
     //Set type.

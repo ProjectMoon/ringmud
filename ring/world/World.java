@@ -69,28 +69,45 @@ public class World implements TickerListener {
 		System.out.println("Building zones...");
 		Zone zone = new Zone();
 		zones.addElement(zone);
+                
 		String s = "[WHITE]Test Room";
 		String x = "[CYAN]This is the room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
 		Room room = new Room(s, x);
 		room.setSize(20, 20, 20);
+                
 		String s2 = "[WHITE]Test Room 2";
 		String x2 = "[CYAN]This is the OTHER room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
 		Room room2 = new Room(s2, x2);
 		room2.setSize(30, 40, 20);
+                
 		String s3 = "[WHITE]Test Room 3";
 		String x3 = "[CYAN]This is YET [B][RED]ANOTHER[R][CYAN] room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
 		Room room3 = new Room(s3, x3);
 		room3.setSize(10000, 20, 10);
+                
 		String s4 = "[WHITE]Hidden Room!";
 		String x4 = "[YELLOW]This room is [B]HIDDEN![R]";
 		Room room4 = new Room(s4, x4);
 		room4.setSize(15, 30, 12);
+                room4.setSearchDC(10);
 		
                 room.sealAllExits();
                 room.makeImplictExit(ZoneCoordinate.NORTH);
+                room.makeImplictExit(ZoneCoordinate.WEST);
                 
                 room2.sealAllExits();
                 room2.makeImplictExit(ZoneCoordinate.SOUTH);
+                                
+		//set up the room grid
+                /** NEW ROOL SET UP CODE GOES HERE **/
+                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 0), room);
+                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 1, 0), room2);
+                //LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 1), room3);
+                LocationGrid.setCoordRoom(new ZoneCoordinate(0, -1, 0, 0), room4);
+		//roomList.put(new ZoneCoordinate(0, 0, 0, 0), room);
+		//roomList.put(new ZoneCoordinate(0, 0, 1, 0), room2);
+		//roomList.put(new ZoneCoordinate(0, 0, 0, 1), room3);
+		//roomList.put(new ZoneCoordinate(0, -1, 0, 0), room4);                
 		/*
 		room.setNorthRoom(room2);
 		room.setUpRoom(room3);
@@ -121,18 +138,6 @@ public class World implements TickerListener {
 		mob.setLocation(new ZoneCoordinate(0, 0, 0, 0));
 		room.addMobile(mob);
 		zone.addEntrance(room);
-
-		//set up the room grid
-                /** NEW ROOL SET UP CODE GOES HERE **/
-                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 0), room);
-                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 1, 0), room2);
-                //LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 1), room3);
-                //LocationGrid.setCoordRoom(new ZoneCoordinate(0, -1, 0, 0), room4);
-		//roomList.put(new ZoneCoordinate(0, 0, 0, 0), room);
-		//roomList.put(new ZoneCoordinate(0, 0, 1, 0), room2);
-		//roomList.put(new ZoneCoordinate(0, 0, 0, 1), room3);
-		//roomList.put(new ZoneCoordinate(0, -1, 0, 0), room4);
-		
 		
 		System.out.println("Done.");
 

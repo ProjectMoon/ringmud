@@ -77,7 +77,7 @@ public class Effect {
     dead = false;
     INIT_TARGET_LATER = false;
     numStarts = 0;
-    if ( (dur == Duration.TIMED) && (timer == 0)) INIT_TIMER_LATER = true;
+    if ((dur == Duration.TIMED) && (timer == 0)) INIT_TIMER_LATER = true;
     System.out.println("Effect generated for: " + this +
                        ". Status: [INACTIVE]");
   }
@@ -112,17 +112,20 @@ public class Effect {
     numStarts = 0; //this is a new effect, so numStarts is still zero.
   }
 
-  public void decrementTimer() {
-    if (duration.equals(Duration.PERMANENT))return; //ignore permanent duration effects. they are removed other ways.
-    if (timer <= 0) {
-      endEffect();
-      return;
+    public void decrementTimer() {
+        //ignore permanent duration effects. they are removed other ways.
+        if (duration.equals(Duration.PERMANENT)) return; 
+        
+        if (timer <= 0) {
+            endEffect();
+            return;
+        }
+        else {
+            //if this is a periodic effect, make it happen again!
+            if (duration == Duration.PERIODIC_TIMED) startEffect();
+            timer--;
+        }
     }
-    else {
-      if (duration == Duration.PERIODIC_TIMED) startEffect(); //if this is a periodic effect, make it happen again!
-      timer--;
-    }
-  }
 
   //setTimer method.
   //This allows the timer to be set to some postive number. It can only be set if INIT_TIME_LATER is set to true.

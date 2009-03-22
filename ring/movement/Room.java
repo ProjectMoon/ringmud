@@ -167,6 +167,7 @@ public class Room {
 
 	//now we can add the exit.
 	localExits.put(zc, exit);
+        addExitString(ZoneCoordinate.getDirectionString(zc));
         return false;
     }
 

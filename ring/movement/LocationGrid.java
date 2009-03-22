@@ -13,6 +13,10 @@ import java.util.HashMap;
  * instead of having to be told to do so.
  * @author jeff
  */
+
+/*
+ * TODO: Change local exits to zone portals!
+ */
 public final class LocationGrid {
     private LocationGrid() {} //no instantiation of this class.
     private static HashMap<ZoneCoordinate, Room> roomList = new HashMap<ZoneCoordinate, Room>();

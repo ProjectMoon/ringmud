@@ -1034,8 +1034,8 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//This method handles the movement of this mobile from ZoneCoordinate to ZoneCoordinate (really room-to-room).
 	//It attempts to cover all bases with regards to movement.  
 	public final boolean move(ZoneCoordinate zc) {
-            //Check to see if this WorldObject is a player and fighting. That means they can't leave.
-            if (this.isPlayer() && this.isFighting) {
+            //Check to see if this mobile is fighting. That means they can't leave.
+            if (this.isFighting) {
                 sendData("[GREEN]You may not leave during combat![WHITE]");
                 return false;
             }
@@ -1058,14 +1058,14 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
                     return false;
             }
 
-            //Else the location must be valid. Move the object to the new Room.
+            //Else the location must be valid. Move the mobile to the new Room.
             else {
                 ZoneCoordinate locToMoveTo = location.offset3D(zc);
                 System.out.println("CURRLOC: " + getLocation());
                 Room currRoom = getLocation().getRoom();
 
                 //Is the location hidden? If so, can the mobile actually locate it?
-                if (roomToMoveTo != null && roomToMoveTo.getSearchDC() > 0) {
+                if (roomToMoveTo.getSearchDC() > 0) {
                         if (this.hiddenExitSearchCheck < roomToMoveTo.getSearchDC()) return false;
                 }
 

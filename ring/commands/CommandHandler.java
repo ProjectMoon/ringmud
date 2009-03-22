@@ -890,7 +890,7 @@ public final class CommandHandler {
 			//to search in the D&D system (see search skill description). The number may be adjusted later if it is
 			//too long or too short. The lock time should always be at least 2 ticks.
 			int lockTime = (int)((room.length() * room.width()) / 25);
-			if (lockTime > 15) lockTime = 15; //15 is the maximum.
+			if (lockTime > 15) lockTime = 8; //8 is the maximum.
 			if (lockTime < 2) lockTime = 2; //2 is the minimum.
 			mob.setLockMessage("You are still searching the room!");
 			mob.setLockFinishedMessage(searchText);
@@ -901,6 +901,14 @@ public final class CommandHandler {
 
 		return res;		
 	}
+        
+        private CommandResult CMD_searchcheck() {
+            CommandResult res = new CommandResult();
+            Mobile mob = (Mobile)sender;
+            res.setText("Your current search check: " + mob.hiddenExitSearchCheck);
+            res.setSuccessful(true);
+            return res;
+        }
 
 	private CommandResult CMD_hide() {
 		CommandResult res = new CommandResult();

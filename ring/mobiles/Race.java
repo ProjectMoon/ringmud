@@ -56,12 +56,6 @@ public class Race {
 
   //This will create a default race with relatives of all 0.
   public Race() {
-    try {
-      jbInit();
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
 
   }
 
@@ -296,8 +290,4 @@ public class Race {
     return new Race("[R][YELLOW]Tiefling[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
                     null, true);
   }
-
-  private void jbInit() throws Exception {
-  }
-
 }
