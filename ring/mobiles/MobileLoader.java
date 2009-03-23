@@ -15,6 +15,7 @@ public class MobileLoader {
         try {
             in = new ObjectInputStream(new FileInputStream(filename));
             Mobile mob = (Mobile) in.readObject();
+            in.close();
             mob.init();
             return mob;
         } catch (IOException ex) {
@@ -38,6 +39,7 @@ public class MobileLoader {
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));
             out.writeObject(mob);
+            out.close();
         } catch (IOException ex) {
             Logger.getLogger(MobileLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
