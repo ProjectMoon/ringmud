@@ -14,9 +14,11 @@ package ring.effects;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.TreeMap;
 
-public final class EffectCreatorParameters {
+public final class EffectCreatorParameters implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class encapsulates EffectCreator parameters. They are stored as a TreeMap, with string names for keys.
   private TreeMap params;
 

@@ -16,9 +16,11 @@ in this class):
 */
 
 
+import java.io.Serializable;
 import ring.effects.*;
 
-public class Spell {
+public class Spell implements Serializable {
+    public static final long serialVersionUID = 1;
   //duration constants
   public static final int INSTANT = 0;
   public static final int PERMANENT = -1;

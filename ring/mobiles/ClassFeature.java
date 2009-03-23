@@ -14,9 +14,11 @@ package ring.mobiles;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import ring.effects.*;
 import java.util.*;
-public class ClassFeature implements Comparable {
+public class ClassFeature implements Comparable, Serializable {
+    public static final long serialVersionUID = 1;
   //This class defines a class feature (as per D&D 3.5) for a MobileClass. A class feature is a unique ability that a class
   //gets that is derived from levels. For example, a Barbarian's rage is a class feature. Class features in the D&D 3.5 system
   //do many things; they could not all possibly be covered by a computer system. A class feature in RingMUD holds the following

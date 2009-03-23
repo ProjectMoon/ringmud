@@ -9,11 +9,13 @@ package ring.entities;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import ring.mobiles.*;
 import ring.effects.*;
 import java.util.Vector;
 
 public class Armor extends Item {
+    public static final long serialVersionUID = 1;
   //This class represents a piece of armor in the world. The AC system is based off of 3rd edition,
   //so the higher the AC amount is, the better it protects you.
 

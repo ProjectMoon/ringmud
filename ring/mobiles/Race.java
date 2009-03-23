@@ -9,9 +9,11 @@ package ring.mobiles;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Race {
+public class Race implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class define's the mobile's race. The Race class in itself is strictly a set of
   //numbers that determine a mobile's HP and other things. It also contains a few other things
   //such as a method that will return a proper body for a race. Basically this class's methods

@@ -14,8 +14,10 @@ package ring.effects;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.Vector;
-public class Effect {
+public class Effect implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class represents an "effect". This effect could be a spell, a skill, or any other thing.
   //It does NOT contain what the effect does however. The main purpose of this class is to allow
   //and facilitate the implementation of timers on spells, items, etc. For example, a spell that

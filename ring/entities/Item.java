@@ -14,6 +14,7 @@ import ring.effects.*;
 import java.util.*;
 
 public class Item extends Entity {
+    public static final long serialVersionUID = 1;
   private int uniqueID;
   protected int weight;
   protected boolean wearable;

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import ring.entities.*;
 
 public class Body implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class defines a body, equipment slots, and the racial abilities it has. Numerous
   //different body parts can be created and can be all added. This means that a mobile
   //can have two left arms and two right arms, one leg, etc.

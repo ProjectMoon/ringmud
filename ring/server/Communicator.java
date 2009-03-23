@@ -20,6 +20,10 @@ public class Communicator {
     private Socket socket;
     private String suffix;
     
+    /**
+     * Constructs a new Communicator given a connection (socket) to use.
+     * @param s - The client-server connection Socket to use for I/O.
+     */
     public Communicator(Socket s) {
         try {
             socket = s;
@@ -48,8 +52,9 @@ public class Communicator {
      * @param data
      */
     public void send(String data) {
+        System.out.println("***SENDING: " + data + "***");
         try {
-            if (data.length() > 0) {
+            if (data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data += suffix;
                 data = TextParser.parseOutgoingData(data);
@@ -140,8 +145,55 @@ public class Communicator {
             error = true;
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Prepends a newline character to the data after having parsed it
+     * normally as per the send method. Also appends the suffix. This is mostly
+     * used for sending data to the user from other sources. Instead of the text
+     * appearing in the middle of their command line it appears below it.
+     * @param data
+     */
+    public void sendWithPreLine(String data) {
+        try {
+            if (data.equals("") || data.length() > 0) {
+                data = TextParser.trimNewlines(data);
+                data += suffix;
+                data = TextParser.parseOutgoingData(data);
+                data = "\n" + data;
+                output.write(data.getBytes());
+                output.write(0);
+                output.flush();
+            }
+        }
+        catch (IOException e) {
+            error = true;
+            e.printStackTrace();
+        }
     }    
     
+    /**
+     * A private method used to make sure the user is still alive. It simply sends
+     * a blank string to the other end of the connection.
+     */
+    private void testConnection() {
+        try {
+            output.write("".getBytes());
+            output.write(0);
+            output.flush();
+        }
+        catch (IOException e) {
+            error = true;
+            e.printStackTrace();
+        }
+    }    
+    
+    /**
+     * Sets the suffix that is appended to outgoing data in most versions
+     * of the send command. In general, the suffix is a command prompt of some 
+     * kind. However, it can be used for other things.
+     * @param s - The suffix to use.
+     */
     public void setSuffix(String s) {
         suffix = s;
     }
@@ -182,8 +234,9 @@ public class Communicator {
                     }
 
                     //if the user is just pressing enter, just return an empty string
-                    if (incomingData.length() == 0 && incomingByte == '\n')
+                    if (incomingData.length() == 0 && incomingByte == '\n') {
                         return "";                    
+                    }
                         
                     //we should only reach the end of a stream when the socket
                     //is closed, therefore error on it.
@@ -197,7 +250,7 @@ public class Communicator {
                         Thread.sleep(50);
                         idleCount++;
                         if (idleCount > 50) {
-                            send("");
+                            testConnection();
                             idleCount = 0;
                             if (timeOutCount++ > timeOutLimit) {
                                 sendln("[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye Bye[WHITE]");

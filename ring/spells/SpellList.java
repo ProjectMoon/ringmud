@@ -14,10 +14,12 @@ package ring.spells;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.*;
 import ring.effects.*;
 
-public class SpellList {
+public class SpellList implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class defines a list of spells available to a MobileClass. It also defines the spell
   //levels for the spells. This allows some classes to receive spells later while others get
   //them sooner... Or something.

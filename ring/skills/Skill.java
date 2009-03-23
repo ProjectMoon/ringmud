@@ -14,9 +14,11 @@ package ring.skills;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Skill {
+public class Skill implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class represents a skill that a MobileClass has. It is a concrete class that holds a few
   //different variables that are used to calculate checks. These checks are used with certain
   //commands and other things. The Skills themselves are presently hardcoded into the game but will

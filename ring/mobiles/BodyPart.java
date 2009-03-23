@@ -15,6 +15,7 @@ import java.util.*;
 import java.io.Serializable;
 
 public class BodyPart implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class is used for a body part.
 
   //Instance variables.

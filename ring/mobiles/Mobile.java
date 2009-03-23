@@ -23,6 +23,7 @@ import ring.skills.*;
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
 //information for a mobile such as body shape, HP, race, etc.
 public class Mobile extends WorldObject implements CommandSender, TickerListener {
+    public static final long serialVersionUID = 1;
 	//CONSTANTS NEEDED BY ALL MOBILES
 	//STAT CONSTANTS
 	public static final int STRENGTH = 0;
@@ -184,7 +185,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	
 	//The speed of the mobile in feet.
 	private int speed;
-
+        
 	//Skill check variables:
 	//These variables somewhat violate the extensible design philosophy of the MUD, but as far as I can see,
 	//they are currently necessary. These are for things that need to be hardcoded into the game. Namely
@@ -269,21 +270,11 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//END CONSTRUCTORS
 	//#####################################################
 
-	//*************************
-	//BEGIN UTILITY METHODS
-	//sendData method.
-	//This method is going to send text back to the player.
-        /*
-	public void sendData(String text) {
 
-	}
-
-	public void sendData2(String text) {
-
-	}*/
-
-	//END UTILITY METHODS.
-	//#####################################################
+        public void init() {
+            handler = new CommandHandler(this);
+        }
+        
 
 	//***********************
 	//BEGIN FLAG AND GET METHODS

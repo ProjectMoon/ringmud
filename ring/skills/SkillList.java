@@ -13,9 +13,11 @@ package ring.skills;
  * @author Jeff Hair
  * @version 1.0
  */
+import java.io.Serializable;
 import java.util.*;
 
-public class SkillList {
+public class SkillList implements Serializable {
+    public static final long serialVersionUID = 1;
   //This is a class that represents a list of skills...
 
   //The actual list of Skills.

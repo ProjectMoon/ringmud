@@ -9,11 +9,13 @@ package ring.mobiles;
  * @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.*;
 import ring.spells.*;
 import ring.skills.*;
 
-public class MobileClass {
+public class MobileClass implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class is for the actual class of the mobile.
   //Internally, MobileClass holds a few different things that make up the class. It holds a list
   //of skills and/or spells, the HD (hit die) type of the class, the classification of the class,

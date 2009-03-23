@@ -62,12 +62,12 @@ public class ZoneCoordinate implements Comparable {
     }
     
     public static String getOppositeDirectionString(ZoneCoordinate zc) { 
-	if (zc.equals(NORTH)) return "south";
-	if (zc.equals(SOUTH)) return "north";
-	if (zc.equals(WEST)) return "east";
-	if (zc.equals(EAST)) return "west";
-	if (zc.equals(UP)) return "down";
-	if (zc.equals(DOWN)) return "up";
+	if (zc.equals(NORTH)) return "the south";
+	if (zc.equals(SOUTH)) return "the north";
+	if (zc.equals(WEST)) return "the east";
+	if (zc.equals(EAST)) return "the west";
+	if (zc.equals(UP)) return "below";
+	if (zc.equals(DOWN)) return "above";
 	return "getOppositeDirectionString: Coordinate not understood!!";
     }
     

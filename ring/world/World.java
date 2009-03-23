@@ -167,12 +167,7 @@ public class World implements TickerListener {
 	public synchronized void notifyGods(String text) {
 
 	}
-
-	//This method is used to send text to players in a location.
-	public synchronized void notifyPlayersAtLocation(Room room, String text) {
-
-	}
-
+        
 	//sendAudioToLocation method.
 	//This method and its variants send "aduio" to a location. That is, all non-deaf characters
 	//will see it appear on their screens.
@@ -186,8 +181,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isDeaf) player.getCommunicator().send(text);
-				else if ((deafText != null) || (!deafText.equals(""))) player.getCommunicator().send(deafText);
+				if (!player.isDeaf) player.getCommunicator().sendWithPreLine(text);
+				else if ((deafText != null) || (!deafText.equals(""))) player.getCommunicator().sendWithPreLine(deafText);
 			}
 		}
 	}
@@ -203,8 +198,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if (mob.isPlayer()) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().send(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().send(blindText);
+				if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
+				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 
 			}
 		}
@@ -219,8 +214,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().send(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().send(blindText);
+				if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
+				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 			}
 		}
 	}
@@ -247,15 +242,15 @@ public class World implements TickerListener {
 				//conditions to worry about.
 				if (mobile.moveSilentlyCheck > 0) { //yes, he's moving silently
 					if ((!player.isDeaf) && (player.listenCheck >= mobile.moveSilentlyCheck)) { //we beat the MS check
-						if (!player.isBlind) player.getCommunicator().send(text);
-						else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().send(blindText);
+						if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
+						else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 					}
 				}
 				
 				else { //mobile is moving regularly.
 					System.out.println("in regular move");
-					if (!player.isBlind) player.getCommunicator().send(text);
-					else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().send(blindText);
+					if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
+					else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 				}
 			} //end player if condition
 		} //end for loop
@@ -271,7 +266,7 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				player.getCommunicator().send(text);
+				player.getCommunicator().sendWithPreLine(text);
 			}
 		}
 	}

@@ -12,6 +12,7 @@ package ring.mobiles;
 import java.io.Serializable;
 
 public class Alignment implements Serializable {
+    public static final long serialVersionUID = 1;
   //This class is used for the alignment of mobiles. It condenses the boolean array into an
   //easy-to-use class. The class provides useful methods related to alignment.
 

@@ -17,6 +17,7 @@ import ring.mobiles.*;
 import java.io.Serializable;
 
 public abstract class WorldObject implements Affectable, Serializable {
+    public static final long serialVersionUID = 1;
   //This class, as it is aptly named, represents an object in the world. "object" in this case is something physically
   //present in the world, not a java object (although each of these objects are java objects...). This class was
   //made to facilitate things such as getRoom() and Effects. EVERY WorldObject is considered Affectable and Serializable. This means
@@ -28,7 +29,7 @@ public abstract class WorldObject implements Affectable, Serializable {
   protected int weight;
   
   //This object represents the world object's location in the world.
-  protected ZoneCoordinate location;
+  protected transient ZoneCoordinate location;
 
   //This is a vector of current effects that must be looped through and dealt with each tick.
   //Each WorldObject (i.e. things that derive this class) is responsible for dealing with this list

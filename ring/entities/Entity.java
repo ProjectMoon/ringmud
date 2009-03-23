@@ -13,6 +13,7 @@ import ring.world.*;
 import ring.movement.Room;
 
 public class Entity extends WorldObject {
+    public static final long serialVersionUID = 1;
   //This class is for all non-living objects including items, props in a room, etc.
   //Any changes made to this class will affect all things extending from it.
 

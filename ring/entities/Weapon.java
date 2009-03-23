@@ -16,6 +16,7 @@ import ring.effects.*;
 import java.util.*;
 
 public class Weapon extends Item {
+    public static final long serialVersionUID = 1;
   public static int SWORD = 0;
   public static int DAGGER = 1;
   public static int STAFF = 2;

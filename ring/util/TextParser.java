@@ -72,6 +72,7 @@ public class TextParser {
     }
 
     public static String trimNewlines(String text) {
+        if (text.length() == 0) return "";
         char[] textChars = text.toCharArray();
         int start = 0;
         int end = text.length() - 1;

@@ -1,5 +1,7 @@
 package ring.effects;
 
+import java.io.Serializable;
+
 /**
  * <p>Title: RingMUD Codebase</p>
  *
@@ -14,7 +16,8 @@ package ring.effects;
  * @version 1.0
  */
 
-public abstract class EffectCreator {
+public abstract class EffectCreator implements Serializable {
+    public static final long serialVersionUID = 1;
   //This is the base class for anything that creates an effect. It used to be an interface, but I made it an
   //abstract class because it makes more sense this way; it allows me to force certain methods to be consistent across
   //all variations of the EffectCreator. EffectCreators are tied closely to the sister class EffectCreatorParameters.

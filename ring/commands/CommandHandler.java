@@ -1420,15 +1420,8 @@ public final class CommandHandler {
 		res.setFailText("[B][RED]SAVING FAILED!! PLEASE NOTIFY AN ADMINISTRATOR!![R][WHITE]");
 		Mobile mob = (Mobile)sender;
 
-		//What we need to save:
-		//HP
-		try {
-			XMLEncoder e = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(mob.getName() + ".xml")));
-			e.writeObject(sender);
-			e.close();
-		}
-
-		catch (Exception e) { System.out.println("Exception"); }
+                
+		MobileLoader.saveMobile(mob.getName() + ".mob", mob);
 
 		res.setText("[R][WHITE]Character saved.");
 		res.setSuccessful(true);

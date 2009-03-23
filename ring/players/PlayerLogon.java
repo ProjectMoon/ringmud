@@ -101,8 +101,18 @@ public class PlayerLogon extends Thread {
 
     
     public PlayerCharacter loadCharacter(String name) {
-        comms.send("You cannot yet load characters!");
-        return null;
+        comms.send("Please enter your password:");
+        String pw = comms.receiveData();
+        PlayerCharacter pc = (PlayerCharacter)MobileLoader.loadMobile(name + ".mob");
+        if (pc.getPassword().equals(pw)) {
+            pc.setLogonDate();
+            pc.setCommunicator(comms);
+            return pc;
+        }
+        else {
+            comms.send("Invalid password.");
+            return null;
+        }
     }
     
     public PlayerCharacter createNewCharacter() {
@@ -110,6 +120,7 @@ public class PlayerLogon extends Thread {
             comms.send("[RED]Entering new character creation mode...\n[WHITE]Please enter a name for this character:");
             String name = comms.receiveData();
             PlayerCharacter character = doCreateNewCharacter(name);
+            MobileLoader.saveMobile(character.getName() + ".mob", character);
             return character;
         }
         catch (Exception e) {

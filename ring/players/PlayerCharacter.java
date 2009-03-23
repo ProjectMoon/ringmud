@@ -52,8 +52,20 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     //World.getWorld().getTicker().addTickerListener(this, "PULSE");
     }
 
+    public void setCommunicator(Communicator c) {
+        communicator = c;
+    }
+    
+    public void setConnection(Socket sock) {
+        communicator = new Communicator(sock);
+    }
+    
     public void setPassword(String pass) {
         password = pass;
+    }
+    
+    public String getPassword() {
+        return password;
     }
 
     public boolean checkAlias(String name) {
@@ -114,6 +126,12 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     private String getPrompt() {
         return "\n\n[B][GREEN]HP: " + super.getCurrentHPString() + "/" + super.getMaxHPString() + " MV: " + super.getCurrentMV() + "/" + super.getMaxMV() + " ]> [R][WHITE]";
     }
+    
+    //getPrompt method.
+    //This returns the prompt that the player has set, except with only 1 newline.
+    private String getSingleLinePrompt() {
+        return "\n[B][GREEN]HP: " + super.getCurrentHPString() + "/" + super.getMaxHPString() + " MV: " + super.getCurrentMV() + "/" + super.getMaxMV() + " ]> [R][WHITE]";
+    }    
 
     //source method.
     //Returns the sender of this CommandSender (that is, the object itself)
@@ -127,7 +145,6 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         super.decrementLockTime();
         if (super.lockTimeRemaining <= 0) {
             communicator.send(super.lockFinishedMessage);
-            //sendData2("\n" + super.lockFinishedMessage + "\n\n" + getPrompt());
         }
     }
 
@@ -137,8 +154,13 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     public void doCommand(String command) {
         //Was anything even typed?
         if (command.length() <= 0) {
-            return;        //Is the player locked?
+            communicator.setSuffix(getSingleLinePrompt());
+            communicator.send("");
+            communicator.setSuffix(getPrompt());
+            return;        
         }
+        
+        //Is the player locked?
         if (this.isLocked) {
             communicator.send(super.lockMessage + " (" + super.lockTimeRemaining * 2 + " seconds left)");
             return;
@@ -152,12 +174,14 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         //Send the command.
         CommandResult res = super.handler.sendCommand(command);
         String result = res.getText();
+        
         communicator.send(result);
         
         //Only update last command if the last command wasn't !!
         if (!command.equals("!!"))
             lastCommand = command;
         
+        communicator.setSuffix(getPrompt()); //Necessary in case of updates to prompt info.       
     }
 
     //setThread method.
