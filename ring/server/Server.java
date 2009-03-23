@@ -41,7 +41,7 @@ public class Server {
     world = new World();
     System.out.println("Attempting to bind to IP: " + addr);
     try {
-      socket = new ServerSocket(23, 50, InetAddress.getByName(addr));//192.168.1.6 for home -- 71.191.150.213 is the internet-visible one.
+      socket = new ServerSocket(2312, 50, InetAddress.getByName(addr));//192.168.1.6 for home -- 71.191.150.213 is the internet-visible one.
     } catch(IOException e) {System.out.println("Hit an IO road bump..."); e.printStackTrace();}
       catch(SecurityException se) {System.out.println("Hit a Security road bump...");}
 
@@ -54,7 +54,7 @@ public class Server {
               System.out.println("Player connected [" + playerSocket.getInetAddress() + "]");
 
               // create a new player thread to run the player seperately
-              Thread playerThread = new Thread(world.getPlayerThreadGroup(), new PlayerLogon(playerSocket, null), "Logon " + playerSocket.getInetAddress().toString());
+              Thread playerThread = new Thread(world.getPlayerThreadGroup(), new PlayerLogon(playerSocket), "Logon " + playerSocket.getInetAddress().toString());
 
               playerThread.setDaemon(true);
               playerThread.start();

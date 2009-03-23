@@ -21,25 +21,34 @@ import ring.effects.library.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import ring.server.Communicator;
 
 public class PlayerLogon extends Thread {
 
     //This socket is the player-server connection.
-    private Socket socket;    //These are the input and output of above connection.
+    private Socket socket;    
+    
+    //A temporary communicator to facilitate sending data back and forth
+    //for this login session.
+    private Communicator comms;
+    
+    //These are the input and output of above connection.
     private BufferedInputStream input;
-    private BufferedOutputStream output;    //Stuff.
+    private BufferedOutputStream output;    
+    
+    //Stuff.
     private boolean communicationError;
-    private PlayerCharacter player;
     private boolean invalidLogin;
     private boolean waiting = true;
     private static String welcomeText = "\n\n[CYAN]                                   RingMUD Alpha[CYAN]\n                              A [WHITE]Forgotten Realms[CYAN] MUD.\n\n[WHITE]                                     Forgers:\n                                [CYAN] Ao (Code & Areas)\n                                 Rillifane (Code)\n                                 Istishia (Code)\n                                 Erevan (Code)\n                                 Fenmarel (Areas & RP)\n                                 Kelemvor (Admin)[WHITE]\n";
     private static String newsText = "\n[YELLOW]There is currently no news.[WHITE]\n";
     private World world;
 
-    public PlayerLogon(Socket connection, PlayerCharacter player) {
+    public PlayerLogon(Socket connection) {
         super();
-        this.player = player;
-        setConnection(connection);
+        comms = new Communicator(connection);
+        comms.setSuffix("\n[R][GREEN]>[R][WHITE]");
+        socket = connection;
     }
 
     /**
@@ -54,81 +63,36 @@ public class PlayerLogon extends Thread {
     public void run() {
         PlayerCharacter enteringPlayer = null;
 
-        try {
-            //wait for log on.
-            waiting = true;
-            sendData(welcomeText + "\n[WHITE]Create new character? (Y/N)");
+        //wait for log on.
+        waiting = true;
+        comms.send(welcomeText + "\n[WHITE]Create new character? (Y/N)");
 
-            while (waiting) {
-                String answer = receiveData();
+        while (waiting) {
+            String answer = comms.receiveData();
+            System.out.println("ANSWER RECEIVED: " + answer);
 
-                if (answer.toLowerCase().equals("y")) {
-                    enteringPlayer = createNewCharacter();
-                }
-                else if (answer.toLowerCase().equals("n")) {
-                    sendData("Please type your name: ");
-                    String name = receiveData();
-                    enteringPlayer = loadCharacter(name);
-                } 
-                else {
-                    sendData("Please enter Y or N.");
-                }
-
-                //We should now have a player to load. If not, we start the whole process again.
-                if (enteringPlayer != null) {
-                    waiting = false;
-                    Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(), enteringPlayer,
-                            "Player [" + enteringPlayer.getName() + "] ");
-                    playerThread.setDaemon(true);
-                    enteringPlayer.setThread(playerThread);
-                    playerThread.start();
-                }
+            if (answer.toLowerCase().equals("y")) {
+                enteringPlayer = createNewCharacter();
             }
-        } catch (IOException e) {
-            System.out.println("Exception in character creation.");
+            else if (answer.toLowerCase().equals("n")) {
+                comms.send("Please type your name: ");
+                String name = comms.receiveData();
+                enteringPlayer = loadCharacter(name);
+            } 
+            else {
+                comms.send("Please enter Y or N.");
+            }
+
+            //We should now have a player to load. If not, we start the whole process again.
+            if (enteringPlayer != null) {
+                waiting = false;
+                Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(), enteringPlayer,
+                        "Player [" + enteringPlayer.getName() + "] ");
+                playerThread.setDaemon(true);
+                enteringPlayer.setThread(playerThread);
+                playerThread.start();
+            }
         }
-    }
-
-    private void setConnection(Socket connection) {
-        socket = connection;
-
-        try {
-            this.input = new BufferedInputStream(connection.getInputStream());
-            this.output = new BufferedOutputStream(connection.getOutputStream());
-        } catch (IOException ioe) {
-            System.out.println(ioe);
-        }
-    }
-
-    public void sendData(String data) throws IOException {
-
-        if (data.length() != 0) {
-            data = data + "[GREEN]\n>";
-            sendData2(data);
-        }
-       
-    }
-
-    //sendData2 method.
-    //This handles the actual sending of the data. sendData checks to see if there is
-    //any data to actually send.
-    public void sendData2(String data) throws IOException {
-        if (data.length() != 0) {
-            data = TextParser.parseOutgoingData(data);
-        }
-        try {
-            output.write(data.getBytes(), 0, data.getBytes().length);
-            output.write(0);
-            output.flush();
-        } catch (IOException ioe) {
-            System.out.println("Comms error sending data (player) for: " + socket.getInetAddress().toString());
-            System.out.println(ioe);
-            throw ioe;
-        }
-    }
-
-    private boolean isCommunicationError() {
-        return communicationError;
     }
 
     public Socket getConnection() {
@@ -137,21 +101,19 @@ public class PlayerLogon extends Thread {
 
     
     public PlayerCharacter loadCharacter(String name) {
-        try {
-            sendData("You cannot yet load characters!");
-        } catch (IOException ex) {
-            Logger.getLogger(PlayerLogon.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        comms.send("You cannot yet load characters!");
         return null;
     }
     
     public PlayerCharacter createNewCharacter() {
         try {
-            sendData("[RED]Entering new character creation mode...\n[WHITE]Please enter a name for this character:");
-            String name = receiveData();
+            comms.send("[RED]Entering new character creation mode...\n[WHITE]Please enter a name for this character:");
+            String name = comms.receiveData();
             PlayerCharacter character = doCreateNewCharacter(name);
             return character;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -170,21 +132,21 @@ public class PlayerLogon extends Thread {
         Race race;
         Alignment alignment;
         MobileClass playerClass;
-        PlayerCharacter newPlayer = new PlayerCharacter(socket, input, output, playerName);
+        PlayerCharacter newPlayer = new PlayerCharacter(socket, playerName);
 
         password = createPassword();
 
         race = chooseRace();
-        sendData2("[CYAN][B]Race chosen: [WHITE]" + race.getName() + "[R]\n");
+        comms.sendlnNoSuffix("[CYAN][B]Race chosen: [WHITE]" + race.getName() + "[R]\n");
 
         gender = chooseGender(race);
-        sendData2("[CYAN][B]Gender chosen: [WHITE]" + gender + "[R]\n");
+        comms.sendlnNoSuffix("[CYAN][B]Gender chosen: [WHITE]" + gender + "[R]\n");
 
         alignment = chooseAlignment();
-        sendData2("[CYAN][B]Alignment chosen: [WHITE]" + alignment.getAlignmentString() + "[R]\n");
+        comms.sendlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]" + alignment.getAlignmentString() + "[R]\n");
 
         playerClass = chooseClass();
-        sendData2("[CYAN][B]Class chosen: [WHITE]" + playerClass.getDisplayName() + "[R]\n");
+        comms.sendlnNoSuffix("[CYAN][B]Class chosen: [WHITE]" + playerClass.getDisplayName() + "[R]\n");
 
         System.out.println("Setting various player attributes...");
         //Set basic info
@@ -206,8 +168,7 @@ public class PlayerLogon extends Thread {
         //Save the player and print a message
         newPlayer.setLogonDate();
         newPlayer.savePlayer();
-        sendData2("[CYAN]The [B][WHITE]" + newPlayer.getTypeString() + "[R][CYAN] " + newPlayer.getRaceString() + " [R][WHITE]" + newPlayer.getMobileClass().getDisplayName() + " " + newPlayer.getName() + " [CYAN]has been created.\n");
-
+        comms.sendlnNoSuffix("[CYAN]The [B][WHITE]" + newPlayer.getTypeString() + "[R][CYAN] " + newPlayer.getRaceString() + " [R][WHITE]" + newPlayer.getMobileClass().getDisplayName() + " " + newPlayer.getName() + " [CYAN]has been created.\n");
 
         return newPlayer;
     }
@@ -224,19 +185,19 @@ public class PlayerLogon extends Thread {
 
         do {
             while (password == null || password.length() == 0) {
-                sendData("Enter a password for your character:");
-                password = receiveData();
+                comms.send("Enter a password for your character:");
+                password = comms.receiveData();
                 if (password.length() < 6) {
-                    sendData2("[B][RED]Passwords must be at least six characters in length.[R][WHITE]\n");
+                    comms.sendlnNoSuffix("[B][RED]Passwords must be at least six characters in length.[R][WHITE]");
                     password = null;
                 }
             }
 
-            sendData("Enter your password again for verification:");
-            validatePassword = receiveData();
+            comms.send("Enter your password again for verification:");
+            validatePassword = comms.receiveData();
 
             if (!password.equals(validatePassword)) {
-                sendData2("[B][RED]First and second passwords do not match.[R][WHITE]");
+                comms.send("[B][RED]First and second passwords do not match.[R][WHITE]");
                 password = null;
             }
         } while (password == null);
@@ -253,13 +214,13 @@ public class PlayerLogon extends Thread {
         Race race = null;
 
         do {
-            sendData2("Please select a race:\n");
-            sendData("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
-            String choice = receiveData();
+            comms.sendlnNoSuffix("Please select a race:");
+            comms.send("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
+            String choice = comms.receiveData();
             race = Race.determineRace(choice);
 
             if (race == null) {
-                sendData("That is not a valid choice.");
+                comms.sendlnNoSuffix("That is not a valid choice.");
             }
         } while (race == null);
 
@@ -283,8 +244,8 @@ public class PlayerLogon extends Thread {
         int gender = -1; //0 is male, 1 female, 2 asexual
 
         do {
-            sendData("Please enter a gender (M/F)");
-            choice = receiveData();
+            comms.send("Please enter a gender (M/F):");
+            choice = comms.receiveData();
             if (choice.toLowerCase().equals("m")) {
                 gender = Mobile.MALE;
             } else if (choice.toLowerCase().equals("f")) {
@@ -310,8 +271,8 @@ public class PlayerLogon extends Thread {
 
 
         do {
-            sendData("Please choose an ethical perspective (L, N, C)");
-            choice = receiveData();
+            comms.send("Please choose an ethical perspective (L, N, C):");
+            choice = comms.receiveData();
             if (choice.toLowerCase().equals("l")) {
                 ethical = Alignment.LAWFUL;
             } else if (choice.toLowerCase().equals("n")) {
@@ -324,8 +285,8 @@ public class PlayerLogon extends Thread {
 
 
         do {
-            sendData("Please input a moral perspective (G, N, E)");
-            choice = receiveData();
+            comms.send("Please input a moral perspective (G, N, E):");
+            choice = comms.receiveData();
             if (choice.toLowerCase().equals("g")) {
                 moral = Alignment.GOOD;
             } else if (choice.toLowerCase().equals("n")) {
@@ -349,9 +310,9 @@ public class PlayerLogon extends Thread {
         MobileClass mc = null;
 
         do {
-            sendData2("Please choose from the following classes. Type in the full name to choose it.\n");
-            sendData("Barbarian, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard\n");
-            choice = receiveData();
+            comms.sendlnNoSuffix("Please choose from the following classes. Type in the full name to choose it.");
+            comms.send("Barbarian, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard");
+            choice = comms.receiveData();
             mc = MobileClassFactory.determineClass(choice);
         } while (mc == null);
 
@@ -365,7 +326,7 @@ public class PlayerLogon extends Thread {
     //These methods are big, hard to read, but very necessary.
 
     //getPlayerName method.
-    //Used for logging in.
+    //Used for logging in.        
     public String getPlayerName() throws IOException {
         String playerName = null;
         boolean playerActive;
@@ -377,12 +338,12 @@ public class PlayerLogon extends Thread {
             invalidName = true;
             // ask for player name and log user on
             while (invalidName) {
-                sendData("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
-                playerName = receiveData();
+                comms.send("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
+                playerName = comms.receiveData();
                 invalidName = false;
                 if (playerName.length() > 15 || playerName.length() < 1) {
                     invalidName = true;
-                    sendData2("[RED]Sorry, character names must be between 1 and 15 characters long.[WHITE]\n");
+                    comms.send("[RED]Sorry, character names must be between 1 and 15 characters long.[WHITE]\n");
                 } else {
                     for (int x = 0; x < playerName.length(); x++) {
                         found = false;
@@ -393,7 +354,7 @@ public class PlayerLogon extends Thread {
                             }
                         }
                         if (!found) {
-                            sendData2("[RED]Sorry, only the uppercase and lower case letters A-Z are allowed in a character name.[WHITE]\n");
+                            comms.send("[RED]Sorry, only the uppercase and lower case letters A-Z are allowed in a character name.[WHITE]\n");
                             invalidName = true;
                             break;
                         }
@@ -414,120 +375,10 @@ public class PlayerLogon extends Thread {
                 }
             }
             if (playerActive) {
-                sendData2("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
+                comms.send("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
             }
         } while (playerActive);
 
         return playerName;
     }
-
-    //receiveData method.
-    //This receives data from the player.
-    public String receiveData() throws IOException {
-        StringBuffer incommingData;
-        String incommingData2;
-        int inputData;
-        int idleCount = 0;
-        int timeOutCount = 0;
-        int timeOutLimit = 500;
-        byte[] bytes;
-
-        incommingData = new StringBuffer();
-
-        // read data from the player until a null character is received
-        try {
-            while (!isCommunicationError() && incommingData.length() == 0) {
-
-                // read data from the player until a null character is received
-                if (input.available() != 0 && incommingData.length() == 0) {
-                    inputData = input.read();
-                    while (inputData != '\n' && inputData != -1 && !isCommunicationError()) {
-                        if (inputData != '\r') {
-                            incommingData.append((char) inputData);
-                        }
-                        inputData = input.read();
-                    }
-
-                    // if user is just pressing enter return an empty string
-                    // bypassing input parsing
-                    if (incommingData.length() == 0 && inputData == '\n') {
-                        return "";
-                    }
-
-                    // we should only reach the end of a stream when the socket
-                    // is closed, therefore error on it.
-                    if (inputData == -1) {
-                        throw new IOException();
-                    //log.message(" Received " + incommingData.length() + " bytes from " + getMobileName());
-                    }
-                } else {
-                    try {
-                        Thread.sleep(50);
-                        if (idleCount++ > 50) {
-                            sendData("");
-                            idleCount = 0;
-                            if (timeOutCount++ > timeOutLimit) {
-                                sendData2("\n[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye Bye[WHITE]\n");
-                                System.out.println("Idle connection terminated for: " + socket.getInetAddress().toString());
-                                throw new IOException();
-                            }
-                        }
-                    } catch (InterruptedException ie) {
-                    }
-                }
-            }
-
-        } catch (IOException ioe) {
-            System.out.println("Comms error receiving data (playerLogon) for: " + socket.getInetAddress().toString());
-            System.out.println(ioe);
-            throw ioe;
-        }
-
-        incommingData2 = parseIncomingData(incommingData.toString());
-
-        /*
-        bytes = incommingData2.getBytes();
-        for (int x=0;x<incommingData2.length();x++) {
-        System.out.println("RECEIVE: " + incommingData2.charAt(x) + "\t" + bytes[x] + "\t" + (int) incommingData2.charAt(x));
-        }
-         */
-
-        return incommingData2;
-    }
-
-    //parseIncomingData method.
-    //Used for.. something.
-    public String parseIncomingData(String data) throws IOException {
-        char dataByte;
-
-        StringBuffer output = new StringBuffer();
-
-        // loop through each data character checking for TELNET protocol commands
-        for (int x = 0; x < data.length(); x++) {
-            dataByte = data.charAt(x);
-            // if hex 255 incoming IAC
-            if (dataByte == '\377') {
-                dataByte = data.charAt(++x);
-
-                // if command is WILL echo DON'T
-                if (dataByte == '\373') {
-                    dataByte = data.charAt(++x);
-                    //sendData2("\377\376" + dataByte);
-                    continue;
-                }
-
-                // if command is DO echo WON'T
-                if (dataByte == '\375') {
-                    dataByte = data.charAt(++x);
-                    //sendData2("\377\374" + dataByte);
-                    continue;
-                }
-            } else {
-                output.append(dataByte);
-            }
-        }
-
-        return output.toString();
-    }    //parseOutgoingData method.
-    //Used again... for something.
 }

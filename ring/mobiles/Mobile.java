@@ -16,6 +16,7 @@ import ring.players.*;
 import ring.world.*;
 import ring.commands.*;
 import java.util.*;
+
 import ring.spells.*;
 import ring.skills.*;
 
@@ -206,7 +207,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//CommandHandler. This CommandHandler is protected so it can drop down into the PlayerCharacter
 	//class. It is transient because it is not serialized
 	protected transient CommandHandler handler;
-
+        
 	//lockTimeRemaining: The time left before this mob can act again.
 	protected int lockTimeRemaining;
 	protected String lockMessage = "You are currently focused on an activity."; //message to display while this mob is locked.
@@ -272,13 +273,14 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//BEGIN UTILITY METHODS
 	//sendData method.
 	//This method is going to send text back to the player.
+        /*
 	public void sendData(String text) {
 
 	}
 
 	public void sendData2(String text) {
 
-	}
+	}*/
 
 	//END UTILITY METHODS.
 	//#####################################################
@@ -1033,11 +1035,11 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//move method.
 	//This method handles the movement of this mobile from ZoneCoordinate to ZoneCoordinate (really room-to-room).
 	//It attempts to cover all bases with regards to movement.  
-	public final boolean move(ZoneCoordinate zc) {
+	public final String move(ZoneCoordinate zc) {
             //Check to see if this mobile is fighting. That means they can't leave.
             if (this.isFighting) {
                 sendData("[GREEN]You may not leave during combat![WHITE]");
-                return false;
+                return null;
             }
 
             //set up the variables we need to use
@@ -1055,7 +1057,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
             //isNoExit is kind of a misnomer here. isNoExit means that this "room"
             //is really blocking off exiting the current room in this direction.
             if (roomToMoveTo == null || roomToMoveTo.isNoExit()) {
-                    return false;
+                    return null;
             }
 
             //Else the location must be valid. Move the mobile to the new Room.
@@ -1066,7 +1068,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
                 //Is the location hidden? If so, can the mobile actually locate it?
                 if (roomToMoveTo.getSearchDC() > 0) {
-                        if (this.hiddenExitSearchCheck < roomToMoveTo.getSearchDC()) return false;
+                        if (this.hiddenExitSearchCheck < roomToMoveTo.getSearchDC()) return null;
                 }
 
                 //default arrive and leave text to broadcast to others			
@@ -1091,12 +1093,11 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
                 this.changeCurrentMV(-1);
 
                 //display the new information of the room
-                if (this.isBlind) sendData("You stumble into a new area, but you cannot see anything!");
-                else sendData2(roomToMoveTo.getTitle() + "\n" +
+                if (this.isBlind) return "You stumble into a new area, but you cannot see anything!";
+                return roomToMoveTo.getTitle() + "\n" +
                                 roomToMoveTo.getDescription() + "\n" +
                                 roomToMoveTo.getExitsString(hiddenExitSearchCheck) + "\n" +
-                                roomToMoveTo.getMobileList(this, spotCheck) + roomToMoveTo.getEntityList());
-                return true;
+                                roomToMoveTo.getMobileList(this, spotCheck) + roomToMoveTo.getEntityList();
             }
         }
 }

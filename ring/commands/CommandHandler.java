@@ -363,6 +363,56 @@ public final class CommandHandler {
 		//Return the CommandResult.
 		return res;
 	}
+        
+        /**
+         * Godvoice command: This command uses the voice of the gods to notify players of something.
+         * Usable only by immortals.
+         * @param params
+         * @return A confirmation that the voice of the gods was heard.
+         */
+	private CommandResult CMD_godvoice(CommandParameters params) {
+		//Make the CommandResult object.
+		params.init(Command.TXT);
+		CommandResult res = new CommandResult();
+		res.setFailText("You don't feel particularly divine...");
+		Mobile mob = (Mobile)sender;
+
+		//Say code here.
+		String message = "";
+		String textBackToPlayer;
+
+		//check for speaker's deafness.
+		textBackToPlayer = "You project your voice across the cosmos, saying, \"";
+
+		String textToOtherPlayers = "The voice of the gods rumbles in the sky! \"";
+
+		//Get the "parameters" as words.
+		int length = params.length();
+		for (int c = 0; c < length; c++) {
+			message += (String)params.getParameter(c);
+
+			if (c != length - 1) {
+				message += " ";
+			}
+		}
+
+		//check for speaker's deafness deafness again.
+		if (!mob.isDeaf) {
+			textBackToPlayer += message;
+			textBackToPlayer += "\"";
+		}
+
+		textToOtherPlayers +=message;
+		textToOtherPlayers += "\"";
+
+		res.setText(textBackToPlayer);
+
+		World.notifyPlayersAtLocation(mob, textToOtherPlayers);
+
+		res.setSuccessful(true);
+		//Return the CommandResult.
+		return res;
+	}        
 
 	//North command.
 	private CommandResult CMD_north() {
@@ -377,11 +427,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.NORTH))
-			return res; //this means the command failed
-		
+                String roomText = mob.move(ZoneCoordinate.NORTH);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
+
 		//Return the CommandResult.
-		res.setSuccessful(true);		
 		return res;
 	}
 
@@ -398,11 +450,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.SOUTH))
-                    return res; //this means the mob was unable to move.
-		
+                String roomText = mob.move(ZoneCoordinate.SOUTH);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
+
 		//Return the CommandResult.
-		res.setSuccessful(true);		
 		return res;
 	}
 
@@ -419,11 +473,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.WEST))
-			return res; //this means the command failed
-		
+                String roomText = mob.move(ZoneCoordinate.WEST);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
+
 		//Return the CommandResult.
-		res.setSuccessful(true);		
 		return res;
 	}
 
@@ -440,11 +496,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.EAST))
-			return res; //this means the command failed
+                String roomText = mob.move(ZoneCoordinate.EAST);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
 
 		//Return the CommandResult.
-		res.setSuccessful(true);
 		return res;
 	}
 
@@ -461,11 +519,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.UP))
-			return res; //this means the command failed
-	
+                String roomText = mob.move(ZoneCoordinate.UP);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
+
 		//Return the CommandResult.
-		res.setSuccessful(true);		
 		return res;
 	}
 
@@ -482,11 +542,13 @@ public final class CommandHandler {
 			return res;
 		}
 		
-		if (!mob.move(ZoneCoordinate.DOWN))
-			return res; //this means the command failed
+                String roomText = mob.move(ZoneCoordinate.DOWN);
+		if (roomText != null) {
+                    res.setSuccessful(true);
+                    res.setText(roomText);
+                }
 
 		//Return the CommandResult.
-		res.setSuccessful(true);		
 		return res;
 	}
 
