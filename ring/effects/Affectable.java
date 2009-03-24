@@ -28,5 +28,4 @@ public interface Affectable {
   public int getMaxHP();
   public int getAC();
   public void addEffect(Effect e);
-  public void sendData(String text);
 }

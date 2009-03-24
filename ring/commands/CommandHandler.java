@@ -23,6 +23,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.beans.*;
 import java.io.*;
+import ring.resources.ClassFeatureLoader;
 
 public final class CommandHandler {
 	//This is the class that contains code for all commands. It returns a CommandResult object with a
@@ -77,20 +78,18 @@ public final class CommandHandler {
 	//sender can use.
 	public CommandResult sendCommand(String command) {
 		System.out.println("received: " + command);
-		String[] commandAsArray = command.split(" ");
-
 		//Make the command object.
-		Command cmd = new Command(commandAsArray, Command.CMD);
+		Command cmd = new Command(command, Command.CMD);
 		System.out.println("Made cmd object");
 
-		//Is it an alternate command?
-		if (!checkAlternateCommand(cmd)) {
-			//If it's not an alternate command, AND if command completion is on,
-			//try to complete the command.
-
-			//if (commandCompletion == on) <---replace this with actual code later
-			completeCommand(cmd);
-		}
+		//We have a hierarchy of command checking:
+                //1. We check to see if it's an aliased command.
+                //2. Failing that, we try to complete the command.
+                //3. Failing THAT, we see if it's a class feature command.
+		if (!checkAlternateCommand(cmd))
+        		if (!completeCommand(cmd))
+                            if (findClassFeature(cmd))
+                                cmd = new Command("classfeature " + command, Command.CMD);
 
 		System.out.println("checked alternates");
 		//actually do the command.
@@ -98,6 +97,17 @@ public final class CommandHandler {
 		System.out.println("handled command");
 		return cr;
 	}
+        
+        private boolean findClassFeature(Command comm) {
+            String cmd = comm.getActualCommand();
+            
+            ClassFeature cf = ClassFeatureLoader.getClassFeatureByName(cmd);
+            
+            if (cf != null)
+                return true;
+            else
+                return false;
+        }
 
 	//completeCommand method.
 	//This method returns a command name based on a fragment given to it. It returns by alphabetical priority
@@ -119,7 +129,11 @@ public final class CommandHandler {
 		//now, loop through all available command names
 		//and see if we can find an available full command
 		for (String key : keys) {
-			if (key.startsWith(fragment)) { comm.setActualCommand(key.substring(4)); return true; } //substring(4) is to get rid of "CMD_"
+			if (key.startsWith(fragment)) { 
+                            //substring(4) is to get rid of "CMD_"
+                            comm.setActualCommand(key.substring(4)); 
+                            return true; 
+                        } 
 		}
 
 		//nothing was found; return false.
@@ -252,6 +266,41 @@ public final class CommandHandler {
 		res.setSuccessful(true);
 		return res;
 	}
+        
+        private CommandResult CMD_classfeature(CommandParameters params) {
+            params.init(Command.CMD);
+            CommandResult res = new CommandResult();
+            
+            res.setFailText("You don't have that class feature!");
+            
+            //This is the actual command the user typed in.
+            //When this method is called, the classfeature command gets prepended
+            //to the command string.
+            String classFeatureName = (String)params.getParameterAsText(0);
+            
+            Mobile mob = (Mobile)sender;
+            
+            ClassFeature cf = mob.getMobileClass().getClassFeature(classFeatureName);
+            
+            //They don't have that class feature, or it doesn't exist.
+            if (cf == null)
+                return res;
+            
+            Affectable target = (Affectable)params.getParameter(1);
+            
+            cf.chooseFeature(mob.getLevel());
+            if (cf.getTargetType().equals(ClassFeature.SELF_ONLY)) {
+                System.out.println("Executing rage with " + mob);
+                cf.execute(mob);
+            }
+            else
+                cf.execute(target);
+            
+            res.setText(cf.getOutputText());
+            res.setSuccessful(true);
+                    
+            return res;
+        }
 
 	//Look command.
 	//This command looks around the current room of the sender, or it looks at a specified object.
@@ -1322,6 +1371,7 @@ public final class CommandHandler {
 		return res;
 	}
 
+        /*
 	private CommandResult CMD_bash(CommandParameters params) {
 		params.init(Command.CMD);
 		Object t = params.getParameter(0);
@@ -1397,6 +1447,7 @@ public final class CommandHandler {
 
 		return res;
 	}
+        */
 
 	private CommandResult CMD_detect(String[] detectWhat) {
 		return null;

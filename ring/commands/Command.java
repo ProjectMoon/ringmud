@@ -42,6 +42,11 @@ public class Command {
     this.cmd = cmd;
     this.type = type;
   }
+  
+  public Command(String cmd, String type) {
+      this.cmd = cmd.split(" ");
+      this.type = type;
+  }
 
   public String[] getCommandString() {
     return cmd;

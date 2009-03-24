@@ -41,8 +41,6 @@ public class MobileClassFactory {
 
         //Class features.
         //bash
-        Effect bashEffect = new Effect(Effect.Duration.INSTANT, 0, new KnockDown());
-        ClassFeature bash = new ClassFeature("Bash", "The act of bashing one\'s opponent is the first basic maneuver that fighters learn. It is a tactical maneuver that sends an opponent sprawling. It keeps the target focused on the fighter.", bashEffect, ClassFeature.Type.SINGLE, ClassFeature.DurationType.ACTIVE, 1, 0);
 
         //Skills.
 
@@ -58,7 +56,7 @@ public class MobileClassFactory {
                 MobileClass.Classification.PHYSICAL);
 
         //add class features
-        res.addClassFeature(bash);
+
         return res;
     }
 
@@ -68,18 +66,6 @@ public class MobileClassFactory {
         MobileClass res;
 
         //Class Features.
-        //rage
-        Effect rageEffect = new Effect(Effect.Duration.TIMED, Effect.SET_TIMER_LATER, new StatChange(), new ACChange());
-        EffectCreatorParameters rageParams = new EffectCreatorParameters();
-        rageParams.add("StatChange:strength", 4);
-        rageParams.add("StatChange:constitution", 4);
-        rageParams.add("ACChange:amount", -2);
-        rageEffect.passParameters(rageParams);
-
-        ClassFeature rage = new ClassFeature("Rage", "Once per fight, a barbarian can fly into a rage. The barbarian temporarily gains a +4 bonus to Strength and Constitution, and a +2 morale bonus on Will saves, and takes a -2 penalty to Armor Class. The increase in Constitution increases the barbarian\'s hit points by 2 points per level, but these hit points go away at the end of the rage. While raging, a barbarian cannot use any Charisma-, Dexterity-, or Intelligence-based skills (except for Balance, Escape Artist, Intimidate, and Ride), the Concentration skill, or any abilities that require patience or concentration, nor can he activate magic items that require a command word, a spell trigger (such as a wand), or spell completion (such as a scroll) to function. He can use any feat he has except Combat Expertise, item creation feats, and metamagic feats. A fit of rage lasts for one minute. At the end of the rage, the barbarian loses the rage modifiers and restrictions and becomes fatigued (-2 penalty to Strength, -2 penalty to Dexterity, max movement halved) for the remainder of the encounter.", rageEffect, ClassFeature.Type.SINGLE, ClassFeature.DurationType.ACTIVE, 1, 0);
-
-        Effect bashEffect = new Effect(Effect.Duration.INSTANT, 0, new KnockDown());
-        ClassFeature bash = new ClassFeature("Bash", "The act of bashing one\'s opponent is the first basic maneuver that fighters learn. It is a tactical maneuver that sends an opponent sprawling. It keeps the target focused on the fighter.", bashEffect, ClassFeature.Type.SINGLE, ClassFeature.DurationType.ACTIVE, 1, 0);
 
         //Skill list.
         SkillList skills = new SkillList();
@@ -110,8 +96,7 @@ public class MobileClassFactory {
                 MobileClass.Classification.PHYSICAL);
 
         //add class features
-        res.addClassFeature(rage);
-        res.addClassFeature(bash);
+        res.addClassFeature("rage");
 
         return res;
 

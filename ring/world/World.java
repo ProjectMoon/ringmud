@@ -19,6 +19,7 @@ import ring.effects.library.*;
 import ring.movement.*;
 import ring.util.*;
 import java.util.*;
+import ring.resources.ClassFeatureLoader;
 
 public class World implements TickerListener {
 	private static World world;
@@ -46,6 +47,11 @@ public class World implements TickerListener {
 	public static final int TIMEOUT_LIMIT = 15;
 
 	public World() {
+                //Load crap
+                System.out.println("Loading class features...");
+                ClassFeatureLoader.loadClassFeaturesFromFile("/home/jeff/classfeatures.xml");
+                System.out.println("Done.");
+                
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
 		playerList = new Vector();

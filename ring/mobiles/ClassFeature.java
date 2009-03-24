@@ -1,194 +1,147 @@
 package ring.mobiles;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- *
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar
- * to DikuMUD</p>
- *
- * <p>Copyright: Copyright (c) 2004</p>
- *
- * <p>Company: RaiSoft/Thermetics</p>
- *
- * @author Jeff Hair
- * @version 1.0
- */
-
-import java.io.Serializable;
-import ring.effects.*;
 import java.util.*;
-public class ClassFeature implements Comparable, Serializable {
-    public static final long serialVersionUID = 1;
-  //This class defines a class feature (as per D&D 3.5) for a MobileClass. A class feature is a unique ability that a class
-  //gets that is derived from levels. For example, a Barbarian's rage is a class feature. Class features in the D&D 3.5 system
-  //do many things; they could not all possibly be covered by a computer system. A class feature in RingMUD holds the following
-  //information:
-  // * Name of the class feature
-  // * Description of the class feature
-  // * Type of class feature: SINGLE or SCALING. SINGLE types are gotten once and that's it. SCALING types improve as a character
-  //       levels up. Other types may be implemented later.
-  // * Duration type: ACTIVE or PASSIVE. ACTIVE requires a command to be executed; PASSIVE is always on.
-  // * A Vector<Effect> that holds all of the effects of this class feature. The feature is defined by the Effects, which are
-  //       in turn defined by EffectCreators.
-  //
-  //PASSIVE class features are PERMANENT duration Effects that get applied as soon as the character logs in or gains a level
-  //and the appropriate class feature. ACTIVE class features are usually TIMED duration Effects, but sometimes INSTANT.
+import ring.effects.*;
+import ring.util.RingConstants;
 
-  //The two enum definitions for the types (see above)
-  public enum Type {
-    SINGLE, SCALING;
-  }
-
-  public enum DurationType {
-    ACTIVE, PASSIVE;
-  }
-
-  private String name; //the name of this class feature
-  private String description; //the extended description of this class feature
-  private Type type; //the type of class feature
-  private DurationType durationType; //the duration type of this class feature
-  private int timer = 0; //the duration of an active feature. zero if it's instant or permanent.
-  private Effect featureEffects; //the effects (i.e. "rules") of this class feature
-  private int levelAcquired; //the level this class feature is first gained.
-  private int levelScalePattern; //the amount of levels it takes before a SCALING class feature improves.
-  private Affectable target; //this is the target for the next use of this class feature; often its owner.
-
-  //There are three separate constructors, each with varying parameters. The following parameters are required for all versions:
-  //Name, description, type, duration type.
-  //Please see each individual constructors for the different parameters they take.
-  public ClassFeature(ClassFeature other) {
-    name = other.name;
-    description = other.description;
-    type = other.type;
-    durationType = other.durationType;
-    featureEffects = other.featureEffects;
-    levelAcquired = other.levelAcquired;
-    levelScalePattern = other.levelScalePattern;
-    target = other.target;
-  }
-
-  public ClassFeature(String name, String description, Type type,
-                      DurationType durationType, int levelAcquired,
-                      int levelScalePattern) {
-    this.name = name;
-    this.description = description;
-    this.levelAcquired = levelAcquired;
-    this.levelScalePattern = levelScalePattern;
-    this.type = type;
-    this.durationType = durationType;
-  }
-
-  public ClassFeature(String name, String description, Effect effects,
-                      Type type, DurationType durationType, int levelAcquired,
-                      int levelScalePattern) {
-    this.name = name;
-    this.description = description;
-    this.levelAcquired = levelAcquired;
-    this.featureEffects = effects;
-    this.levelScalePattern = levelScalePattern;
-    this.type = type;
-    this.durationType = durationType;
-  }
-
-  public ClassFeature(String name, String description, Effect effects,
-                      Type type, DurationType durationType) {
-    this.name = name;
-    this.description = description;
-    featureEffects = effects;
-    this.levelAcquired = 1;
-    this.levelScalePattern = 0;
-    this.type = type;
-    this.durationType = durationType;
-  }
-
-  //addEffect method.
-  //This method, while bearing the same name as WorldObject.addEffect, is not quite the same. It has some error checking and
-  //throws exceptions if the conditions are not met. These are the conditions of addEffect:
-  //If this class feature is PASSIVE, only PERMANENT duration Effects can be added.
-  //If it is ACTIVE, any type of Effect can be added.
-  public void setEffect(Effect e) throws IllegalArgumentException {
-    if ( (durationType == DurationType.PASSIVE) &&
-        (e.getDuration() != Effect.Duration.PERMANENT))throw new
-        IllegalArgumentException(
-        "passive class feature can only accept permanent effects.");
-    else featureEffects = e;
-  }
-
-  //activate method.
-  //This method activates the class feature, regardless of duration type. The caveat is that PASSIVE class features cannot be
-  //turned off once activated. A PASSIVE feature will usually be activated on level up or login.
-  public void activate() {
-      //This uniqueInstance() call here is necessary to create a unique instantiation of this effect.
-      //If this is not done, strange timing issues happen when applying the same effect twice.
-      Effect ef = featureEffects.uniqueInstance();
-      ef.setTarget(target);
-      ef.setTimer(timer);
-      target.addEffect(ef);
-  }
-
-  //This method is currently commented out because it does not seem necessary. Plus, it runs into problems with the
-  //unique instance nature of the activate() method. While this may be a flaw in the design of the Effects system,
-  //it will be dealt with for now.
-  //deactivate method.
-  //This method turns a class feature off. It throws IllegalArgumentException if this feature is PASSIVE.
-  /*
-  public void deactivate() throws IllegalArgumentException {
-    if (durationType == DurationType.PASSIVE) throw(new IllegalArgumentException("cannot deactivate passive class features!"));
-    else {
-      for (Effect e : featureEffects) {
-        e.endEffect();
-      }
+/**
+ * A complete re-write of the ClassFeature class. A class feature needs several
+ * things. One, it needs a 
+ * @author jeff
+ */
+public class ClassFeature {
+    //Constants
+    public static String SELF_ONLY = "self";
+    public static String OTHERS_ONLY = "others";
+    public static String ALL = "all";
+    
+    //The effects of this class. Stored as such for scaling features that change
+    //with level.
+    private HashMap<Integer, Effect> featureEffects;
+    
+    //The feature we should be using; done so we don't have to continually look
+    //for the right level feature.
+    private int featureToUse;
+    
+    //Self-explanatory.
+    private String name;
+    private String command; //The command used to execute this feature--may or may not take params
+    private String description;
+    private String targetType; //self, others, all. These values are exclusive; i.e. others does not allow self-target.
+    private String outputText; //what to send back to the executor.
+    
+    
+    public ClassFeature() {
+        featureEffects = new HashMap<Integer, Effect>();
     }
-  }
-  */
-
-  //registerTarget method.
-  //This sets the target for the next use of this class feature. It's usually the class feature's owner.
-  public void registerTarget(Affectable t) {
-    target = t;
-  }
-
-  //registerDuration method.
-  //This sets the timer for the next use of this class feature.
-  public void registerTimer(int n) {
-    timer = n;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public int getLevelAcquired() {
-    return levelAcquired;
-  }
-
-  public int getLevelScalingPattern() {
-    return levelScalePattern;
-  }
-
-  private Effect getEffects() {
-    return featureEffects;
-  }
-
-  //compareTo method.
-  //This method compares a ClassFeature to another object. It returns -1 if the ClassFeature is not identical.
-  //Otherwise it returns 0.
-  //Details:
-  //-1 if other is not a ClassFeature
-  //-1 if other is a ClassFeature but does not hold identical information as this
-  //0 if all conditions evaluate to true.
-  public int compareTo(Object other) {
-    if (!(other instanceof ClassFeature)) return -1;
-    ClassFeature otherFeature = (ClassFeature)other;
-    if ((this.name.equals(otherFeature.name)) && (this.description.equals(otherFeature.description)) &&
-        (this.featureEffects.equals(otherFeature.featureEffects)) && (this.type == otherFeature.type) &&
-        (this.durationType == otherFeature.durationType) && (this.levelAcquired == otherFeature.levelAcquired) &&
-        (this.levelScalePattern == otherFeature.levelScalePattern)) return 0;
-    else return -1;
-  }
-
+    
+    public ClassFeature(String name, String command, String description, String text, String targetType) {
+        featureEffects = new HashMap<Integer, Effect>();
+        this.name = name;
+        this.command = command;
+        this.description = description;
+        this.targetType = targetType;
+        this.outputText = text;
+    }
+    
+    /**
+     * This method figures out the right "level" of the class feature to use,
+     * if it indeed has more than one level. This should not be called all the
+     * time as it is fairly inefficient. It gets called automatically during
+     * the creation of a Mobile and when a player levels up.
+     */
+    public void chooseFeature(int mobLevel) {
+        //first test to see if there's a feature right at this level.
+        Effect eff = featureEffects.get(mobLevel);
+        int featureLevel = mobLevel;
+        
+        //If not, we need to find it.
+        //We find the closest-level feature effect that is equal to or lower
+        //than the specified level.
+        if (eff == null) {
+            for (featureLevel = mobLevel; featureLevel > 0; featureLevel--) {
+                eff = featureEffects.get(featureLevel);
+                if (eff != null) break;
+            }   
+        }
+        
+        //Now, we should've found it. If the number is zero, there are
+        //other problems we should be worrying about...
+        featureToUse = featureLevel;
+    }
+    
+    /**
+     * "Executes" this class feature on the specified target. The target parameter
+     * can be ignored if the target of the class feature is set to "self." If not,
+     * the parameter must be passed. The check for that, however, is handled in
+     * CommandHandler, not this class.
+     * @param target
+     * @return True on a successful application of the class feature.
+     */
+    public boolean execute(Affectable target) {
+        Effect eff = featureEffects.get(featureToUse);
+        eff.setTarget(target);
+        target.addEffect(eff);
+        return true;
+    }
+    
+    public void setCommand(String cmd) {
+        command = cmd;
+    }
+    
+    public String getCommand() {
+        return command;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setDescription(String desc) {
+        description = desc;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void addEffect(int level, Effect eff) {
+        featureEffects.put(level, eff);
+    }
+    
+    public void removeEffect(int level) {
+        featureEffects.remove(level);
+    }
+    
+    public String getTargetType() {
+        return targetType;
+    }
+    
+    public void setTargetType(String type) {
+        targetType = type;
+    }
+    
+    public String getOutputText() {
+        return outputText;
+    }
+    
+    public void setOutputText(String text) {
+        outputText = text;
+    }
+    
+    public String toString() {
+        String res = "";
+        res = name + " (" + command + "); [Effects: ";
+        
+        Collection<Effect> c = featureEffects.values();
+        for (Effect e : c)
+            res += e.toString();
+        
+        res += "]";
+        return res;
+    }
 }

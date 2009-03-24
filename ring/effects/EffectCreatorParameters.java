@@ -29,6 +29,10 @@ public final class EffectCreatorParameters implements Serializable {
   public EffectCreatorParameters(TreeMap params) {
     this.params = params;
   }
+  
+  private EffectCreatorParameters(EffectCreatorParameters other) {
+      this.params = new TreeMap(other.params);
+  }
 
   //begin add methods.
   //There is a version of add for every pertinent primitive type, Strings, and one for a general catch-all Object.
@@ -91,5 +95,9 @@ public final class EffectCreatorParameters implements Serializable {
 
   public boolean equals(EffectCreatorParameters other) {
     return params.equals(other.params);
+  }
+  
+  public EffectCreatorParameters uniqueInstance() {
+      return new EffectCreatorParameters(this);
   }
 }

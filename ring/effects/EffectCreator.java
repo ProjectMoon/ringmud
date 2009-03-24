@@ -48,4 +48,8 @@ public abstract class EffectCreator implements Serializable {
   public abstract void effectLife(Affectable target);
   //effectDeath is called when the effect is removed or reaches its natural duration end.
   public abstract void effectDeath(Affectable target);
+  
+  public String toString() {
+      return this.getClass().getSimpleName();
+  }
 }

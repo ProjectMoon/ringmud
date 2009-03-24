@@ -11,6 +11,7 @@ package ring.mobiles;
 
 import java.io.Serializable;
 import java.util.*;
+import ring.resources.ClassFeatureLoader;
 import ring.spells.*;
 import ring.skills.*;
 
@@ -41,7 +42,7 @@ public class MobileClass implements Serializable {
   private SpellList spellsMemorized; //This is a list of spells the mobile can cast.
 
   //A list of ClassFeatures this class has.
-  private Vector<ClassFeature> classFeatures;
+  private HashMap<String, ClassFeature> classFeatures;
 
   //These variables hold the class skill informationfor this MobileClass.
   private int skillPointsPerLevel;
@@ -115,7 +116,7 @@ public class MobileClass implements Serializable {
     spellsAvailable = new SpellList();
     spellsKnown = new SpellList();
     spellsMemorized = new SpellList();
-    classFeatures = new Vector<ClassFeature>();
+    classFeatures = new HashMap<String, ClassFeature>();
   }
 
   public MobileClass(String name, String displayName, int hitDie, int skillPointsPerLevel,
@@ -136,11 +137,7 @@ public class MobileClass implements Serializable {
     baseAttackBonus = bab;
     this.classification = classification;
     this.skillPointsPerLevel = skillPointsPerLevel;
-    classFeatures = new Vector<ClassFeature>();
-  }
-
-  public void addClassFeature(ClassFeature feature) {
-    classFeatures.addElement(feature);
+    classFeatures = new HashMap<String, ClassFeature>();
   }
 
   public int getHitDie() {
@@ -224,26 +221,18 @@ public class MobileClass implements Serializable {
     }
 
     return -9999; //should never be hit, but keeps compiler happy
-  }
-
-  //registerClassFeature method.
-  //adds a class feature to this class. TODO: Add error checking for duplicity
-  public void registerClassFeature(ClassFeature feature) {
-    classFeatures.addElement(feature);
+}
+ 
+  
+  public void addClassFeature(String featureName) {
+      ClassFeature cf = ClassFeatureLoader.getClassFeatureByName(featureName);
+      classFeatures.put(featureName, cf);
   }
 
   //getFeatureByName method.
   //Returns the class feature specified by the name parameter or null if nothing
   //is found. This method is case insensitive.
-  public ClassFeature getFeatureByName(String name) {
-    System.out.println("in getfeaturebyname");
-    ClassFeature ret = null;
-    System.out.println("CF SIZE: " + classFeatures.size());
-    for (int c = 0; c < classFeatures.size(); c++) {
-      ClassFeature cf = classFeatures.get(c);
-      if (cf.getName().equalsIgnoreCase(name)) ret = cf;
-    }
-
-    return new ClassFeature(ret);
+  public ClassFeature getClassFeature(String name) {
+    return classFeatures.get(name);
   }
 }

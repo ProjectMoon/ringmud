@@ -72,7 +72,8 @@ public class Effect implements Serializable {
 
   public Effect(Duration dur, int timer, Affectable target, EffectCreator ... efcs) {
     effectCreators = new Vector<EffectCreator>();
-    for (EffectCreator ef : efcs) effectCreators.addElement(ef);
+    if (efcs != null)
+        for (EffectCreator ef : efcs) effectCreators.addElement(ef);
     this.timer = timer;
     this.target = target;
     duration = dur;
@@ -80,13 +81,12 @@ public class Effect implements Serializable {
     INIT_TARGET_LATER = false;
     numStarts = 0;
     if ((dur == Duration.TIMED) && (timer == 0)) INIT_TIMER_LATER = true;
-    System.out.println("Effect generated for: " + this +
-                       ". Status: [INACTIVE]");
   }
 
   public Effect(Duration dur, int timer, EffectCreator ... efcs) {
     effectCreators = new Vector<EffectCreator>();
-    for (EffectCreator ef : efcs) effectCreators.addElement(ef);
+    if (efcs != null)
+        for (EffectCreator ef : efcs) effectCreators.addElement(ef);
     this.timer = timer;
     target = null;
     duration = dur;
@@ -94,8 +94,6 @@ public class Effect implements Serializable {
     INIT_TARGET_LATER = true;
     numStarts = 0;
     if ( (dur == Duration.TIMED) && (timer == 0)) INIT_TIMER_LATER = true;
-    System.out.println("Effect generated for: " + this +
-                       ". Status: [INACTIVE]");
   }
 
   //This copy constructor is used when starting up effects in order to create a new, unique
@@ -112,6 +110,10 @@ public class Effect implements Serializable {
     INIT_EFFECT_LATER = other.INIT_EFFECT_LATER;
     INIT_TIMER_LATER = other.INIT_TIMER_LATER;
     numStarts = 0; //this is a new effect, so numStarts is still zero.
+  }
+  
+  public void addEffectCreator(EffectCreator efc) {
+      effectCreators.addElement(efc);
   }
 
     public void decrementTimer() {
@@ -166,6 +168,7 @@ public class Effect implements Serializable {
   //This method passes parameters to all EffectCreators in this Effect. Returns true
   //if succesful in adding parameters to all EffectCreators, but false if one fails.
   public boolean passParameters(EffectCreatorParameters params) {
+      params = params.uniqueInstance(); //Ensures that no one else takes our parameters.
     boolean success = true;
     for (EffectCreator ef : effectCreators) {
       if (success == false)
