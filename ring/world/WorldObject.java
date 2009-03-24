@@ -56,6 +56,9 @@ public abstract class WorldObject implements Affectable, Serializable {
   //addEffect method.
   //Adds an Effect to the WorldObject.
   public final void addEffect(Effect e) {
+      //This should make sure that effects added to a WorldObject are always unique.
+      
+      e = e.uniqueInstance();
     System.out.println("in addeffect");
     if (e.getTarget() != this) {
       System.out.println("***WARNING***\nInbound effect [" + e + "] is not targeting WorldObject [" + this + "]. Operation aborted.");

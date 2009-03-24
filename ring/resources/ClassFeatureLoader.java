@@ -129,7 +129,7 @@ public class ClassFeatureLoader {
         }
 
         //Create the effect object
-        Effect eff = new Effect(duration, timer, null);
+        Effect eff = new Effect(duration, timer, (EffectCreator[])(null));
 
         //Compile the effect creators into the Effect object.
         NodeList effectSubNodes = effectElement.getChildNodes();

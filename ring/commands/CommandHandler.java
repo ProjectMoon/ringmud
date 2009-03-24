@@ -162,10 +162,9 @@ public final class CommandHandler {
 		//Determine the type of command and parameters.
 		//Set up the parameters object.
 		CommandParameters parameters = new CommandParameters(cmd.getParameters(), sender);
-		System.out.println("params: " + parameters);
+		//System.out.println("params: " + parameters);
 		int nMethodParams = TextParser.countParameters(m.toString());
 
-		System.out.println("nmethodparams: " + nMethodParams);
 		//Invoke the method!
 		try {
 			//cover both no-parameter and parametered commands

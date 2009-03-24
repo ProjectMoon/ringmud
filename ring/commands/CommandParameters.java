@@ -48,7 +48,6 @@ public final class CommandParameters {
   //getParameter method.
   //Returns a parameter.
   public Object getParameter(int index) {
-    System.out.println("params in CP: " + parameters);
     if (parameters == null)return null;
     if (index >= parameters.length) return null;
     return parameters[index];

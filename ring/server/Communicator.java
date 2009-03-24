@@ -52,7 +52,6 @@ public class Communicator {
      * @param data
      */
     public void send(String data) {
-        System.out.println("***SENDING: " + data + "***");
         try {
             if (data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);

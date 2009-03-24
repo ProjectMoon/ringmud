@@ -126,7 +126,9 @@ public class Effect implements Serializable {
         }
         else {
             //if this is a periodic effect, make it happen again!
-            if (duration == Duration.PERIODIC_TIMED) startEffect();
+            if (duration == Duration.PERIODIC_TIMED) 
+                startEffect();
+            
             timer--;
         }
     }
