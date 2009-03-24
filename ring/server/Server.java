@@ -18,6 +18,7 @@ import ring.players.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import ring.resources.MUDBoot;
 
 public class Server {
   //This is the world object. Everything is stored in it.
@@ -38,7 +39,12 @@ public class Server {
   	}
   	
     Socket playerSocket;
+    
+    //Boot the mud
+    MUDBoot.boot();
     world = new World();
+
+    //Bind the IP
     System.out.println("Attempting to bind to IP: " + addr);
     try {
       socket = new ServerSocket(2312, 50, InetAddress.getByName(addr));//192.168.1.6 for home -- 71.191.150.213 is the internet-visible one.

@@ -46,12 +46,7 @@ public class World implements TickerListener {
 	//World Constants.
 	public static final int TIMEOUT_LIMIT = 15;
 
-	public World() {
-                //Load crap
-                System.out.println("Loading class features...");
-                ClassFeatureLoader.loadClassFeaturesFromFile("C:\\classfeatures.xml");
-                System.out.println("Done.");
-                
+	public World() {                
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
 		playerList = new Vector();
