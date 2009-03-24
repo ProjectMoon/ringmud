@@ -49,7 +49,7 @@ public class World implements TickerListener {
 	public World() {
                 //Load crap
                 System.out.println("Loading class features...");
-                ClassFeatureLoader.loadClassFeaturesFromFile("/home/jeff/classfeatures.xml");
+                ClassFeatureLoader.loadClassFeaturesFromFile("C:\\classfeatures.xml");
                 System.out.println("Done.");
                 
 		//Instantiate all of the variables.

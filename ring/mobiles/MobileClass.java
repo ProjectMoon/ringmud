@@ -11,7 +11,7 @@ package ring.mobiles;
 
 import java.io.Serializable;
 import java.util.*;
-import ring.resources.ClassFeatureLoader;
+import ring.resources.*;
 import ring.spells.*;
 import ring.skills.*;
 
@@ -42,7 +42,7 @@ public class MobileClass implements Serializable {
   private SpellList spellsMemorized; //This is a list of spells the mobile can cast.
 
   //A list of ClassFeatures this class has.
-  private HashMap<String, ClassFeature> classFeatures;
+  private HashMap<String, ClassFeatureReference> classFeatures;
 
   //These variables hold the class skill informationfor this MobileClass.
   private int skillPointsPerLevel;
@@ -116,7 +116,7 @@ public class MobileClass implements Serializable {
     spellsAvailable = new SpellList();
     spellsKnown = new SpellList();
     spellsMemorized = new SpellList();
-    classFeatures = new HashMap<String, ClassFeature>();
+    classFeatures = new HashMap<String, ClassFeatureReference>();
   }
 
   public MobileClass(String name, String displayName, int hitDie, int skillPointsPerLevel,
@@ -137,7 +137,7 @@ public class MobileClass implements Serializable {
     baseAttackBonus = bab;
     this.classification = classification;
     this.skillPointsPerLevel = skillPointsPerLevel;
-    classFeatures = new HashMap<String, ClassFeature>();
+    classFeatures = new HashMap<String, ClassFeatureReference>();
   }
 
   public int getHitDie() {
@@ -225,14 +225,14 @@ public class MobileClass implements Serializable {
  
   
   public void addClassFeature(String featureName) {
-      ClassFeature cf = ClassFeatureLoader.getClassFeatureByName(featureName);
-      classFeatures.put(featureName, cf);
+      classFeatures.put(featureName, new ClassFeatureReference(featureName));
   }
 
   //getFeatureByName method.
   //Returns the class feature specified by the name parameter or null if nothing
   //is found. This method is case insensitive.
   public ClassFeature getClassFeature(String name) {
-    return classFeatures.get(name);
+      ClassFeatureReference cf = classFeatures.get(name);
+      return (ClassFeature)cf.getResource();
   }
 }

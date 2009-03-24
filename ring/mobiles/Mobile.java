@@ -104,15 +104,14 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	private Body body;
 
 	//Class of the mobile. All PlayerCharacters will have a class. Some mobiles have classes,
-	//but not all necessarily do. The class effects the skill list and level of the mob.
+	//but not all necessarily do. The class affects the skill list and level of the mob.
 	private MobileClass mobClass;
 
 	//Level of the mobile. The maximum level (for non-god players) is 20. This may be increased over time with epic
 	//content.
 	private int level;
 
-	//Armor class of the mobile. This determines how hard the mobile is to hit... Well..
-	//How hard it is to take damage from an attack!
+	//Armor class of the mobile. This determines how hard the mobile is to hit.
 	private int currentAC;
 	
 	//Current target of the mobile. This will be used as an automatic parameter during combat when using hostile
