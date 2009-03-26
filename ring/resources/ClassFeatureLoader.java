@@ -1,24 +1,5 @@
-/*
-* This file is part of the Factbook Generator.
-* 
-* The Factbook Generator is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* The Factbook Generator is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with The Factbook Generator.  If not, see <http://www.gnu.org/licenses/>.
-*
-* Copyright 2008, 2009 Bradley Brown, Dustin Yourstone, Jeffrey Hair, Paul Halvorsen, Tu Hoang
-*/
 package ring.resources;
 
-import ring.mobiles.ClassFeature;
 import ring.effects.*;
 import java.io.*;
 import java.util.HashMap;
@@ -29,7 +10,10 @@ import org.w3c.dom.*;
 import ring.mobiles.ClassFeature;
 
 /**
- *
+ * This class loads class features from XML files and converts them into ClassFeature
+ * objects. The rest of the MUD does not access this class directly; it is accessed
+ * through the ClassFeatureReference class. This allows player serialization to
+ * occur without affecting class features which may change.
  * @author jeff
  */
 public class ClassFeatureLoader {
@@ -148,6 +132,7 @@ public class ClassFeatureLoader {
         //Return the effect
         return eff;
     }    
+    
     private static Effect.Duration determineDuration(String value) {
         if (value.toLowerCase().equals("timed")) return Effect.Duration.TIMED;
         if (value.toLowerCase().equals("periodic")) return Effect.Duration.PERIODIC_TIMED;
