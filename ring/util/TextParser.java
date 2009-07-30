@@ -47,8 +47,7 @@ public class TextParser {
         colors.put("[R]", "\033[22m");        
     }
 
-    public TextParser() {
-    }
+    public TextParser() {}
 
     public static int countParameters(String str) {
         //return zero for parameters with zero parameters; fixes a bug...
