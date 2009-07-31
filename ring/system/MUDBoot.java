@@ -1,4 +1,6 @@
-package ring.resources;
+package ring.system;
+
+import ring.resources.*;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the

@@ -1,4 +1,4 @@
-package ring.resources;
+package ring.system;
 
 import java.util.Properties;
 import java.io.*;

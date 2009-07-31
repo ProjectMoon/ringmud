@@ -18,7 +18,7 @@ import ring.players.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-import ring.resources.MUDBoot;
+import ring.system.MUDBoot;
 
 public class Server {
   //This is the world object. Everything is stored in it.
