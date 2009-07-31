@@ -1,7 +1,9 @@
 package ring.system;
 
+import java.net.MalformedURLException;
 import java.util.Properties;
-import java.io.*;
+import java.util.prefs.Preferences;
+import java.net.*;
 
 /**
  * This is the front-end to the MUD config file. Configuration is stored using
@@ -37,7 +39,7 @@ public class MUDConfig {
     }
 
     private static void loadDefaults() {
-        try {
+          	try {
             config.setProperty("class_features_data", DEFAULT_DATA_PATH + "classfeatures.xml");
             config.setProperty("item_data", DEFAULT_DATA_PATH + "items.xml");
             config.setProperty("npc_data", DEFAULT_DATA_PATH + "npcs.xml");
@@ -52,7 +54,25 @@ public class MUDConfig {
                     "Specify them via full path name and separate with semicolons (;).";
 
             makeDirectories();
-            config.store(new FileOutputStream(CFG_PATH + "mud.config"), comments);
+            String path = Configmanager.getstring("ring.system.MUDConfig.configLocation");
+            
+            URL url = null;
+            URI uri = null;
+            string urlString = path;
+            
+            try { 
+            	uri = new URI(url.toString());
+            } catch (URISyntaxException e) {
+            	e.printStackTrace();
+            }
+            
+            try {
+            	url = new URL(urlString);
+            } catch (MalformedURLException e) {
+            	e.printStackTrace();
+            }
+            config.store(path, comments);
+               
         }
         catch (Exception e) {
             e.printStackTrace();
