@@ -105,6 +105,11 @@ public class ConfigManager {
 		String prefName = arg.substring(lastDot + 1, arg.length());
 		String className = arg.substring(0, lastDot);
 		
+		if (prefName.equals("")) {
+			System.err.println("Error: Can't have an empty preference name.");
+			System.exit(1);
+		}
+		
 		ret[0] = className;
 		ret[1] = prefName;
 		
@@ -122,6 +127,7 @@ public class ConfigManager {
 	}
 
 	private static void displayPreferenceValue(String pref) {
+		//TODO implement displaying list of all prefs with * character.
 		String value = getString(pref);
 		if (value != null)
 			System.out.println(pref + " = " + value);
