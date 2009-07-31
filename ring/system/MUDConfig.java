@@ -12,7 +12,7 @@ import java.net.*;
 /**
  * This is the front-end to the MUD config file. Configuration is stored using
  * the Properties API, with simple key=value pairs. The MUD's config file allows
- * a number of different options to be used. These mostly affect where data is
+ * a number of different options to bje used. These mostly affect where data is
  * loaded from, password policy, maximum number of connections, and the like.
  * @author jh44695
  */
@@ -30,9 +30,10 @@ public class MUDConfig {
     public static void loadProperties() {
         config = new Properties();
         try {
+        	String path = ConfigManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
             System.out.print("Loading MUD configuration: ");
-            System.out.println(CFG_PATH + "mud.config");
-            config.load(new FileInputStream(ConfigManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config"));
+            System.out.println(path);
+            config.load(new FileInputStream(path));
         }
         catch (FileNotFoundException e) {
             System.out.println("Couldn't find the config file. Loading default values.");
