@@ -23,14 +23,14 @@ public class ConfigManager {
 		}
 	}
 
-	private static void get(String pref) {
+	protected static void get(String pref) {
 		if (pref.equals("configLocation")) {
 			Preferences prefs = getPrefs(ring.system.MUDConfig.class);
 			System.out.println(pref + " = " + prefs.get(pref, null));
 		}		
 	}
 
-	private static void set(String pref, String value) {
+	protected static void set(String pref, String value) {
 		if (pref.equals("configLocation")) {
 			Preferences prefs = getPrefs(ring.system.MUDConfig.class);
 			prefs.put("configLocation", value);
@@ -42,6 +42,11 @@ public class ConfigManager {
 			}
 			System.out.println("Set config location to: " + value);
 		}
+	}
+	
+	protected static String getString(String pref) {
+		Preferences prefs = getPrefs(ring.system.MUDConfig.class);
+		return prefs.get(pref, null);
 	}
 	
 	private static Preferences getPrefs(Class c) {
