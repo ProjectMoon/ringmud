@@ -1,5 +1,9 @@
 package ring.system;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.prefs.Preferences;
@@ -20,12 +24,15 @@ public class MUDConfig {
 
     private static final String DEFAULT_DATA_PATH = CFG_PATH + "data" + SEP;
 
+    public static void main(String[] args) {
+    	MUDConfig.loadProperties();
+    }
     public static void loadProperties() {
         config = new Properties();
         try {
             System.out.print("Loading MUD configuration: ");
             System.out.println(CFG_PATH + "mud.config");
-            config.load(new FileInputStream(CFG_PATH + "mud.config"));
+            config.load(new FileInputStream(ConfigManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config"));
         }
         catch (FileNotFoundException e) {
             System.out.println("Couldn't find the config file. Loading default values.");
@@ -39,7 +46,7 @@ public class MUDConfig {
     }
 
     private static void loadDefaults() {
-          	try {
+      	try {
             config.setProperty("class_features_data", DEFAULT_DATA_PATH + "classfeatures.xml");
             config.setProperty("item_data", DEFAULT_DATA_PATH + "items.xml");
             config.setProperty("npc_data", DEFAULT_DATA_PATH + "npcs.xml");
@@ -53,25 +60,19 @@ public class MUDConfig {
                     "However, if you wish to include additional data sources\n" +
                     "Specify them via full path name and separate with semicolons (;).";
 
-            makeDirectories();
-            String path = Configmanager.getstring("ring.system.MUDConfig.configLocation");
+            String path = ConfigManager.getString("ring.system.MUDConfig.configLocation");
+            makeDirectories(path);
             
-            URL url = null;
-            URI uri = null;
-            string urlString = path;
-            
-            try { 
-            	uri = new URI(url.toString());
-            } catch (URISyntaxException e) {
-            	e.printStackTrace();
-            }
+            //TODO less hardcoding of filenames, more config manager reading!
+            path += SEP + "mud.config";
+            URI uri = new File(path).toURI();
             
             try {
-            	url = new URL(urlString);
+            	uri.toURL();
             } catch (MalformedURLException e) {
             	e.printStackTrace();
             }
-            config.store(path, comments);
+            config.store(new FileWriter(path), comments);
                
         }
         catch (Exception e) {
@@ -79,11 +80,9 @@ public class MUDConfig {
         }
     }
 
-    private static void makeDirectories() {
-        File f = new File(CFG_PATH);
-        f.mkdir();
-
-        f = new File(DEFAULT_DATA_PATH);
+    private static void makeDirectories(String path) {
+    	System.out.println ("mkdir " + path);
+        File f = new File(path);
         f.mkdir();
     }
 
