@@ -31,8 +31,7 @@ public class MUDConfig {
         config = new Properties();
         try {
         	String path = ConfigManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
-            System.out.print("Loading MUD configuration: ");
-            System.out.println(path);
+            System.out.println("Loading MUD configuration: " + path);
             config.load(new FileInputStream(path));
         }
         catch (FileNotFoundException e) {
@@ -40,7 +39,7 @@ public class MUDConfig {
             loadDefaults();
         }
         catch (Exception e) {
-            System.err.println("There was an error loading the program configuration");
+            System.err.println("There was an error loading the program configuration:");
             e.printStackTrace();
             System.exit(1);
         }
