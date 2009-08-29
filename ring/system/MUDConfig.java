@@ -30,7 +30,7 @@ public class MUDConfig {
     public static void loadProperties() {
         config = new Properties();
         try {
-        	String path = ConfigManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
+        	String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
             System.out.println("Loading MUD configuration: " + path);
             config.load(new FileInputStream(path));
         }
@@ -60,7 +60,7 @@ public class MUDConfig {
                     "However, if you wish to include additional data sources\n" +
                     "Specify them via full path name and separate with semicolons (;).";
 
-            String path = ConfigManager.getString("ring.system.MUDConfig.configLocation");
+            String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation");
             makeDirectories(path);
             
             //TODO less hardcoding of filenames, more config manager reading!

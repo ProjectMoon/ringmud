@@ -1,0 +1,16 @@
+RingMUD Engine: Java MUD server and utilities
+RingMUD is a MUD system written for the Java platform. This help gives
+basic usage instructions for the system. Please refer to the full
+documentation for more details on administration, development, etc.
+
+The RingMUD jar file contains the MUD server itself and several utilities
+for managing the MUD. To launch an individual module of the MUD, specify
+it as an argument to java. Arguments after that will be forwarded on to
+the module.
+
+Example: Starting/stopping the MUD server
+java -jar RingMUD.jar Server start
+java -jar RingMUD.jar Server stop
+
+Example: Using the preferences manager
+java -jar RingMUD.jar PreferencesManager get ring.system.MUDConfig.configLocation 

@@ -4,6 +4,8 @@ import java.util.Scanner;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import ring.main.RingModule;
+
 /**
  * Manages MUD system preferences. These are internal configuration values for the
  * MUD itself. Users and developers should rarely have to mess with these, except perhaps
@@ -11,36 +13,9 @@ import java.util.prefs.Preferences;
  * @author jeff
  *
  */
-public class ConfigManager {
+public class PreferencesManager implements RingModule {
 	public static void main(String[] args) {
-		if (args.length == 0) {
-			usage();
-			System.exit(0);
-		}
-		
-		if (args[0].equals("set")) {
-			String[] splitValues = parseClassAndPref(args[1]);
-			String prefValue = args[2];
-			
-			set(splitValues[0], splitValues[1], prefValue);
-		}
-		else if (args[0].equals("get")) {
-			displayPreferenceValue(args[1]);
-		}
-		else if (args[0].equals("clear")) {
-			String[] splitValues = parseClassAndPref(args[1]);
-			clear(splitValues[0], splitValues[1]);
-		}
-		else if (args[0].equals("fclear")) {
-			String[] splitValues = parseClassAndPref(args[1]);
-			if (splitValues[1].equals("*"))
-				doClear(splitValues[0], splitValues[1], true);
-			else
-				doClear(splitValues[0], splitValues[1], false);
-		}
-		else {
-			usage();
-		}
+
 	}
 	
 	private static void clear(String className, String pref) {
@@ -117,13 +92,13 @@ public class ConfigManager {
 	}
 
 	private static void usage() {
-		System.out.println("ConfigManager: Unrecognized option. Try:");
+		System.out.println("PreferencesManager: Unrecognized option. Try:");
 		System.out.println("\tset pkg.class.preference pref: Sets a preference");
 		System.out.println("\tget pkg.class.preference: Prints preference value");
 		System.out.println("\tclear pkg.class.preference: Clears a preference");
 		System.out.println("\tfclear pkg.class.preference: Clears preference without asking");
 		System.out.println("Example syntax:");
-		System.out.println("ring.system.ConfigManager set ring.system.MUDConfig.configLocation /path/to/configfile");
+		System.out.println("ring.system.PreferencesManager set ring.system.MUDConfig.configLocation /path/to/configfile");
 	}
 
 	private static void displayPreferenceValue(String pref) {
@@ -162,7 +137,7 @@ public class ConfigManager {
 			Preferences prefs = getPrefs(c);
 			return prefs.get(pref, null);
 		} catch (ClassNotFoundException e) {
-			System.err.println("ConfigManager: Unrecgonized class component " + className);
+			System.err.println("PreferencesManager: Unrecgonized class component " + className);
 			System.exit(1);
 			return null;
 		}
@@ -179,9 +154,45 @@ public class ConfigManager {
 			Class c = Class.forName(className);
 			return getPrefs(c);
 		} catch (ClassNotFoundException e) {
-			System.err.println("ConfigManager: Unrecognized class component " + className);
+			System.err.println("PreferencesManager: Unrecognized class component " + className);
 			System.exit(1);
 			return null; //not reachable
 		}
+	}
+
+	public void start(String[] args) {
+		if (args.length == 0) {
+			usage();
+			System.exit(0);
+		}
+		
+		if (args[0].equals("set")) {
+			String[] splitValues = parseClassAndPref(args[1]);
+			String prefValue = args[2];
+			
+			set(splitValues[0], splitValues[1], prefValue);
+		}
+		else if (args[0].equals("get")) {
+			displayPreferenceValue(args[1]);
+		}
+		else if (args[0].equals("clear")) {
+			String[] splitValues = parseClassAndPref(args[1]);
+			clear(splitValues[0], splitValues[1]);
+		}
+		else if (args[0].equals("fclear")) {
+			String[] splitValues = parseClassAndPref(args[1]);
+			if (splitValues[1].equals("*"))
+				doClear(splitValues[0], splitValues[1], true);
+			else
+				doClear(splitValues[0], splitValues[1], false);
+		}
+		else {
+			usage();
+		}
+	}
+
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 }
