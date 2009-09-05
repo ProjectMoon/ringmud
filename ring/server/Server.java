@@ -17,7 +17,6 @@ import ring.players.*;
 //Java imports.
 import java.net.*;
 import java.io.*;
-import java.util.*;
 import ring.system.MUDBoot;
 
 public class Server implements RingModule {

@@ -43,6 +43,7 @@ public class RingMain {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void executeModule(String app, String[] appArgs) {
 		Properties props = new Properties();
 		InputStream input = this.getClass().getClassLoader().getResourceAsStream(MODULES_LOCATION);

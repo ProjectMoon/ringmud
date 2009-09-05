@@ -119,7 +119,7 @@ public class TextParser {
                 count += text.length();
             }
             
-            if (count > SCREEN_WIDTH) {
+            if (count >= SCREEN_WIDTH) {
                 res.append("\r\n");
                 count = 0;
             }
@@ -141,4 +141,16 @@ public class TextParser {
 
         return "meh";
     }
+
+    /**
+     * Removes all formatting from the given String. Useful for
+     * sending data to players who have ANSI turned off, as well
+     * as other internal uses.
+     * @param displayName
+     * @return
+     */
+	public static String stripFormatting(String text) {
+		// TODO implement this. currently returns whatever it was given.
+		return text;
+	}
 }

@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.prefs.Preferences;
 import java.net.*;
 
 /**

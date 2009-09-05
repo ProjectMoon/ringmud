@@ -142,7 +142,8 @@ public class ClassFeatureLoader {
         return Effect.Duration.INSTANT;
     }
     
-    private static EffectCreator createEffectCreator(Element e, EffectCreatorParameters currentParams) {
+    @SuppressWarnings("unchecked")
+	private static EffectCreator createEffectCreator(Element e, EffectCreatorParameters currentParams) {
         String className = e.getAttribute("class");
         NodeList parameters = e.getElementsByTagName("param");
         
