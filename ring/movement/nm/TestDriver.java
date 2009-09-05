@@ -59,6 +59,32 @@ public class TestDriver {
 		System.out.println("Room 1 north destination: " + r1.getDestination("north"));
 		System.out.println("Room 2 east destination: " + r2.getDestination("east"));
 		System.out.println("Room 3 southwest destination: " + r3.getDestination("southwest"));
+		
+		separator();
+		
+		//Traversal test
+		Mobile m = new Mobile();
+		//m.hiddenExitSearchCheck = 4999;
+		//r2port.setSearchDC(5000);
+		
+		//Start at r1, then move to r2, then to r3, then back to r1
+		m.setLocation(r1);
+		boolean success = LocationManager.move(m, r1.getPortal("north"));
+		if (success) {
+			success = LocationManager.move(m, r2.getPortal("east"));
+			if (success) {
+				success = LocationManager.move(m, r3.getPortal("southwest"));
+				if (!success) {
+					System.out.println("Traversal died on room 3 -> room1");
+				}
+			}
+			else {
+				System.out.println("Traversal died on room 2 -> room 3");
+			}
+		}
+		else {
+			System.out.println("Traversal died on room 1 -> room 2");
+		}
 	}
 	
 	public static void separator() {

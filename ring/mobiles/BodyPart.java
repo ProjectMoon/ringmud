@@ -8,11 +8,9 @@ package ring.mobiles;
  * @author Jeff Hair
  * @version 1.0
  */
-import ring.entities.*;
-import ring.damage.*;
-
-import java.util.*;
 import java.io.Serializable;
+
+import ring.entities.Item;
 
 public class BodyPart implements Serializable {
     public static final long serialVersionUID = 1;

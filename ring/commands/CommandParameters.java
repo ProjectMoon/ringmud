@@ -4,6 +4,7 @@ import ring.world.WorldObject;
 import java.util.Vector;
 import ring.mobiles.Mobile;
 import ring.entities.Entity;
+import ring.entities.Item;
 import ring.mobiles.Body;
 import ring.mobiles.BodyPart;
 import ring.movement.Room;
@@ -30,13 +31,16 @@ public final class CommandParameters {
 
   public CommandParameters(String[] params, CommandSender sender) {
     this.sender = sender;
-    this.cmdType = cmdType;
     initParameters = params;
   }
 
   public void init(String cmdType) {
     this.cmdType = cmdType;
     parameters = getParameters(initParameters, cmdType);
+  }
+  
+  public String getType() {
+	  return cmdType;
   }
 
   //length method.
@@ -199,7 +203,7 @@ public final class CommandParameters {
       mob = null;
     }
 
-    Vector inventory = mob.getInventory();
+    Vector<Item> inventory = mob.getInventory();
     try {
       if (inventory.size() > 0) {
         for (int c = 0; c < inventory.size(); c++) {
@@ -236,7 +240,7 @@ public final class CommandParameters {
 
     //Need to get the list of BodyParts...
     Body mobBody = mob.getBody();
-    Vector bodyParts = mobBody.getBodyParts();
+    Vector<BodyPart> bodyParts = mobBody.getBodyParts();
 
     try {
       if (bodyParts.size() > 0) {
@@ -282,7 +286,7 @@ public final class CommandParameters {
     Room room = location.getRoom();
     //First loop through mobiles to see if the thing we're looking for is a mobile...
     try {
-      Vector mobiles = room.getMobiles();
+      Vector<Mobile> mobiles = room.getMobiles();
       if (mobiles.size() > 0) {
         for (int c = 0; c < mobiles.size(); c++) {
           Mobile mob = (Mobile) mobiles.get(c);
@@ -293,7 +297,7 @@ public final class CommandParameters {
       }
 
       //next try the entities...
-      Vector entities = room.getEntities();
+      Vector<Entity> entities = room.getEntities();
       if (entities.size() > 0) {
         for (int c = 0; c < entities.size(); c++) {
           Entity ent = (Entity) entities.get(c);

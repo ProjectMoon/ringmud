@@ -13,7 +13,7 @@ import ring.util.TextParser;
  */
 public class Portal {
 	//The place to go!
-	private Destination destination;
+	private Location destination;
 	
 	//i.e. "north", "heavy wooden door"
 	private String displayName;
@@ -32,7 +32,7 @@ public class Portal {
 	 * @param displayName
 	 * @param interactiveName
 	 */
-	public Portal(Destination dest, String displayName, String interactiveName) {
+	public Portal(Location dest, String displayName, String interactiveName) {
 		destination = dest;
 		this.displayName = displayName;
 		this.interactiveName = interactiveName;
@@ -45,10 +45,14 @@ public class Portal {
 	 * @param dest
 	 * @param displayName
 	 */
-	public Portal(Destination dest, String displayName) {
+	public Portal(Location dest, String displayName) {
 		destination = dest;
 		this.displayName = displayName;
 		this.interactiveName = TextParser.stripFormatting(displayName);
+	}
+	
+	public boolean isHidden() {
+		return (searchDC > 0);
 	}
 	
 	public void setSearchDC(int dc) {
@@ -67,12 +71,26 @@ public class Portal {
 		return interactiveName;
 	}
 	
-	public Destination getDestination() {
+	public Location getDestination() {
 		return destination;
 	}
 	
 	public String toString() {
 		return "Portal[displayname=" + displayName + ", interactivename=" + interactiveName
 			+ ", Destination=" + destination;
+	}
+	
+	/**
+	 * Returns true if the destinations of the two Portal objects point to the same Location object.
+	 * False otherwise.
+	 */
+	public boolean equals(Object other) {
+		if (other == null || (!(other instanceof Portal))) {
+			return false;
+		}
+		else {
+			Portal p = (Portal)other;
+			return (this.destination == p.destination);
+		}
 	}
 }

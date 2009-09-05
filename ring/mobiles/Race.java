@@ -10,7 +10,6 @@ package ring.mobiles;
  */
 
 import java.io.Serializable;
-import java.util.*;
 
 public class Race implements Serializable {
     public static final long serialVersionUID = 1;

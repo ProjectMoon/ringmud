@@ -10,11 +10,11 @@ package ring.mobiles;
  */
 
 import ring.commands.*;
-import ring.effects.*;
 import ring.world.*;
 import java.util.*;
 
 public class NPC extends Mobile implements CommandSender, TickerListener {
+	public static final long serialVersionUID = 1;
   //Instance variables specific to this mobile.
   //NPC Constants.
   //This is how often the NPC will do something. The higher the number, the

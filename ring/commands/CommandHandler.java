@@ -11,7 +11,6 @@ package ring.commands;
 
 import ring.spells.*;
 import ring.effects.*;
-import ring.effects.library.*;
 import ring.entities.*;
 import ring.movement.*;
 import ring.mobiles.*;
@@ -34,7 +33,6 @@ public final class CommandHandler {
 	private CommandSender sender;//The Command-Sending object this handler is linked to.
 	private TreeMap<String, Method> commands;//TreeMap of all the commands. super quick lookup.
 	private TreeMap<String, String> alternateCommands;//TreeMap of all the alternate commands.
-	private CommandResult result;//The current result that is going to get sent back.
 
 	//Internal constants.
 
@@ -44,7 +42,7 @@ public final class CommandHandler {
 		alternateCommands = new TreeMap<String, String>();
 		//Set up the command list.
 		commands = new TreeMap<String, Method>();
-		Class c = this.getClass();
+		Class<?> c = this.getClass();
 		Method[] m = c.getDeclaredMethods();
 		for (int x = 0; x < m.length; x++) {
 			String name = m[x].toString();
@@ -1271,7 +1269,7 @@ public final class CommandHandler {
 
 		String equipment = "[R][WHITE]You are wearing:\n";
 		Mobile mob = (Mobile)sender;
-		Vector mobEquipment = mob.getEquipment();
+		Vector<Item> mobEquipment = mob.getEquipment();
 
 		if ((mobEquipment == null) || (mobEquipment.size() == 0)) return res;
 

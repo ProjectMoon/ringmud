@@ -1,7 +1,5 @@
 package ring.mobiles;
 
-import java.util.*;
-
 public class Language {
 	//This class describes and implements a language in the MUD. The objective for this class is
 	//to, given a general description of the "sound" of the language, translate words based on the

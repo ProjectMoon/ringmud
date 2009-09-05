@@ -1,4 +1,4 @@
-package ring.mobiles;
+package ring.movement.nm;
 
 /**
  * <p>Title: RingMUD Codebase</p>
@@ -9,19 +9,21 @@ package ring.mobiles;
  * @version 1.0
  */
 
-import java.util.*;
-
 import ring.entities.*;
+import ring.mobiles.*;
 import ring.movement.*;
 import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
 import ring.commands.*;
+import java.util.*;
+
+import ring.spells.*;
 import ring.skills.*;
 
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
 //information for a mobile such as body shape, HP, race, etc.
-public class Mobile extends WorldObject implements CommandSender, TickerListener {
+public class Mobile implements CommandSender, TickerListener, Movable {
     public static final long serialVersionUID = 1;
 	//CONSTANTS NEEDED BY ALL MOBILES
 	//STAT CONSTANTS
@@ -118,8 +120,8 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	private Affectable currentTarget;
 
 	//Inventory.
-	Vector<Item> inventory;
-	Vector<Item> tempInv;//May be needed for something so we'll put it in.
+	Vector inventory;
+	Vector tempInv;//May be needed for something so we'll put it in.
 
 	//Race-Aggressive list. This is the list of Races the mobile is aggressive to. For mobiles
 	//that attack any PC that comes into their room, they are simply aggressive to all races.
@@ -226,13 +228,11 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		currentHP = 5;
 		this.mobClass = null;
 		this.level = 1;
-		location = null;
 		this.alignment = null;
 		this.alignmentAggressiveList = null;
 		this.raceAggressiveList = null;
 		isAggressive = true;
 		isFlying = true;
-		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV;
 		currentMV = BASE_MAXMV;
 	}
@@ -240,7 +240,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//Creates a mobile with all fields filled out.
 	public Mobile(String name, String textOnLook, Race race, Body body, int[] stats,
 			int[] money, int hp, MobileClass mobClass, int level, Alignment alignment, int gender,
-			Vector<Alignment> alignmentAggressiveList, Vector<Race> raceAggressiveList, ZoneCoordinate location,
+			Vector<Alignment> alignmentAggressiveList, Vector<Race> raceAggresiveList, ZoneCoordinate location,
 			boolean aggressive) {
 		this.name = name;
 		this.textOnLook = textOnLook;
@@ -252,12 +252,10 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		maxHP = hp;
 		this.mobClass = mobClass;
 		this.level = level;
-		this.location = location;
 		this.alignment = alignment;
 		this.alignmentAggressiveList = alignmentAggressiveList;
 		this.raceAggressiveList = raceAggressiveList;
 		isAggressive = aggressive;
-		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV + (10 * getModifier(Mobile.CONSTITUTION));
 		currentMV = maxMV;
 		//World.getWorld().notifyGods("A mobile has been created at zone " + zone.getName() +
@@ -307,12 +305,12 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//This checks to see if the mobile is a player. This is used in numerous method that only
 	//or only need to affect the players.
 	public boolean isPlayer() {
-		return this instanceof PlayerCharacter;
+		return true;
 	}
 
 	//isNPC method.
 	public boolean isNPC() {
-		return this instanceof NPC;
+		return false;
 	}
 
 
@@ -324,7 +322,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
 	//getInventory method.
 	//Returns the inventory vector.
-	public Vector<Item> getInventory() {
+	public Vector getInventory() {
 		return inventory;
 	}
 
@@ -674,7 +672,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public String getCurrentHPString() {
 		String res = "";
 		int hp = (int)currentHP;
-		res = String.valueOf(hp);
+		res = res.valueOf(hp);
 		return res;
 	}
 
@@ -683,16 +681,16 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public String getMaxHPString() {
 		String res = "";
 		int hp = (int)(maxHP + bonusHP);
-		res = String.valueOf(hp);
+		res = res.valueOf(hp);
 		return res;
 	}
 
 	//getEquipment method.
 	//This method returns an array of Items that comes from the equipment.
-	public Vector<Item> getEquipment() {
+	public Vector getEquipment() {
 		Body body = this.getBody();
-		Vector<BodyPart> partList = body.getBodyParts();
-		Vector<Item> theEquipment = new Vector<Item>();
+		Vector partList = body.getBodyParts();
+		Vector theEquipment = new Vector();
 
 		for (int c = 0; c < partList.size(); c++) {
 			try {
@@ -825,7 +823,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		if (!(item.getWeight() <= weightLimit)) return false;
 
 		//If yes, check room in inventory of getter, WITH THE NEW ITEM FACTORED IN.
-		if (inventory == null) inventory = new Vector<Item>();
+		if (inventory == null) inventory = new Vector();
 		if (!((inventory.size() + 1) <= MAX_ITEMS_IN_INV)) return false;
 
 		//If both of those are yes, we can add it to the inventory.
@@ -887,15 +885,15 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		//Many SpellLists just have no spells in them :)
 		System.out.println("Applying the spells...");
 		Effect itemEffects = item.getPassiveEffects();
-		itemEffects.setTarget(this);
-		super.addEffect(itemEffects);
+		//itemEffects.setTarget(this);
+		//super.addEffect(itemEffects);
 
 
 		System.out.println("Spells applied...");
 
 		//Third: Call the item's special code block in case it does something requiring
 		//special programming.
-		item.specialCode(this);
+		//item.specialCode(this);
 		System.out.println("Special code applied...");
 	}
 
@@ -965,7 +963,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
 		if (this.isPlayer()) {
 			System.out.println("Sending to player...");
-			PlayerCharacter pc = (PlayerCharacter)this;
+			PlayerCharacter pc = (PlayerCharacter)null;
 			pc.sendData("[B][GREEN]You have leveled up to level " + level + "![R][WHITE]");
 		}
 
@@ -1001,91 +999,23 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	//own unique fashion. However, they MUST call super.processTick()
 	//or there will be problems... big problems.
 	public void processTick(TickerEvent e) {
-		for (int c = 0;  c < super.effectsList.size(); c++) {
-			Effect effect = (Effect)super.effectsList.get(c);
-			if (effect.isDead()) { System.out.println("***Removing Effect: " + effect); super.effectsList.removeElement(effect); }
-			else effect.decrementTimer();
-		}
 		
-		//Deal with locking.
-		if (this.isLocked) this.decrementLockTime();
-		if (this.getLockTimeRemaining() <= 0) { 
-			this.setLocked(false);
-			lockMessage = "You are currently focused on an activity.";
-			lockFinishedMessage = "You become aware of the world again.";
-		}
-		
-		//Regenerate some movement and HP.
-		if ((getCurrentMV() < getMaxMV()) && (e.getCurrentTick() % 3 == 0)) regenMV();
-		if (getCurrentHP() < getMaxHP()) regenHP();
+	}
 
+	private Location currLocation;
+	public void setLocation(Location loc) {
+		currLocation = loc;
 	}
 	
-	//move method.
-	//This method handles the movement of this mobile from ZoneCoordinate to ZoneCoordinate (really room-to-room).
-	//It attempts to cover all bases with regards to movement.  
-	public final String move(ZoneCoordinate zc) {
-            //Check to see if this mobile is fighting. That means they can't leave.
-            if (this.isFighting) {
-                sendData("[GREEN]You may not leave during combat![WHITE]");
-                return null;
-            }
-
-            //set up the variables we need to use
-            Room roomToMoveTo;
-
-            //now we first check the current room's local exits
-            roomToMoveTo = location.getRoom().getLocalExit(zc);
-
-            //if the local exit is null, we shouldlook globally.
-            if (roomToMoveTo == null) {
-                roomToMoveTo = location.offset3D(zc).getRoom();
-            }
-
-            //now we can see if this room exists/is not an exit.
-            //isNoExit is kind of a misnomer here. isNoExit means that this "room"
-            //is really blocking off exiting the current room in this direction.
-            if (roomToMoveTo == null || roomToMoveTo.isNoExit()) {
-                    return null;
-            }
-
-            //Else the location must be valid. Move the mobile to the new Room.
-            else {
-                System.out.println("CURRLOC: " + getLocation());
-                Room currRoom = getLocation().getRoom();
-
-                //Is the location hidden? If so, can the mobile actually locate it?
-                if (roomToMoveTo.getSearchDC() > 0) {
-                        if (this.hiddenExitSearchCheck < roomToMoveTo.getSearchDC()) return null;
-                }
-
-                //default arrive and leave text to broadcast to others			
-                String leaveText = this.getName() + " [R][WHITE]leaves " + ZoneCoordinate.getDirectionString(zc) + ".";
-                String arriveText = this.getName() + " [R][WHITE]arrives from " + ZoneCoordinate.getOppositeDirectionString(zc) + ".";
-
-                //is our mobile hiding? if so, make some vague leave/arrive text.			
-                if (this.hideCheck > 0) {
-                        leaveText = "You catch someone (or something) leaving " + ZoneCoordinate.getDirectionString(zc) + " out of the corner of your eye.";
-                        arriveText = "In the corner of your eye, you see someone (or something) arrive from " + ZoneCoordinate.getOppositeDirectionString(zc) + " and disappear.";
-                }
-
-                //change the character's location.
-                World.roomArriveLeaveToLocation(this, leaveText, "[R][WHITE]You hear the shuffling of someone leaving.");
-                this.resetChecks(); //reset the character's search, listen, and spot checks.
-                currRoom.removeMobile(this);
-                this.setLocation(location.offset3D(zc)); //make sure we're actually AT the new location...
-                roomToMoveTo.addMobile(this);
-                World.roomArriveLeaveToLocation(this, arriveText, "[R][WHITE]You hear the sounds of someone arriving.");
-
-                //subtract the right amount of move points.
-                this.changeCurrentMV(-1);
-
-                //display the new information of the room
-                if (this.isBlind) return "You stumble into a new area, but you cannot see anything!";
-                return roomToMoveTo.getTitle() + "\n" +
-                                roomToMoveTo.getDescription() + "\n" +
-                                roomToMoveTo.getExitsString(hiddenExitSearchCheck) + "\n" +
-                                roomToMoveTo.getMobileList(this, spotCheck) + roomToMoveTo.getEntityList();
-            }
-        }
+	public Location getLocation() {
+		return currLocation;
+	}
+	
+	public boolean usesSearchSkill() {
+		return true;
+	}
+	
+	public int getSearchCheck() {
+		return hiddenExitSearchCheck;
+	}
 }

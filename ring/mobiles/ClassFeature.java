@@ -2,7 +2,6 @@ package ring.mobiles;
 
 import java.util.*;
 import ring.effects.*;
-import ring.util.RingConstants;
 
 /**
  * A complete re-write of the ClassFeature class. A class feature needs several

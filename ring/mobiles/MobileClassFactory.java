@@ -17,9 +17,6 @@ import ring.skills.*;
 import ring.spells.*;
 import ring.effects.*;
 import ring.effects.library.*;
-import ring.world.*;
-
-import java.util.*;
 
 public class MobileClassFactory {
     //This class is HOPEFULLY a placeholder of sorts. It currently contains hard-coded versions of

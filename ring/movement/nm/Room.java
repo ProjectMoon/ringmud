@@ -26,7 +26,7 @@ import ring.mobiles.Mobile;
  -
  */
 
-public class Room implements Destination {
+public class Room implements Location {
 	// Room.NO_EXIT constant: This tells us that there is no exit in a given
 	// direction.
 	public static final Room NO_EXIT = new Room();
@@ -194,7 +194,11 @@ public class Room implements Destination {
 	 * @param direction The string identifier of the desired Portal.
 	 * @return The Destination object, if one exists. null otherwise.
 	 */
-	public Destination getDestination(String direction) {
+	public Portal getPortal(String direction) {
+		return LocationManager.getPortal(this, direction);
+	}
+	
+	public Location getDestination(String direction) {
 		return LocationManager.getDestination(this, direction);
 	}
 
@@ -414,9 +418,18 @@ public class Room implements Destination {
 	}
 
 	/**
-	 * At the moment, all Mobiles can enter a Room.
+	 * At the moment, all Movables can enter a Room. Probably can implement search DCs in here.
 	 */
-	public boolean canEnter(Mobile mob) {
+	public boolean canEnter(Movable m) {
 		return true;
+	}
+
+	public void movableEnters(Movable m, Portal from) {
+		System.out.println(m + " has arrived from " + from.getDisplayName());
+		System.out.println("new room: " + this.getTitle());
+	}
+
+	public void movableLeaves(Movable m, Portal to) {
+		System.out.println(m + " leaves to " + to.getDisplayName());
 	}
 }

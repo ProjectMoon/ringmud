@@ -29,7 +29,7 @@ public class Server implements RingModule {
 	public Server() {}
 
 	public static void main(String[] args) {
-
+		
 	}
 
 	public void start(String[] args) {
