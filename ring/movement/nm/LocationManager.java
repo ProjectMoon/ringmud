@@ -12,6 +12,14 @@ import java.util.List;
  *
  */
 public class LocationManager {
+	//Public constants for standard directions
+	public static final String NORTH = "north";
+	public static final String SOUTH = "south";
+	public static final String EAST = "east";
+	public static final String WEST = "west";
+	public static final String UP = "up";
+	public static final String DOWN = "down";
+	
 	protected static HashMap<Location, HashMap<String, Portal>> worldGrid =
 		new HashMap<Location, HashMap<String, Portal>>();
 
@@ -29,7 +37,7 @@ public class LocationManager {
 		}
 	}
 	
-	public static Portal getPortal(Location room, String portalName) {
+	public static Portal getPortal(Location room, String portalName) throws PortalNotFoundException {
 		Portal p = worldGrid.get(room).get(portalName);
 		if (p == null)
 			throw new PortalNotFoundException("Portal identifier " + portalName + " not found");
@@ -62,7 +70,11 @@ public class LocationManager {
 	 * @return true if the move was successful, false otherwise.
 	 * @throws MovementAssertionException if the Portal being used is not at the Movable's current Location.
 	 */
-	public static boolean move(Movable mov, Portal port) {
+	public static boolean move(Movable mov, Portal port) throws MovementAssertionException, PortalNotFoundException {
+		if (port == null) {
+			throw new PortalNotFoundException("can't move into a null portal!");
+		}
+		
 		//Absolute first thing we must check is if the portal is hidden.
 		if (port.isHidden()) {
 			if (mov.getSearchCheck() < port.getSearchDC())
@@ -117,7 +129,10 @@ public class LocationManager {
 	 * @return true if the combination was added successfully, false if there was
 	 * already a Destination at the specified Room and Portal "coordinate."
 	 */
-	public static boolean addToGrid(Location room, Portal port) {
+	public static boolean addToGrid(Location room, Portal port) throws WorldConstructionException {
+		if (port == null) {
+			throw new WorldConstructionException("Specified portal was null!");
+		}
 		//If this is a new coordinate, we need to add it.
 		if (getPortals(room) == null) {
 			return putNewGridEntry(room, port);
@@ -140,12 +155,38 @@ public class LocationManager {
 	 * @param autolink
 	 * @return
 	 */
-	public static boolean addToGrid(Location room, Portal port, boolean autolink) {
-		if (!autolink)
-			return addToGrid(room, port);
+	public static boolean addToGrid(Location room, Portal port, boolean autolink) throws WorldConstructionException {
+		if (autolink) {
+			//First add the current combination to the grid
+			boolean success = addToGrid(room, port);
+		
+			//Now add an ad-hoc Portal in the opposite direction to the original room.
+			if (success) {
+				System.out.println("Creating reverse link  for " + port.getDestination() + " to " + room);
+				String direction = null;
+				try {
+					direction = getOppositeDirection(port.getInteractiveName());
+				}
+				catch (PortalNotFoundException e) {
+					throw new WorldConstructionException("Cannot auto-link on non-standard directions!");
+				}
+				
+				Location departFrom = port.getDestination();
+				
+				Portal reversePort = new Portal(room, direction);
+				if (addToGrid(departFrom, reversePort)) {
+					return true;
+				}
+				else {
+					throw new WorldConstructionException("There was an error auto-linking " + room + " and " + port.getDestination());
+				}
+			}
+			else {
+				return false;
+			}
+		}
 		else {
-			//TODO implement this. Main problem is "how do i determine opposite direction?"
-			throw new UnsupportedOperationException();
+			return addToGrid(room, port);
 		}
 	}
 	
@@ -164,12 +205,24 @@ public class LocationManager {
 	private static boolean updateGridEntry(Location room, Portal port) {
 		HashMap<String, Portal> ports = worldGrid.get(room);
 		Portal old = ports.put(port.getInteractiveName(), port);
-		if (old != null) {
-			worldGrid.put(room, ports);
-			return true;
-		}
-		else {
-			return false;
-		}	
+		worldGrid.put(room, ports);
+		return true;	
+	}
+	
+	/**
+	 * Utility method that returns the opposite direction of a standard direction.
+	 * @param direction
+	 * @return the opposite direction (north from south, etc)
+	 * @throws PortalNotFoundException if a non-standard direction is specified.
+	 */
+	public static String getOppositeDirection(String direction) throws PortalNotFoundException {
+		if (direction.equalsIgnoreCase(NORTH)) return SOUTH;
+		else if (direction.equalsIgnoreCase(SOUTH)) return NORTH;
+		else if (direction.equalsIgnoreCase(EAST)) return WEST;
+		else if (direction.equalsIgnoreCase(WEST)) return EAST;
+		else if (direction.equalsIgnoreCase(UP)) return DOWN;
+		else if (direction.equalsIgnoreCase(DOWN)) return UP;
+		
+		throw new PortalNotFoundException("incorrect standard direction");
 	}
 }

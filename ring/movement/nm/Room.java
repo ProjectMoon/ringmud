@@ -188,18 +188,22 @@ public class Room implements Location {
 	}
 	
 	/**
-	 * Convenience method for getting a Destination relative to the
-	 * current room object. It is equivalent to calling
+	 * Method defined by the Location interface. Queries the Location Manager for finding
+	 * the desired Portal. This method is equivalent to calling the following method:
 	 * LocationManager.getDestination(roomObj, direction).
 	 * @param direction The string identifier of the desired Portal.
-	 * @return The Destination object, if one exists. null otherwise.
+	 * @return The Portal object, if one exists. null otherwise.
 	 */
 	public Portal getPortal(String direction) {
-		return LocationManager.getPortal(this, direction);
-	}
-	
-	public Location getDestination(String direction) {
-		return LocationManager.getDestination(this, direction);
+		try {
+			return LocationManager.getPortal(this, direction);
+		}
+		catch (PortalNotFoundException e) {
+			//TODO log this.
+			e.printStackTrace();
+			System.out.println("uh oh");
+			return null;
+		}
 	}
 
 	// addEntity method. This method adds an entity such as an item to the list.

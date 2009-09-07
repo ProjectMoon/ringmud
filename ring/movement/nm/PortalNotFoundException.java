@@ -1,6 +1,6 @@
 package ring.movement.nm;
 
-public class PortalNotFoundException extends RuntimeException {
+public class PortalNotFoundException extends Exception {
 	public PortalNotFoundException() {
 		super();
 	}
