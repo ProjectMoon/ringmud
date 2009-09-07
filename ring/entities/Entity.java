@@ -41,8 +41,13 @@ public class Entity extends WorldObject {
     return idleDescriptor;
   }
 
+  private String description = "Set my description!";
   public String getLongDescription() {
-    return "Override this!";
+    return description;
+  }
+  
+  public void setLongDescription(String desc) {
+	  description = desc;
   }
 
   public String getIndefiniteDescriptor() {

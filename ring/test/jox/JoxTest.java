@@ -10,10 +10,8 @@ public class JoxTest {
 		InputStream input = new JoxTest().getClass().getClassLoader().getResourceAsStream("ring/test/jox/beans.xml");
 		JOXBeanInputStream joxIn = new JOXBeanInputStream(input);
 		try {
-			PersonBean person = (PersonBean)joxIn.readObject(PersonBean.class);
-			PersonBean person2 = (PersonBean)joxIn.readObject(PersonBean.class);
-			System.out.println("person: " + person);
-			System.out.println("person2: " + person2);
+			Item person = (Item)joxIn.readObject(Item.class);
+			System.out.println("person: " + person.getLongDescription());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

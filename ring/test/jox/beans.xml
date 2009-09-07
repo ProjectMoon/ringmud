@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<APerson>
-	<name>Some Guy</name>
-	<address>
-		<line1>123 Test Street</line1>
-		<line2>Some Place, MD 12345</line2>
-	</address>
-</APerson>
-
-<APerson>
-	<name>Another Guy</name>
-	<address>
-		<line1>2345 Other Street</line1>
-		<line2>Another Place, MD 54321</line2>
-	</address>
-</APerson>
+<Item>
+	<longDescription>
+		This is a description.
+	</longDescription>
+</Item>
