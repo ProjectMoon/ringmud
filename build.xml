@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RingMUD" basedir="." default="main">
+	<path id="project.class.path">
+		<pathelement location="lib/dtdparser121.jar" />
+		<pathelement location="lib/jox-1.17b3.jar" />
+	</path>
+	
     <property name="src.dir"     value="."/>
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
@@ -17,7 +22,7 @@
 
     <target name="compile">
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+        <javac classpathref="project.class.path" srcdir="${src.dir}" destdir="${classes.dir}"/>
     </target>
 
     <target name="jar" depends="compile">
