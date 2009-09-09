@@ -33,11 +33,13 @@ public class BodyPart extends WorldObject {
 	public BodyPart() {}
 	
 	public BodyPart(String description) {
+		super.name = description;
 		super.longDescription = description;
 	}
 
 	// Copy constructor
 	public BodyPart(BodyPart other) {
+		this.name = other.name;
 		this.longDescription = other.description;
 	}
 

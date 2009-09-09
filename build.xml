@@ -16,6 +16,10 @@
 		<include name="**/*.txt" />
 	</fileset>
 	
+	<fileset id="sources" dir="${src.dir}">
+		<include name="**/*.java" />
+	</fileset>
+	
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>

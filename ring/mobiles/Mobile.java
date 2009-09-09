@@ -299,6 +299,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV;
 		currentMV = BASE_MAXMV;
+		initInternal();
 	}
 
 	// Creates a mobile with all fields filled out.
@@ -326,6 +327,8 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV + (10 * getModifier(Mobile.CONSTITUTION));
 		currentMV = maxMV;
+		
+		initInternal();
 		// World.getWorld().notifyGods("A mobile has been created at zone " +
 		// zone.getName() +
 		// "(Index: " + zone.getIndex() + ") in Room #" +
@@ -335,6 +338,13 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	// END CONSTRUCTORS
 	// #####################################################
 
+	protected void initInternal() {
+		inventory = new Inventory();
+		equipment = new Equipment();
+		money = new Bank();
+		bankAccount = new Bank();
+	}
+	
 	public void init() {
 		handler = new CommandHandler(this);
 	}

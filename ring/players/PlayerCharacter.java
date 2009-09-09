@@ -41,6 +41,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     private boolean quitting;
 
     public PlayerCharacter() {
+    	super.initInternal();
     }
 
     public PlayerCharacter(Socket socket, String pName) throws IOException {
@@ -49,6 +50,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         password = "";
         lastLogon = new Date();
         super.setName(pName);
+        super.initInternal();
     //World.getWorld().getTicker().addTickerListener(this, "PULSE");
     }
 
@@ -177,6 +179,10 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
             lastCommand = command;
         
         communicator.setSuffix(getPrompt()); //Necessary in case of updates to prompt info.       
+    }
+    
+    public void sendData(String data) {
+    	communicator.send(data);
     }
 
     //setThread method.

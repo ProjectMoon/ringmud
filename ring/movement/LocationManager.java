@@ -204,7 +204,6 @@ public class LocationManager {
 	
 	private static boolean updateGridEntry(Location room, Portal port) {
 		HashMap<String, Portal> ports = worldGrid.get(room);
-		Portal old = ports.put(port.getInteractiveName(), port);
 		worldGrid.put(room, ports);
 		return true;	
 	}

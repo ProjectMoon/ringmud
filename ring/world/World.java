@@ -177,7 +177,7 @@ public class World implements TickerListener {
 
 	//This version sends the data to non-blind characters in the room.
 	public static synchronized void sendVisualToLocation(Room room, String text, String blindText) {
-		Vector mobiles = room.getMobiles();
+		Vector<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if (mob.isPlayer()) {

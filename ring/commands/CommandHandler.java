@@ -952,15 +952,23 @@ public final class CommandHandler {
 		boolean success = false;
 		BodyPart thePart = null;
 
+		System.out.println("Eligible parts: " + eligibleParts.length);
 		for (int c = 0; c < eligibleParts.length; c++) {
 			thePart = eligibleParts[c];
+			System.out.println("The part: " + thePart.getName());
 			success = mob.equip(thePart, target);
 			if (success)
 				break;
 		}
+		
+		if (!success) {
+			res.setFailText("[R][WHITE]You lack the proper body shape to wear that!");
+			return res;
+		}
 
 		// Remove the target from the wearer's inventory.
 		mob.removeItemFromInventory(target);
+		System.out.println("Removed item...");
 
 		// Set text and stuff.
 		res.setText("[R][WHITE]You wear "
@@ -968,6 +976,8 @@ public final class CommandHandler {
 				+ target.getName() + " on your "
 				+ thePart.getName().toLowerCase() + ".");
 		res.setSuccessful(true);
+		
+		System.out.println("Set success");
 
 		// Notify other players.
 		World.sendVisualToLocation(mob, "[R][WHITE]" + mob.getName()
