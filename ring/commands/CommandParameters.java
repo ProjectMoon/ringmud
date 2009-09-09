@@ -164,9 +164,9 @@ public final class CommandParameters {
 					parameters[x] = o;
 				}
 
-				// it must be something else. For now, pass it along.
+				// it must be something else. For now, return null.
 				else {
-					parameters[x] = params[x];
+					parameters[x] = null;
 				}
 			}
 		} // END OF INVENTORY COMMAND PARAMETERS!!!!

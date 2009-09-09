@@ -26,7 +26,7 @@ import ring.skills.*;
 //information for a mobile such as body shape, HP, race, etc.
 public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable {
 	public static final long serialVersionUID = 1;
-	// CONSTANTS NEEDED BY ALL MOBILES
+	// CONSTANTS NEEDE D BY ALL MOBILES
 	// STAT CONSTANTS
 	public static final int STRENGTH = 0;
 	public static final int DEXTERITY = 1;

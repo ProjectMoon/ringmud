@@ -11,6 +11,8 @@ package ring.mobiles;
 
 import ring.commands.*;
 import ring.world.*;
+
+import java.io.PrintStream;
 import java.util.*;
 
 public class NPC extends Mobile implements CommandSender, TickerListener {
@@ -23,6 +25,10 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	// The random number generator to determine actions.
 	Random rand;
 
+	//A test stream used sometimes. Not really all that pertinent otherwise.
+	//Will be removed in "production" code when we have actual unit tests.
+	public static PrintStream theStream;
+	
 	public NPC() {
 		super();
 		rand = new Random(System.currentTimeMillis());
@@ -73,6 +79,9 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 		}
 	}
 
+	public void sendData(String data) {
+		theStream.println(data);
+	}
 	public void doCommand(String command) {
 		// Was anything even typed?
 		if (command.length() <= 0)
@@ -80,6 +89,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 
 		// Send the command.
 		CommandResult res = super.handler.sendCommand(command);
+		sendData(res.getText());
 	}
 
 	public String toString() {

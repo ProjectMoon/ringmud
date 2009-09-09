@@ -902,7 +902,6 @@ public final class CommandHandler {
 	private CommandResult CMD_wear(CommandParameters params) {
 		params.init(Command.INV);
 		Object t = params.getParameter(0);
-
 		CommandResult res = new CommandResult();
 		res.setFailText("[R][WHITE]You can't wear that!");
 
@@ -910,8 +909,9 @@ public final class CommandHandler {
 			res.setFailText("[R][WHITE]Wear what?");
 			return res;
 		}
-		if ((!(t instanceof Item)) && (t != null))
+		if (!(t instanceof Item)) {
 			return res;
+		}
 
 		Item target = (Item) t;
 		if (!target.isWearable())
@@ -1097,14 +1097,19 @@ public final class CommandHandler {
 			// this will be sent back as a lock finish message for the player.
 			String searchText = "[R][WHITE]Your [B]search[R] turns up the following:\n";
 
-			Room checkRoom = (Room)LocationManager.getDestination(mob.getLocation(), dir);
-			// first, look for hidden exits and set the mobile's current hidden
-			// exit search check to the result of the
-			// search check.
-			mob.hiddenExitSearchCheck = check;
-			if (check >= checkRoom.getSearchDC())
-				searchText += "Hidden Exits: " + dir + "\n";
-
+			try {
+				Portal checkPort = mob.getLocation().getPortal(dir);
+				// first, look for hidden exits and set the mobile's current hidden
+				// exit search check to the result of the
+				// search check.
+				mob.hiddenExitSearchCheck = check;
+				if (check >= checkPort.getSearchDC())
+					searchText += "Hidden Exits: " + dir + "\n";
+				
+			}
+			//we can silently ignore this because there's simply nothing to find.
+			catch (PortalNotFoundException e) {}
+			
 			// second, look for traps
 			searchText += "Traps: IMPLEMENT LATER!\n";
 
@@ -1128,7 +1133,6 @@ public final class CommandHandler {
 			mob.setLockMessage("You are still searching the room!");
 			mob.setLockFinishedMessage(searchText);
 			mob.increaseLockTime(lockTime);
-
 			res.setSuccessful(true);
 		}
 
@@ -1621,10 +1625,6 @@ public final class CommandHandler {
 	 * 
 	 * return res; }
 	 */
-
-	private CommandResult CMD_detect(String[] detectWhat) {
-		return null;
-	}
 
 	private CommandResult CMD_setdesc(CommandParameters params) {
 		CommandResult res = new CommandResult();

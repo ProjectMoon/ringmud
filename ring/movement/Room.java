@@ -140,24 +140,7 @@ public class Room implements Location {
 	 * @return The list of exits.
 	 */
 	public String getExitsString() {
-		List<Portal> exits = LocationManager.getPortals(this);
-		
-		if (exits == null) {
-			return NO_EXITS_STRING;
-		}
-		
-		String exitString = "[CYAN]";
-		
-		//Add all exits to the string that are
-		//plainly visible.
-		for (Portal p : exits) {
-			if (p.getSearchDC() <= 0) {
-				exitString += p.getDisplayName() + ", ";
-			}
-		}
-		
-		//Remove the last ", " and return
-		return exitString.substring(0, exitString.length() - 2);	
+		return getExitsString(0);	
 	}
 
 	/**
@@ -179,13 +162,24 @@ public class Room implements Location {
 		//Add all exits to the string that are
 		//that the search check allows us to see.
 		for (Portal p : exits) {
-			if (p.getSearchDC() <= searchCheck) {
+			if (p.getSearchDC() > 0) {
+				if (searchCheck >= p.getSearchDC()) {
+					exitString += p.getDisplayName() + ", ";
+				}
+			}
+			else {
 				exitString += p.getDisplayName() + ", ";
 			}
 		}
 		
 		//Remove the last ", " and return
-		return exitString.substring(0, exitString.length() - 2);	
+		//Or, if we have nothing... return an empty string. Bit of an ugly check.
+		if (exitString.equals("[CYAN]")) {
+			return "";
+		}
+		else {
+			return exitString.substring(0, exitString.length() - 2);
+		}
 	}
 	
 	/**

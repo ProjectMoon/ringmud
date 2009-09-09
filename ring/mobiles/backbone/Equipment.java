@@ -33,7 +33,7 @@ public class Equipment implements Iterable<Item> {
 	public Item removeItem(BodyPart part) {
 		Item item = equipment.remove(part);
 		if (item != null) {
-			item.setPartWornOn(null);
+			//item.setPartWornOn(null);
 			return item;
 		} else {
 			return null;
@@ -65,8 +65,7 @@ public class Equipment implements Iterable<Item> {
 	}
 
 	public Iterator<Item> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ItemIterator(this);
 	}
 
 }
