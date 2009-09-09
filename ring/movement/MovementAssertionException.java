@@ -1,4 +1,4 @@
-package ring.movement.nm;
+package ring.movement;
 
 /**
  * An exception that denotes there is something strange about a given move operation.

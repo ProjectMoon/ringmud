@@ -41,8 +41,8 @@ public class CommandResult {
   }
 
   public String getText() {
-    if (successful) return text + "\n\n";
-    else return failText + "\n\n"; //have a double line break after every command input
+    if (successful) return text;
+    else return failText; //have a double line break after every command input
   }
 
 }

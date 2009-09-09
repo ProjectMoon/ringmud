@@ -53,7 +53,7 @@ public class Communicator {
      */
     public void send(String data) {
         try {
-            if (data.equals("") || data.length() > 0) {
+            if (!data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data += suffix;
                 data = TextParser.parseOutgoingData(data);
@@ -74,7 +74,7 @@ public class Communicator {
      */
     public void sendln(String data) {
         try {
-            if (data.equals("") || data.length() > 0) {
+            if (!data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data += suffix;
                 data = TextParser.parseOutgoingData(data);
@@ -111,7 +111,7 @@ public class Communicator {
      */
     public void sendNoSuffix(String data) {
         try {
-            if (data.equals("") || data.length() > 0) {
+            if (!data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data = TextParser.parseOutgoingData(data);
                 output.write(data.getBytes());
@@ -131,7 +131,7 @@ public class Communicator {
      */
     public void sendlnNoSuffix(String data) {
         try {
-            if (data.equals("") || data.length() > 0) {
+            if (!data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data = TextParser.parseOutgoingData(data);
                 data += "\n";
@@ -155,7 +155,7 @@ public class Communicator {
      */
     public void sendWithPreLine(String data) {
         try {
-            if (data.equals("") || data.length() > 0) {
+            if (!data.equals("") || data.length() > 0) {
                 data = TextParser.trimNewlines(data);
                 data += suffix;
                 data = TextParser.parseOutgoingData(data);

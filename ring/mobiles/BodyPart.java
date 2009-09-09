@@ -8,90 +8,82 @@ package ring.mobiles;
  * @author Jeff Hair
  * @version 1.0
  */
-import java.io.Serializable;
+import ring.world.WorldObject;
 
-import ring.entities.Item;
+/**
+ * This class represents an individual body part, such as a face, a finger, a
+ * head, etc. There are a host of BodyPart constants in the Body class. An
+ * individual BodyPart is immutable and thus objects can share many copies of
+ * them. Items are not stored in this class. They are rather stored in a list in
+ * the Mobile class.
+ * 
+ * @author projectmoon
+ * 
+ */
+public class BodyPart extends WorldObject {
+	public static final long serialVersionUID = 1;
+	// This class is used for a body part.
 
-public class BodyPart implements Serializable {
-    public static final long serialVersionUID = 1;
-  //This class is used for a body part.
+	// Instance variables.
+	// All the constant BodyParts are maintained in class Body.
 
-  //Instance variables.
-  //All the constant BodyParts are maintained in class Body.
-  //The item this body part has on it.
-  private Item equipment;
+	// Description of the body part.
+	private String description;
 
-  //Description of the body part.
-  private String description;
+	public BodyPart() {}
+	
+	public BodyPart(String description) {
+		super.longDescription = description;
+	}
 
-  public BodyPart(String description) {
-    this.description = description;
-  }
+	// Copy constructor
+	public BodyPart(BodyPart other) {
+		this.longDescription = other.description;
+	}
 
-  //Copy constructor
-  private BodyPart(BodyPart other){
-    this.description = other.description;
-    this.equipment = other.equipment;
-  }
+	@Override
+	public boolean isAttackable() {
+		return false;
+	}
 
-  //getItem method.
-  //Returns the current item on the body part.
-  public Item getItem() {
-    return equipment;
-  }
+	@Override
+	public boolean isEntity() {
+		return false;
+	}
 
-  //removeItem method.
-  //Removes the current item on the body part and returns it.
-  public Item removeItem() {
-    Item returnedItem = getItem();
-    equipment = null;
-    return returnedItem;
-  }
+	@Override
+	public boolean isNPC() {
+		return false;
+	}
 
+	@Override
+	public boolean isPlayer() {
+		return false;
+	}
+	
+	@Override
+	public boolean isItem() {
+		return false;
+	}
 
-  //addItem method.
-  //Adds an item to this body part. If there is an item on it, the method will not allow
-  //adding of a new item.
-  public void addItem(Item item) {
-    if (equipment != null) {
-      System.out.println("Item already exists there, remove it first!");
-      return;
-    }
+	public int getAC() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-    else {
-      equipment = item;
-    }
-  }
+	public int getCurrentHP() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-  //hasItem method.
-  //Returns true if this body part has an item. Else returns false.
-  public boolean hasItem() {
-    if (equipment == null) return false;
+	public int getEntityType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-    else return true;
-  }
-
-  //createUniquePart method.
-  //This method creates a unique BodyPart from the part passed to it. Good so you don't have
-  //every mob with the same BodyPart references :)
-  public BodyPart createUniquePart() {
-    return new BodyPart(this);
-  }
-
-	//a static version for older code pieces
-  public static BodyPart createUniquePart(BodyPart other) {
-    return new BodyPart(other);
-  }
-
-  //getName method.
-  //Gets the name of the body part.
-  public String getName() {
-    return description;
-  }
-
-  public boolean equalsIgnoreItem(BodyPart otherPart) {
-    if (this.getName().equalsIgnoreCase(otherPart.getName())) return true;
-    return false;
-  }
+	public int getMaxHP() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

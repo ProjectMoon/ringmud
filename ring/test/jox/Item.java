@@ -26,7 +26,7 @@ public class Item extends ring.entities.Entity {
   public static int FOOD = 2;
 
   public Item() {
-    super.gettable = true;
+    //super.gettable = true;
   }
 
   public final boolean wearable() {

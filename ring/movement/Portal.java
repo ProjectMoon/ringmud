@@ -1,4 +1,4 @@
-package ring.movement.nm;
+package ring.movement;
 
 import ring.util.TextParser;
 

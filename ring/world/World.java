@@ -45,7 +45,8 @@ public class World implements TickerListener {
 
 	//World Constants.
 	public static final int TIMEOUT_LIMIT = 15;
-
+	public Room r1 = new Room("Room 1", "This is the description for room 1");
+	
 	public World() {                
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
@@ -68,77 +69,59 @@ public class World implements TickerListener {
 		//RIGHT NOW THIS IS A TEST PIECE OF CODE FOR THE WORLD
 		//YEP
 		System.out.println("Building zones...");
-		Zone zone = new Zone();
-		zones.addElement(zone);
-                
-		String s = "[WHITE]Test Room";
-		String x = "[CYAN]This is the room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
-		Room room = new Room(s, x);
-		room.setSize(20, 20, 20);
-                
-		String s2 = "[WHITE]Test Room 2";
-		String x2 = "[CYAN]This is the OTHER room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
-		Room room2 = new Room(s2, x2);
-		room2.setSize(30, 40, 20);
-                
-		String s3 = "[WHITE]Test Room 3";
-		String x3 = "[CYAN]This is YET [B][RED]ANOTHER[R][CYAN] room that all testing occurs in. Here is where the [B][RED]Lord Ao[R][CYAN] will reside in the future as well.";
-		Room room3 = new Room(s3, x3);
-		room3.setSize(10000, 20, 10);
-                
-		String s4 = "[WHITE]Hidden Room!";
-		String x4 = "[YELLOW]This room is [B]HIDDEN![R]";
-		Room room4 = new Room(s4, x4);
-		room4.setSize(15, 30, 12);
-                room4.setSearchDC(10);
+		Room r2 = new Room("Room 2", "This is the description for room 2");
+		Room r3 = new Room("Room 3", "This is the description for room 3");
+		Room r4 = new Room("Room 4", "This is the description for room 4");
 		
-                room.sealAllExits();
-                room.makeImplictExit(ZoneCoordinate.NORTH);
-                room.makeImplictExit(ZoneCoordinate.WEST);
-                
-                room2.sealAllExits();
-                room2.makeImplictExit(ZoneCoordinate.SOUTH);
-                                
-		//set up the room grid
-                /** NEW ROOL SET UP CODE GOES HERE **/
-                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 0), room);
-                LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 1, 0), room2);
-                //LocationGrid.setCoordRoom(new ZoneCoordinate(0, 0, 0, 1), room3);
-                LocationGrid.setCoordRoom(new ZoneCoordinate(0, -1, 0, 0), room4);
-		//roomList.put(new ZoneCoordinate(0, 0, 0, 0), room);
-		//roomList.put(new ZoneCoordinate(0, 0, 1, 0), room2);
-		//roomList.put(new ZoneCoordinate(0, 0, 0, 1), room3);
-		//roomList.put(new ZoneCoordinate(0, -1, 0, 0), room4);                
-		/*
-		room.setNorthRoom(room2);
-		room.setUpRoom(room3);
-		room.setWestRoom(room4);
-		//room.setSearchDC(Room.WEST, 10);
-
-		//links from surrounding rooms back to main room.
-		room2.setSouthRoom(room);
-		room3.setDownRoom(room);
-		room4.setEastRoom(room);
-		*/
+		System.out.println("Room information:");
+		System.out.println("Room1: " + r1);
+		System.out.println("Room2: " + r2);
+		System.out.println("Room3: " + r3);
+		System.out.println("Room4: " + r4);
+	
+		//Room portals.
+		//Room 2 is north of room 1.
+		Portal r2port = new Portal(r2, "north");
+		
+		//Room 3 is east of room 2.
+		Portal r3port = new Portal(r3, "east");
+		
+		//Room 4 is south of room 3.
+		Portal r4port = new Portal(r4, "south");
+		
+		//Room 1 is west of room 4.
+		Portal r1port = new Portal(r1, "west");
+		
+		System.out.println("Portal information: ");
+		System.out.println(r2port);
+		System.out.println(r3port);
+		System.out.println(r4port);
+		System.out.println(r1port);
+	
+		//Link the rooms.
+		System.out.println("Link room 1 to room 2: " + LocationManager.addToGrid(r1, r2port, true));
+		System.out.println("Link room 2 to room 3: " + LocationManager.addToGrid(r2, r3port, true));
+		System.out.println("Link room 3 to room 4: " + LocationManager.addToGrid(r3, r4port, true));
+		System.out.println("Link room 4 to room 1: " + LocationManager.addToGrid(r4, r1port, true));
 		
 		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0, new HPChange());
 		EffectCreatorParameters p = new EffectCreatorParameters(); p.add("HPChange:amount", 40);
 		hpe.passParameters(p);
 
-		Armor armor = new Armor(40, hpe, BodyPart.createUniquePart(Body.HEAD), "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
-		room.addEntity(armor);
+		Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
+		r1.addEntity(armor);
 		NPC mob = new NPC();
 		String n = "[B][YELLOW]A Human Commoner[R][WHITE]";
 		String r = "[B][YELLOW]Human[R][WHITE]";
 		mob.setName(n);
-		mob.setDescription("A human commoner. Doesn't look very dangerous.");
-		Race r2 = new Race();
-		r2.setName(r);
-		mob.setRace(r2);
+		mob.setLongDescription("A human commoner. Doesn't look very dangerous.");
+		Race ra2 = new Race();
+		ra2.setName(r);
+		mob.setRace(ra2);
 		worldTicker.addTickerListener(mob, "0001");
-		mob.setLocation(new ZoneCoordinate(0, 0, 0, 0));
-		room.addMobile(mob);
-		zone.addEntrance(room);
+		
+		mob.setLocation(r1);
+		r1.addMobile(mob);
 		
 		System.out.println("Done.");
 
@@ -176,7 +159,7 @@ public class World implements TickerListener {
 	//This version sends the data to non-deaf characters in the room except for the specified Mobile.
 	//Mainly used for the say command.
 	public static synchronized void sendAudioToLocation(Mobile mobile, String text, String deafText) {
-		Room room = mobile.getLocation().getRoom();
+		Room room = (Room)mobile.getLocation();
 		Vector mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
@@ -209,7 +192,7 @@ public class World implements TickerListener {
 	//This version sends the data to non-blind characters in the room except for the specified Mobile.
 	//Mainly used for the say command.
 	public static synchronized void sendVisualToLocation(Mobile mobile, String text, String blindText) {
-		Room room = mobile.getLocation().getRoom();
+		Room room = (Room)mobile.getLocation();
 		Vector mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
@@ -230,7 +213,7 @@ public class World implements TickerListener {
 	//moving silently broadcast no matter what.
 	public static synchronized void roomArriveLeaveToLocation(Mobile mobile, String text, String blindText) {
 		System.out.println("in ArriveLeave");
-		Room room = mobile.getLocation().getRoom();
+		Room room = (Room)mobile.getLocation();
 		Vector mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
@@ -261,7 +244,7 @@ public class World implements TickerListener {
 	//Notifies players in the room of the mobile except for the specified mobile.
 	//Useful for the voice of the gods!
 	public static synchronized void notifyPlayersAtLocation(Mobile mobile, String text) {
-		Room room = mobile.getLocation().getRoom();
+		Room room = (Room)mobile.getLocation();
 		Vector mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);

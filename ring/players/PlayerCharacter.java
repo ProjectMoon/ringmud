@@ -105,9 +105,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         System.out.println("Creating player in the world: " + getName());
         World.getWorld().getTicker().addTickerListener(this, "PULSE");
         //Set location.
-        Room room = ZoneCoordinate.ORIGIN.getRoom();
+        Room room = World.getWorld().r1;
         room.addMobile(this);
-        setLocation(new ZoneCoordinate(0, 0, 0, 0));
+        setLocation(room);
        
         //The player has to poof into existence!
         World.sendVisualToLocation(this, "There is a loud bang and a puff of smoke, and " + super.getName() + " appears in the world once more!", "You hear a loud bang and smell acrid smoke. Someone has appeared in the world once more!");
@@ -132,12 +132,6 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     private String getSingleLinePrompt() {
         return "\n[B][GREEN]HP: " + super.getCurrentHPString() + "/" + super.getMaxHPString() + " MV: " + super.getCurrentMV() + "/" + super.getMaxMV() + " ]> [R][WHITE]";
     }    
-
-    //source method.
-    //Returns the sender of this CommandSender (that is, the object itself)
-    public Object source() {
-        return this;
-    }
 
     //decrementLockTime method.
     //Overriden to display "Your head clears." after time is up.
@@ -174,6 +168,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         //Send the command.
         CommandResult res = super.handler.sendCommand(command);
         String result = res.getText();
+        System.out.println("RESULT: " + result);
         
         communicator.send(result);
         

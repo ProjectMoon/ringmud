@@ -199,7 +199,7 @@ public class Race implements Serializable {
   //This returns the Human PC race.
   public static Race createHuman() {
     int[] relatives = {0, 0, 0, 0, 0, 0, 0};
-    return new Race("[B][YELLOW]Human[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[B][YELLOW]Human[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -207,7 +207,7 @@ public class Race implements Serializable {
   //This returns the Drow PC race.
   public static Race createDrow() {
     int[] relatives = {0, 6, 10, 10, -10, 0, -10};
-    return new Race("[MAGENTA]Drow[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[MAGENTA]Drow[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -215,7 +215,7 @@ public class Race implements Serializable {
   //This returns the Elf PC race.
   public static Race createElf() {
     int[] relatives = {0, -10, 15, 15, 6, 10, 10};
-    return new Race("[CYAN]Moon Elf[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[CYAN]Moon Elf[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -223,7 +223,7 @@ public class Race implements Serializable {
   //This returns the Ogre PC race.
   public static Race createOgre() {
     int[] relatives = {25, 30, -15, -20, -15, -10, -15};
-    return new Race("[B][BLUE]Ogre[R][WHITE]", Body.createLargeHumanoidBody(), relatives,
+    return new Race("[B][BLUE]Ogre[R][WHITE]", BodyFactory.createLargeHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -231,7 +231,7 @@ public class Race implements Serializable {
   //This returns the Dwarf PC race.
   public static Race createDwarf() {
     int[] relatives = {10, 10, -6, 0, 0, 0, 0};
-    return new Race("[B][GREEN]Dwarf[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[B][GREEN]Dwarf[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -239,7 +239,7 @@ public class Race implements Serializable {
   //This returns the Duergar PC race.
   public static Race createDuergar() {
     int[] relatives = {15, 10, 6, -6, -6, 0, 0};
-    return new Race("[RED]Duergar[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[RED]Duergar[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -247,7 +247,7 @@ public class Race implements Serializable {
   //This returns the Half-Elf PC race.
   public static Race createHalfElf() {
     int[] relatives = {0, -6, 10, 0, 0, 10, 0};
-    return new Race("[GREEN]Half-Elf[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[GREEN]Half-Elf[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -255,7 +255,7 @@ public class Race implements Serializable {
   //This method returns the Illithid PC race.
   public static Race createIllithid() {
     int[] relatives = {-20, -30, 0, 60, 20, -25, 10};
-    return new Race("[B][MAGENTA]Illithid[R][WHITE]", Body.createIllithidBody(), relatives,
+    return new Race("[B][MAGENTA]Illithid[R][WHITE]", BodyFactory.createIllithidBody(), relatives,
                     null, true);
   }
 
@@ -264,7 +264,7 @@ public class Race implements Serializable {
   //Tiefling: Str +0, Con +0, Dex +15, Int +10, Wis +0, Agi +10, Cha -15
   public static Race createGnome() {
     int[] relatives = {0, 0, 15, 10, 0, 10, -15};
-    return new Race("[B][RED]Gnome[R][WHITE]", Body.createSmallHumanoidBody(), relatives,
+    return new Race("[B][RED]Gnome[R][WHITE]", BodyFactory.createSmallHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -272,7 +272,7 @@ public class Race implements Serializable {
   //This method returns the Troll PC race.
   public static Race createTroll() {
     int[] relatives = {15, 15, 10, -20, -20, 0, -10};
-    return new Race("[GREEN]Troll[R][WHITE]", Body.createLargeHumanoidBody(), relatives,
+    return new Race("[GREEN]Troll[R][WHITE]", BodyFactory.createLargeHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -280,7 +280,7 @@ public class Race implements Serializable {
   //This method returns the Aasimar PC race.
   public static Race createAasimar() {
     int[] relatives = {10, 10, 6, 10, 0, 0, 15};
-    return new Race("[B][WHITE]Aasimar[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[B][WHITE]Aasimar[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 
@@ -288,7 +288,7 @@ public class Race implements Serializable {
   //This method returns the Tiefling PC race.
   public static Race createTiefling() {
     int[] relatives = {15, 15, 10, -20, -20, 0, -10};
-    return new Race("[R][YELLOW]Tiefling[R][WHITE]", Body.createMediumHumanoidBody(), relatives,
+    return new Race("[R][YELLOW]Tiefling[R][WHITE]", BodyFactory.createMediumHumanoidBody(), relatives,
                     null, true);
   }
 }

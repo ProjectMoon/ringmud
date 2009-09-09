@@ -164,7 +164,7 @@ public class PlayerLogon extends Thread {
         newPlayer.setName(playerName);
         newPlayer.setPassword(password);
         newPlayer.setType(PlayerCharacter.MORTAL);
-        newPlayer.setDescription("You see nothing special about " + newPlayer.getHimHerIt() + ".");
+        newPlayer.setLongDescription("You see nothing special about " + newPlayer.getHimHerIt() + ".");
 
         //Set some physical and alignment characteristics
         newPlayer.setRace(race);

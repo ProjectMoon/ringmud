@@ -12,67 +12,88 @@ package ring.entities;
 import ring.world.*;
 import ring.movement.Room;
 
-public class Entity extends WorldObject {
-    public static final long serialVersionUID = 1;
-  //This class is for all non-living objects including items, props in a room, etc.
-  //Any changes made to this class will affect all things extending from it.
+/**
+ * This class represents something non-living in the world. This includes items,
+ * props in a room, doors, and other similar things. It should be noted that a
+ * Room is not considered an entity.
+ * @author projectmoon
+ *
+ */
+public class Entity extends WorldObject {	
+	public static final long serialVersionUID = 1;
 
-  protected Room currentRoom;
-  protected String name;
-  protected String idleDescriptor;
-  protected String indefiniteDescriptor;
-  protected int currentHP;
-  protected int maxHP;
-  protected int currentAC;
+	protected Room currentRoom;
+	protected String idleDescriptor;
+	protected String indefiniteDescriptor;
+	protected int currentHP;
+	protected int maxHP;
+	protected int currentAC;
 
-  public Entity() {
-    idleDescriptor = "lies here.";
-  }
+	public Entity() {
+		idleDescriptor = "lies here.";
+	}
 
-  public String getName() {
-    return name;
-  }
+	public Room getRoom() {
+		return currentRoom;
+	}
 
-  public Room getRoom() {
-    return currentRoom;
-  }
+	public final String getIdleDescriptor() {
+		return idleDescriptor;
+	}
+	
+	public final void setIdleDescriptor(String desc) {
+		idleDescriptor = desc;
+	}
 
-  public String getIdleDescriptor() {
-    return idleDescriptor;
-  }
+	public final String getIndefiniteDescriptor() {
+		return indefiniteDescriptor;
+	}
+	
+	public final void setIndefiniteDescriptor(String desc) {
+		indefiniteDescriptor = desc;
+	}
 
-  private String description = "Set my description!";
-  public String getLongDescription() {
-    return description;
-  }
-  
-  public void setLongDescription(String desc) {
-	  description = desc;
-  }
+	//Not final because some weapons may need to override to be
+	//intelligent. They are considered "NPCs."
+	@Override
+	public boolean isNPC() {
+		return false;
+	}
 
-  public String getIndefiniteDescriptor() {
-    return indefiniteDescriptor;
-  }
+	@Override
+	public final boolean isPlayer() {
+		return false;
+	}
 
-  public boolean isNPC() {
-    return false;
-  }
+	@Override
+	public final boolean isEntity() {
+		return true;
+	}	
+	
+	@Override
+	public final boolean isItem() {
+		return this instanceof Item;
+	}
 
-  public boolean isPlayer() {
-    return false;
-  }
+	public int getEntityType() {
+		return 0;
+		// Meant to be overriden.
+	}
 
-  public Object source() {
-    return this;
-  }
+	public int getCurrentHP() {
+		return currentHP;
+	}
 
-  public int getEntityType() {
-    return 0;
-    //Meant to be overriden.
-  }
+	public int getMaxHP() {
+		return maxHP;
+	}
 
-  public int getCurrentHP() { return currentHP; }
-  public int getMaxHP() { return maxHP; }
-  public int getAC() { return currentAC; }
-
+	public int getAC() {
+		return currentAC;
+	}
+	
+	@Override
+	public boolean isAttackable() {
+		return false;
+	}
 }

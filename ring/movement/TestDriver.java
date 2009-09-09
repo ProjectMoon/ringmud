@@ -1,6 +1,8 @@
-package ring.movement.nm;
+package ring.movement;
 
 import java.util.Scanner;
+
+import ring.mobiles.Mobile;
 
 /**
  * Test driver for the new movement system that uses the Room-Portal-Destination graph

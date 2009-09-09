@@ -9,91 +9,92 @@ package ring.world;
  * @version 1.0
  */
 
-import ring.entities.*;
-import ring.movement.*;
-import ring.effects.*;
-import java.util.Vector;
-import ring.mobiles.*;
 import java.io.Serializable;
+import java.util.Vector;
 
+import ring.effects.Affectable;
+import ring.effects.Effect;
+
+/**
+ * This class defines things common to all objects that exist within the game
+ * world. Things like weight, location, name, description, and effects are 
+ * centralized in this highest bean of the game data heirarchy.
+ * 
+ * @author projectmoon
+ * 
+ */
 public abstract class WorldObject implements Affectable, Serializable {
-    public static final long serialVersionUID = 1;
-  //This class, as it is aptly named, represents an object in the world. "object" in this case is something physically
-  //present in the world, not a java object (although each of these objects are java objects...). This class was
-  //made to facilitate things such as getRoom() and Effects. EVERY WorldObject is considered Affectable and Serializable. This means
-  //it can targeted with Effects. Individual Effects may have restrictions on what type of WorldObjects they affect, however.
-  //For instance, most EffectCreators only deal with mobiles. Two common types of Affectable WorldObjects are Entities and
-  //Mobiles.
-  //various things.
-  protected boolean gettable;
-  protected int weight;
-  
-  //This object represents the world object's location in the world.
-  protected transient ZoneCoordinate location;
+	public static final long serialVersionUID = 1;
 
-  //This is a vector of current effects that must be looped through and dealt with each tick.
-  //Each WorldObject (i.e. things that derive this class) is responsible for dealing with this list
-  //in its own way. Therefore there is nothing enforced on classes below this one that MAKES them deal
-  //with this list. Most WorldObjects that should be targetable by Effects deal with them in their
-  //processTick method.
-  protected Vector effectsList;
+	protected String name;
+	protected int weight;
+	protected String longDescription;
 
-  public WorldObject() {}
-  
-  //getLocation method.
-  //gets the location of this WorldObject.
-  public final ZoneCoordinate getLocation() {
-	  return location;
-  }
-  
-  //setLocation method.
-  //sets the location of this WorldObject. Returns true on success.
-  public final boolean setLocation(ZoneCoordinate loc) {
-		location = loc;
-		return true;
-  }
-  
-  //addEffect method.
-  //Adds an Effect to the WorldObject.
-  public final void addEffect(Effect e) {
-      //This should make sure that effects added to a WorldObject are always unique.
-      
-      e = e.uniqueInstance();
-    System.out.println("in addeffect");
-    if (e.getTarget() != this) {
-      System.out.println("***WARNING***\nInbound effect [" + e + "] is not targeting WorldObject [" + this + "]. Operation aborted.");
-      return;
-    }
+	// This is a vector of current effects that must be looped through and dealt
+	// with each tick.
+	// Each WorldObject (i.e. things that derive this class) is responsible for
+	// dealing with this list
+	// in its own way. Therefore there is nothing enforced on classes below this
+	// one that MAKES them deal
+	// with this list. Most WorldObjects that should be targetable by Effects
+	// deal with them in their
+	// processTick method.
+	protected Vector<Effect> effectsList;
 
-    effectsList.addElement(e);
-    System.out.println("added element/starting effect");
-    e.startEffect();
-    System.out.println("started effect");
-  }
+	public WorldObject() {}
 
-  public boolean gettable() {
-    return gettable;
-  }
+	// addEffect method.
+	// Adds an Effect to the WorldObject.
+	public final void addEffect(Effect e) {
+		// This should make sure that effects added to a WorldObject are always
+		// unique.
 
-  public abstract String getName();
+		e = e.uniqueInstance();
+		System.out.println("in addeffect");
+		if (e.getTarget() != this) {
+			System.out.println("***WARNING***\nInbound effect [" + e
+					+ "] is not targeting WorldObject [" + this
+					+ "]. Operation aborted.");
+			return;
+		}
 
-  public int getWeight() {
-    return weight;
-  }
+		effectsList.addElement(e);
+		System.out.println("added element/starting effect");
+		e.startEffect();
+		System.out.println("started effect");
+	}
 
-  public void setWeight(int weight) {
-    this.weight = weight;
-  }
+	public final String getName() {
+		return name;
+	}
+	
+	public final void setName(String name) {
+		this.name = name;
+	}
 
-  //All of the following are meant to be overriden, but they don't necessarily have to be.
-  public String getLongDescription() { return "[WorldObject] override this."; }
-  public Object source() { return this; }
-  public boolean isPlayer() { return false; }
-  public boolean isNPC() { return false;}
-  public int getEntityType() { return 0;}
-  public int getCurrentHP() { return 0;}
-  public int getMaxHP() { return 0; }
-  public int getAC() { return 0; }
-  public void sendData(String text) {}
+	public final int getWeight() {
+		return weight;
+	}
 
+	public final void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public final String getLongDescription() {
+		return longDescription;
+	}
+	
+	public final void setLongDescription(String desc) {
+		longDescription = desc;
+	}
+	
+	public final Object source() {
+		return this;
+	}
+	
+	public abstract boolean isItem();
+	public abstract boolean isEntity();
+	public abstract boolean isPlayer();
+	public abstract boolean isNPC();
+	public abstract boolean isAttackable();
 }

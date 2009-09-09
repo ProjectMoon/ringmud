@@ -1,4 +1,4 @@
-package ring.movement.nm;
+package ring.movement;
 
 /**
  * The Movable interface defines something that moves in the game world.
