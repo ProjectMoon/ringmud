@@ -27,6 +27,14 @@ public class LocationManager {
 		return portal.getDestination();
 	}
 	
+	public static Location getOrigin() {
+		for (Location l : worldGrid.keySet()) {
+			return l;
+		}
+		
+		return null;
+	}
+	
 	public static Location getDestination(Location room, String portalName) {
 		try {
 			return getDestinationFromPortal(getPortal(room, portalName));

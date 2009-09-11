@@ -14,7 +14,9 @@ import java.util.Random;
 import java.util.Vector;
 
 import ring.entities.Entity;
+import ring.jox.beans.RoomBean;
 import ring.mobiles.Mobile;
+import ring.resources.RingResource;
 import ring.world.World;
 
 /*
@@ -27,13 +29,17 @@ import ring.world.World;
  -
  */
 
-public class Room implements Location {
+public class Room implements Location, RingResource<RoomBean> {
 	// Room.NO_EXIT constant: This tells us that there is no exit in a given
 	// direction.
 	public static final Room NO_EXIT = new Room();
 	private static final String NO_EXITS_STRING = "[B][RED]NO EXITS![R][WHITE]";
 
 	// Room data.
+	
+	// Unique ID for this room in its set.
+	private String roomID;
+	
 	// Mobiles present in the Room.
 	private Vector<Mobile> mobiles;
 
@@ -63,6 +69,9 @@ public class Room implements Location {
 	public Room() {
 		title = "NO EXIT";
 		text = "NO EXIT";
+		mobiles = new Vector<Mobile>();
+		entities = new Vector<Entity>();
+		searchDC = 0;
 	}
 
 	// EMPTY ROOM CONSTRUCTOR.
@@ -130,6 +139,13 @@ public class Room implements Location {
 	// END CONSTRUCTOR SECTION OF CODE
 	// #########################################################
 
+	public String getID() {
+		return roomID;
+	}
+	
+	public void setID(String id) {
+		roomID = id;
+	}
 	
 	
 	
@@ -479,5 +495,14 @@ public class Room implements Location {
 							// spot checks.
 
 		World.roomArriveLeaveToLocation(mob, arriveText, "[R][WHITE]You hear the sounds of someone leaving.");
+	}
+
+	public void populateFromBean(RoomBean bean) {
+		this.roomID = bean.getID();
+		this.title = bean.getTitle();
+		this.text = bean.getDescription();
+		this.height = bean.getHeight();
+		this.width = bean.getWidth();
+		this.length = bean.getLength();
 	}
 }

@@ -24,7 +24,8 @@ import ring.skills.*;
 
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
 //information for a mobile such as body shape, HP, race, etc.
-public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable {
+public class Mobile extends WorldObject implements CommandSender,
+		TickerListener, Movable {
 	public static final long serialVersionUID = 1;
 	// CONSTANTS NEEDE D BY ALL MOBILES
 	// STAT CONSTANTS
@@ -54,7 +55,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public static final int BASE_MAXMV = 100;
 
 	// Instance variables needed by all mobiles.
-	//The current location of the mobile.
+	// The current location of the mobile.
 	private Location currLocation;
 
 	// The maximum HP of the mobile. We don't need a maximum mana because the
@@ -182,14 +183,14 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	// modifying or adding code, please use the new way--i.e. "if (mob.isGod)",
 	// etc.
 	public boolean isAggressive;// If mob is agressive. This is used for NPCs to
-								// determine if they attack players
-								// automatically.
+	// determine if they attack players
+	// automatically.
 	public boolean isDead;// If mob is dead.
 	public boolean isGod;// If mob is a god/staff member on the MUD.
 	public boolean isDeaf;// If mob is deaf.
 	public boolean isBlind;// If mob is blind.
 	public boolean isSilent;// If mob can cast spells with verbal components or
-							// not. Also if it can speak.
+	// not. Also if it can speak.
 	public boolean isFlying;// If mob is flying.
 	public boolean isFloating;// If mob is floating with a levitate effect.
 	public boolean isMounted;// If mob is mounted on a horse or something.
@@ -200,7 +201,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public boolean isLyingDown;// If mob is lying down.
 	public boolean isSitting;// If mob is sitting.
 	public boolean moves;// Used for NPCs to tell if they move from room to room
-							// or not.
+	// or not.
 
 	// Random other things.
 	private double weightCarried;
@@ -246,8 +247,8 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public int spotCheck;
 	public int listenCheck;
 	public int hiddenExitSearchCheck = 0; // current search check for viewing
-											// hidden exits. reset every room
-											// change.
+	// hidden exits. reset every room
+	// change.
 
 	// Descriptions: name is stored in WorldObject.
 	private String title;
@@ -261,21 +262,22 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	// lockTimeRemaining: The time left before this mob can act again.
 	protected int lockTimeRemaining;
 	protected String lockMessage = "You are currently focused on an activity."; // message
-																				// to
-																				// display
-																				// while
-																				// this
-																				// mob
-																				// is
-																				// locked.
+	// to
+	// display
+	// while
+	// this
+	// mob
+	// is
+	// locked.
 	protected String lockFinishedMessage = "You become aware of the world again."; // message
-																					// to
-																					// display
-																					// when
-																					// this
-																					// mob
-																					// becomes
-																					// unlocked.
+
+	// to
+	// display
+	// when
+	// this
+	// mob
+	// becomes
+	// unlocked.
 
 	// Creates a generic mobile.
 	public Mobile() {
@@ -327,7 +329,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV + (10 * getModifier(Mobile.CONSTITUTION));
 		currentMV = maxMV;
-		
+
 		initInternal();
 		// World.getWorld().notifyGods("A mobile has been created at zone " +
 		// zone.getName() +
@@ -344,16 +346,16 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		money = new Bank();
 		bankAccount = new Bank();
 	}
-	
+
 	public void init() {
 		handler = new CommandHandler(this);
 	}
 
-	//Meant to be overridden.
+	// Meant to be overridden.
 	public void sendData(String text) {
-		
+
 	}
-	
+
 	// ***********************
 	// BEGIN FLAG AND GET METHODS
 	// hasSkill method.
@@ -407,7 +409,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public Inventory getInventory() {
 		return inventory;
 	}
-	
+
 	public void setInventory(Inventory inv) {
 		inventory = inv;
 	}
@@ -926,7 +928,9 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
 	/**
 	 * Convenience method for adding an item to a Mobile's inventory.
-	 * @param item the item to add
+	 * 
+	 * @param item
+	 *            the item to add
 	 * @return true or false based on whether item adding was successful.
 	 */
 	public boolean addItemToInventory(Item item) {
@@ -935,6 +939,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
 	/**
 	 * Convenience method that removes an item from a Mobile's inventory.
+	 * 
 	 * @param item
 	 * @return true or false if the removal was successful or not.
 	 */
@@ -942,9 +947,9 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		return inventory.removeItem(item);
 	}
 
-
 	/**
 	 * Convenience method that equips an item on a body part for the mobile.
+	 * 
 	 * @param part
 	 * @param item
 	 * @return true if equipping was successful, false otherwise.
@@ -961,6 +966,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 
 	/**
 	 * Convenience method that dequips an item.
+	 * 
 	 * @param part
 	 * @return the Item removed, if there was one. null otherwise.
 	 */
@@ -1156,9 +1162,10 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 			sendData("[GREEN]You may not leave during combat![WHITE]");
 			return false;
 		}
-		
+
 		try {
-			return LocationManager.move(this, LocationManager.getPortal(currLocation, direction));
+			return LocationManager.move(this, LocationManager.getPortal(
+					currLocation, direction));
 		} catch (MovementAssertionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1179,7 +1186,7 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public boolean isEntity() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isItem() {
 		return false;

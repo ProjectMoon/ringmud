@@ -1,5 +1,7 @@
 package ring.system;
 
+import ring.jox.BeanParser;
+import ring.jox.beans.RoomSet;
 import ring.resources.*;
 
 /**
@@ -34,5 +36,8 @@ public class MUDBoot {
         //Load NPCs
 
         //Load world (zones and rooms)
+        BeanParser<RoomSet> roomParser = new BeanParser<RoomSet>();
+        RoomSet set = roomParser.parse("/etc/ringmud/data/rooms.xml", RoomSet.class);
+        set.construct();
     }
 }

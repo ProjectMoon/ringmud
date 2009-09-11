@@ -107,7 +107,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         System.out.println("Creating player in the world: " + getName());
         World.getWorld().getTicker().addTickerListener(this, "PULSE");
         //Set location.
-        Room room = World.getWorld().r1;
+        Room room = (Room) LocationManager.getOrigin();
         room.addMobile(this);
         setLocation(room);
        

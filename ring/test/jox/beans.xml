@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Item>
-	<longDescription>
-		This is a description.
-	</longDescription>
-</Item>
+<RoomSet>
+	<name>A zone</name>
+	<room>
+		<id>room1</id>
+		<title>A room</title>
+		<description>A description</description>
+		<height>100</height>
+		<width>500</width>
+		<exit>
+			<direction>north</direction>
+			<destination>room2</destination>
+		</exit>
+	</room>
+	
+	<room>
+		<id>room3</id>
+		<title>Another room</title>
+		<description>A different description</description>
+		<exit>
+			<direction>south</direction>
+			<destination>room1</destination>
+		</exit>
+	</room>
+</RoomSet>

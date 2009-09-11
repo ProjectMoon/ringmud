@@ -1,5 +1,6 @@
 package ring.mobiles.backbone;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -14,7 +15,9 @@ import ring.mobiles.BodyPart;
  * @author projectmoon
  * 
  */
-public class Equipment implements Iterable<Item> {
+public class Equipment implements Iterable<Item>, Serializable {
+	public static final long serialVersionUID = 1;
+	
 	protected HashMap<BodyPart, Item> equipment;
 
 	public Equipment() {

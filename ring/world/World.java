@@ -99,10 +99,10 @@ public class World implements TickerListener {
 		System.out.println(r1port);
 	
 		//Link the rooms.
-		System.out.println("Link room 1 to room 2: " + LocationManager.addToGrid(r1, r2port, true));
-		System.out.println("Link room 2 to room 3: " + LocationManager.addToGrid(r2, r3port, true));
-		System.out.println("Link room 3 to room 4: " + LocationManager.addToGrid(r3, r4port, true));
-		System.out.println("Link room 4 to room 1: " + LocationManager.addToGrid(r4, r1port, true));
+		//System.out.println("Link room 1 to room 2: " + LocationManager.addToGrid(r1, r2port, true));
+		//System.out.println("Link room 2 to room 3: " + LocationManager.addToGrid(r2, r3port, true));
+		//System.out.println("Link room 3 to room 4: " + LocationManager.addToGrid(r3, r4port, true));
+		//System.out.println("Link room 4 to room 1: " + LocationManager.addToGrid(r4, r1port, true));
 		
 		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0, new HPChange());
 		EffectCreatorParameters p = new EffectCreatorParameters(); p.add("HPChange:amount", 40);
@@ -120,8 +120,8 @@ public class World implements TickerListener {
 		mob.setRace(ra2);
 		worldTicker.addTickerListener(mob, "0001");
 		
-		mob.setLocation(r1);
-		r1.addMobile(mob);
+		//mob.setLocation(r1);
+		//r1.addMobile(mob);
 		
 		System.out.println("Done.");
 

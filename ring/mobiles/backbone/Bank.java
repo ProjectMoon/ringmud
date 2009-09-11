@@ -1,5 +1,6 @@
 package ring.mobiles.backbone;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
@@ -8,7 +9,9 @@ import java.math.BigInteger;
  * @author projectmoon
  *
  */
-public class Bank {
+public class Bank implements Serializable {
+	public static final long serialVersionUID = 1;
+	
 	private BigInteger theMoney;
 	
 	public Bank() {
@@ -39,5 +42,13 @@ public class Bank {
 		else {
 			throw new IllegalArgumentException("You don't have that much money in your bank.");
 		}
+	}
+	
+	public void setAmount(long money) {
+		theMoney = BigInteger.valueOf(money);
+	}
+	
+	public BigInteger getAmount() {
+		return theMoney;
 	}
 }

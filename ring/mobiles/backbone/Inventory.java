@@ -1,5 +1,6 @@
 package ring.mobiles.backbone;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +12,9 @@ import ring.entities.Item;
  * @author projectmoon
  *
  */
-public class Inventory implements Iterable<Item> {
+public class Inventory implements Iterable<Item>, Serializable {
+	public static final long serialVersionUID = 1;
+	
 	protected List<Item> inv;
 	private int capacity;
 	

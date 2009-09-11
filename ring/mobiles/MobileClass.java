@@ -139,6 +139,10 @@ public class MobileClass implements Serializable {
     this.skillPointsPerLevel = skillPointsPerLevel;
     classFeatures = new HashMap<String, ClassFeatureReference>();
   }
+  
+  public int getClassLevel() {
+	  return level;
+  }
 
   public int getHitDie() {
     return hitDie;

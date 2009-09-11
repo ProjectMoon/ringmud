@@ -10,6 +10,7 @@
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir"     value="${build.dir}/jar"/>
     <property name="main-class"  value="ring.main.RingMain"/>
+    <property name="jar-classpath" value="lib/jox-1.17b3.jar lib/dtdparser121.jar" />
 
 	<fileset id="resources" dir="${src.dir}/ring/main/">
 		<include name="**/*.properties" />
@@ -34,6 +35,7 @@
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="${jar-classpath}"/>
             </manifest>
             <zipfileset refid="resources" prefix="ring/main/" />
         </jar>
