@@ -18,10 +18,12 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	public static final long serialVersionUID = 1;
 	
 	private HashMap<String, RoomBean> roomSet;
+	private HashMap<String, Room> cachedLocations;
 	private String name;
 	
 	public RoomSet() {
 		roomSet = new HashMap<String, RoomBean>();
+		cachedLocations = new HashMap<String, Room>();
 	}
 	
 	public RoomBean[] getRoom() {
@@ -41,14 +43,13 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 		System.out.println("Building RoomSet \"" + this.getName() + "\"");
 		for (RoomBean roomBean : roomSet.values()) {
 			System.out.println("Processing " + roomBean);
-			Room room = new Room();
-			room.populateFromBean(roomBean);
+			Room room = getRoom(roomBean);
 			
 			//Create all the exits for this room and add it to the grid.
 			for (PortalBean portBean : roomBean.getExit()) {
 				Portal port = new Portal();
 				port.populateFromBean(portBean);
-				Location dest = getLocationFromID(roomBean.getID());
+				Location dest = getLocationFromID(portBean.getDestination());
 				port.setDestination(dest);
 				LocationManager.addToGrid(room, port);
 			}
@@ -57,9 +58,21 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	
 	private Location getLocationFromID(String id) {
 		RoomBean bean = roomSet.get(id);
-		Room r = new Room();
-		r.populateFromBean(bean);
+		Room r = getRoom(bean);
+		System.out.println("Returning " + r);
 		return r;
+	}
+	
+	private Room getRoom(RoomBean roomBean) {
+		Room room = cachedLocations.get(roomBean.getID());
+		
+		if (room == null) {
+			room = new Room();
+			room.populateFromBean(roomBean);
+			cachedLocations.put(roomBean.getID(), room);
+		}
+		
+		return room;
 	}
 
 	public void setName(String name) {

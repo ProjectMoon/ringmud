@@ -16,6 +16,7 @@ public class JoxTest {
 		BeanParser<RoomSet> parser = new BeanParser<RoomSet>();
 		RoomSet set = parser.parse(input, RoomSet.class);
 		set.construct();
+		
 		System.out.println(LocationManager.getOrigin());
 	}
 }

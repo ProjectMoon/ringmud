@@ -36,6 +36,7 @@ public class MUDBoot {
         //Load NPCs
 
         //Load world (zones and rooms)
+        //TODO no more hardcoded file, read everything from the data/world directory.
         BeanParser<RoomSet> roomParser = new BeanParser<RoomSet>();
         RoomSet set = roomParser.parse("/etc/ringmud/data/rooms.xml", RoomSet.class);
         set.construct();
