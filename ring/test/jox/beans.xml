@@ -14,7 +14,7 @@
 	</room>
 	
 	<room>
-		<id>room3</id>
+		<id>room2</id>
 		<title>Another room</title>
 		<description>A different description</description>
 		<exit>
