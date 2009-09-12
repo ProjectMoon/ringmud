@@ -6,6 +6,7 @@
 	</path>
 	
     <property name="src.dir"     value="."/>
+	<property name="lib.dir"	value="./lib"/>
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir"     value="${build.dir}/jar"/>
@@ -39,6 +40,11 @@
             </manifest>
             <zipfileset refid="resources" prefix="ring/main/" />
         </jar>
+    	<copy todir="${jar.dir}/lib">
+    		<fileset dir="${lib.dir}">
+    			<include name="**/*.jar" />
+    		</fileset>
+    	</copy>
     </target>
 
 	<target name="clean-build" depends="clean" />

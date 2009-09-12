@@ -17,6 +17,7 @@ public class Item extends Entity {
 	protected boolean wearable;
 	protected BodyPart partWornOn;
 	protected Effect passiveEffects;// Magical passive effects of this item.
+	protected boolean cursed;
 
 	public static int WEAPON = 0;
 	public static int ARMOR = 1;
@@ -67,5 +68,14 @@ public class Item extends Entity {
 	// themselves but that's ok...
 	// I forsee an item scripting language in the future !
 	public void specialCode(Affectable wearer) {
+		
+	}
+	
+	public final boolean isCursed() {
+		return cursed;
+	}
+	
+	public final void setCursed(boolean yes) {
+		cursed = yes;
 	}
 }

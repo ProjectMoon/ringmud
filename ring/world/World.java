@@ -68,16 +68,16 @@ public class World implements TickerListener {
 		//Build zones.
 		//RIGHT NOW THIS IS A TEST PIECE OF CODE FOR THE WORLD
 		//YEP
-		System.out.println("Building zones...");
+		//System.out.println("Building zones...");
 		Room r2 = new Room("Room 2", "This is the description for room 2");
 		Room r3 = new Room("Room 3", "This is the description for room 3");
 		Room r4 = new Room("Room 4", "This is the description for room 4");
 		
-		System.out.println("Room information:");
-		System.out.println("Room1: " + r1);
-		System.out.println("Room2: " + r2);
-		System.out.println("Room3: " + r3);
-		System.out.println("Room4: " + r4);
+		//System.out.println("Room information:");
+		//System.out.println("Room1: " + r1);
+		//System.out.println("Room2: " + r2);
+		//System.out.println("Room3: " + r3);
+		//System.out.println("Room4: " + r4);
 	
 		//Room portals.
 		//Room 2 is north of room 1.
@@ -92,11 +92,11 @@ public class World implements TickerListener {
 		//Room 1 is west of room 4.
 		Portal r1port = new Portal(r1, "west");
 		
-		System.out.println("Portal information: ");
-		System.out.println(r2port);
-		System.out.println(r3port);
-		System.out.println(r4port);
-		System.out.println(r1port);
+//		System.out.println("Portal information: ");
+//		System.out.println(r2port);
+//		System.out.println(r3port);
+//		System.out.println(r4port);
+//		System.out.println(r1port);
 	
 		//Link the rooms.
 		//System.out.println("Link room 1 to room 2: " + LocationManager.addToGrid(r1, r2port, true));
@@ -212,11 +212,10 @@ public class World implements TickerListener {
 	//to see the boradcast of a mobile moving silently. Deaf mobiles will automatically not see
 	//moving silently broadcast no matter what.
 	public static synchronized void roomArriveLeaveToLocation(Mobile mobile, String text, String blindText) {
-		System.out.println("in ArriveLeave");
 		Room room = (Room)mobile.getLocation();
-		Vector mobiles = room.getMobiles();
+		Vector<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = (Mobile)mobiles.get(c);
+			Mobile mob = mobiles.get(c);
 			
 			if ((!mob.equals(mobile)) && (mob.isPlayer())) {
 				PlayerCharacter player = (PlayerCharacter)mob;
@@ -227,14 +226,13 @@ public class World implements TickerListener {
 				if (mobile.moveSilentlyCheck > 0) { //yes, he's moving silently
 					if ((!player.isDeaf) && (player.listenCheck >= mobile.moveSilentlyCheck)) { //we beat the MS check
 						if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-						else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+						else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 					}
 				}
 				
 				else { //mobile is moving regularly.
-					System.out.println("in regular move");
 					if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-					else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+					else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
 				}
 			} //end player if condition
 		} //end for loop

@@ -1,5 +1,10 @@
 package ring.system;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Logger;
+
 import ring.jox.BeanParser;
 import ring.jox.beans.RoomSet;
 import ring.resources.*;
@@ -14,6 +19,8 @@ import ring.resources.*;
  * @author jeff
  */
 public class MUDBoot {
+	private static final Logger log = Logger.getLogger(MUDBoot.class.getName());
+	
     public static void boot() {
         System.out.println("Loading RingMUD.");
 
@@ -35,10 +42,54 @@ public class MUDBoot {
 
         //Load NPCs
 
-        //Load world (zones and rooms)
-        //TODO no more hardcoded file, read everything from the data/world directory.
-        BeanParser<RoomSet> roomParser = new BeanParser<RoomSet>();
-        RoomSet set = roomParser.parse("/etc/ringmud/data/rooms.xml", RoomSet.class);
-        set.construct();
+        //Load the universe (world)
+        buildUniverse();
+    }
+    
+    /**
+     * Builds the "universe." The universe is all rooms in the world
+     * composed from all files in all directories. In a normal setup,
+     * there is only one data directory. However, in a setup with multiple
+     * world data directories, this will make sure all rooms get linked together.
+     */
+    private static void buildUniverse() {
+        String[] roomSetFiles = MUDConfig.getRoomSetFiles();
+        RoomSet universe = new RoomSet();
+        universe.setName("Universe");
+        for (String filePath : roomSetFiles) {
+        	RoomSet set = constructFromFiles(filePath);
+        	log.info("Processed globe " + set);
+        	universe.copyFrom(set);
+        }
+        
+        universe.construct();
+    }
+    
+    private static RoomSet constructFromFiles(String directory) {
+    	File dir = new File(directory);
+    	RoomSet globe = new RoomSet();
+    	globe.setName(directory);
+    	if (dir.isDirectory() == false) {
+    		throw new MUDBootException("Data files should only be specified by directory, not absolute files.");
+    	}
+    	else {
+    		File[] dataFiles = dir.listFiles(new XMLFileNameFilter());
+    		
+    		for (File dataFile : dataFiles) {
+    			log.fine("Processing RoomSet " + dataFile);
+    			try {
+					FileInputStream stream = new FileInputStream(dataFile);
+					BeanParser<RoomSet> roomParser = new BeanParser<RoomSet>();
+	    			RoomSet set = roomParser.parse(stream, RoomSet.class);
+	    			globe.copyFrom(set);
+				} 
+    			catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}			
+    		}
+    		
+    		return globe;
+    	}
     }
 }

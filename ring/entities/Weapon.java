@@ -40,7 +40,6 @@ public class Weapon extends Item {
 
 	// Weapon flags!
 	private boolean twoHanded;
-	private boolean cursed;
 
 	//Empty constructor required for bean-ness.
 	public Weapon() {
@@ -86,16 +85,7 @@ public class Weapon extends Item {
 		return twoHanded;
 	}
 	
-	public boolean isCursed() {
-		return cursed;
-	}
-	
 	public void setTwoHanded(boolean yes) {
 		twoHanded = yes;
 	}
-	
-	public void setCursed(boolean yes) {
-		cursed = yes;
-	}
-
 }

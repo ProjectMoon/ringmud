@@ -2,6 +2,7 @@ package ring.jox.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import ring.movement.Location;
 import ring.movement.LocationManager;
@@ -17,6 +18,7 @@ import ring.movement.Room;
 public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	public static final long serialVersionUID = 1;
 	
+	private static Logger log = Logger.getLogger(RoomSet.class.getName());
 	private HashMap<String, RoomBean> roomSet;
 	private HashMap<String, Room> cachedLocations;
 	private String name;
@@ -24,6 +26,10 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	public RoomSet() {
 		roomSet = new HashMap<String, RoomBean>();
 		cachedLocations = new HashMap<String, Room>();
+	}
+	
+	public void copyFrom(RoomSet otherSet) {
+		roomSet.putAll(otherSet.roomSet);
 	}
 	
 	public RoomBean[] getRoom() {
@@ -40,9 +46,10 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	 * Constructs the zone based on the rooms here.
 	 */
 	public void construct() {
-		System.out.println("Building RoomSet \"" + this.getName() + "\"");
+		log.info("Building RoomSet \"" + this.getName() + "\"");
 		for (RoomBean roomBean : roomSet.values()) {
-			System.out.println("Processing " + roomBean);
+			log.fine("Processing " + roomBean);
+			
 			Room room = getRoom(roomBean);
 			
 			//Create all the exits for this room and add it to the grid.
@@ -59,7 +66,6 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 	private Location getLocationFromID(String id) {
 		RoomBean bean = roomSet.get(id);
 		Room r = getRoom(bean);
-		System.out.println("Returning " + r);
 		return r;
 	}
 	
@@ -81,5 +87,9 @@ public class RoomSet extends RingBean<RoomSet> implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String toString() {
+		return getName();
 	}
 }

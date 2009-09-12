@@ -68,6 +68,7 @@ public class RingMain {
 			System.err.println(app + " exists, but is not a valid RingMUD module!");
 		}
 		catch (NullPointerException e) {
+			e.printStackTrace();
 			System.err.println(app + " is not a defined RingMUD module");
 		}
 		

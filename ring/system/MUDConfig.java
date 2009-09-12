@@ -18,10 +18,6 @@ import java.net.*;
 public class MUDConfig {
     private static Properties config;
     private static final String SEP = System.getProperty("file.separator");
-    private static final String CFG_PATH = System.getProperty("user.home") +
-                                            SEP + "RingMUD" + SEP;
-
-    private static final String DEFAULT_DATA_PATH = CFG_PATH + "data" + SEP;
 
     public static void main(String[] args) {
     	MUDConfig.loadProperties();
@@ -45,38 +41,7 @@ public class MUDConfig {
     }
 
     private static void loadDefaults() {
-      	try {
-            config.setProperty("class_features_data", DEFAULT_DATA_PATH + "classfeatures.xml");
-            config.setProperty("item_data", DEFAULT_DATA_PATH + "items.xml");
-            config.setProperty("npc_data", DEFAULT_DATA_PATH + "npcs.xml");
-            config.setProperty("zone_data", DEFAULT_DATA_PATH + "world.xml");
-            config.setProperty("world_state_file", DEFAULT_DATA_PATH + "world.state");
-            config.setProperty("player_saves", DEFAULT_DATA_PATH + "players" + SEP);
-
-            String comments = "RingMUD configuration file\n" +
-                    "This is the main config file for the MUD\n" +
-                    "Default values should be suitable for most systems.\n" +
-                    "However, if you wish to include additional data sources\n" +
-                    "Specify them via full path name and separate with semicolons (;).";
-
-            String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation");
-            makeDirectories(path);
-            
-            //TODO less hardcoding of filenames, more config manager reading!
-            path += SEP + "mud.config";
-            URI uri = new File(path).toURI();
-            
-            try {
-            	uri.toURL();
-            } catch (MalformedURLException e) {
-            	e.printStackTrace();
-            }
-            config.store(new FileWriter(path), comments);
-               
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+    	//TODO reimplement this.
     }
 
     private static void makeDirectories(String path) {
@@ -86,39 +51,37 @@ public class MUDConfig {
     }
 
     public static String[] getClassFeaturesFiles() {
-        String paths = config.getProperty("class_features_data");
+        String paths = config.getProperty("data.classFeatures");
         String[] ret = paths.split(";");
         return ret;
     }
 
     public static String[] getItemFiles() {
-        String paths = config.getProperty("item_data");
+        String paths = config.getProperty("data.items");
         String[] ret = paths.split(";");
         return ret;
     }
 
     public static String[] getNPCFiles() {
-        String paths = config.getProperty("npc_data");
+        String paths = config.getProperty("data.mobiles");
         String[] ret = paths.split(";");
         return ret;
     }
 
-    public static String[] getZoneFiles() {
-        String paths = config.getProperty("zone_data");
+    public static String[] getRoomSetFiles() {
+        String paths = config.getProperty("data.world");
         String[] ret = paths.split(";");
         return ret;
     }
 
     public static String[] getPlayerSavePath() {
-        String paths = config.getProperty("player_saves");
+        String paths = config.getProperty("data.players");
         String[] ret = paths.split(";");
         return ret;
     }
 
-    public static String[] getWorldStateFile() {
-        String paths = config.getProperty("world_state_file");
-        String[] ret = paths.split(";");
-        return ret;
+    public static String getSaveDirectory() {
+        return config.getProperty("data.saveDir");
     }
 
 }

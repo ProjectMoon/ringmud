@@ -117,18 +117,11 @@ public final class CommandParameters {
 	// executed properly.
 	// All nulls and such are handled properly as well.
 	private Object[] getParameters(String[] params, String cmdType) {
-		System.out.println("in getParameters");
 		WorldObject o;
 
 		// Handle a command that has no parameters.
-		System.out.println("checking nullity");
 		if ((params == null) || (params.length == 0) || (params[0] == null))
 			return null;
-
-		System.out.println("passed nullity. param length: " + params.length);
-		for (int c = 0; c < params.length; c++) {
-			System.out.println("param: " + params[c]);
-		}
 
 		// Do things according to the type of command.
 		// is is a "say"-type command?
@@ -146,11 +139,8 @@ public final class CommandParameters {
 				parameters[c] = params[c];
 			}
 
-			System.out.println("getting a name");
 			String name = params[params.length - 1].toString();
-			System.out.println("got it");
 			parameters[params.length - 1] = getWorldObjectByName(name);
-			System.out.println("got world object");
 		}// END OF SPELL COMMANDS
 
 		// Is it a command that looks for parameters in the inventory?
@@ -191,9 +181,7 @@ public final class CommandParameters {
 
 		// It must be a command that looks for parameters in a room...
 		if (cmdType.equals(Command.CMD)) {
-			System.out.println("in CMD if statement.");
 			for (int x = 0; x < parameters.length; x++) {
-				System.out.println("loop " + x);
 				// First, let's check to see if the parameter is something in
 				// the room. This is the most common
 				// Parameter.
@@ -224,7 +212,7 @@ public final class CommandParameters {
 		try {
 			mob = (Mobile) sender;
 		} catch (NullPointerException e) {
-			System.out.println("WARNING: NULL SENDER SOURCE");
+			System.err.println("WARNING: NULL SENDER SOURCE");
 			mob = null;
 		}
 
@@ -240,7 +228,7 @@ public final class CommandParameters {
 		try {
 			mob = (Mobile) sender;
 		} catch (NullPointerException e) {
-			System.out.println("WARNING: NULL SENDER SOURCE");
+			System.err.println("WARNING: NULL SENDER SOURCE");
 			mob = null;
 		}
 
@@ -295,7 +283,7 @@ public final class CommandParameters {
 		// Catch a null pointer... This tells us it isn't anything... just a
 		// sort of thing to return.
 		catch (NullPointerException e) {
-			System.out.println("COULDN\'T FIND!");
+			System.err.println("COULDN'T FIND!");
 			return null;
 		}
 

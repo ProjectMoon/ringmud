@@ -231,6 +231,9 @@ public class PreferencesManager implements RingModule {
 			System.out.println("Creating data directories...");
 			new File("/etc/ringmud/data/players/").mkdirs();
 			new File("/etc/ringmud/data/world/").mkdirs();
+			
+			System.out.println("Setting up preferences...");
+			set("ring.system.MUDConfig", "configLocation", "/etc/ringmud/");
 		}
 		else {
 			System.out.println("/etc/ringmud already exists, or you have insufficient permissions.");

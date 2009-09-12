@@ -22,6 +22,8 @@ import ring.players.*;
 import ring.util.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.beans.*;
 import java.io.*;
 import ring.resources.ClassFeatureLoader;
@@ -36,19 +38,21 @@ public final class CommandHandler {
 	// Instance variables.
 	private CommandSender sender;// The Command-Sending object this handler is
 									// linked to.
-	private TreeMap<String, Method> commands;// TreeMap of all the commands.
+	private HashMap<String, Method> commands;// Map of all the commands.
 												// super quick lookup.
-	private TreeMap<String, String> alternateCommands;// TreeMap of all the
+	private HashMap<String, String> alternateCommands;// Map of all the
 														// alternate commands.
+	
+	private static final Logger log = Logger.getLogger(CommandHandler.class.getName());
 
 	// Internal constants.
 
 	public CommandHandler(CommandSender sender) {
 		this.sender = sender;
 
-		alternateCommands = new TreeMap<String, String>();
+		alternateCommands = new HashMap<String, String>();
 		// Set up the command list.
-		commands = new TreeMap<String, Method>();
+		commands = new HashMap<String, Method>();
 		Class<?> c = this.getClass();
 		Method[] m = c.getDeclaredMethods();
 		for (int x = 0; x < m.length; x++) {
@@ -84,10 +88,10 @@ public final class CommandHandler {
 	// CommandResult that the
 	// sender can use.
 	public CommandResult sendCommand(String command) {
-		System.out.println("received: " + command);
+		log.info("received from [" + sender.toString() + "]: " + command);
 		// Make the command object.
 		Command cmd = new Command(command, Command.CMD);
-		System.out.println("Made cmd object");
+		log.fine("Made cmd object");
 
 		// We have a hierarchy of command checking:
 		// 1. We check to see if it's an aliased command.
@@ -98,10 +102,10 @@ public final class CommandHandler {
 				if (findClassFeature(cmd))
 					cmd = new Command("classfeature " + command, Command.CMD);
 
-		System.out.println("checked alternates");
+		log.fine("checked alternates");
 		// actually do the command.
 		CommandResult cr = handleCommand(cmd);
-		System.out.println("handled command");
+		log.info("handled command [" + command + "] from " + sender.toString());
 		return cr;
 	}
 
@@ -183,49 +187,38 @@ public final class CommandHandler {
 
 		// Invoke the method!
 		try {
+			log.finer("beginning command Method object invocation");
 			// cover both no-parameter and parametered commands
 
-			// commands with no paramteres
+			// commands with no paramters
 			if (nMethodParams == 0) {
-				System.out.println("no params");
+				log.finer("method has no params");
 				res = (CommandResult) m.invoke(this);
 			}
 
 			// commands with parameters. however, they may still not need
 			// parameters to operate.
 			else {
-				System.out.println("params");
+				log.finer("method has params");
 				if (cmd.getParameterLength() == 0) {
-					System.out.println("execing null param");
+					log.finer("execing null param");
 					res = (CommandResult) m.invoke(this, parameters);
-				} else
-					res = (CommandResult) m.invoke(this,
-							new Object[] { parameters });
+				} 
+				else {
+					res = (CommandResult) m.invoke(this, new Object[] { parameters });
+				}
 			}
-		} catch (IllegalAccessException e) {
-			System.out.println("UHOH1");
-		} catch (InvocationTargetException e) {
-			System.err
-					.println("InvocationTargetException for CMD_"
-							+ cmd.getActualCommand()
-							+ "(). This most likely means there is a NullPointerException issue in the command code. It may also be a ClassCastException issue.");
-			e.printStackTrace();
+		} 
+		catch (IllegalAccessException e) {
+			log.log(Level.SEVERE, "IllegalAccessException during execution of " + methodName, e);
+		} 
+		catch (InvocationTargetException e) {
+			log.log(Level.SEVERE, "There was an error in " + methodName + ". Sender was: " + sender.toString(), e.getCause());
 		}
 		// Fix that little bug with the no-parameter methods like the
 		// directional ones.
 		catch (IllegalArgumentException e) {
-			System.out.println("LOL ARGUMENT FAILURE :D!");
-			System.out.println(e);
-			e.printStackTrace();
-			/*
-			 * try { res = (CommandResult)m.invoke(this, (Object[])null); }
-			 * catch (IllegalAccessException ex) { System.out.println("UHOH11");
-			 * } catch (InvocationTargetException ex) {
-			 * System.err.println("InvocationTargetException for CMD_" +
-			 * cmd.getActualCommand() +
-			 * "(). This most likely means there is a Null Pointer issue in the command code."
-			 * ); }
-			 */
+			log.log(Level.SEVERE, "IllegalArgumentException in " + methodName, e);
 		}
 		// End of ye method invocation.
 
@@ -342,12 +335,8 @@ public final class CommandHandler {
 	// This command looks around the current room of the sender, or it looks at
 	// a specified object.
 	private CommandResult CMD_look(CommandParameters params) {
-		System.out.println("in look");
-		System.out.println("sender in Look: " + sender);
 		params.init(Command.CMD);
-		System.out.println("param created");
 		Object t = params.getParameter(0);
-		System.out.println("got param");
 
 		// Make the CommandResult object.
 		CommandResult res = new CommandResult();
@@ -423,8 +412,11 @@ public final class CommandHandler {
 		CommandResult res = new CommandResult();
 		res.setFailText("You cannot talk!");
 		Mobile mob = (Mobile) sender;
+		
+		// Someone silenced can't talk...
+		if (mob.isSilent)
+			return res;
 
-		// Say code here.
 		String message = "";
 		String textBackToPlayer;
 
@@ -461,6 +453,7 @@ public final class CommandHandler {
 				+ " says something, but you cannot hear it!\n");
 
 		res.setSuccessful(true);
+		
 		// Return the CommandResult.
 		return res;
 	}
@@ -497,12 +490,9 @@ public final class CommandHandler {
 				message += " ";
 			}
 		}
-
-		// check for speaker's deafness deafness again.
-		if (!mob.isDeaf) {
-			textBackToPlayer += message;
-			textBackToPlayer += "\"";
-		}
+		
+		textBackToPlayer += message;
+		textBackToPlayer += "\"";
 
 		textToOtherPlayers += message;
 		textToOtherPlayers += "\"";
@@ -720,11 +710,8 @@ public final class CommandHandler {
 	}
 
 	private CommandResult CMD_drop(CommandParameters params) {
-		System.out.println("initting");
 		params.init(Command.INV);
-		System.out.println("initted");
 		Object target = params.getParameter(0);
-		System.out.println("got param: " + target);
 
 		CommandResult res = new CommandResult();
 
@@ -742,26 +729,27 @@ public final class CommandHandler {
 		Mobile mob = (Mobile) sender;
 
 		// Remove the item from the inventory.
-		System.out.println("removing...");
-		System.out.println("removed? " + mob.removeItemFromInventory(item));
-
-		// Put it back in the room the mobile is in.
-		System.out.println("attempting to add");
-		Room room = (Room)mob.getLocation();
-		room.addEntity(item);
-		System.out.println("added.");
-
-		// Set the text.
-		res.setText("[R][WHITE]You drop "
-				+ item.getIndefiniteDescriptor().toLowerCase() + " "
-				+ item.getName() + "[R][WHITE].");
-
-		// Notify other people in the world.
-		World.sendVisualToLocation(mob, mob.getName() + " drops "
-				+ item.getIndefiniteDescriptor().toLowerCase() + " "
-				+ item.getName() + "[R][WHITE].",
-				"\nYou hear the thud of something being dropped.\n");
-
+		if (mob.removeItemFromInventory(item)) {
+			// Put it back in the room the mobile is in.
+			Room room = (Room)mob.getLocation();
+			room.addEntity(item);
+			System.out.println("added.");
+	
+			// Set the text.
+			res.setText("[R][WHITE]You drop "
+					+ item.getIndefiniteDescriptor().toLowerCase() + " "
+					+ item.getName() + "[R][WHITE].");
+	
+			// Notify other people in the world.
+			World.sendVisualToLocation(mob, mob.getName() + " drops "
+					+ item.getIndefiniteDescriptor().toLowerCase() + " "
+					+ item.getName() + "[R][WHITE].",
+					"\nYou hear the thud of something being dropped.\n");
+	
+			}
+		else {
+			res.setFailText("[R][WHITE]You can't drop that!");
+		}
 		res.setSuccessful(true);
 		return res;
 	}
@@ -786,7 +774,6 @@ public final class CommandHandler {
 	}
 
 	private CommandResult CMD_cast(CommandParameters params) {
-		System.out.println("cast call");
 		CommandResult res = new CommandResult();
 		params.init(Command.SPL);
 
@@ -843,7 +830,7 @@ public final class CommandHandler {
 		// we must go into the targeting check procedures.
 
 		if (spell.getTargetType() == Spell.SINGLE_TARGET) {
-			System.out.println("1");
+			log.fine("[" + sender.toString() + "] Casting: step 1");
 			WorldObject t = (WorldObject) params.lastParameter();
 			if (t == null) {
 				System.out.println("You don't see that here.");
@@ -856,7 +843,7 @@ public final class CommandHandler {
 				return res;
 			}
 
-			System.out.println("2");
+			log.fine("[" + sender.toString() + "] Casting: step 2");
 			Affectable target = (Affectable) t;
 			Effect e = spell.generateEffect();
 			e.setTarget(target);
@@ -868,10 +855,10 @@ public final class CommandHandler {
 			// remove spell from memory
 			// casting delay
 			// check the resistance and stuff...
-			System.out.println("3");
+			log.fine("[" + sender.toString() + "] Casting: step 3");
 			mob.sendData("[R][WHITE]You begin chanting...\n");
 			e.startEffect();
-			System.out.println("started effect");
+			log.fine("[" + sender.toString() + "] Casting: started effect");
 			res.setText("[R][WHITE]You cast " + spell.getName() + " at "
 					+ target.getName() + ".");
 			spells.removeSpell(spell);
@@ -925,7 +912,6 @@ public final class CommandHandler {
 		// Check if the target is wearable.
 		if (!(target.isWearable()))
 			return res;
-		System.out.println("Passed step 1...");
 
 		// Check if the wearer meets all the requirements to wear target
 		// (alignment, class, etc.)
@@ -942,7 +928,6 @@ public final class CommandHandler {
 		// Were there any parts actually found?
 		if (eligibleParts == null)
 			return res;
-		System.out.println("Passed step 2...");
 
 		// Check if the wearer has room on the body part. If the number from the
 		// previous step was
@@ -952,10 +937,8 @@ public final class CommandHandler {
 		boolean success = false;
 		BodyPart thePart = null;
 
-		System.out.println("Eligible parts: " + eligibleParts.length);
 		for (int c = 0; c < eligibleParts.length; c++) {
 			thePart = eligibleParts[c];
-			System.out.println("The part: " + thePart.getName());
 			success = mob.equip(thePart, target);
 			if (success)
 				break;
@@ -968,7 +951,6 @@ public final class CommandHandler {
 
 		// Remove the target from the wearer's inventory.
 		mob.removeItemFromInventory(target);
-		System.out.println("Removed item...");
 
 		// Set text and stuff.
 		res.setText("[R][WHITE]You wear "
@@ -976,8 +958,6 @@ public final class CommandHandler {
 				+ target.getName() + " on your "
 				+ thePart.getName().toLowerCase() + ".");
 		res.setSuccessful(true);
-		
-		System.out.println("Set success");
 
 		// Notify other players.
 		World.sendVisualToLocation(mob, "[R][WHITE]" + mob.getName()
@@ -1302,8 +1282,7 @@ public final class CommandHandler {
 		Mobile mob = (Mobile) sender;
 		// is our spotter blind? if so, he can't really spot anything can he?
 		if (mob.isBlind) {
-			res
-					.setFailText("[R][WHITE]You might have better luck spotting things if you weren't blind...");
+			res.setFailText("[R][WHITE]You might have better luck spotting things if you weren't blind...");
 			return res;
 		}
 
@@ -1318,9 +1297,7 @@ public final class CommandHandler {
 		// ok, so they do...
 		int check = spot.makeCheck();
 		mob.spotCheck = check;
-		res
-				.setText("[R][WHITE]You begin scanning the area for anything interesting... (check: "
-						+ check + ")");
+		res.setText("[R][WHITE]You begin scanning the area for anything interesting... (check: " + check + ")");
 		res.setSuccessful(true);
 		return res;
 	}
@@ -1333,8 +1310,7 @@ public final class CommandHandler {
 		// is our listener deaf? if so, he can't really listen for anything can
 		// he?
 		if (mob.isDeaf) {
-			res
-					.setFailText("[R][WHITE]You might have better luck listening for things if you weren't deaf...");
+			res.setFailText("[R][WHITE]You might have better luck listening for things if you weren't deaf...");
 			return res;
 		}
 
@@ -1349,9 +1325,7 @@ public final class CommandHandler {
 		// ok, so they do...
 		int check = listen.makeCheck();
 		mob.listenCheck = check;
-		res
-				.setText("[R][WHITE]You begin listening intently for any interesting (or suspicious) sounds... (check: "
-						+ check + ")");
+		res.setText("[R][WHITE]You begin listening intently for any interesting (or suspicious) sounds... (check: "	+ check + ")");
 		res.setSuccessful(true);
 		return res;
 	}
@@ -1407,8 +1381,7 @@ public final class CommandHandler {
 
 	private CommandResult CMD_who(CommandParameters params) {
 		CommandResult res = new CommandResult();
-		res
-				.setFailText("[R][WHITE]Please use the command 'help who' for information on how to use the who command.");
+		res.setFailText("[R][WHITE]Please use the command 'help who' for information on how to use the who command.");
 
 		// Parse the parameters.
 		// Current acceptable parameters include the following:
@@ -1498,13 +1471,9 @@ public final class CommandHandler {
 
 	private CommandResult CMD_levelup() {
 		CommandResult res = new CommandResult();
-		System.out.println("1...");
-
 		Mobile mob = (Mobile) sender;
-		System.out.println("2...");
-
 		mob.levelup();
-		System.out.println("3...");
+		
 		res.setText("Leveled up...");
 		res.setSuccessful(true);
 		return res;
@@ -1523,13 +1492,9 @@ public final class CommandHandler {
 			return res;
 		}
 
-		System.out.println("Spell name: " + spellNameAsString);
-
 		// Check to see if the mobile has the spell.
 		SpellList spells = mob.getMobileClass().getAvailableSpells();
-		System.out.println("1....");
 		Spell spell = spells.getSpellByName(spellNameAsString);
-		System.out.println("2....");
 
 		if (spell == null) {
 			res
@@ -1546,21 +1511,14 @@ public final class CommandHandler {
 
 		// Memorize it!
 		SpellList memorizedSpells = mob.getMobileClass().getMemorizedSpells();
-		System.out.println("3....");
 
 		// Need to implement some sort of countdown or something!!
-		System.out.println("spelllist: " + memorizedSpells);
 		mob.increaseLockTime(2);
-		mob.setLockMessage("[GREEN]You are busy preparing [B]"
-				+ spell.getName() + "[R]![WHITE]");
-		mob.setLockFinishedMessage("[GREEN]You finish preparing [B]"
-				+ spell.getName() + "[R]![WHITE]");
-		System.out.println(memorizedSpells.addSpell(spell));
-		System.out.println("3.5....");
-		res.setText("[GREEN]You begin studying [B]" + spell.getName()
-				+ "[R].[WHITE]");
+		mob.setLockMessage("[GREEN]You are busy preparing [B]" + spell.getName() + "[R]![WHITE]");
+		mob.setLockFinishedMessage("[GREEN]You finish preparing [B]" + spell.getName() + "[R]![WHITE]");
+		memorizedSpells.addSpell(spell);
+		res.setText("[GREEN]You begin studying [B]" + spell.getName() + "[R].[WHITE]");
 		res.setSuccessful(true);
-		System.out.println("4!");
 
 		return res;
 	}
@@ -1642,8 +1600,7 @@ public final class CommandHandler {
 
 	private CommandResult CMD_save() {
 		CommandResult res = new CommandResult();
-		res
-				.setFailText("[B][RED]SAVING FAILED!! PLEASE NOTIFY AN ADMINISTRATOR!![R][WHITE]");
+		res.setFailText("[B][RED]SAVING FAILED!! PLEASE NOTIFY AN ADMINISTRATOR!![R][WHITE]");
 		Mobile mob = (Mobile) sender;
 
 		MobileLoader.saveMobile(mob.getName() + ".mob", mob);

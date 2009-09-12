@@ -64,7 +64,12 @@ public class Inventory implements Iterable<Item>, Serializable {
 	}
 	
 	public boolean removeItem(Item item) {
-		return inv.remove(item);
+		if (!item.isCursed()) {
+			return inv.remove(item);
+		}
+		else {
+			return false;
+		}
 	}
 	
 	//TODO later this will need weight checks or something.
