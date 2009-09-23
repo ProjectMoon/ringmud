@@ -104,9 +104,9 @@ public class World implements TickerListener {
 		//System.out.println("Link room 3 to room 4: " + LocationManager.addToGrid(r3, r4port, true));
 		//System.out.println("Link room 4 to room 1: " + LocationManager.addToGrid(r4, r1port, true));
 		
-		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0, new HPChange());
-		EffectCreatorParameters p = new EffectCreatorParameters(); p.add("HPChange:amount", 40);
-		hpe.passParameters(p);
+		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0);
+		hpe.addEffectCreator("hpchange", new HPChange());
+		hpe.addParameter("hpchange", "amount", 40);
 
 		Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
 		r1.addEntity(armor);

@@ -15,89 +15,103 @@ package ring.effects;
  */
 
 import java.io.Serializable;
-import java.util.TreeMap;
+import java.util.HashMap;
 
+/**
+ * Class used to encapsulate effect creator parameters. Each
+ * EffectCreator stores its own set of parameters. Cannot be
+ * instantiated directly outside the package.
+ * @author projectmoon
+ *
+ */
 public final class EffectCreatorParameters implements Serializable {
-    public static final long serialVersionUID = 1;
-  //This class encapsulates EffectCreator parameters. They are stored as a TreeMap, with string names for keys.
-  private TreeMap params;
+	public static final long serialVersionUID = 1;
+	// This class encapsulates EffectCreator parameters. They are stored as a
+	// HashMap, with string names for keys.
+	private HashMap<String, Object> params;
 
-  public EffectCreatorParameters() {
-    params = new TreeMap();
-  }
+	protected EffectCreatorParameters() {
+		params = new HashMap<String, Object>();
+	}
 
-  public EffectCreatorParameters(TreeMap params) {
-    this.params = params;
-  }
-  
-  private EffectCreatorParameters(EffectCreatorParameters other) {
-      this.params = new TreeMap(other.params);
-  }
+	protected EffectCreatorParameters(HashMap<String, Object> params) {
+		this.params = params;
+	}
 
-  //begin add methods.
-  //There is a version of add for every pertinent primitive type, Strings, and one for a general catch-all Object.
-  public void add(String name, int i) {
-    Integer in = new Integer(i);
-    params.put(name, in);
-  }
+	protected EffectCreatorParameters(EffectCreatorParameters other) {
+		this.params = new HashMap<String, Object>(other.params);
+	}
 
-  public void add(String name, boolean b) {
-    Boolean bo = new Boolean(b);
-    params.put(name, bo);
-  }
+	// begin add methods.
+	// There is a version of add for every pertinent primitive type, Strings,
+	// and one for a general catch-all Object.
+	public void add(String name, int i) {
+		Integer in = new Integer(i);
+		params.put(name, in);
+	}
 
-  public void add(String name, double d) {
-    Double dou = new Double(d);
-    params.put(name, dou);
-  }
+	public void add(String name, boolean b) {
+		Boolean bo = new Boolean(b);
+		params.put(name, bo);
+	}
 
-  public void add(String name, String s) {
-    params.put(name, s);
-  }
+	public void add(String name, double d) {
+		Double dou = new Double(d);
+		params.put(name, dou);
+	}
 
-  public void add(String name, Object o) {
-    params.put(name, o);
-  }
+	public void add(String name, String s) {
+		params.put(name, s);
+	}
 
-  //begin get methods
-  //There is a version of get for eveyr pertinent primitive type, Strings, and one for a general catch-all Object.
-  public int getInt(String name) {
-    Integer i = (Integer) params.get(name);
-    if (i == null) return 0;
-    return i.intValue();
-  }
+	public void add(String name, Object o) {
+		params.put(name, o);
+	}
 
-  public boolean getBoolean(String name) {
-    Boolean bo = (Boolean) params.get(name);
-    if (bo == null) return false;
-    return bo.booleanValue();
-  }
+	// begin get methods
+	// There is a version of get for eveyr pertinent primitive type, Strings,
+	// and one for a general catch-all Object.
+	public int getInt(String name) {
+		Integer i = (Integer) params.get(name);
+		if (i == null)
+			return 0;
+		return i.intValue();
+	}
 
-  public double getDouble(String name) {
-    Double dou = (Double) params.get(name);
-    if (dou == null) return 0.0;
-    return dou.doubleValue();
-  }
+	public boolean getBoolean(String name) {
+		Boolean bo = (Boolean) params.get(name);
+		if (bo == null)
+			return false;
+		return bo.booleanValue();
+	}
 
-  public String getString(String name) {
-    String s = (String)params.get(name);
-    if (s == null) return "";
-    return s;
-  }
+	public double getDouble(String name) {
+		Double dou = (Double) params.get(name);
+		if (dou == null)
+			return 0.0;
+		return dou.doubleValue();
+	}
 
-  public Object getObject(String name) {
-    return params.get(name);
-  }
+	public String getString(String name) {
+		String s = (String) params.get(name);
+		if (s == null)
+			return "";
+		return s;
+	}
 
-  public void removeParameter(String name) {
-    params.remove(name);
-  }
+	public Object getObject(String name) {
+		return params.get(name);
+	}
 
-  public boolean equals(EffectCreatorParameters other) {
-    return params.equals(other.params);
-  }
-  
-  public EffectCreatorParameters uniqueInstance() {
-      return new EffectCreatorParameters(this);
-  }
+	public void removeParameter(String name) {
+		params.remove(name);
+	}
+
+	public boolean equals(EffectCreatorParameters other) {
+		return params.equals(other.params);
+	}
+
+	public EffectCreatorParameters uniqueInstance() {
+		return new EffectCreatorParameters(this);
+	}
 }

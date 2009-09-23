@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.net.*;
 
 /**
@@ -16,6 +20,7 @@ import java.net.*;
  * @author jh44695
  */
 public class MUDConfig {
+	private static Logger log = Logger.getLogger(MUDConfig.class.getName());
     private static Properties config;
     private static final String SEP = System.getProperty("file.separator");
 
@@ -23,7 +28,7 @@ public class MUDConfig {
     	MUDConfig.loadProperties();
     }
     public static void loadProperties() {
-        config = new Properties();
+        config = new Properties(loadDefaults());
         try {
         	String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
             System.out.println("Loading MUD configuration: " + path);
@@ -40,16 +45,21 @@ public class MUDConfig {
         }
     }
 
-    private static void loadDefaults() {
-    	//TODO reimplement this.
+    private static Properties loadDefaults() {
+    	InputStream input = MUDConfig.class.getClassLoader().getResourceAsStream("ring/main/default-config.properties");
+    	Properties props = new Properties();
+    	try {
+			props.load(input);
+		}
+    	catch (IOException e) {
+			log.log(Level.SEVERE, "Problem loading default properties", e);
+		}
+    	return props;
     }
 
-    private static void makeDirectories(String path) {
-    	System.out.println ("mkdir " + path);
-        File f = new File(path);
-        f.mkdir();
+    public static String getServerIP() {
+    	return config.getProperty("server.address");
     }
-
     public static String[] getClassFeaturesFiles() {
         String paths = config.getProperty("data.classFeatures");
         String[] ret = paths.split(";");

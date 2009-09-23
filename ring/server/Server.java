@@ -18,6 +18,7 @@ import ring.players.*;
 import java.net.*;
 import java.io.*;
 import ring.system.MUDBoot;
+import ring.system.MUDConfig;
 
 public class Server implements RingModule {
 	// This is the world object. Everything is stored in it.
@@ -38,7 +39,7 @@ public class Server implements RingModule {
 			if (args[0].equals("-a"))
 				addr = args[1];
 			else
-				addr = "localhost";
+				addr = MUDConfig.getServerIP();
 		}
 
 		Socket playerSocket;

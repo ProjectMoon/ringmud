@@ -78,10 +78,10 @@ public class MobileClassFactory {
         skills.addSkill(spot);
         skills.addSkill(listen);
 
-        Effect mme = new Effect(Effect.Duration.INSTANT, 0, new HPChange());
-        EffectCreatorParameters hpe = new EffectCreatorParameters();
-        hpe.add("HPChange:amount", -5);
-        mme.passParameters(hpe);
+        Effect mme = new Effect(Effect.Duration.INSTANT, 0);
+        mme.addEffectCreator("hpchange", new HPChange());
+        mme.addParameter("hpchange", "amount", -5);
+  
         Spell mm = new Spell("magic missile", 0, mme);
         SpellList spells = new SpellList();
         spells.addSpell(mm);

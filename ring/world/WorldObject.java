@@ -10,6 +10,7 @@ package ring.world;
  */
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import ring.effects.Affectable;
@@ -39,9 +40,11 @@ public abstract class WorldObject implements Affectable, Serializable {
 	// with this list. Most WorldObjects that should be targetable by Effects
 	// deal with them in their
 	// processTick method.
-	protected Vector<Effect> effectsList;
+	protected ArrayList<Effect> effectsList;
 
-	public WorldObject() {}
+	public WorldObject() {
+		effectsList = new ArrayList<Effect>();
+	}
 
 	// addEffect method.
 	// Adds an Effect to the WorldObject.
@@ -58,9 +61,9 @@ public abstract class WorldObject implements Affectable, Serializable {
 			return;
 		}
 
-		effectsList.addElement(e);
+		effectsList.add(e);
 		System.out.println("added element/starting effect");
-		e.startEffect();
+		e.begin();
 		System.out.println("started effect");
 	}
 

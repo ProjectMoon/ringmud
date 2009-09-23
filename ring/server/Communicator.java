@@ -14,6 +14,7 @@ import ring.util.TextParser;
  * @author jeff
  */
 public class Communicator {
+	private static Logger log = Logger.getLogger(Communicator.class.getName());
     private BufferedInputStream input;
     private BufferedOutputStream output;
     private boolean error;
@@ -211,7 +212,6 @@ public class Communicator {
         int idleCount = 0;
         int timeOutCount = 0;
         int timeOutLimit = 500;
-        byte[] bytes;
 
         incomingData = new StringBuffer();
 
@@ -253,7 +253,7 @@ public class Communicator {
                             idleCount = 0;
                             if (timeOutCount++ > timeOutLimit) {
                                 sendln("[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye Bye[WHITE]");
-                                System.out.println("Idle connection terminated for: " + socket.getInetAddress().toString());
+                                log.info("Idle connection terminated for: " + socket.getInetAddress().toString());
                                 throw new IOException();
                             }
                         }

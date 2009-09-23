@@ -10,6 +10,10 @@ package ring.commands;
  */
 
 import ring.spells.*;
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
+import ring.commands.CommandSender;
 import ring.effects.*;
 import ring.entities.*;
 import ring.movement.*;
@@ -857,7 +861,7 @@ public final class CommandHandler {
 			// check the resistance and stuff...
 			log.fine("[" + sender.toString() + "] Casting: step 3");
 			mob.sendData("[R][WHITE]You begin chanting...\n");
-			e.startEffect();
+			e.begin();
 			log.fine("[" + sender.toString() + "] Casting: started effect");
 			res.setText("[R][WHITE]You cast " + spell.getName() + " at "
 					+ target.getName() + ".");

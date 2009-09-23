@@ -23,12 +23,12 @@ public class StatChange extends EffectCreator {
   public StatChange() { super(); }
 
   public void effectLife(Affectable target) {
-    stats[Mobile.STRENGTH] = super.params.getInt("StatChange:strength");
-    stats[Mobile.DEXTERITY] = super.params.getInt("StatChange:dexterity");
-    stats[Mobile.CONSTITUTION] = super.params.getInt("StatChange:constitution");
-    stats[Mobile.INTELLIGENCE] = super.params.getInt("StatChange:intelligence");
-    stats[Mobile.WISDOM] = super.params.getInt("StatChange:wisdom");
-    stats[Mobile.CHARISMA] = super.params.getInt("StatChange:charisma");
+    stats[Mobile.STRENGTH] = super.params.getInt("strength");
+    stats[Mobile.DEXTERITY] = super.params.getInt("dexterity");
+    stats[Mobile.CONSTITUTION] = super.params.getInt("constitution");
+    stats[Mobile.INTELLIGENCE] = super.params.getInt("intelligence");
+    stats[Mobile.WISDOM] = super.params.getInt("wisdom");
+    stats[Mobile.CHARISMA] = super.params.getInt("charisma");
 
     Mobile mob = (Mobile)target;
     mob.setStat(Mobile.STRENGTH, mob.getStat(Mobile.STRENGTH) + stats[0]);

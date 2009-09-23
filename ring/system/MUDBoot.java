@@ -31,9 +31,9 @@ public class MUDBoot {
 
         //Load class features
         System.out.println("Loading class features...");
-        String[] classFeatureFiles = MUDConfig.getClassFeaturesFiles();
-        for (String file : classFeatureFiles)
-            ClassFeatureLoader.loadClassFeaturesFromFile(file);
+        //String[] classFeatureFiles = MUDConfig.getClassFeaturesFiles();
+        //for (String file : classFeatureFiles)
+            //ClassFeatureLoader.loadClassFeaturesFromFile(file);
 
         System.out.println("Done.");
         //Load classes

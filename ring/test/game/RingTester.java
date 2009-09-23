@@ -33,9 +33,10 @@ public class RingTester {
 		
 		mob.setBody(BodyFactory.createMediumHumanoidBody());
 		
-		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0, new HPChange());
-		EffectCreatorParameters p = new EffectCreatorParameters(); p.add("HPChange:amount", 40);
-		hpe.passParameters(p);
+		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0);
+		hpe.addEffectCreator("hpchange", new HPChange());
+		hpe.addParameter("hpchange", "amount", 40);
+		
 		Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
 		
 		//Set up everything
@@ -46,11 +47,11 @@ public class RingTester {
 		//Redirect useless debug output
 		PrintStream realOut = System.out;
 		try {
-			System.setOut(new PrintStream("blah"));
+			//System.setOut(new PrintStream("blah"));
 			NPC.theStream = realOut;
-			mob.doCommand("look");
-			mob.doCommand("search north");
-			mob.doCommand("look");
+			mob.doCommand("get helm");
+			mob.doCommand("wear helm");
+			System.out.println("MOB HP: " + mob.getMaxHP());
 		}
 		catch (Exception e) {
 			System.err.println("Test failed.");

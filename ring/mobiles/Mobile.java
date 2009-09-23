@@ -20,6 +20,7 @@ import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
 import ring.commands.*;
+import ring.commands.nc.CommandHandler;
 import ring.skills.*;
 
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
@@ -298,7 +299,7 @@ public class Mobile extends WorldObject implements CommandSender,
 		this.raceAggressiveList = null;
 		isAggressive = true;
 		isFlying = true;
-		effectsList = new Vector<Effect>();
+		
 		maxMV = BASE_MAXMV;
 		currentMV = BASE_MAXMV;
 		initInternal();
@@ -326,7 +327,6 @@ public class Mobile extends WorldObject implements CommandSender,
 		this.alignmentAggressiveList = alignmentAggressiveList;
 		this.raceAggressiveList = raceAggressiveList;
 		isAggressive = aggressive;
-		effectsList = new Vector<Effect>();
 		maxMV = BASE_MAXMV + (10 * getModifier(Mobile.CONSTITUTION));
 		currentMV = maxMV;
 
@@ -1130,9 +1130,11 @@ public class Mobile extends WorldObject implements CommandSender,
 			Effect effect = (Effect) super.effectsList.get(c);
 			if (effect.isDead()) {
 				System.out.println("***Removing Effect: " + effect);
-				super.effectsList.removeElement(effect);
-			} else
+				super.effectsList.remove(effect);
+			} 
+			else {
 				effect.decrementTimer();
+			}
 		}
 
 		// Deal with locking.

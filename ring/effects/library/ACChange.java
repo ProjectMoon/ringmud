@@ -18,18 +18,21 @@ import ring.effects.*;
 import ring.mobiles.*;
 
 public class ACChange extends EffectCreator {
-  private int acChange;
+	private static final long serialVersionUID = 1L;
+	private int acChange;
 
-  public ACChange() { super(); }
+	public ACChange() {
+		super();
+	}
 
-  public void effectLife(Affectable target) {
-    acChange = super.params.getInt("ACChange:amount");
-    Mobile mob = (Mobile)target;
-    mob.changeAC(acChange);
-  }
+	public void effectLife(Affectable target) {
+		acChange = super.params.getInt("amount");
+		Mobile mob = (Mobile) target;
+		mob.changeAC(acChange);
+	}
 
-  public void effectDeath(Affectable target) {
-    Mobile mob = (Mobile)target;
-    mob.changeAC(acChange * -1);
-  }
+	public void effectDeath(Affectable target) {
+		Mobile mob = (Mobile) target;
+		mob.changeAC(acChange * -1);
+	}
 }

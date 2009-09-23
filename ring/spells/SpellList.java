@@ -19,109 +19,123 @@ import java.util.*;
 import ring.effects.*;
 
 public class SpellList implements Serializable {
-    public static final long serialVersionUID = 1;
-  //This class defines a list of spells available to a MobileClass. It also defines the spell
-  //levels for the spells. This allows some classes to receive spells later while others get
-  //them sooner... Or something.
+	public static final long serialVersionUID = 1;
+	// This class defines a list of spells available to a MobileClass. It also
+	// defines the spell
+	// levels for the spells. This allows some classes to receive spells later
+	// while others get
+	// them sooner... Or something.
 
-  //Instance variables.
-  private Vector spellList;
+	// Instance variables.
+	private Vector spellList;
 
+	public SpellList() {
+		spellList = new Vector();
+	}
 
-  public SpellList() {
-    spellList = new Vector();
-  }
+	// getSpellByName method.
+	// This method returns a Spell based on a name passed to it. This is one of
+	// the most used methods.
+	public Spell getSpellByName(String name) {
+		// Does the spellList even have any spells in it?
+		if (spellList.size() == 0)
+			return null;
 
-  //getSpellByName method.
-  //This method returns a Spell based on a name passed to it. This is one of the most used methods.
-  public Spell getSpellByName(String name) {
-    //Does the spellList even have any spells in it?
-    if (spellList.size() == 0) return null;
+		// Guess it does!
+		Spell s;
+		for (int c = 0; c < spellList.size(); c++) {
+			s = (Spell) spellList.get(c);
+			if (name.equalsIgnoreCase(s.getName()))
+				return s;
+		}
 
-    //Guess it does!
-    Spell s;
-    for (int c = 0; c < spellList.size(); c++) {
-      s = (Spell)spellList.get(c);
-      if (name.equalsIgnoreCase(s.getName())) return s;
-    }
+		return null;
+	}
 
-    return null;
-  }
+	// addSpell method.
+	// This method adds a spell to the list using the spell's default level. It
+	// returns a boolean depending
+	// on whether it successfully adds it or not (no clones of spells!)
+	public boolean addSpell(Spell spell) {
+		if (spellList.contains(spell))
+			return false;
+		else
+			spellList.addElement(spell);
 
-  //addSpell method.
-  //This method adds a spell to the list using the spell's default level. It returns a boolean depending
-  //on whether it successfully adds it or not (no clones of spells!)
-  public boolean addSpell(Spell spell) {
-    if (spellList.contains(spell)) return false;
-    else spellList.addElement(spell);
+		return true;
+	}
 
-    return true;
-  }
+	// addSpell method: The custom level verison.
+	// This method adds a spell to the list using the spell's specified level.
+	// It returns a boolean depending
+	// on whether it successfully adds it or not (no clones of spells!)
+	public boolean addSpell(Spell spell, int level) {
+		spell.setLevel(level);
+		if (spellList.contains(spell))
+			return false;
+		else
+			spellList.addElement(spell);
 
-  //addSpell method: The custom level verison.
-  //This method adds a spell to the list using the spell's specified level. It returns a boolean depending
-  //on whether it successfully adds it or not (no clones of spells!)
-  public boolean addSpell(Spell spell, int level) {
-    spell.setLevel(level);
-    if (spellList.contains(spell)) return false;
-    else spellList.addElement(spell);
+		return true;
+	}
 
-    return true;
-  }
+	// removeSpell method.
+	// This method should never be called... The logger will log all calls of
+	// it.
+	public boolean removeSpell(Spell spell) {
+		if (spellList.contains(spell)) {
+			spellList.remove(spell);
+			return true;
+		}
 
+		return false;
+	}
 
-  //removeSpell method.
-  //This method should never be called... The logger will log all calls of it.
-  public boolean removeSpell(Spell spell) {
-    if(spellList.contains(spell)) {
-      spellList.remove(spell);
-      return true;
-    }
+	// getSpellsByLevel method.
+	// Returns a Spell[] depending on the level specified. IMPLEMENT LATER !!
+	// ...Maybe.
 
-    return false;
-  }
+	// castAll method.
+	// This method is USED FOR ITEMS ONLY!! It simply loops through all of the
+	// spells on the list
+	// and calls their cast method...
+	public void castAll(Affectable target) {
+		// Are there any spells to cast.... ?
+		if (spellList.size() == 0)
+			return;
 
-  //getSpellsByLevel method.
-  //Returns a Spell[] depending on the level specified. IMPLEMENT LATER !! ...Maybe.
+		Spell s;
+		for (int c = 0; c < spellList.size(); c++) {
+			s = (Spell) spellList.get(c);
+			Effect e = s.generateEffect();
+			e.setTarget(target);
+			e.begin();
+		}
+	}
 
-  //castAll method.
-  //This method is USED FOR ITEMS ONLY!! It simply loops through all of the spells on the list
-  //and calls their cast method...
-  public void castAll(Affectable target) {
-    //Are there any spells to cast.... ?
-    if (spellList.size() == 0) return;
+	// decastAll method.
+	// This method is USED FOR ITEMS ONLY!! It is the inverse of above.
+	public void decastAll(Affectable target) {
+		// Are there any spells to cast.... ?
+		if (spellList.size() == 0)
+			return;
 
-    Spell s;
-    for (int c = 0; c < spellList.size(); c++) {
-      s = (Spell)spellList.get(c);
-      Effect e = s.generateEffect();
-      e.setTarget(target);
-      e.startEffect();
-    }
-  }
+		Spell s;
+		for (int c = 0; c < spellList.size(); c++) {
+			s = (Spell) spellList.get(c);
+			Effect e = s.generateEffect();
+			e.setTarget(target);
+			e.endEffect();
+		}
+	}
 
-  //decastAll method.
-  //This method is USED FOR ITEMS ONLY!! It is the inverse of above.
-  public void decastAll(Affectable target) {
-    //Are there any spells to cast.... ?
-    if (spellList.size() == 0) return;
+	public String toString() {
+		String res = "";
+		for (int c = 0; c < spellList.size(); c++) {
+			res += ((Spell) (spellList.get(c))).getName() + " || ";
+		}
 
-    Spell s;
-    for (int c = 0; c < spellList.size(); c++) {
-      s = (Spell)spellList.get(c);
-      Effect e = s.generateEffect();
-      e.setTarget(target);
-      e.endEffect();
-    }
-  }
-
-  public String toString() {
-    String res = "";
-    for (int c = 0; c < spellList.size(); c++) {
-      res += ((Spell)(spellList.get(c))).getName() + " || ";
-    }
-
-    return res;
-  }
+		return res;
+	}
 
 }

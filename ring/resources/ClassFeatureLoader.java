@@ -103,7 +103,7 @@ public class ClassFeatureLoader {
     }
     
     private static Effect createEffect(Element effectElement) {
-        EffectCreatorParameters currentParams = new EffectCreatorParameters();
+        EffectCreatorParameters currentParams = null;
         Effect.Duration duration = determineDuration(effectElement.getAttribute("duration"));
         int timer = 0;
         try {
@@ -122,12 +122,9 @@ public class ClassFeatureLoader {
             if (efcNode.getNodeName().equals("efc")) {
                 Element e = (Element) efcNode;
                 EffectCreator efc = createEffectCreator(e, currentParams); //Current params are modified in the method.
-                eff.addEffectCreator(efc);
+                eff.addEffectCreator("lol", efc);
             }
         }
-
-        //Add the parameters, which were gathered in createEffectCreator
-        eff.passParameters(currentParams);
         
         //Return the effect
         return eff;
