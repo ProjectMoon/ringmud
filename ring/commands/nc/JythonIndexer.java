@@ -83,3 +83,4 @@ public class JythonIndexer implements CommandIndexer {
 		System.out.println("Test done");
 	}
 }
+a
