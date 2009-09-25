@@ -82,7 +82,7 @@ public final class CommandHandler {
 	 * @param pkgName
 	 */
 	public static void indexCommands(String packageName) {
-		CommandIndexer indexer = new CommandIndexer(packageName);
+		CommandIndexer indexer = new PackageIndexer(packageName);
 
 		for (Command cmd : indexer.getCommands()) {
 			addCommand(cmd.toString(), cmd);			
