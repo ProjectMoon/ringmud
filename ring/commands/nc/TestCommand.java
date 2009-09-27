@@ -7,7 +7,7 @@ import ring.commands.CommandSender;
 public class TestCommand implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
-		// TODO Auto-generated method stub
+		System.out.println("hello from test!");
 		return null;
 	}
 
@@ -16,7 +16,7 @@ public class TestCommand implements Command {
 		
 	}
 	
-	public String toString() {
+	public String getCommandName() {
 		return "test";
 	}
 

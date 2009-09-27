@@ -1,42 +1,38 @@
 package ring.players;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
-import ring.mobiles.*;
-import ring.world.*;
-import ring.util.*;
-import ring.entities.*;
-import ring.movement.*;
-import ring.commands.*;
-import ring.effects.*;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Date;
+import java.util.logging.Logger;
 
-import java.util.*;
-import java.net.*;
-import java.io.*;
+import ring.commands.CommandResult;
+import ring.commands.CommandSender;
+import ring.mobiles.Mobile;
+import ring.movement.LocationManager;
+import ring.movement.Room;
 import ring.server.Communicator;
+import ring.world.TickerEvent;
+import ring.world.TickerListener;
+import ring.world.World;
 
+/**
+ * A class representing a PlayerCharacter in the world. This particular version of Mobile implements
+ * client-server communication by having a Communicator.
+ * @author projectmoon
+ *
+ */
 public class PlayerCharacter extends Mobile implements Runnable, CommandSender, TickerListener {
-    //Player Constants.
+	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(PlayerCharacter.class.getName());
+	
     //Player-Server connection.
-    // the player to server connection
     private transient Communicator communicator;
-    private transient BufferedInputStream input;
-    private transient BufferedOutputStream output;
-    private transient Thread thread;    //Player instance variables.
+    private transient Thread thread;
+    
+    //Player instance variables.
     private String password;
     private Date lastLogon;
-    private transient boolean TTPActive;
-    private transient long TTPTotal;
-    private transient int TTPCount;
-    private transient Date TTPStart;
-    private transient Date TTPEnd;
-    private transient Date sessionStartTime;
     private transient String lastCommand = null;    //Other variables.
     private boolean quitting;
 
@@ -48,10 +44,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         communicator = new Communicator(socket);
         communicator.setSuffix(getPrompt());
         password = "";
-        lastLogon = new Date();
+        setLastLogon(new Date());
         super.setName(pName);
         super.initInternal();
-    //World.getWorld().getTicker().addTickerListener(this, "PULSE");
     }
 
     public void setCommunicator(Communicator c) {
@@ -74,11 +69,12 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         return false;
     }
 
-    //setLogonDate method.
-    //This method creates a new Date object and sets lastLogon to it. This should be
-    //called every time the player logs in.
-    public void setLogonDate() {
-        lastLogon = new Date();
+    /**
+     * This no-arguments setter for lastLogon sets the property to the
+     * current date.
+     */
+    public void setLastLogon() {
+        setLastLogon(new Date());
     }
 
     //savePlayer method.
@@ -102,9 +98,8 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     //The run method starts the up the character and then goes into a loop, waiting on
     //commands.
     public void run() {
-        System.out.println("Starting a player thread...");
         //Start up character.
-        System.out.println("Creating player in the world: " + getName());
+        log.info("Creating player in the world: " + getName());
         World.getWorld().getTicker().addTickerListener(this, "PULSE");
         //Set location.
         Room room = (Room) LocationManager.getOrigin();
@@ -116,10 +111,32 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         doCommand("look");        
 
         //Wait for commands.
-        while (!isDead) {
-            Thread.currentThread().yield();
+        while (!isDead && !quitting && !communicator.isCommunicationError()) {
+            Thread.yield();
             communicator.setSuffix(getPrompt()); //Necessary in case of updates to prompt info.
-            doCommand(communicator.receiveData());
+            try {
+            	doCommand(communicator.receiveData());
+            }
+            catch (SocketException e) {
+            	log.info("There was a socket error for " + this);
+            	break;
+            }
+        }
+        
+        //Close the player's connection once their loop is done.
+        //Handle either graceful quit or forced quit/disconnect.
+        if (quitting && !communicator.isCommunicationError()) {
+        	//Save player
+        	//Send quit message
+        	communicator.send("You have successfully quit. Good-bye.");
+        	communicator.close();
+        	log.info(this + " quit gracefully");
+        	return;
+        }
+        else if (communicator.isCommunicationError()) {
+        	//Save player.
+        	log.info(this + " experienced disconnect/forced quit.");
+        	return;
         }
     }
 
@@ -165,12 +182,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         //Is the player requesting to repeat the last command?
         if (command.equals("!!")) command = lastCommand;
 
-        System.out.println("Sending: " + command);
-
         //Send the command.
         CommandResult res = super.handler.sendCommand(command);
         String result = res.getText();
-        System.out.println("RESULT: " + result);
         
         communicator.send(result);
         
@@ -185,10 +199,20 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     	communicator.send(data);
     }
 
-    //setThread method.
-    //This sets the player's thread.
+    /**
+     * Sets the thread of execution for this Player object.
+     * @param thread
+     */
     public void setThread(Thread thread) {
         this.thread = thread;
+    }
+    
+    /**
+     * Gets the thread of execution tied to this player.
+     * @return
+     */
+    public Thread getThread() {
+    	return thread;
     }
 
     //getShortDescription method.
@@ -205,4 +229,20 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     public Communicator getCommunicator() {
         return communicator;
     }
+
+	public void setLastLogon(Date lastLogon) {
+		this.lastLogon = lastLogon;
+	}
+
+	public Date getLastLogon() {
+		return lastLogon;
+	}
+
+	public void quit() {
+		quitting = true;
+	}
+	
+	public boolean isQuitting() {
+		return quitting;
+	}
 }

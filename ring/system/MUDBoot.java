@@ -3,10 +3,16 @@ package ring.system;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
+import ring.commands.nc.Command;
+import ring.commands.nc.CommandHandler;
+import ring.commands.nc.CommandIndexer;
+import ring.commands.nc.IndexerFactory;
 import ring.jox.BeanParser;
 import ring.jox.beans.RoomSet;
+import ring.mobiles.Mobile;
 import ring.resources.*;
 
 /**
@@ -27,6 +33,9 @@ public class MUDBoot {
         //Load the properites file
         MUDConfig.loadProperties();
 
+        //Load commands
+        loadCommands();
+        
         //Load effects
 
         //Load class features
@@ -47,6 +56,27 @@ public class MUDBoot {
     }
     
     /**
+     * Loads both internal commands (in packages) and Jython-based commands
+     * (from script files).
+     */
+    private static void loadCommands() {
+		Properties pkgProps = new Properties();
+		Properties jythonProps = new Properties();
+		
+		pkgProps.setProperty("package", "ring.commands.nc");
+		jythonProps.setProperty("directory", "/etc/ringmud/commands");
+		CommandIndexer indexer = IndexerFactory.getIndexer("ring.commands.nc.PackageIndexer", pkgProps);
+		indexer.index();
+		CommandHandler.addCommands(indexer.getCommands());
+	}
+    
+    public static void main(String[] args) {
+    	loadCommands();
+    	CommandHandler h = new CommandHandler(new Mobile());
+    	h.sendCommand("test");
+    }
+
+	/**
      * Builds the "universe." The universe is all rooms in the world
      * composed from all files in all directories. In a normal setup,
      * there is only one data directory. However, in a setup with multiple

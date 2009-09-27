@@ -20,7 +20,7 @@ import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
 import ring.commands.*;
-import ring.commands.nc.CommandHandler;
+import ring.commands.CommandHandler;
 import ring.skills.*;
 
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic

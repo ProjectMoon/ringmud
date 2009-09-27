@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Package-level helper class that indexes Command objects from a given Java package.
@@ -11,9 +12,9 @@ import java.util.List;
  *
  */
 class PackageIndexer implements CommandIndexer {
-	private String packageName;
 	private ArrayList<Command> commandList = new ArrayList<Command>();
 	private boolean indexed = false;
+	private Properties props;
 	
 	/**
 	 * Creates new CommandIndexer without a package specified.
@@ -23,36 +24,17 @@ class PackageIndexer implements CommandIndexer {
 	}
 	
 	/**
-	 * Creates a new CommandIndexer to index the specified package.
-	 * @param pkg
-	 */
-	public PackageIndexer(String pkg) {
-		setPackage(pkg);
-	}
-	
-	/**
-	 * Sets the package to index.
-	 * @param pkg
-	 */
-	public void setPackage(String pkg) {
-		packageName = pkg;
-	}
-	
-	/**
-	 * Gets the package to be indexed.
-	 * @return
-	 */
-	public String getPackage() {
-		return packageName;
-	}
-	
-	/**
 	 * Performs the actual indexing operation.
 	 */
-	public void index() {
-		String pkgName = "/" + packageName;
-		pkgName = pkgName.replace('.', '/');
-		URL pkgURL = CommandHandler.class.getResource(pkgName);
+	public void index() throws IllegalStateException {
+		if (props == null) {
+			throw new IllegalStateException("PackageIndexer: No properties! Can't index without them!");
+		}
+		String packageName = props.getProperty("package");
+		String pkgPath = "/" + packageName;
+		
+		pkgPath = pkgPath.replace('.', '/');
+		URL pkgURL = CommandHandler.class.getResource(pkgPath);
 		File pkg = new File(pkgURL.getFile());
 		
 		if (pkg.exists()) {
@@ -113,11 +95,23 @@ class PackageIndexer implements CommandIndexer {
 	 * called, this method will automatically call it.
 	 * @return
 	 */
-	public List<Command> getCommands() {
+	public List<Command> getCommands() throws IllegalStateException {
+		if (props == null) {
+			throw new IllegalStateException("PackageIndexer: No properties! Can't get commands without them!");
+		}
+		
 		if (!indexed) {
 			index();
 		}
 		
 		return commandList;
+	}
+
+	public Properties getProperties() {
+		return props;
+	}
+
+	public void setProperties(Properties props) {
+		this.props = props;
 	}
 }

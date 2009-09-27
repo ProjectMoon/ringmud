@@ -24,14 +24,9 @@ import ring.resources.ClassFeatureLoader;
 public class World implements TickerListener {
 	private static World world;
 	private static Vector playerList;
-	private static Vector zones;
-	private static Vector rooms;
 
 	//Stuff of the world.
-	private static Vector mobiles;
 	private static Ticker worldTicker;
-	private static Vector races;
-	private static Vector classes;
 
 	//World flags.
 	private static boolean isShutDown;
@@ -51,11 +46,7 @@ public class World implements TickerListener {
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
 		playerList = new Vector();
-		zones = new Vector();
-		rooms = new Vector();
-		mobiles = new Vector();
-		races = new Vector();
-		classes = new Vector();
+		
 		/** room init line here? **/
 		isShutDown = false;
 		System.out.println("Done.");
@@ -118,7 +109,7 @@ public class World implements TickerListener {
 		Race ra2 = new Race();
 		ra2.setName(r);
 		mob.setRace(ra2);
-		worldTicker.addTickerListener(mob, "0001");
+		//worldTicker.addTickerListener(mob, "0001");
 		
 		//mob.setLocation(r1);
 		//r1.addMobile(mob);
@@ -264,12 +255,6 @@ public class World implements TickerListener {
 	//This method returns the world object.
 	public static World getWorld() {
 		return world;
-	}
-
-	//getZoneList method.
-	//This returns the zone list.
-	public Vector getZoneList() {
-		return zones;
 	}
 
 	//getPlayerThreadGroup method.

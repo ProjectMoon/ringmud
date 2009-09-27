@@ -27,4 +27,10 @@ public interface Command {
 	 * Reserved for future use.
 	 */
 	public void rollback();
+	
+	/**
+	 * Returns the actual command name that players would type in to use this Command.
+	 * @return
+	 */
+	public String getCommandName();
 }

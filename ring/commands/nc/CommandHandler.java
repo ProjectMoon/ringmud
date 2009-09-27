@@ -9,11 +9,9 @@ package ring.commands.nc;
  * @version 1.0
  */
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import ring.commands.CommandParameters;
@@ -82,14 +80,21 @@ public final class CommandHandler {
 	 * @param pkgName
 	 */
 	public static void indexCommands(String packageName) {
-		CommandIndexer indexer = new PackageIndexer(packageName);
+		Properties pkgProps = new Properties();
+		pkgProps.setProperty("package", packageName);
+		//Properties jythonProps = new Properties();
+		CommandIndexer pkgIndexer = IndexerFactory.getIndexer("ring.commands.nc.PackageIndexer", pkgProps);
 
-		for (Command cmd : indexer.getCommands()) {
-			addCommand(cmd.toString(), cmd);			
+		for (Command cmd : pkgIndexer.getCommands()) {
+			addCommand(cmd.getCommandName(), cmd);			
 		}
 	}
 	
-
+	public static void addCommands(List<Command> cmds) {
+		for (Command cmd : cmds) {
+			commands.put(cmd.getCommandName(), cmd);
+		}
+	}
 	
 	public static void main(String[] args) {
 		CommandHandler.indexCommands("ring.commands.nc");

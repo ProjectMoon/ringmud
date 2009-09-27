@@ -334,6 +334,15 @@ public final class CommandHandler {
 
 		return res;
 	}
+	
+	private CommandResult CMD_quit(CommandParameters params) {
+		CommandResult res = new CommandResult();
+		res.setSuccessful(true);
+		res.setText("Shutting down your connection...");
+		PlayerCharacter player = (PlayerCharacter)sender;
+		player.quit();
+		return res;
+	}
 
 	// Look command.
 	// This command looks around the current room of the sender, or it looks at

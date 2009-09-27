@@ -3,6 +3,7 @@
 	<path id="project.class.path">
 		<pathelement location="lib/dtdparser121.jar" />
 		<pathelement location="lib/jox-1.17b3.jar" />
+		<pathelement location="lib/jython.jar" />
 	</path>
 	
     <property name="src.dir"     value="."/>

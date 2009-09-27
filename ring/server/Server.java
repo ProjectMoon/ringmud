@@ -30,7 +30,7 @@ public class Server implements RingModule {
 	public Server() {}
 
 	public static void main(String[] args) {
-		
+		new Server().start(new String[] { "-a", "localhost" });
 	}
 
 	public void start(String[] args) {

@@ -2,6 +2,9 @@ package ring.server;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ring.util.TextParser;
@@ -14,6 +17,20 @@ import ring.util.TextParser;
  * @author jeff
  */
 public class Communicator {
+	/**
+	 * The number of increments reached before the connection is terminated.
+	 */
+	public static final long TIMEOUT_LIMIT = 5;
+	
+	/**
+	 * How many individual loop iterations must be passed idle before incrementing timeout count.
+	 */
+	public static final long TIMEOUT_INCREMENT = 10;
+	
+	private TimeoutTask timeoutTask = new TimeoutTask();
+	private Timer timeoutTimer = new Timer();
+	
+	
 	private static Logger log = Logger.getLogger(Communicator.class.getName());
     private BufferedInputStream input;
     private BufferedOutputStream output;
@@ -32,6 +49,7 @@ public class Communicator {
             output = new BufferedOutputStream(s.getOutputStream());
             error = false;
             suffix = "";
+            timeoutTimer.scheduleAtFixedRate(timeoutTask, 0, TimeoutTask.SECOND);
         } 
         catch (IOException ex) {
             Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);
@@ -65,7 +83,8 @@ public class Communicator {
         }
         catch (IOException e) {
             error = true;
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Socket state: " + socket.isConnected());
         }
     }
         
@@ -205,26 +224,28 @@ public class Communicator {
      * the connection and the communication error variable will be set.
      * @return The received data.
      */
-    public String receiveData() {
+    public String receiveData() throws SocketException {
         StringBuffer incomingData;
         String retData = null;
         int incomingByte;
-        int idleCount = 0;
-        int timeOutCount = 0;
-        int timeOutLimit = 500;
 
         incomingData = new StringBuffer();
-
+        
         // read data from the player until a null character is received
         try {
             //this big while loop is needed to actually block the communicator.
             //this is what allows us to WAIT for data.
             while (!isCommunicationError() && incomingData.length() == 0) {
-                //read data from the player until a null character is received
+            	//Check if we're timed out. If so, the socket gets closed.
+                checkTimeout();
+            	
                 if (input.available() != 0 && incomingData.length() == 0) {
-                    incomingByte = input.read();
+                	//User is no longer idle.
+                	clearTimeout();
+                	
                     //loop through the available data of the input stream to construct
                     //the data received
+                	incomingByte = input.read();
                     while (incomingByte != '\n' && incomingByte != -1 && !isCommunicationError()) {
                         if (incomingByte != '\r')
                             incomingData.append((char)incomingByte);
@@ -242,24 +263,7 @@ public class Communicator {
                     if (incomingByte == -1)
                         throw new IOException();
                     
-                } 
-                else {
-                    //here we actually wait by having the thread sleep.
-                    try {
-                        Thread.sleep(50);
-                        idleCount++;
-                        if (idleCount > 50) {
-                            testConnection();
-                            idleCount = 0;
-                            if (timeOutCount++ > timeOutLimit) {
-                                sendln("[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye Bye[WHITE]");
-                                log.info("Idle connection terminated for: " + socket.getInetAddress().toString());
-                                throw new IOException();
-                            }
-                        }
-                    } 
-                    catch (InterruptedException ie) {}
-                }
+                }                
             } //end huge while loop
 
         } //end huge try block
@@ -277,6 +281,34 @@ public class Communicator {
             e.printStackTrace();
         }
         return retData;
+    }
+    
+    private void clearTimeout() {
+    	timeoutTask.timeoutCount = 0;
+    }
+    
+    private void checkTimeout() {
+    	if (timeoutTask.isTimedOut()) {
+    		timeoutTimer.cancel();
+    		sendln("[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye bye.[WHITE]");
+            log.info("Idle connection terminated for: " + socket.getInetAddress().toString());
+            killConnection();
+            //Explicitly set error flag because this was not intended (usually).
+            error = true;
+    	}
+    }
+    
+    /**
+     * Kills the socket connection, but does not set error status unless
+     * there was a problem closing.
+     */
+    private void killConnection() {
+    	try {
+			socket.close();
+		} catch (IOException e) {
+			error = true;
+			e.printStackTrace();
+		}
     }
     
     /**
@@ -324,5 +356,18 @@ public class Communicator {
 
         return output.toString();
     }
+
+	public boolean isConnected() {
+		return socket.isConnected();
+	}
+
+	public void close() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }
