@@ -11,6 +11,7 @@ import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.movement.LocationManager;
 import ring.movement.Room;
+import ring.server.CommunicationException;
 import ring.server.Communicator;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
@@ -117,7 +118,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
             try {
             	doCommand(communicator.receiveData());
             }
-            catch (SocketException e) {
+            catch (CommunicationException e) {
             	log.info("There was a socket error for " + this);
             	break;
             }

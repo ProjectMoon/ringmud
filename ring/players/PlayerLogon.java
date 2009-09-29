@@ -22,6 +22,7 @@ import ring.mobiles.MobileClass;
 import ring.mobiles.MobileClassFactory;
 import ring.mobiles.MobileLoader;
 import ring.mobiles.Race;
+import ring.server.CommunicationException;
 import ring.server.Communicator;
 import ring.world.World;
 
@@ -67,7 +68,7 @@ public class PlayerLogon extends Thread {
         waiting = true;
         comms.send(welcomeText + "\n[WHITE]Create new character? (Y/N)");
 
-        while (waiting && !comms.isCommunicationError()) {
+        while (waiting) {
         	try {
 	            String answer = comms.receiveData();
 	
@@ -99,7 +100,7 @@ public class PlayerLogon extends Thread {
 	                playerThread.start();
 	            }
         	}
-        	catch (SocketException e) {
+        	catch (CommunicationException e) {
         		waiting = false;
         	}
         }
@@ -231,7 +232,7 @@ public class PlayerLogon extends Thread {
                 comms.send("[B][RED]First and second passwords do not match.[R][WHITE]");
                 password = null;
             }
-        } while (password == null && !comms.isCommunicationError());
+        } while (password == null);
 
         return password;
     }
@@ -253,7 +254,7 @@ public class PlayerLogon extends Thread {
             if (race == null) {
                 comms.sendlnNoSuffix("That is not a valid choice.");
             }
-        } while (race == null && !comms.isCommunicationError());
+        } while (race == null);
 
         return race;
     }
@@ -284,7 +285,7 @@ public class PlayerLogon extends Thread {
             } else {
                 gender = -1;
             }
-        } while (gender < 0 && !comms.isCommunicationError());
+        } while (gender < 0);
 
 
         return gender;
@@ -311,7 +312,7 @@ public class PlayerLogon extends Thread {
             } else if (choice.toLowerCase().equals("c")) {
                 ethical = Alignment.CHAOTIC;
             }
-        } while (ethical == -1 && !comms.isCommunicationError());
+        } while (ethical == -1);
 
 
 
@@ -325,7 +326,7 @@ public class PlayerLogon extends Thread {
             } else if (choice.toLowerCase().equals("e")) {
                 moral = Alignment.EVIL;
             }
-        } while (moral == -1 && !comms.isCommunicationError());
+        } while (moral == -1);
 
         Alignment a = new Alignment(ethical, moral);
         return a;
@@ -345,7 +346,7 @@ public class PlayerLogon extends Thread {
             comms.send("Barbarian, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard");
             choice = comms.receiveData();
             mc = MobileClassFactory.determineClass(choice);
-        } while (mc == null && !comms.isCommunicationError());
+        } while (mc == null);
 
         return mc;
     }
@@ -368,7 +369,7 @@ public class PlayerLogon extends Thread {
         do {
             invalidName = true;
             // ask for player name and log user on
-            while (invalidName && !comms.isCommunicationError()) {
+            while (invalidName) {
                 comms.send("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
                 playerName = comms.receiveData();
                 invalidName = false;
@@ -391,7 +392,7 @@ public class PlayerLogon extends Thread {
                         }
                     }
                 }
-            } while (!comms.isCommunicationError());
+            }
 
             System.out.println("Player [" + getConnection().getInetAddress() + "] logged on as " + playerName);
 
@@ -408,7 +409,7 @@ public class PlayerLogon extends Thread {
             if (playerActive) {
                 comms.send("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
             }
-        } while (playerActive && !comms.isCommunicationError());
+        } while (playerActive);
 
         return playerName;
     }

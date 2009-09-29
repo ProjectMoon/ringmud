@@ -27,6 +27,7 @@ public class MUDConfig {
     public static void main(String[] args) {
     	MUDConfig.loadProperties();
     }
+    
     public static void loadProperties() {
         config = new Properties(loadDefaults());
         try {
@@ -93,5 +94,9 @@ public class MUDConfig {
     public static String getSaveDirectory() {
         return config.getProperty("data.saveDir");
     }
+    
+	public static long getTimeoutLimit() {
+		return Long.parseLong(config.getProperty("connection.timeout"));
+	}
 
 }
