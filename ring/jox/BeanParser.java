@@ -3,12 +3,8 @@ package ring.jox;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
-import ring.jox.beans.RingBean;
-import ring.jox.beans.RoomSet;
-import ring.test.jox.JoxTest;
+import ring.resources.beans.RingBean;
 
 import com.wutka.jox.JOXBeanInputStream;
 
@@ -19,7 +15,7 @@ import com.wutka.jox.JOXBeanInputStream;
  * @author projectmoon
  * 
  */
-public class BeanParser<T extends RingBean<?>> {
+public class BeanParser<T extends RingBean> {
 	public BeanParser() {
 		//Reflection trickery to instantiate T without having to supply a T.
 		//Class c =
@@ -30,7 +26,6 @@ public class BeanParser<T extends RingBean<?>> {
 		try {
 			InputStream input = new FileInputStream(xmlFile);
 			JOXBeanInputStream joxIn = new JOXBeanInputStream(input);
-
 			T ret = (T)joxIn.readObject(c);
 			return ret;
 		} catch (IOException e) {

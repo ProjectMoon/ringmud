@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ring.jox.BeanParser;
-import ring.jox.beans.RoomSet;
 import ring.mobiles.Mobile;
 import ring.movement.LocationManager;
+import ring.resources.beans.RoomSet;
 
 import com.wutka.jox.JOXBeanInputStream;
 

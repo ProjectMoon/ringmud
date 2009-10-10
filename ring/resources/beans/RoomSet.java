@@ -1,4 +1,4 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import ring.movement.Room;
  * @author projectmoon
  *
  */
-public class RoomSet extends RingBean<RoomSet> implements Serializable {
+public class RoomSet extends RingBean implements Serializable {
 	public static final long serialVersionUID = 1;
 	
 	private static Logger log = Logger.getLogger(RoomSet.class.getName());

@@ -1,7 +1,7 @@
 package ring.movement;
 
-import ring.jox.beans.PortalBean;
 import ring.resources.RingResource;
+import ring.resources.beans.PortalBean;
 import ring.util.TextParser;
 
 /**
@@ -14,6 +14,8 @@ import ring.util.TextParser;
  *
  */
 public class Portal implements RingResource<PortalBean> {
+	private String beanID;
+	
 	//The place to go!
 	private Location destination;
 	
@@ -103,11 +105,16 @@ public class Portal implements RingResource<PortalBean> {
 	}
 
 	public void populateFromBean(PortalBean bean) {
+		this.beanID = bean.getID();
 		//this.destination = bean.getDestination();
 		this.displayName = bean.getDirection();
 		if (bean.getInteractiveName() != null)
 			this.interactiveName = bean.getInteractiveName();
 		else
 			this.interactiveName = TextParser.stripFormatting(bean.getDirection());
+	}
+
+	public String getBeanID() {
+		return beanID;
 	}
 }

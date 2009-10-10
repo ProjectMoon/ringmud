@@ -2,7 +2,6 @@ package ring.players;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Date;
 import java.util.logging.Logger;
 

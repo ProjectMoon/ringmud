@@ -11,9 +11,9 @@ import ring.commands.nc.CommandHandler;
 import ring.commands.nc.CommandIndexer;
 import ring.commands.nc.IndexerFactory;
 import ring.jox.BeanParser;
-import ring.jox.beans.RoomSet;
 import ring.mobiles.Mobile;
 import ring.resources.*;
+import ring.resources.beans.RoomSet;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the
@@ -83,6 +83,11 @@ public class MUDBoot {
      * world data directories, this will make sure all rooms get linked together.
      */
     private static void buildUniverse() {
+    	//New algorithm?:
+    	//ResourceLoader<RoomSet> loader = LoaderFactory.getRoomSetLoader();
+    	//for (RoomSet roomSet : loader.getAllResources()) {
+    	//	roomSet.construct();
+    	//}
         String[] roomSetFiles = MUDConfig.getRoomSetFiles();
         RoomSet universe = new RoomSet();
         universe.setName("Universe");

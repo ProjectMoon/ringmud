@@ -1,4 +1,4 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,14 +10,13 @@ import java.util.List;
  * @author projectmoon
  *
  */
-public class RoomBean extends RingBean<RoomBean> implements Serializable {
+public class RoomBean extends RingBean implements Serializable {
 	public static final long serialVersionUID = 1;
 	
 	public RoomBean() {
 		portals = new ArrayList<PortalBean>();
 	}
 
-	private String roomID;
 	private String title;
 	private String description;
 	private int width;
@@ -43,6 +42,7 @@ public class RoomBean extends RingBean<RoomBean> implements Serializable {
 	public void setWidth(int width) {
 		this.width = width;
 	}
+	
 
 	public int getWidth() {
 		return width;
@@ -65,13 +65,6 @@ public class RoomBean extends RingBean<RoomBean> implements Serializable {
 		return length;
 	}
 	
-	public void setID(String roomID) {
-		this.roomID = roomID;
-	}
-	
-	public String getID() {
-		return roomID;
-	}
 	public void setHeight(int height) {
 		this.height = height;
 	}

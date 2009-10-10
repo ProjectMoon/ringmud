@@ -1,4 +1,4 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author projectmoon
  * 
  */
-public class PortalBean extends RingBean<PortalBean> implements Serializable {
+public class PortalBean extends RingBean implements Serializable {
 	public static final long serialVersionUID = 1;
 
 	private String direction;

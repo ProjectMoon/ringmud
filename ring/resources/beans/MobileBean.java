@@ -1,4 +1,4 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import ring.mobiles.backbone.Inventory;
  * @author projectmoon
  * 
  */
-public class MobileBean implements Serializable {
+public class MobileBean extends RingBean implements Serializable {
 	public static final long serialVersionUID = 1;
 	
 	private String name;

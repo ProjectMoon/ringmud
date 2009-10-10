@@ -1,4 +1,4 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
 import ring.entities.Item;
 

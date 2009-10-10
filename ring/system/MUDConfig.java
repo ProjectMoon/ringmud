@@ -1,16 +1,12 @@
 package ring.system;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.net.*;
 
 /**
  * This is the front-end to the MUD config file. Configuration is stored using
@@ -97,6 +93,10 @@ public class MUDConfig {
     
 	public static long getTimeoutLimit() {
 		return Long.parseLong(config.getProperty("connection.timeout"));
+	}
+	
+	public static String[] getJythonCommands() {
+		return config.getProperty("scripts.commands").split(";");
 	}
 
 }

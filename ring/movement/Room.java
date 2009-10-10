@@ -14,9 +14,9 @@ import java.util.Random;
 import java.util.Vector;
 
 import ring.entities.Entity;
-import ring.jox.beans.RoomBean;
 import ring.mobiles.Mobile;
 import ring.resources.RingResource;
+import ring.resources.beans.RoomBean;
 import ring.world.World;
 
 /*
@@ -504,5 +504,12 @@ public class Room implements Location, RingResource<RoomBean> {
 		this.height = bean.getHeight();
 		this.width = bean.getWidth();
 		this.length = bean.getLength();
+	}
+
+	/**
+	 * Returns the bean ID, which in this case is the same as the room ID.
+	 */
+	public String getBeanID() {
+		return getID();
 	}
 }

@@ -20,13 +20,14 @@ import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
 import ring.commands.*;
-import ring.commands.CommandHandler;
+import ring.resources.RingResource;
+import ring.resources.beans.MobileBean;
 import ring.skills.*;
 
 //This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
 //information for a mobile such as body shape, HP, race, etc.
 public class Mobile extends WorldObject implements CommandSender,
-		TickerListener, Movable {
+		TickerListener, Movable, RingResource<MobileBean> {
 	public static final long serialVersionUID = 1;
 	// CONSTANTS NEEDE D BY ALL MOBILES
 	// STAT CONSTANTS
@@ -1208,5 +1209,15 @@ public class Mobile extends WorldObject implements CommandSender,
 
 	public Location getLocation() {
 		return currLocation;
+	}
+
+	public String getBeanID() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	public void populateFromBean(MobileBean bean) {
+		// TODO Auto-generated method stub
+		
 	}
 }

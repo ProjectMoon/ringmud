@@ -1,6 +1,5 @@
-package ring.jox.beans;
+package ring.resources.beans;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -14,22 +13,22 @@ import java.lang.reflect.Type;
  *
  * @param <T>
  */
-public abstract class RingBean<T> implements Type {
+public abstract class RingBean implements Type {
+	protected String beanID;
+	
 	/**
-	 * At the moment, this method is pretty much useless as the parser
-	 * still requires a Class object. There's no way to instantiate a T
-	 * without a T already in existence somewhere else.
+	 * Returns the unique ID of this bean.
 	 * @return
 	 */
-	public Class getRealClass() {
-		ParameterizedType parameterizedType = (ParameterizedType) getClass()
-				.getGenericSuperclass();
-		return (Class) parameterizedType.getActualTypeArguments()[0];
+	public String getID() {
+		return beanID;
 	}
 	
-	public T getInstance() {
-		//Class c =
-		return null;
+	/**
+	 * Sets the unique ID of this bean.
+	 * @param id
+	 */
+	public void setID(String id) {
+		beanID = id;
 	}
-
 }
