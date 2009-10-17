@@ -17,10 +17,12 @@ import ring.mobiles.NPC;
 import ring.movement.LocationManager;
 import ring.movement.Portal;
 import ring.movement.Room;
+import ring.resources.loaders.LoaderFactory;
+import ring.system.MUDConfig;
 
 public class RingTester {
 	public static void main(String[] args) {
-		Room r = new Room("A room", "lol");
+		/*Room r = new Room("A room", "lol");
 		Room r2 = new Room("Room 2", "hidden!");
 		Portal r2port = new Portal(r2, "north");
 		r2port.setSearchDC(25);
@@ -57,7 +59,13 @@ public class RingTester {
 			System.err.println("Test failed.");
 			e.printStackTrace();
 			System.exit(1);
-		}
+		}*/
+		
+		MUDConfig.loadProperties();
+		LoaderFactory.initLoaders();
+		LoaderFactory.loadAllBeans();
+		Armor a = (Armor)LoaderFactory.getItemLoader().getResource("headHelmX90");
+		System.out.println(a.getName());
 		
 	}
 }

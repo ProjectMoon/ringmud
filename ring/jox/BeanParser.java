@@ -15,7 +15,7 @@ import com.wutka.jox.JOXBeanInputStream;
  * @author projectmoon
  * 
  */
-public class BeanParser<T extends RingBean> {
+public class BeanParser<T> {
 	public BeanParser() {
 		//Reflection trickery to instantiate T without having to supply a T.
 		//Class c =
@@ -35,7 +35,7 @@ public class BeanParser<T extends RingBean> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public T parse(InputStream xmlStream, Class c) {
+	public T parse(InputStream xmlStream, Class<T> c) {
 		try {
 			JOXBeanInputStream joxIn = new JOXBeanInputStream(xmlStream);
 

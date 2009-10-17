@@ -18,6 +18,7 @@ import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
 import ring.mobiles.MobileClass;
 import ring.mobiles.Race;
+import ring.resources.beans.ItemBean;
 
 /**
  * This class represents a piece of armor in the world. It carries several properties,
@@ -156,5 +157,15 @@ public final class Armor extends Item {
 	
 	public void setACBonus(int ac) {
 		acBonus = ac;
+	}
+	
+	/**
+	 * Overriden from Item to make specific use of certain ItemBean properties
+	 * specific to armor.
+	 */
+	@Override
+	public void populateFromBean(ItemBean bean) {
+		super.populateFromBean(bean);
+		setACBonus(bean.getACBonus());
 	}
 }

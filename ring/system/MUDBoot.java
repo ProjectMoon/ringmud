@@ -1,19 +1,13 @@
 package ring.system;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import ring.commands.nc.Command;
 import ring.commands.nc.CommandHandler;
 import ring.commands.nc.CommandIndexer;
 import ring.commands.nc.IndexerFactory;
-import ring.jox.BeanParser;
-import ring.mobiles.Mobile;
-import ring.resources.*;
-import ring.resources.beans.RoomSet;
+import ring.resources.loaders.LoaderFactory;
+import ring.resources.loaders.RoomLoader;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the
@@ -29,10 +23,13 @@ public class MUDBoot {
 	
     public static void boot() {
         System.out.println("Loading RingMUD.");
-
-        //Load the properites file
-        MUDConfig.loadProperties();
-
+        
+        //Init resource loaders
+        LoaderFactory.initLoaders();
+        
+        //Load all beans.
+        LoaderFactory.loadAllBeans();
+        
         //Load commands
         loadCommands();
         
@@ -70,61 +67,8 @@ public class MUDBoot {
 		CommandHandler.addCommands(indexer.getCommands());
 	}
     
-    public static void main(String[] args) {
-    	loadCommands();
-    	CommandHandler h = new CommandHandler(new Mobile());
-    	h.sendCommand("test");
-    }
-
-	/**
-     * Builds the "universe." The universe is all rooms in the world
-     * composed from all files in all directories. In a normal setup,
-     * there is only one data directory. However, in a setup with multiple
-     * world data directories, this will make sure all rooms get linked together.
-     */
     private static void buildUniverse() {
-    	//New algorithm?:
-    	//ResourceLoader<RoomSet> loader = LoaderFactory.getRoomSetLoader();
-    	//for (RoomSet roomSet : loader.getAllResources()) {
-    	//	roomSet.construct();
-    	//}
-        String[] roomSetFiles = MUDConfig.getRoomSetFiles();
-        RoomSet universe = new RoomSet();
-        universe.setName("Universe");
-        for (String filePath : roomSetFiles) {
-        	RoomSet set = constructFromFiles(filePath);
-        	log.info("Processed globe " + set);
-        	universe.copyFrom(set);
-        }
-        
-        universe.construct();
-    }
-    
-    private static RoomSet constructFromFiles(String directory) {
-    	File dir = new File(directory);
-    	RoomSet globe = new RoomSet();
-    	globe.setName(directory);
-    	if (dir.isDirectory() == false) {
-    		throw new MUDBootException("Data files should only be specified by directory, not absolute files.");
-    	}
-    	else {
-    		File[] dataFiles = dir.listFiles(new XMLFileNameFilter());
-    		
-    		for (File dataFile : dataFiles) {
-    			log.fine("Processing RoomSet " + dataFile);
-    			try {
-					FileInputStream stream = new FileInputStream(dataFile);
-					BeanParser<RoomSet> roomParser = new BeanParser<RoomSet>();
-	    			RoomSet set = roomParser.parse(stream, RoomSet.class);
-	    			globe.copyFrom(set);
-				} 
-    			catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-    		}
-    		
-    		return globe;
-    	}
+    	RoomLoader roomLoader = (RoomLoader) LoaderFactory.getRoomLoader();
+    	roomLoader.constructWorld();
     }
 }

@@ -30,6 +30,7 @@ public class Server implements RingModule {
 	public Server() {}
 
 	public static void main(String[] args) {
+		MUDConfig.loadProperties();
 		new Server().start(new String[] { "-a", "localhost" });
 	}
 

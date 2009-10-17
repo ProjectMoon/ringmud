@@ -67,9 +67,9 @@ public class Effect implements Serializable {
 	// * if timer is set to zero on a TIMED effect, INIT_TIMER_LATER is set.
 	// * REMOVE_ON_DEATH is set automatically unless specified otherwise.
 
-	public boolean INIT_TARGET_LATER = false;
-	public boolean INIT_TIMER_LATER = false;
-	public boolean INIT_EFFECT_LATER = false;
+	private boolean INIT_TARGET_LATER = false;
+	private boolean INIT_TIMER_LATER = false;
+	private boolean INIT_EFFECT_LATER = false;
 	public static final int SET_TIMER_LATER = 0;
 
 	/**

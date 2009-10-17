@@ -10,6 +10,9 @@ import ring.util.TextParser;
  * change the current location of the Mobile. A Portal could be a direction
  * like north or south, it could be an entrance like a door, or it could be
  * truly a portal, that leads to grand places like another plane of existence!
+ * 
+ * Portals are special RingResources in that they do not have a resource loader.
+ * They are created on the fly by the RoomLoader's constructWorld() method.
  * @author jeff
  *
  */

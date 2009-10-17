@@ -19,10 +19,6 @@ public class MUDConfig {
 	private static Logger log = Logger.getLogger(MUDConfig.class.getName());
     private static Properties config;
     private static final String SEP = System.getProperty("file.separator");
-
-    public static void main(String[] args) {
-    	MUDConfig.loadProperties();
-    }
     
     public static void loadProperties() {
         config = new Properties(loadDefaults());
@@ -57,6 +53,15 @@ public class MUDConfig {
     public static String getServerIP() {
     	return config.getProperty("server.address");
     }
+    
+    public static String getRoomProvider() {
+    	return config.getProperty("room.provider");
+    }
+    
+    public static String getPortalProvider() {
+    	return config.getProperty("portal.provider");
+    }
+    
     public static String[] getClassFeaturesFiles() {
         String paths = config.getProperty("data.classFeatures");
         String[] ret = paths.split(";");
@@ -97,6 +102,10 @@ public class MUDConfig {
 	
 	public static String[] getJythonCommands() {
 		return config.getProperty("scripts.commands").split(";");
+	}
+
+	public static String getItemProvider() {
+		return config.getProperty("items.provider");
 	}
 
 }

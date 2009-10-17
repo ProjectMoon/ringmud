@@ -10,9 +10,11 @@ package ring.entities;
  */
 
 import ring.mobiles.*;
+import ring.resources.RingResource;
+import ring.resources.beans.ItemBean;
 import ring.effects.*;
 
-public class Item extends Entity {
+public abstract class Item extends Entity implements RingResource<ItemBean> {
 	public static final long serialVersionUID = 1;
 	protected boolean wearable;
 	protected BodyPart partWornOn;
@@ -77,5 +79,20 @@ public class Item extends Entity {
 	
 	public final void setCursed(boolean yes) {
 		cursed = yes;
+	}
+
+	public String getBeanID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Item is an abstract class, and thus all specific item types should 
+	 * override this method. This method sets properties common to all
+	 * items, and subclasses should call this method to make sure all
+	 * properties are set.
+	 */
+	public void populateFromBean(ItemBean bean) {
+		super.setName(bean.getName());
 	}
 }

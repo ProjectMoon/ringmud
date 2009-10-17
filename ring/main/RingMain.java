@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import ring.system.MUDConfig;
+
 /**
  * Main class for the jar file. Provides entry point to other classes in the system
  * such as the server or preferences manager utility.
@@ -22,6 +24,9 @@ public class RingMain {
 			main.usage();
 		}
 		else {
+			//Load configuration as the very first thing.
+			MUDConfig.loadProperties();
+			
 			String app = args[0];
 			String[] appArgs = new String[args.length - 1];
 			System.arraycopy(args, 1, appArgs, 0, args.length - 1);
@@ -63,9 +68,6 @@ public class RingMain {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			System.err.println("Module " + app + " is defined, but points to an invalid Java class.");
-		}
-		catch (ClassCastException e) {
-			System.err.println(app + " exists, but is not a valid RingMUD module!");
 		}
 		catch (NullPointerException e) {
 			e.printStackTrace();

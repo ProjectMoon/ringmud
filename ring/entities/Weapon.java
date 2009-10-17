@@ -12,6 +12,7 @@ package ring.entities;
 import ring.damage.WeaponDamage;
 import ring.effects.Effect;
 import ring.mobiles.BodyPart;
+import ring.resources.beans.ItemBean;
 
 /**
  * This class represents a weapon in the game. A weapon is generally a pointy
@@ -87,5 +88,11 @@ public class Weapon extends Item {
 	
 	public void setTwoHanded(boolean yes) {
 		twoHanded = yes;
+	}
+
+	@Override
+	public void populateFromBean(ItemBean bean) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
 	}
 }
