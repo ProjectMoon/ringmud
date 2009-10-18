@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 import org.python.util.PythonInterpreter;
 
 /**
- * Package-level class that indexes Jython script files and turns them into RingMUD Command
- * objects. JythonIndexer takes the following properties as parameters:<br/>
+ * Package-level indexer class that indexes Jython script files and turns them 
+ * into RingMUD Command objects. JythonIndexer takes the following properties as parameters:<br/>
  * directory: The directory to index.
  * @author projectmoon
  *
@@ -28,8 +28,8 @@ class JythonIndexer implements CommandIndexer {
 	 * if we don't need to execute the same file twice (or more).
 	 */
 	private final ArrayList<String> fileCache = new ArrayList<String>();
-	
 	private final ArrayList<Command> cmds = new ArrayList<Command>();
+	private boolean indexed = false;
 
 	private Properties props;
 	private static final PythonInterpreter INTERP = new PythonInterpreter();
@@ -39,13 +39,15 @@ class JythonIndexer implements CommandIndexer {
 		
 	}
 	
+	/**
+	 * Indexes commands from Jython script files.
+	 */
 	public void index() throws IllegalStateException {
 		if (props == null) {
 			throw new IllegalStateException("JythonIndexer: No properties! Can't index without them!");
 		}
 		
-		filePath = props.getProperty("directory");
-		System.out.println("Entering index");
+		filePath = props.getProperty("jythonIndexer.directory");
 		initInterpreter();
 		File dir = new File(filePath);
 		if (dir.isDirectory()) {
@@ -60,12 +62,10 @@ class JythonIndexer implements CommandIndexer {
 			
 			//Process each file and attempt to instantiate classes out of them.
 			for (File file : pythonFiles) {
-				System.out.println("Finding commands in " + file.getAbsolutePath());
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader(file));
 					String line = "";
 					while ((line = reader.readLine()) != null) {
-						System.out.println("   Testing line: " + line);
 						String className = findClassName(line);
 						if (className != null) {
 							instantiateCommand(file.getAbsolutePath().toString(), className);
@@ -77,15 +77,17 @@ class JythonIndexer implements CommandIndexer {
 				}
 			}
 		}
+		
+		indexed = true;
 	}
 	
 	/**
-	 * Provide imports so scripts don't have to.
+	 * Initializes the Jython environment for use with the indexer.
 	 */
 	private void initInterpreter() {
 		INTERP.exec("from ring.commands.nc import Command");
 		INTERP.exec("from ring.commands import CommandSender");
-		INTERP.exec("from ring.commands import CommandParameters");
+		INTERP.exec("from ring.commands.nc import CommandParameters");
 	}
 	
 	/**
@@ -94,7 +96,7 @@ class JythonIndexer implements CommandIndexer {
 	 * @param name The name of the class to create.
 	 */
 	private void instantiateCommand(String filename, String name) {
-		System.out.println("Adding command " + name + " to the list");
+		System.out.println(this + ": Found command " + name + " (in " + filename + ")");
 		
 		//Load the python file if it hasn't already been.
 		attemptExecute(filename);
@@ -102,12 +104,21 @@ class JythonIndexer implements CommandIndexer {
 		//Create a new Command object in the interpreter and extract it.
 		INTERP.exec("_ring_obj = " + name + "()");
 		Command cmd = (Command)INTERP.get("_ring_obj", Command.class);
-		cmds.add(cmd);
+		if (cmd == null) {
+			System.out.println(this + ": Error: There was an error creating command " + name);
+		}
+		else if (cmd.getCommandName() == null) {
+			System.err.println(this + ": Error: Command object " + name + " does not define getCommandName().");
+		}
+		else {
+			cmds.add(cmd);
+		}
 	}
 	
 	/**
 	 * Executes a python script file if it's not in the cache and has not already
-	 * been executed.
+	 * been executed. This stops the indexer from repeatedly executing one file that
+	 * may have more than one command in it, and reduces overhead.
 	 * @param filename
 	 */
 	private void attemptExecute(String filename) {
@@ -133,33 +144,40 @@ class JythonIndexer implements CommandIndexer {
 		}
 	}
 	
+	/**
+	 * Gets the list of indexed commands. If index() has not already been called,
+	 * this method calls it automatically.
+	 */
 	public List<Command> getCommands()  throws IllegalStateException {
 		if (props == null) {
 			throw new IllegalStateException("JythonIndexer: No properties! Can't get commands without them!");
 		}
+		
+		if (!indexed) {
+			index();
+		}
+		
 		return cmds;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("Beginning jython indexer test");
-		JythonIndexer indexer = new JythonIndexer();
-		Properties props = new Properties();
-		props.setProperty("directory", "/Users/projectmoon/Programs/ringmud/");
-		indexer.setProperties(props);
-		long millis = System.currentTimeMillis();
-		indexer.index();
-		System.out.println("Index took: " + (System.currentTimeMillis() - millis));
-		for (Command c : indexer.getCommands()) {
-			c.execute(null, null);
-		}
-		System.out.println("Test done");
-	}
-
+	/**
+	 * Gets this plugin's properties.
+	 */
 	public Properties getProperties() {
 		return props;
 	}
 
+	/**
+	 * Sets this plugin's properties.
+	 */
 	public void setProperties(Properties props) {
 		this.props = props;	
+	}
+	
+	/**
+	 * Returns "[JythonIndexer]".
+	 */
+	public String toString() {
+		return "[JythonIndexer]";
 	}
 }

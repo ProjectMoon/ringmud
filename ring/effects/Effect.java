@@ -65,11 +65,12 @@ public class Effect implements Serializable {
 	// certain attributes are set automatically depending on the constructor:
 	// * if target is not specified, INIT_TARGET_LATER is set.
 	// * if timer is set to zero on a TIMED effect, INIT_TIMER_LATER is set.
-	// * REMOVE_ON_DEATH is set automatically unless specified otherwise.
 
 	private boolean INIT_TARGET_LATER = false;
 	private boolean INIT_TIMER_LATER = false;
 	private boolean INIT_EFFECT_LATER = false;
+	
+	//Constant to allow the timer to be set later. Used as a parameter to the constructor.
 	public static final int SET_TIMER_LATER = 0;
 
 	/**

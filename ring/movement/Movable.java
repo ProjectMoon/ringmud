@@ -14,8 +14,24 @@ package ring.movement;
  *
  */
 public interface Movable {
+	/**
+	 * Sets this Movable's current location.
+	 * @param loc
+	 */
 	public void setLocation(Location loc);
+	
+	/**
+	 * Gets this movable's current location.
+	 * @return
+	 */
 	public Location getLocation();
+	
+	/**
+	 * Returns true if this Movable is allowed to move at the given moment when
+	 * this method is executed.
+	 * @return true or false
+	 */
+	public boolean canMove();
 	
 	/**
 	 * Tells whether this Movable needs to use a search check to find hidden exits.

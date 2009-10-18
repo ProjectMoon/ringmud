@@ -19,7 +19,8 @@ import ring.movement.*;
 import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
-import ring.commands.*;
+import ring.commands.nc.CommandHandler;
+import ring.commands.CommandSender;
 import ring.resources.RingResource;
 import ring.resources.beans.MobileBean;
 import ring.skills.*;
@@ -1155,17 +1156,26 @@ public class Mobile extends WorldObject implements CommandSender,
 
 	}
 
-	// move method.
-	// This method handles the movement of this mobile from ZoneCoordinate to
-	// ZoneCoordinate (really room-to-room).
-	// It attempts to cover all bases with regards to movement.
-	public final boolean move(String direction) {
-		// Check to see if this mobile is fighting. That means they can't leave.
+	public boolean canMove() {
 		if (this.isFighting) {
 			sendData("[GREEN]You may not leave during combat![WHITE]");
 			return false;
 		}
+		else if (getCurrentMV() - 1 <= 0) {
+			sendData("[R][WHITE]You are too exhausted to move any further. Rest for awhile to regain your strength.");
+			return true;
+		}
+		else {
+			return true;
+		}
+	}
 
+	/**
+	 * Convenience method that wraps around the location manager's move method.
+	 * @param direction
+	 * @return true if the Mobile was able to move in the specified direction, false otherwise.
+	 */
+	public final boolean move(String direction) {
 		try {
 			return LocationManager.move(this, LocationManager.getPortal(
 					currLocation, direction));

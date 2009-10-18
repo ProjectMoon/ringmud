@@ -83,7 +83,12 @@ public class LocationManager {
 			throw new PortalNotFoundException("can't move into a null portal!");
 		}
 		
-		//Absolute first thing we must check is if the portal is hidden.
+		//Absolute first thing we must check is if the Movable can move or not.
+		if (mov.canMove() == false) {
+			return false;
+		}
+		
+		//Second thing we must check is if the portal is hidden.
 		if (port.isHidden()) {
 			if (mov.getSearchCheck() < port.getSearchDC())
 				return false;

@@ -31,6 +31,7 @@ public class MUDBoot {
         LoaderFactory.loadAllBeans();
         
         //Load commands
+        System.out.println("Loading commands...");
         loadCommands();
         
         //Load effects
@@ -56,15 +57,14 @@ public class MUDBoot {
      * Loads both internal commands (in packages) and Jython-based commands
      * (from script files).
      */
-    private static void loadCommands() {
-		Properties pkgProps = new Properties();
-		Properties jythonProps = new Properties();
+    public static void loadCommands() {
+		Properties pkgProps = MUDConfig.getPluginProperties("pkgIndexer");
+		Properties jythonProps = MUDConfig.getPluginProperties("jythonIndexer");
 		
-		pkgProps.setProperty("package", "ring.commands.nc");
-		jythonProps.setProperty("directory", "/etc/ringmud/commands");
-		CommandIndexer indexer = IndexerFactory.getIndexer("ring.commands.nc.PackageIndexer", pkgProps);
-		indexer.index();
-		CommandHandler.addCommands(indexer.getCommands());
+		CommandIndexer pkgIndexer = IndexerFactory.getIndexer("ring.commands.nc.PackageIndexer", pkgProps);
+		CommandIndexer jythonIndexer = IndexerFactory.getIndexer("ring.commands.nc.JythonIndexer", jythonProps);
+		CommandHandler.addCommands(pkgIndexer.getCommands());
+		CommandHandler.addCommands(jythonIndexer.getCommands());
 	}
     
     private static void buildUniverse() {

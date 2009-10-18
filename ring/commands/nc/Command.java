@@ -1,7 +1,5 @@
 package ring.commands.nc;
 
-import ring.commands.CommandParameters;
-import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 
 /**

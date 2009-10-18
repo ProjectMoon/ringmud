@@ -107,5 +107,30 @@ public class MUDConfig {
 	public static String getItemProvider() {
 		return config.getProperty("items.provider");
 	}
+	
+	/**
+	 * A method to allow retrieval of plugin properties that have been defined
+	 * in mud.config. It is responsible for the plugin classes to get their properties
+	 * as well as gracefully handle any errors that result. Also used by the modular APIs
+	 * for command indexing and resource providing.
+	 * <br/><br/>
+	 * The proper syntax for defining properties for a plugin is "pluginName.propName". Further
+	 * subcategorization is up to the author. Properties included in the returned Properties object
+	 * will all begin with "pluginName." as their first characters.
+	 * @param pluginName
+	 * @return A Properties object containing all properties starting with the plugin's name.
+	 */
+	public static Properties getPluginProperties(String pluginName) {
+		Properties pluginProps = new Properties();
+		
+		for (Object p : config.keySet()) {
+			String prop = (String)p;
+			if (prop.startsWith(pluginName + ".")) {
+				pluginProps.put(prop, config.getProperty(prop));
+			}
+		}
+		
+		return pluginProps;
+	}
 
 }
