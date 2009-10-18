@@ -3,6 +3,7 @@ package ring.system;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import ring.commands.nc.Command;
 import ring.commands.nc.CommandHandler;
 import ring.commands.nc.CommandIndexer;
 import ring.commands.nc.IndexerFactory;
@@ -63,6 +64,7 @@ public class MUDBoot {
 		
 		CommandIndexer pkgIndexer = IndexerFactory.getIndexer("ring.commands.nc.PackageIndexer", pkgProps);
 		CommandIndexer jythonIndexer = IndexerFactory.getIndexer("ring.commands.nc.JythonIndexer", jythonProps);
+		
 		CommandHandler.addCommands(pkgIndexer.getCommands());
 		CommandHandler.addCommands(jythonIndexer.getCommands());
 	}

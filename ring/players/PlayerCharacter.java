@@ -33,7 +33,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
     //Player instance variables.
     private String password;
     private Date lastLogon;
-    private transient String lastCommand = null;    //Other variables.
+    
+    //Other variables
+    private transient String lastCommand = null;
     private boolean quitting;
 
     public PlayerCharacter() {
@@ -184,9 +186,11 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
 
         //Send the command.
         ring.commands.nc.CommandResult res = super.handler.sendCommand(command);
-        String result = res.getText();
         
-        communicator.send(result);
+        if (res.getReturnData()) {
+        	String result = res.getText();
+        	communicator.send(result);
+        }
         
         //Only update last command if the last command wasn't !!
         if (!command.equals("!!"))

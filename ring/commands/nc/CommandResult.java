@@ -67,11 +67,10 @@ public class CommandResult {
 	}
 	
 	/**
-	 * Sets whether or not to return data from this CommandResult. Protected because
-	 * only the Command package needs to worry about this.
+	 * Sets whether or not to return data from this CommandResult.
 	 * @param returnData
 	 */
-	protected void setReturnData(boolean returnData) {
+	public void setReturnData(boolean returnData) {
 		this.returnData = returnData;
 	}
 

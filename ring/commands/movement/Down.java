@@ -1,6 +1,9 @@
-package ring.commands.nc;
+package ring.commands.movement;
 
 import ring.commands.CommandSender;
+import ring.commands.nc.Command;
+import ring.commands.nc.CommandParameters;
+import ring.commands.nc.CommandResult;
 import ring.mobiles.Mobile;
 import ring.movement.LocationManager;
 

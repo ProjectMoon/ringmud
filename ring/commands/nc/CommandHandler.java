@@ -78,11 +78,22 @@ public final class CommandHandler {
 	 */
 	public static void addCommands(List<Command> cmds) {
 		for (Command cmd : cmds) {
-			if (cmd.getCommandName() != null) {
+			//Command names should never be null.
+			assert (cmd.getCommandName() != null);
+			
+			//If they are null for some reason, ignore it and continue.
+			if (cmd.getCommandName() == null) {
+				log.warning(cmd + " has no command name! Ignoring it.");
+				continue;
+			}
+			
+			if (containsCommand(cmd.getCommandName()) == false) {
 				commands.put(cmd.getCommandName(), cmd);
 			}
 			else {
-				System.err.println(cmd + " has no command name. Cannot add!");
+				String collision = "Command [" + cmd.getCommandName() +"] is already in the command map!\n" +
+					"Colliding objects: [" + cmd + "] and [" + commands.get(cmd.getCommandName()) + "]";
+				log.severe(collision);
 			}
 		}
 	}
@@ -103,6 +114,16 @@ public final class CommandHandler {
 	 */
 	public static void addCommand(String cmdKey, Command cmd) {
 		commands.put(cmdKey, cmd);
+	}
+	
+	/**
+	 * Tells whether or not the command key is present in the shared command
+	 * map.
+	 * @param cmdKey
+	 * @return true if the key is present, false otherwise.
+	 */
+	public static boolean containsCommand(String cmdKey) {
+		return commands.containsKey(cmdKey);
 	}
 
 	/**
@@ -221,7 +242,14 @@ public final class CommandHandler {
 	 * @return the result of the command.
 	 */
 	private CommandResult handleCommand(Command cmd, CommandParameters params) {
-		return cmd.execute(sender, params);
+		CommandResult cr = cmd.execute(sender, params);
+		if (cr == null) {
+			log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult! Creating a wrapper result.");
+			cr = new CommandResult();
+			cr.setReturnData(false);
+		}
+		
+		return cr;
 	}
 
 	
