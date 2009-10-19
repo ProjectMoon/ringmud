@@ -19,7 +19,7 @@ import ring.movement.*;
 import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
-import ring.commands.nc.CommandHandler;
+import ring.commands.CommandHandler;
 import ring.commands.CommandSender;
 import ring.resources.RingResource;
 import ring.resources.beans.MobileBean;

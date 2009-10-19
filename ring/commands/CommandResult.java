@@ -1,48 +1,77 @@
 package ring.commands;
 
 /**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
+ * Class representing the result of a command. It encapsulates data to send back
+ * to the CommandSender (if any), as well as the success or failure status of
+ * the command.
+ * 
+ * @author projectmoon
+ * 
  */
-
 public class CommandResult {
-  //Instance variables.
-  String text;//the text to be returned to the player.
-  String failText;//text to be returned on fail.
-  boolean successful;//did the command "fail" or "succeed" to be executed? example: "can't wear this item."
+	//Text to be return on success.
+	private String text;
+	
+	//text to be returned on fail.
+	private String failText;
+	
+	//did the command "fail" or "succeed" to be executed?
+	private boolean successful;
+	
+	//Whether or not to even return data.
+	private boolean returnData;
 
-  public CommandResult() {
-    text = "";
-    failText = "[R][GREEN]You can't do that.[R][WHITE]";
-    successful = false;
-  }
+	public CommandResult() {
+		text = "";
+		failText = "[R][GREEN]You can't do that.[R][WHITE]";
+		successful = false;
+	}
 
-  public void clearText() {
-    text = "";
-  }
+	public void clearText() {
+		text = "";
+	}
 
-  public void setFailText(String text) {
-    failText = text;
-  }
-  public void addText(String txt) {
-    text += txt;
-  }
+	public void setFailText(String text) {
+		failText = text;
+	}
 
-  public void setText(String txt) {
-    text = txt;
-  }
+	public void addText(String txt) {
+		text += txt;
+	}
 
-  public void setSuccessful(boolean b) {
-    successful = b;
-  }
+	public void setText(String txt) {
+		text = txt;
+	}
 
-  public String getText() {
-    if (successful) return text;
-    else return failText; //have a double line break after every command input
-  }
+	public void setSuccessful(boolean b) {
+		successful = b;
+	}
+
+	public String getText() {
+		if (successful)
+			return text;
+		else
+			return failText; 
+	}
+	
+	/**
+	 * Returns whether or not to return data. A CommandSender
+	 * should not send data back to its client if this is set
+	 * to false. It may be false for a number of reasons; though
+	 * usually it is because data sending gets handled within the command
+	 * in a different way than normal (the movement system, for example).
+	 * @return
+	 */
+	public boolean getReturnData() {
+		return returnData;
+	}
+	
+	/**
+	 * Sets whether or not to return data from this CommandResult.
+	 * @param returnData
+	 */
+	public void setReturnData(boolean returnData) {
+		this.returnData = returnData;
+	}
 
 }

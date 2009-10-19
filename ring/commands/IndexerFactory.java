@@ -1,4 +1,4 @@
-package ring.commands.nc;
+package ring.commands;
 
 import java.util.Properties;
 

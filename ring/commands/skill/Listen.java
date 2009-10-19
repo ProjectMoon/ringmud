@@ -1,19 +1,47 @@
 package ring.commands.skill;
 
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandParameters;
-import ring.commands.nc.CommandResult;
+import ring.mobiles.Mobile;
+import ring.skills.Skill;
+import ring.skills.SkillList;
 
 //TODO implement listen
 public class Listen implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
-		throw new UnsupportedOperationException();
+		CommandResult res = new CommandResult();
+		res.setFailText("You listen for the sounds of the world.");
+
+		Mobile mob = (Mobile) sender;
+		// is our listener deaf? if so, he can't really listen for anything can
+		// he?
+		if (mob.isDeaf) {
+			res.setFailText("[R][WHITE]You might have better luck listening for things if you weren't deaf...");
+			return res;
+		}
+
+		// ok, try to set up the skill
+		SkillList skills = mob.getSkillList();
+		Skill listen = skills.getSkillByName("listen");
+
+		// do they even have listen?
+		if (listen == null)
+			return res;
+
+		// ok, so they do...
+		int check = listen.makeCheck();
+		mob.listenCheck = check;
+		res.setText("[R][WHITE]You begin listening intently for any interesting (or suspicious) sounds... (check: "	+ check + ")");
+		res.setSuccessful(true);
+		return res;
+
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "listen";
 	}
 
 	public void rollback() {

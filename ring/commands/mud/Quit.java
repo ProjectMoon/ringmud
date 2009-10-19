@@ -1,18 +1,24 @@
 package ring.commands.mud;
 
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandParameters;
-import ring.commands.nc.CommandResult;
+import ring.players.PlayerCharacter;
 
 public class Quit implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
-		throw new UnsupportedOperationException();
+		CommandResult res = new CommandResult();
+		res.setSuccessful(true);
+		res.setText("Shutting down your connection...");
+		PlayerCharacter player = (PlayerCharacter)sender;
+		player.quit();
+		return res;
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "quit";
 	}
 
 	public void rollback() {

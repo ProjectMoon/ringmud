@@ -1,6 +1,5 @@
-package ring.commands.nc;
+package ring.commands;
 
-import ring.commands.CommandSender;
 
 public class Bad implements Command {
 

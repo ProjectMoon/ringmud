@@ -1,4 +1,4 @@
-package ring.commands.nc;
+package ring.commands;
 
 import java.io.BufferedReader;
 import java.io.File;

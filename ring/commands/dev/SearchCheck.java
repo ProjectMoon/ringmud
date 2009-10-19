@@ -1,19 +1,27 @@
 package ring.commands.dev;
 
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandParameters;
-import ring.commands.nc.CommandResult;
+import ring.commands.admin.AbstractAdminCommand;
+import ring.mobiles.Mobile;
 
-//TODO implement searchcheck
-public class SearchCheck implements Command {
+public class SearchCheck extends AbstractAdminCommand implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
-		throw new UnsupportedOperationException();
+		CommandResult res = new CommandResult();
+		res.setFailText("Yes, you do have one of those...");
+		if (super.isAccessAllowed(sender)) {
+			Mobile mob = (Mobile) sender;
+			res.setText("Your current search check: " + mob.hiddenExitSearchCheck);
+			res.setSuccessful(true);
+		}
+		return res;
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "searchcheck";
 	}
 
 	public void rollback() {

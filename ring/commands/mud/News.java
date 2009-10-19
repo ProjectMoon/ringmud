@@ -1,9 +1,9 @@
 package ring.commands.mud;
 
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandParameters;
-import ring.commands.nc.CommandResult;
 
 public class News implements Command {
 

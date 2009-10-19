@@ -32,23 +32,36 @@ import ring.movement.Room;
  * @author Jeff Hair
  * @version 1.0
  */
-public final class CommandParameters {
+public final class CommandParameters {	
+	/**
+	 * An enum representing different types of Command parameters. The type tells
+	 * the CommandParameters objects how to translate the strings it has into
+	 * actual MUD objects.
+	 */
+	public enum CommandType {
+		TEXT,
+		SPELL,
+		INVENTORY,
+		EQUIPMENT,
+		FROM_ROOM
+	}
+
 	private Object[] parameters;
 	private String[] initParameters;
 	private CommandSender sender;
-	private String cmdType;
-
+	private CommandType cmdType;
+	
 	public CommandParameters(String[] params, CommandSender sender) {
 		this.sender = sender;
 		initParameters = params;
 	}
 
-	public void init(String cmdType) {
+	public void init(CommandType cmdType) {
 		this.cmdType = cmdType;
 		parameters = getParameters(initParameters, cmdType);
 	}
 
-	public String getType() {
+	public CommandType getType() {
 		return cmdType;
 	}
 
@@ -116,7 +129,7 @@ public final class CommandParameters {
 	// This method gets all of the parameters needed for the method to be
 	// executed properly.
 	// All nulls and such are handled properly as well.
-	private Object[] getParameters(String[] params, String cmdType) {
+	private Object[] getParameters(String[] params, CommandType cmdType) {
 		WorldObject o;
 
 		// Handle a command that has no parameters.
@@ -125,7 +138,7 @@ public final class CommandParameters {
 
 		// Do things according to the type of command.
 		// is is a "say"-type command?
-		if (cmdType.equals(Command.TXT))
+		if (cmdType.equals(CommandType.TEXT))
 			return params;
 
 		// well it must require some sort of object, so let's declare an
@@ -134,17 +147,17 @@ public final class CommandParameters {
 
 		// Is it a command that requires the last object to be a WorldObject
 		// target? i.e. a cast command
-		if (cmdType.equals(Command.SPL)) {
+		if (cmdType.equals(CommandType.SPELL)) {
 			for (int c = 0; c < params.length - 1; c++) {
 				parameters[c] = params[c];
 			}
 
 			String name = params[params.length - 1].toString();
-			parameters[params.length - 1] = getWorldObjectByName(name);
+			parameters[params.length - 1] = getWorldObjectFromRoomByName(name);
 		}// END OF SPELL COMMANDS
 
 		// Is it a command that looks for parameters in the inventory?
-		if (cmdType.equals(Command.INV)) {
+		if (cmdType.equals(CommandType.INVENTORY)) {
 			for (int x = 0; x < params.length; x++) {
 				// First, let's check to see if the parameter is something in
 				// the room. This is the most common
@@ -162,7 +175,7 @@ public final class CommandParameters {
 		} // END OF INVENTORY COMMAND PARAMETERS!!!!
 
 		// Is it a command that looks for parameters in the equipment?
-		if (cmdType.equals(Command.EQP)) {
+		if (cmdType.equals(CommandType.EQUIPMENT)) {
 			for (int x = 0; x < params.length; x++) {
 				// First, let's check to see if the parameter is something in
 				// the room. This is the most common
@@ -180,12 +193,12 @@ public final class CommandParameters {
 		} // END OF EQUIPMENT COMMAND PARAMETERS!!!!!!
 
 		// It must be a command that looks for parameters in a room...
-		if (cmdType.equals(Command.CMD)) {
+		if (cmdType.equals(CommandType.FROM_ROOM)) {
 			for (int x = 0; x < parameters.length; x++) {
 				// First, let's check to see if the parameter is something in
 				// the room. This is the most common
 				// Parameter.
-				o = getWorldObjectByName(params[x]);
+				o = getWorldObjectFromRoomByName(params[x]);
 				if (o != null) {
 					parameters[x] = o;
 				}
@@ -240,7 +253,7 @@ public final class CommandParameters {
 	// String name.
 	// Will have to be updated later to accomodate things like
 	// "1.monster, 2.sword" etc.
-	private WorldObject getWorldObjectByName(String name) {
+	private WorldObject getWorldObjectFromRoomByName(String name) {
 		if (name.equals("a"))
 			return null;
 		Mobile o;

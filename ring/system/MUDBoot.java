@@ -3,10 +3,10 @@ package ring.system;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandHandler;
-import ring.commands.nc.CommandIndexer;
-import ring.commands.nc.IndexerFactory;
+import ring.commands.Command;
+import ring.commands.CommandHandler;
+import ring.commands.CommandIndexer;
+import ring.commands.IndexerFactory;
 import ring.resources.loaders.LoaderFactory;
 import ring.resources.loaders.RoomLoader;
 

@@ -1,19 +1,32 @@
 package ring.commands.dev;
 
+import ring.commands.Command;
+import ring.commands.CommandParameters;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.commands.nc.Command;
-import ring.commands.nc.CommandParameters;
-import ring.commands.nc.CommandResult;
+import ring.commands.admin.AbstractAdminCommand;
+import ring.mobiles.Mobile;
 
-//TODO implement Deaf
-public class Deaf implements Command {
+public class Deaf extends AbstractAdminCommand implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
-		throw new UnsupportedOperationException();
+		CommandResult res = new CommandResult();
+		if (super.isAccessAllowed(sender)) {
+			Mobile mob = (Mobile) sender;
+			if (mob.isDeaf)
+				mob.isDeaf = false;
+			else
+				mob.isDeaf = true;
+			res.setFailText("Couldn't make you deaf (or not deaf).");
+			res.setText("Your deafness: " + mob.isDeaf);
+			res.setSuccessful(true);
+		}
+		return res;
+
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "deaf";
 	}
 
 	public void rollback() {

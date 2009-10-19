@@ -88,7 +88,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 			return;
 
 		// Send the command.
-		ring.commands.nc.CommandResult res = super.handler.sendCommand(command);
+		ring.commands.CommandResult res = super.handler.sendCommand(command);
 		sendData(res.getText());
 	}
 
