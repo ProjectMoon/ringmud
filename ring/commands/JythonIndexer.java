@@ -85,9 +85,9 @@ class JythonIndexer implements CommandIndexer {
 	 * Initializes the Jython environment for use with the indexer.
 	 */
 	private void initInterpreter() {
-		INTERP.exec("from ring.commands.nc import Command");
+		INTERP.exec("from ring.commands import Command");
 		INTERP.exec("from ring.commands import CommandSender");
-		INTERP.exec("from ring.commands.nc import CommandParameters");
+		INTERP.exec("from ring.commands import CommandParameters");
 	}
 	
 	/**

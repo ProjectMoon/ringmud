@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import ring.jox.BeanParser;
 import ring.resources.beans.ItemBean;
 import ring.resources.beans.ItemBeanSet;
-import ring.resources.beans.RoomBeanSet;
 import ring.system.MUDBootException;
 import ring.system.MUDConfig;
 import ring.system.XMLFileNameFilter;

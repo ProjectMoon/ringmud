@@ -2,7 +2,6 @@ package ring.resources.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 /**
  * This class represents a set of RoomBeans being loaded in by the JOX parser. It stores
@@ -14,7 +13,6 @@ import java.util.logging.Logger;
 public class RoomBeanSet implements Serializable {
 	public static final long serialVersionUID = 1;
 	
-	private static Logger log = Logger.getLogger(RoomBeanSet.class.getName());
 	private HashMap<String, RoomBean> roomSet;
 	private String name;
 	

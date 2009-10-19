@@ -59,8 +59,7 @@ public class Look implements Command {
 
 			// is our looker blind?
 			if (mob.isBlind) {
-				res
-						.setFailText("You have nothing to look at, for you are blind!");
+				res.setFailText("You have nothing to look at, for you are blind!");
 				return res;
 			}
 

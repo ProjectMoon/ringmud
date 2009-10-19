@@ -185,7 +185,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender, 
         if (command.equals("!!")) command = lastCommand;
 
         //Send the command.
-        ring.commands.CommandResult res = super.handler.sendCommand(command);
+        CommandResult res = super.handler.sendCommand(command);
         
         if (res.getReturnData()) {
         	String result = res.getText();

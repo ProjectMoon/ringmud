@@ -19,7 +19,7 @@ public class CommandResult {
 	private boolean successful;
 	
 	//Whether or not to even return data.
-	private boolean returnData;
+	private boolean returnData = true;
 
 	public CommandResult() {
 		text = "";

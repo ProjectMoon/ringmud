@@ -8,8 +8,6 @@ package ring.players;
  * @author Jeff Hair
  * @version 1.0
  */
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import ring.entities.Item;
-import ring.mobiles.NPC;
 
 public class ItemIterator implements Iterator<Item> {
 	private int pos;

@@ -14,6 +14,7 @@ import ring.world.World;
 public class Wear implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		System.out.println("In wear");
 		params.init(CommandType.INVENTORY);
 		Object t = params.getParameter(0);
 		CommandResult res = new CommandResult();

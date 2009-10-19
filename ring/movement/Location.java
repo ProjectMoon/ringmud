@@ -1,8 +1,5 @@
 package ring.movement;
 
-import java.util.List;
-
-import ring.mobiles.Mobile;
 
 /**
  * An abstract interface representing a place a Movable can go in the MUD.

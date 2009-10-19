@@ -1,15 +1,13 @@
 package ring.commands;
 
-import ring.world.WorldObject;
 import java.util.Vector;
-import ring.mobiles.Mobile;
+
 import ring.entities.Entity;
-import ring.entities.Item;
-import ring.mobiles.Body;
-import ring.mobiles.BodyPart;
+import ring.mobiles.Mobile;
 import ring.mobiles.backbone.Inventory;
 import ring.movement.Location;
 import ring.movement.Room;
+import ring.world.WorldObject;
 
 /**
  * <p>
