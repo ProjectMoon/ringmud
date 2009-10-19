@@ -11,6 +11,8 @@ package ring.world;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import ring.effects.Affectable;
@@ -19,7 +21,7 @@ import ring.effects.Effect;
 /**
  * This class defines things common to all objects that exist within the game
  * world. Things like weight, location, name, description, and effects are 
- * centralized in this highest bean of the game data heirarchy.
+ * centralized in this highest class of the game data heirarchy.
  * 
  * @author projectmoon
  * 
@@ -31,19 +33,14 @@ public abstract class WorldObject implements Affectable, Serializable {
 	protected int weight;
 	protected String longDescription;
 
-	// This is a vector of current effects that must be looped through and dealt
-	// with each tick.
-	// Each WorldObject (i.e. things that derive this class) is responsible for
-	// dealing with this list
-	// in its own way. Therefore there is nothing enforced on classes below this
-	// one that MAKES them deal
-	// with this list. Most WorldObjects that should be targetable by Effects
-	// deal with them in their
-	// processTick method.
-	protected ArrayList<Effect> effectsList;
+	/**
+	 * The list of Effects on this world object. World objects must take care of calling
+	 * the WorldObject's removeDeadEffects() method in order to get rid of dead effects each tick.
+	 */
+	protected List<Effect> effectsList = Collections.synchronizedList(new ArrayList<Effect>());
 
 	public WorldObject() {
-		effectsList = new ArrayList<Effect>();
+
 	}
 
 	// addEffect method.
@@ -53,7 +50,8 @@ public abstract class WorldObject implements Affectable, Serializable {
 		// unique.
 
 		e = e.uniqueInstance();
-		System.out.println("in addeffect");
+		assert (e.getTarget() == this);
+		
 		if (e.getTarget() != this) {
 			System.out.println("***WARNING***\nInbound effect [" + e
 					+ "] is not targeting WorldObject [" + this
@@ -62,9 +60,7 @@ public abstract class WorldObject implements Affectable, Serializable {
 		}
 
 		effectsList.add(e);
-		System.out.println("added element/starting effect");
 		e.begin();
-		System.out.println("started effect");
 	}
 
 	public final String getName() {
@@ -100,4 +96,18 @@ public abstract class WorldObject implements Affectable, Serializable {
 	public abstract boolean isPlayer();
 	public abstract boolean isNPC();
 	public abstract boolean isAttackable();
+
+	protected void removeDeadEffects() {
+		ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();
+		for (Effect effect : effectsList) {
+			if (effect.isDead()) {
+				System.out.println("***Removing Effect: " + effect);
+				effectsToRemove.add(effect);
+			}
+		}
+		
+		if (effectsToRemove.size() > 0) {
+			effectsList.removeAll(effectsToRemove);
+		}
+	}
 }

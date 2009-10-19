@@ -16,6 +16,8 @@ package ring.effects;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This class represents an "effect.: The effect could be part of a spell,
@@ -72,6 +74,16 @@ public class Effect implements Serializable {
 	
 	//Constant to allow the timer to be set later. Used as a parameter to the constructor.
 	public static final int SET_TIMER_LATER = 0;
+	
+	//Internal timer task to handle the management of this Effect.
+	private TimerTask effectTask = new TimerTask() {
+		@Override
+		public void run() {
+			decrementTimer();
+		}
+	};
+	
+	private Timer effectTimer = new Timer();
 
 	/**
 	 * Creates a new instant Effect with no EffectCreators.
@@ -161,12 +173,15 @@ public class Effect implements Serializable {
 
 		if (timer <= 0) {
 			endEffect();
-			return;
+			effectTimer.cancel();
+			dead = true;
+			System.out.println("effect ended...");
 		} 
 		else {
 			// if this is a periodic effect, make it happen again!
-			if (duration == Duration.PERIODIC_TIMED)
+			if (duration == Duration.PERIODIC_TIMED) {
 				startEffect();
+			}
 
 			timer--;
 		}
@@ -200,15 +215,21 @@ public class Effect implements Serializable {
 	public void begin() {
 		if (!begun) {
 			passParameters();
-			startEffect();
+			
+			//Periodic timed effects will be applied when timer decrements.
+			if (duration != Duration.PERIODIC_TIMED) {
+				startEffect();
+			}
 			begun = true;
+			effectTimer.scheduleAtFixedRate(effectTask, 0, 2000);
 		}
 	}
 	
 	private void startEffect() {
 		numStarts++;
 		if (duration == Duration.INSTANT)
-			dead = true; // dead on arrival?
+			dead = true; // dead on arrival
+		
 		for (EffectCreator ef : effectCreators.values())
 			ef.effectLife(target);
 	}

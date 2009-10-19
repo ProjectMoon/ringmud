@@ -1,14 +1,10 @@
 package ring.world;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
+ * Interface that allows objects to listen to ticker events.
+ * @author projectmoon
+ *
  */
-
 public interface TickerListener {
-  public void processTick(TickerEvent event);
+	public void processTick(TickerEvent event);
 }

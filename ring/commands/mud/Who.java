@@ -1,17 +1,50 @@
 package ring.commands.mud;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ring.commands.Command;
 import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
+import ring.commands.CommandParameters.CommandType;
+import ring.players.PlayerCharacter;
+import ring.world.World;
 
 //TODO implement who
 public class Who implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
 		res.setFailText("[R][WHITE]Please use the command 'help who' for information on how to use the who command.");
 
+		//For now, simple implementation
+		String[] whoParams = params.getParameterArray();
+		if (whoParams == null || whoParams.length == 0) {
+			return res;
+		}
+		
+		List<PlayerCharacter> players = World.getWorld().getPlayers();
+		ArrayList<String> whoNames = new ArrayList<String>();
+		
+		for (String whoParam : whoParams) {
+			for (PlayerCharacter player : players) {
+				if (player.getWhoTag().contains(whoParam)) {
+					whoNames.add(player.getName());
+				}
+			}
+		}
+		
+		String whoText = "Players Online:\n---------------\n";
+		
+		for (String name : whoNames) {
+			whoText += name + "\n";
+		}
+		
+		res.setSuccessful(true);
+		res.setText(whoText);
+		
 		// Parse the parameters.
 		// Current acceptable parameters include the following:
 		// class names, player names, race names, individual level (a number), a
@@ -43,7 +76,6 @@ public class Who implements Command {
 		// Set the CommandResult's text to the string.
 
 		// Return the result.
-		res.setSuccessful(true);
 		return res;
 	}
 

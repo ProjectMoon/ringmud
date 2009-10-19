@@ -22,7 +22,7 @@ import ring.system.MUDConfig;
 
 public class RingTester {
 	public static void main(String[] args) {
-		/*Room r = new Room("A room", "lol");
+		Room r = new Room("A room", "lol");
 		Room r2 = new Room("Room 2", "hidden!");
 		Portal r2port = new Portal(r2, "north");
 		r2port.setSearchDC(25);
@@ -35,19 +35,31 @@ public class RingTester {
 		
 		mob.setBody(BodyFactory.createMediumHumanoidBody());
 		
-		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0);
+		Effect hpe = new Effect(Effect.Duration.PERIODIC_TIMED, 5);
 		hpe.addEffectCreator("hpchange", new HPChange());
 		hpe.addParameter("hpchange", "amount", 40);
+		hpe.setTarget(mob);
+		mob.addEffect(hpe);
 		
-		Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
+		//Simulate world ticker.
+		while (true) {
+			mob.processTick(null);
+			try {
+				Thread.sleep(2000);
+			}
+			catch (Exception e) {}
+		}
+		
+
+		//Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
 		
 		//Set up everything
-		r.addEntity(armor);
-		r.addMobile(mob);
-		mob.setLocation(r);
+		//r.addEntity(armor);
+		//r.addMobile(mob);
+		//mob.setLocation(r);
 		
 		//Redirect useless debug output
-		PrintStream realOut = System.out;
+		/*PrintStream realOut = System.out;
 		try {
 			//System.setOut(new PrintStream("blah"));
 			NPC.theStream = realOut;
@@ -60,12 +72,5 @@ public class RingTester {
 			e.printStackTrace();
 			System.exit(1);
 		}*/
-		
-		MUDConfig.loadProperties();
-		LoaderFactory.initLoaders();
-		LoaderFactory.loadAllBeans();
-		Armor a = (Armor)LoaderFactory.getItemLoader().getResource("headHelmX90");
-		System.out.println(a.getName());
-		
 	}
 }

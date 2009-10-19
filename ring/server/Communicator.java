@@ -379,5 +379,4 @@ public class Communicator {
 			e.printStackTrace();
 		}
 	}
-
 }

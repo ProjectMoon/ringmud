@@ -303,4 +303,8 @@ public final class CommandParameters {
 		return null;
 	}
 
+	public String[] getParameterArray() {
+		return initParameters;
+	}
+
 }

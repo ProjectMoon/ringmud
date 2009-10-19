@@ -97,13 +97,6 @@ public final class CommandHandler {
 		}
 	}
 	
-	public static void main(String[] args) {
-		MUDConfig.loadProperties();
-		MUDBoot.loadCommands();
-		Command c = commands.get("test");
-		System.out.println(c);
-	}
-	
 	/**
 	 * Adds an individual String-Command relation to the command Map. This
 	 * method is useful for scripting languages that extend the MUD and
@@ -191,7 +184,9 @@ public final class CommandHandler {
 	 * Sends a command to this CommandHandler. This method assumes that
 	 * the CommandSender was the one to send this command. Technically, it
 	 * is possible to have an external entity send a command to a any CommandHandler,
-	 * but only if they can actually access that handler.
+	 * but only if they can actually access that handler. The actual execution of the
+	 * command is synchronized on the command sender. Some commands may also synchronize
+	 * on other objects in order to ensure atomicity.
 	 * @param command
 	 * @return the CommandResult containing results of the command.
 	 */
@@ -235,20 +230,31 @@ public final class CommandHandler {
 	}
 
 	/**
-	 * Invokes a Command with the specified parametes.
+	 * Invokes a Command with the specified parameters. Synchronizes on command sender.
 	 * @param cmd
 	 * @param params
 	 * @return the result of the command.
 	 */
 	private CommandResult handleCommand(Command cmd, CommandParameters params) {
-		CommandResult cr = cmd.execute(sender, params);
-		if (cr == null) {
-			log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult! Creating a wrapper result.");
-			cr = new CommandResult();
-			cr.setReturnData(false);
+		synchronized (sender) {
+			try {
+				CommandResult cr = cmd.execute(sender, params);
+				if (cr == null) {
+					log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult! Creating a wrapper result.");
+					cr = new CommandResult();
+					cr.setReturnData(false);
+				}
+				
+				return cr;
+			}
+			catch (RuntimeException e) {
+				log.severe("There was a runtime exception executing the command " + cmd + " for sender " + sender + ":");
+				e.printStackTrace();
+				CommandResult cr = new CommandResult();
+				cr.setFailText("There was an error: " + e.toString());
+				return cr;
+			}
 		}
-		
-		return cr;
 	}
 
 	

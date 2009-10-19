@@ -80,7 +80,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	}
 
 	public void sendData(String data) {
-		theStream.println(data);
+		
 	}
 	public void doCommand(String command) {
 		// Was anything even typed?

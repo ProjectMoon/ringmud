@@ -23,7 +23,7 @@ import ring.resources.ClassFeatureLoader;
 
 public class World implements TickerListener {
 	private static World world;
-	private static Vector playerList;
+	private static ArrayList<PlayerCharacter> playerList;
 
 	//Stuff of the world.
 	private static Ticker worldTicker;
@@ -45,7 +45,7 @@ public class World implements TickerListener {
 	public World() {                
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
-		playerList = new Vector();
+		playerList = new ArrayList<PlayerCharacter>();
 		
 		/** room init line here? **/
 		isShutDown = false;
@@ -265,7 +265,7 @@ public class World implements TickerListener {
 
 	//getPlayers method.
 	//Returns the player list.
-	public Vector getPlayers() {
+	public List<PlayerCharacter> getPlayers() {
 		return playerList;
 	}
 

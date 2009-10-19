@@ -1128,17 +1128,8 @@ public class Mobile extends WorldObject implements CommandSender,
 	// own unique fashion. However, they MUST call super.processTick()
 	// or there will be problems... big problems.
 	public void processTick(TickerEvent e) {
-		for (int c = 0; c < super.effectsList.size(); c++) {
-			Effect effect = (Effect) super.effectsList.get(c);
-			if (effect.isDead()) {
-				System.out.println("***Removing Effect: " + effect);
-				super.effectsList.remove(effect);
-			} 
-			else {
-				effect.decrementTimer();
-			}
-		}
-
+		super.removeDeadEffects();		
+		
 		// Deal with locking.
 		if (this.isLocked)
 			this.decrementLockTime();
