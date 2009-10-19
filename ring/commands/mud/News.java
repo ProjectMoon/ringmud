@@ -5,6 +5,7 @@ import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 
+//TODO Implement news
 public class News implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
@@ -12,7 +13,7 @@ public class News implements Command {
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "news";
 	}
 
 	public void rollback() {

@@ -7,7 +7,6 @@ import ring.commands.CommandSender;
 import ring.commands.admin.AbstractAdminCommand;
 import ring.mobiles.Mobile;
 
-//TODO implement levelup
 public class LevelUp extends AbstractAdminCommand implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
@@ -25,7 +24,7 @@ public class LevelUp extends AbstractAdminCommand implements Command {
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "levelup";
 	}
 
 	public void rollback() {

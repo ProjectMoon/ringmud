@@ -35,7 +35,7 @@ public class Equipment implements Command {
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "equipment";
 	}
 
 	public void rollback() {

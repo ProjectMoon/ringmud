@@ -10,7 +10,6 @@ import ring.entities.Item;
 import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
 
-//TODO implement Remove
 public class Remove implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {

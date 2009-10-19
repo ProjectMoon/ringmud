@@ -9,7 +9,6 @@ import ring.mobiles.Mobile;
 import ring.spells.Spell;
 import ring.spells.SpellList;
 
-//TODO implement Prepare
 public class Prepare implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {

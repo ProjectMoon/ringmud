@@ -9,7 +9,6 @@ package ring.entities;
  * @version 1.0
  */
 
-import ring.damage.WeaponDamage;
 import ring.effects.Effect;
 import ring.mobiles.BodyPart;
 import ring.resources.beans.ItemBean;
@@ -35,7 +34,6 @@ public class Weapon extends Item {
 	public static int WAND = 8;
 
 	// Certain necessary things.
-	private WeaponDamage damage;
 	private int type;
 	private Effect procEffects;
 
@@ -48,11 +46,10 @@ public class Weapon extends Item {
 	}
 
 	public Weapon(String name, String indefiniteDescriptor, BodyPart bodyPart,
-			String idleDescriptor, WeaponDamage damage, int type,
+			String idleDescriptor, int type,
 			Effect passiveEffects, Effect procEffects) {
 		super.name = name;
 		super.idleDescriptor = idleDescriptor;
-		this.damage = damage;
 		if ((type < SWORD) || (type > WAND))
 			type = SWORD;
 		this.type = type;
@@ -62,9 +59,6 @@ public class Weapon extends Item {
 		super.wearable = true;
 	}
 
-	public WeaponDamage getDamage() {
-		return damage;
-	}
 
 	public int getType() {
 		return type;

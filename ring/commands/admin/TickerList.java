@@ -27,7 +27,7 @@ public class TickerList extends AbstractAdminCommand implements Command {
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "tickerlist";
 	}
 
 	public void rollback() {

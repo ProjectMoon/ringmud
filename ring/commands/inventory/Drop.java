@@ -59,7 +59,7 @@ public class Drop implements Command {
 	}
 
 	public String getCommandName() {
-		return "inventory";
+		return "drop";
 	}
 
 	public void rollback() {

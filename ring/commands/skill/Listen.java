@@ -8,7 +8,6 @@ import ring.mobiles.Mobile;
 import ring.skills.Skill;
 import ring.skills.SkillList;
 
-//TODO implement listen
 public class Listen implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {

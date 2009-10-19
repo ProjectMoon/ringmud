@@ -8,7 +8,6 @@ import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
 import ring.world.World;
 
-//TODO implement say
 public class Say implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {

@@ -5,7 +5,7 @@ import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.players.PlayerCharacter;
 
-public abstract class AbstractAdminCommand implements Command {
+public abstract class AbstractAdminCommand {
 	public boolean isAccessAllowed(CommandSender sender) {
 		if (sender instanceof PlayerCharacter == false) {
 			return false;

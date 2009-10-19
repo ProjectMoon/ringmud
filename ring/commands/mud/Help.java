@@ -13,7 +13,7 @@ public class Help implements Command {
 	}
 
 	public String getCommandName() {
-		throw new UnsupportedOperationException();
+		return "help";
 	}
 
 	public void rollback() {
