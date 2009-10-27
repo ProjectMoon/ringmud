@@ -40,7 +40,9 @@ public class ItemProvider implements RingBeanProvider<ItemBean> {
         for (String filePath : itemSetFiles) {
         	ItemBeanSet set = constructFromFiles(filePath);
         	log.info("Processed item set " + set);
-        	itemBeans.copyFrom(set);
+        	if (set != null) {
+        		itemBeans.copyFrom(set);
+			}
         }
         
         return itemBeans;
@@ -55,28 +57,34 @@ public class ItemProvider implements RingBeanProvider<ItemBean> {
     	File dir = new File(directory);
     	ItemBeanSet set = new ItemBeanSet();
     	
-    	if (dir.isDirectory() == false) {
-    		throw new MUDBootException("Data files should only be specified by directory, not absolute files.");
-    	}
-    	else {
-    		File[] dataFiles = dir.listFiles(new XMLFileNameFilter());
-    		
-    		for (File dataFile : dataFiles) {
-    			log.fine("Processing ItemSet " + dataFile);
-    			try {
-					FileInputStream stream = new FileInputStream(dataFile);
-					BeanParser<ItemBeanSet> roomParser = new BeanParser<ItemBeanSet>();
-	    			ItemBeanSet fileSet = roomParser.parse(stream, ItemBeanSet.class);
-	    			set.copyFrom(fileSet);
-				} 
-    			catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-    		}
-    		
-    		return set;
-    	}
+    	if (dir.exists()) {
+			if (dir.isDirectory() == false) {
+				throw new MUDBootException("Data files should only be specified by directory, not absolute files.");
+			}
+			else {
+				File[] dataFiles = dir.listFiles(new XMLFileNameFilter());
+				
+				for (File dataFile : dataFiles) {
+					log.fine("Processing ItemSet " + dataFile);
+					try {
+						FileInputStream stream = new FileInputStream(dataFile);
+						BeanParser<ItemBeanSet> roomParser = new BeanParser<ItemBeanSet>();
+						ItemBeanSet fileSet = roomParser.parse(stream, ItemBeanSet.class);
+						set.copyFrom(fileSet);
+					} 
+					catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}			
+				}
+				
+				return set;
+			}
+		}
+		else {
+			System.err.println("Directory does not exist: " + dir);
+			return null;
+		}
     }	
 
 }

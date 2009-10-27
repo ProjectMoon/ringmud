@@ -63,10 +63,18 @@ public class MUDBoot {
 		Properties jythonProps = MUDConfig.getPluginProperties("jythonIndexer");
 		
 		CommandIndexer pkgIndexer = IndexerFactory.getIndexer("ring.commands.PackageIndexer", pkgProps);
-		CommandIndexer jythonIndexer = IndexerFactory.getIndexer("ring.commands.JythonIndexer", jythonProps);
-		
 		CommandHandler.addCommands(pkgIndexer.getCommands());
-		CommandHandler.addCommands(jythonIndexer.getCommands());
+		
+		if (jythonProps.size() > 0) {
+			CommandIndexer jythonIndexer = IndexerFactory.getIndexer("ring.commands.JythonIndexer", jythonProps);
+			CommandHandler.addCommands(jythonIndexer.getCommands());
+		}
+		else {
+			System.out.println("Jython Indexer is not enabled.");
+		}
+		
+		
+		
 	}
     
     private static void buildUniverse() {

@@ -10,14 +10,16 @@ package ring.util;
  */
 import java.util.*;
 
+//TODO refactor this into a non static class. will allow for better code
+//in parseOutgoingData
 public class TextParser {
     //Constants
     public static final int SCREEN_WIDTH = 80;
-    private static final TreeMap<String, String> colors = new TreeMap<String, String>();
+    private static final Map<String, String> colors = new HashMap<String, String>();
     
     static {
         //Black.
-        colors.put("[BLACK]", "\033[30m");
+        colors.put("\\[BLACK\\]", "\033[30m");
         
         //Blue.
         colors.put("[BLUE]", "\033[34m");
@@ -35,7 +37,7 @@ public class TextParser {
         colors.put("[RED]", "\033[31m");
         
         //White.
-        colors.put("[WHITE]", "\033[37m");
+        colors.put("[WHITE]", "\033[39m");
         
         //Yellow.
         colors.put("[YELLOW]", "\033[33m");
@@ -44,32 +46,15 @@ public class TextParser {
         colors.put("[B]", "\033[1m");
         
         //Regular.
-        colors.put("[R]", "\033[22m");        
+        colors.put("[R]", "\033[0m");        
     }
 
     public TextParser() {}
 
-    public static int countParameters(String str) {
-        //return zero for parameters with zero parameters; fixes a bug...
-        if (str.indexOf("()") != -1) {
-            return 0;
-        }
-        char[] chars = str.toCharArray();
-        int commas = 0;
-
-        for (int c = 0; c < chars.length; c++) {
-            if (chars[c] == ',') {
-                commas++;
-            }
-        }
-
-        commas++; //account for that last parameter
-
-        return commas;
-    }
-
     public static String trimNewlines(String text) {
-        if (text.length() == 0) return "";
+    	//Don't need to make any changes to an empty string.
+        if (text.length() == 0) return text;
+        
         char[] textChars = text.toCharArray();
         int start = 0;
         int end = text.length() - 1;
@@ -91,6 +76,7 @@ public class TextParser {
         StringTokenizer st = new StringTokenizer(data, "\n[], \t", true);
         StringBuilder res = new StringBuilder();
         int count = 0;
+        boolean trimPrevious = false;
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
            
@@ -120,28 +106,42 @@ public class TextParser {
             }
             
             if (count >= SCREEN_WIDTH) {
-                res.append("\r\n");
-                count = 0;
+            	res.append(text);
+            	int offset = count - SCREEN_WIDTH;
+            	int maxIndex = res.length() - 1;
+            	char c = res.charAt(maxIndex - offset);
+            	
+            	//rewind until we find a character that is whitespace
+            	while (Character.isWhitespace(c) == false) {
+            		offset++;
+            		c = res.charAt(maxIndex - offset);
+				}
+				
+				//Leave whitespace on the line above by moving offset back one
+				if (offset != 0) {
+	           		offset--;
+	           	}
+            	
+            	//Now we should have a safe insert.
+            	res.insert(maxIndex - offset, "\r\n");
+                count = offset;
+                continue;
             }
             
+            //finally we can append normally, if we reach this part.
             res.append(text);         
         }
         
-        //make sure we return to white.
-        res.append(colors.get("[WHITE]"));
-        return res.toString();
+        //make sure we return to default.
+        res.append(colors.get("[R]"));
+                
+        //It is FAR simpler to remove \n\\s this way than in the parsing
+        //loop...
+        String ret = res.toString();
+        return ret.replaceAll("\n\\s+", "\n");
+        
     }
-
-    public static String indefiniteArticle(String text) {
-        String[] tokens = text.split(" ");
-
-        String plurality = (tokens[0].substring(tokens[0].length() - 1));
-
-        System.out.println(plurality);
-
-        return "meh";
-    }
-
+    
     /**
      * Removes all formatting from the given String. Useful for
      * sending data to players who have ANSI turned off, as well

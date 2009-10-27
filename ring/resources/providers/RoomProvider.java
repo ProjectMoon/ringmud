@@ -69,7 +69,7 @@ public class RoomProvider implements RingBeanProvider<RoomBean> {
     		File[] dataFiles = dir.listFiles(new XMLFileNameFilter());
     		
     		for (File dataFile : dataFiles) {
-    			log.fine("Processing RoomSet " + dataFile);
+    			log.info("Processing RoomSet " + dataFile);
     			try {
 					FileInputStream stream = new FileInputStream(dataFile);
 					BeanParser<RoomBeanSet> roomParser = new BeanParser<RoomBeanSet>();
