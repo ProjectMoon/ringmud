@@ -19,7 +19,7 @@ public class TextParser {
     
     static {
         //Black.
-        colors.put("\\[BLACK\\]", "\033[30m");
+        colors.put("[BLACK]", "\033[30m");
         
         //Blue.
         colors.put("[BLUE]", "\033[34m");
@@ -150,7 +150,19 @@ public class TextParser {
      * @return
      */
 	public static String stripFormatting(String text) {
-		// TODO implement this. currently returns whatever it was given.
+		for (String color : colors.keySet()) {
+			CharSequence s1 = "[";
+			CharSequence s2 = "]";
+			CharSequence r1 = "\\[";
+			CharSequence r2 = "\\]";
+			color = color.replace("[", "\\[");
+			color = color.replace("]", "\\]");
+			text = text.replaceAll(color, "");
+		}
 		return text;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(stripFormatting("[WHITE]blah[CYAN]"));
 	}
 }
