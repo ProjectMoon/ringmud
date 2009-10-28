@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ring.server.Server;
 import ring.util.TextParser;
 
 /**
@@ -327,6 +328,7 @@ public class TelnetCommunicator implements Communicator {
 	private void killConnection() {
 		try {
 			socket.close();
+			Server.decrementConnections();
 		} catch (IOException e) {
 			error = true;
 			e.printStackTrace();
@@ -389,6 +391,7 @@ public class TelnetCommunicator implements Communicator {
 	public void close() {
 		try {
 			socket.close();
+			Server.decrementConnections();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

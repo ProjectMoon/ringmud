@@ -25,6 +25,7 @@ public class Server implements RingModule {
 	private static ServerSocket socket;
 	
 	private static PlayerList playerList = new PlayerList();
+	private static int currentConnections = 0;
 
 	public Server() {}
 	
@@ -36,6 +37,14 @@ public class Server implements RingModule {
 		MUDConfig.loadProperties();
 		new Server().start(new String[] { "-a", "localhost" });
 	}
+	
+	public static void incrementConnections() {
+		currentConnections++;
+	}
+	
+	public static void decrementConnections() {
+		currentConnections--;
+	}
 
 	public void start(String[] args) {
 		String addr = "localhost";
@@ -45,6 +54,8 @@ public class Server implements RingModule {
 			else
 				addr = MUDConfig.getServerIP();
 		}
+		
+		int port = MUDConfig.getServerPort();
 
 		Socket playerSocket;
 
@@ -53,9 +64,9 @@ public class Server implements RingModule {
 		new World(); //no assignment because world assigns itself.
 
 		// Bind the IP
-		System.out.println("Attempting to bind to IP: " + addr);
+		System.out.println("Attempting to bind to IP: " + addr + ":" + port);
 		try {
-			socket = new ServerSocket(2312, 50, InetAddress.getByName(addr));
+			socket = new ServerSocket(port, 50, InetAddress.getByName(addr));
 		} catch (IOException e) {
 			System.out.println("Hit an IO road bump...");
 			e.printStackTrace();
@@ -72,14 +83,23 @@ public class Server implements RingModule {
 				System.out.println("Player connected ["
 						+ playerSocket.getInetAddress() + "]");
 
-				// create a new player thread to run the player seperately
-				Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(),
-						new PlayerLogon(playerSocket), "Logon "
-								+ playerSocket.getInetAddress().toString());
+				//only start a new login thread if the number of max connections is not
+				//violated.
+				if (MUDConfig.getServerMaxConnections() == 0 ||
+						currentConnections + 1 < MUDConfig.getServerMaxConnections()) {
+					Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(),
+							new PlayerLogon(playerSocket), "Logon "
+									+ playerSocket.getInetAddress().toString());
 
-				playerThread.setDaemon(true);
-				playerThread.start();
-				playerThread = null;
+					playerThread.setDaemon(true);
+					playerThread.start();
+					playerThread = null;
+					incrementConnections();
+				}
+				else {
+					System.out.println("Max number of connections reached. Closing connection for [" + playerSocket.getInetAddress() + "]");
+					playerSocket.close();
+				}
 
 			} catch (InterruptedIOException iioe) {
 				System.out.println("I//O interrupted!");

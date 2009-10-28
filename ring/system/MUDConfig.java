@@ -54,6 +54,14 @@ public class MUDConfig {
     	return config.getProperty("server.address");
     }
     
+    public static int getServerPort() {
+    	return Integer.parseInt(config.getProperty("server.port"));
+	}
+	
+	public static int getServerMaxConnections() {
+		return Integer.parseInt(config.getProperty("server.maxConnections"));
+	}
+    
     public static String getRoomProvider() {
     	return config.getProperty("room.provider");
     }
