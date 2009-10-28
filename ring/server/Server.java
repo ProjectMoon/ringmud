@@ -21,13 +21,16 @@ import ring.system.MUDBoot;
 import ring.system.MUDConfig;
 
 public class Server implements RingModule {
-	// This is the world object. Everything is stored in it.
-	private static World world;
-
 	// The server socket that players connect on.
 	private static ServerSocket socket;
+	
+	private static PlayerList playerList = new PlayerList();
 
 	public Server() {}
+	
+	public static PlayerList getPlayerList() {
+		return playerList;
+	}
 
 	public static void main(String[] args) {
 		MUDConfig.loadProperties();
@@ -47,7 +50,7 @@ public class Server implements RingModule {
 
 		// Boot the mud
 		MUDBoot.boot();
-		world = new World();
+		new World(); //no assignment because world assigns itself.
 
 		// Bind the IP
 		System.out.println("Attempting to bind to IP: " + addr);
@@ -70,7 +73,7 @@ public class Server implements RingModule {
 						+ playerSocket.getInetAddress() + "]");
 
 				// create a new player thread to run the player seperately
-				Thread playerThread = new Thread(world.getPlayerThreadGroup(),
+				Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(),
 						new PlayerLogon(playerSocket), "Logon "
 								+ playerSocket.getInetAddress().toString());
 

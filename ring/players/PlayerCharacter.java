@@ -39,18 +39,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 
 	// Other variables
 	private transient String lastCommand = null;
-	private boolean quitting;
+	private transient boolean quitting;
 
 	public PlayerCharacter() {
-		super.initInternal();
-	}
-
-	public PlayerCharacter(Socket socket, String pName) throws IOException {
-		communicator = new Communicator(socket);
-		communicator.setSuffix(getPrompt());
-		password = "";
-		setLastLogon(new Date());
-		super.setName(pName);
 		super.initInternal();
 	}
 
@@ -120,9 +111,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		setLocation(room);
 
 		// The player has to poof into existence!
-		World
-				.sendVisualToLocation(
-						this,
+		World.sendVisualToLocation(this,
 						"There is a loud bang and a puff of smoke, and "
 								+ super.getName()
 								+ " appears in the world once more!",
@@ -152,6 +141,8 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 			log.info(this + " quit gracefully");
 			return;
 		} else if (communicator.isCommunicationError()) {
+			//TODO wait for a certain amount of time for the person to
+			//come back. If so, restart their game loop.
 			// Save player.
 			log.info(this + " experienced disconnect/forced quit.");
 			return;

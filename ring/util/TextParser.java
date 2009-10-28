@@ -71,6 +71,59 @@ public class TextParser {
         return text.substring(start, end + 1);
     }
     
+    public static String parseOutgoingData(String data, boolean screenWidthParsing) {
+    	if (screenWidthParsing) {
+    		return parseOutgoingData(data);
+		}
+		else {
+			return parseOutgoingDataNoSWP(data);
+		}
+	}
+	
+	//Explicitly does not insert newlines.
+	private static String parseOutgoingDataNoSWP(String data) {
+      StringTokenizer st = new StringTokenizer(data, "\n[], \t", true);
+        StringBuilder res = new StringBuilder();
+        int count = 0;
+        boolean trimPrevious = false;
+        while (st.hasMoreTokens()) {
+            String text = st.nextToken();
+           
+            //handle possibility of inline commands
+            if (text.equals("[")) {
+                text += st.nextToken() + st.nextToken();
+                String replaceValue = colors.get(text);
+                
+                //if there was a replacement match found, use that.
+                //otherwise it's not a command.
+                if (replaceValue != null)
+                    text = replaceValue;
+                else
+                    count += text.length();               
+            }
+            
+            //handle \ns directly.
+            else if (text.equals("\n")) {
+                res.append("\r\n");
+                count = 0;
+                continue;
+            }
+                        
+            //normal data handling
+            else {
+                count += text.length();
+            }
+                        
+            //finally we can append normally, if we reach this part.
+            res.append(text);         
+        }
+        
+        //make sure we return to default.
+        res.append(colors.get("[R]"));
+        
+        return res.toString();
+	}
+    
     //This method is used to replace the color tags with the correct ANSI codes.
     public static String parseOutgoingData(String data) {
         StringTokenizer st = new StringTokenizer(data, "\n[], \t", true);
@@ -139,7 +192,6 @@ public class TextParser {
         //loop...
         String ret = res.toString();
         return ret.replaceAll("\n\\s+", "\n");
-        
     }
     
     /**

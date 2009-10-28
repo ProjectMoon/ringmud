@@ -19,10 +19,11 @@ import ring.mobiles.Alignment;
 import ring.mobiles.Mobile;
 import ring.mobiles.MobileClass;
 import ring.mobiles.MobileClassFactory;
-import ring.mobiles.MobileLoader;
 import ring.mobiles.Race;
+import ring.server.Server;
 import ring.server.CommunicationException;
 import ring.server.Communicator;
+import ring.server.TelnetCommunicator;
 import ring.world.World;
 
 public class PlayerLogon extends Thread {
@@ -47,8 +48,8 @@ public class PlayerLogon extends Thread {
 
 	public PlayerLogon(Socket connection) {
 		super();
-		comms = new Communicator(connection);
-		comms.setSuffix("\n[R][GREEN]>[R][WHITE]");
+		comms = new TelnetCommunicator(connection);
+		comms.setSuffix("\n[R][GREEN]>[R]");
 		socket = connection;
 	}
 
@@ -66,7 +67,12 @@ public class PlayerLogon extends Thread {
 
 		// wait for log on.
 		waiting = true;
+		
+		//Explicitly ignore screen width parsing so formatting for title
+		//is preserved.
+		comms.setScreenWidthParsing(false);
 		comms.send(welcomeText + "\n[WHITE]Create new character? (Y/N)");
+		comms.setScreenWidthParsing(true);
 
 		while (waiting) {
 			try {
@@ -97,7 +103,7 @@ public class PlayerLogon extends Thread {
 					playerThread.setDaemon(true);
 					enteringPlayer.setThread(playerThread);
 					playerThread.start();
-					World.getWorld().getPlayers().add(enteringPlayer);
+					Server.getPlayerList().addPlayer(enteringPlayer);
 				}
 			} catch (CommunicationException e) {
 				waiting = false;
@@ -115,6 +121,7 @@ public class PlayerLogon extends Thread {
 
 	public PlayerCharacter loadCharacter(String name) throws IOException,
 			SocketException {
+				/*
 		comms.send("Please enter your password:");
 		String pw = comms.receiveData();
 		PlayerCharacter pc = (PlayerCharacter) MobileLoader.loadMobile(name
@@ -127,6 +134,8 @@ public class PlayerLogon extends Thread {
 			comms.send("Invalid password.");
 			return null;
 		}
+		*/
+		throw new UnsupportedOperationException();
 	}
 
 	public PlayerCharacter createNewCharacter() {
@@ -141,7 +150,6 @@ public class PlayerLogon extends Thread {
 			}
 
 			PlayerCharacter character = doCreateNewCharacter(name);
-			MobileLoader.saveMobile(character.getName() + ".mob", character);
 			return character;
 		} catch (Exception e) {
 			log.severe("Error creating character; returning null");
@@ -423,15 +431,15 @@ public class PlayerLogon extends Thread {
 			// TODO: check both active and inactive players by querying the
 			// player store.
 			playerActive = false;
-			List<PlayerCharacter> currentPlayers = world.getPlayers();
-
-			for (int x = 0; x < currentPlayers.size(); x++) {
-				if (((PlayerCharacter) currentPlayers.get(x))
-						.checkAlias(playerName.toUpperCase())) {
+			
+			List<PlayerCharacter> currentPlayers = Server.getPlayerList().getPlayers();
+			for (PlayerCharacter player : currentPlayers) {
+				if (player.checkAlias(playerName.toUpperCase())) {
 					playerActive = true;
 					break;
 				}
 			}
+
 			if (playerActive) {
 				comms
 						.send("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
