@@ -114,9 +114,6 @@ public class Server implements RingModule {
 				System.out.println("--------------------------------");
 				System.exit(0);
 			}
-
-			// check ticker still running - respawn if dead
-			// world.checkTicker();
 		}
 
 	}

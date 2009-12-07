@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ring.server.Server;
+import ring.server.callbacks.Callback;
+import ring.system.MUDConfig;
 import ring.util.TextParser;
 
 /**
@@ -21,27 +23,17 @@ import ring.util.TextParser;
  * @author jeff
  */
 public class TelnetCommunicator implements Communicator {
-	private TimeoutTask timeoutTask = new TimeoutTask();
-	private Timer timeoutTimer = new Timer();
-	
-	/**
-	 * A heartbeat task to periodically make sure this Communicator is still open.
-	 */
-	private TimerTask heartbeat = new TimerTask() {
-		@Override
-		public void run() {
-			testConnection();
-		}
-		
-	};
-
 	private static Logger log = Logger.getLogger(Communicator.class.getName());
+	
 	private BufferedInputStream input;
 	private BufferedOutputStream output;
 	private boolean error;
 	private Socket socket;
 	private String suffix;
 	private boolean screenWidthParsing = false;
+	
+	private Callback connCallback;
+	private Callback dcCallback;
 
 	/**
 	 * Constructs a new Communicator given a connection (socket) to use.
@@ -54,17 +46,14 @@ public class TelnetCommunicator implements Communicator {
 		}
 		try {
 			socket = s;
+			socket.setSoTimeout((int)(MUDConfig.getTimeoutLimit()));
 			input = new BufferedInputStream(s.getInputStream());
 			output = new BufferedOutputStream(s.getOutputStream());
 			error = false;
 			suffix = "";
-			
-			//Schedule the two timers 10 ms apart.
-			timeoutTimer.scheduleAtFixedRate(timeoutTask, 0, TimeoutTask.SECOND);
-			timeoutTimer.scheduleAtFixedRate(heartbeat, 10, 10 * TimeoutTask.SECOND);
-			
-		} catch (IOException ex) {
-			Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE,
+		} 
+		catch (IOException ex) {
+			log.log(Level.SEVERE,
 					null, ex);
 		}
 	}
@@ -208,32 +197,11 @@ public class TelnetCommunicator implements Communicator {
 	}
 
 	/**
-	 * A private method used to make sure the user is still alive. It simply
-	 * sends a blank string to the other end of the connection.
-	 */
-	private void testConnection() {
-		try {
-			System.out.println("heartbeat for " + this);
-			output.write("".getBytes());
-			output.write(0);
-			output.flush();
-		} catch (IOException e) {
-			System.err.println("socket is dead. closing.");
-			timeoutTimer.cancel();
-			error = true;
-			if (!socket.isClosed()) {
-				killConnection();
-			}
-		}
-	}
-
-	/**
 	 * Sets the suffix that is appended to outgoing data in most versions of the
 	 * send command. In general, the suffix is a command prompt of some kind.
 	 * However, it can be used for other things.
 	 * 
-	 * @param s
-	 *            - The suffix to use.
+	 * @param s - The suffix to use.
 	 */
 	public void setSuffix(String s) {
 		suffix = s;
@@ -249,89 +217,52 @@ public class TelnetCommunicator implements Communicator {
 	 * @return The received data.
 	 */
 	public String receiveData() throws CommunicationException {
+		System.out.println("In receiveData");
 		StringBuffer incomingData;
-		int incomingByte;
-
 		incomingData = new StringBuffer();
 
 		// read data from the player until a null character is received
 		try {
-			// this big while loop is needed to actually block the communicator.
-			// this is what allows us to WAIT for data.
-			while (!isCommunicationError() && incomingData.length() == 0) {
-				// Check if we're timed out. If so, the socket gets closed.
-				checkTimeout();
-
-				if (input.available() != 0 && incomingData.length() == 0) {
-					// User is no longer idle.
-					clearTimeout();
-
-					// loop through the available data of the input stream to
-					// construct
-					// the data received
-					incomingByte = input.read();
-					while (incomingByte != '\n' && incomingByte != -1
-							&& !isCommunicationError()) {
-						if (incomingByte != '\r')
-							incomingData.append((char) incomingByte);
-
-						incomingByte = input.read();
-					}
-
-					// if the user is just pressing enter, just return an empty
-					// string
-					if (incomingData.length() == 0 && incomingByte == '\n') {
-						return "";
-					}
-
-					// we should only reach the end of a stream when the socket
-					// is closed, therefore error on it.
-					if (incomingByte == -1)
-						throw new CommunicationException();
-
-				}
-			} // end huge while loop
-
-		} // end huge try block
+			// loop through the available data of the input stream 
+			// to construct the data received
+			System.out.println("Reading...");
+			readData(incomingData);
+				
+			// if the user is just pressing enter, just return an empty
+			// string
+			if (incomingData.length() == 0 || incomingData.toString().equals("\n")) {
+				return "";
+			}
+			else {
+				return parseReceived(incomingData.toString());
+			}
+		}
 		catch (IOException e) {
-			System.out.println("Comms error receiving data (playerLogon) for: "
-					+ socket.getInetAddress().toString());
+			System.out.println("Comms error receiving data (playerLogon) for: "	+ socket.getInetAddress().toString());
 			error = true;
 			throw new CommunicationException(e);
 		}
-
-		return parseReceived(incomingData.toString());
-
 	}
-
-	private void clearTimeout() {
-		timeoutTask.timeoutCount = 0;
-	}
-
-	private void checkTimeout() {
-		if (timeoutTask.isTimedOut()) {
-			timeoutTimer.cancel();
-			sendln("[RED]Idle Connection terminated by Server.\n\n[YELLOW]Bye bye.[WHITE]");
-			log.info("Idle connection terminated for: "
-					+ socket.getInetAddress().toString());
-			killConnection();
-			// Explicitly set error flag because this was not intended
-			// (usually).
-			error = true;
-		}
-	}
-
+	
 	/**
-	 * Kills the socket connection, but does not set error status unless there
-	 * was a problem closing.
+	 * Reads data from the socket stream into a StringBuffer.
 	 */
-	private void killConnection() {
-		try {
-			socket.close();
-			Server.decrementConnections();
-		} catch (IOException e) {
-			error = true;
-			e.printStackTrace();
+	private void readData(StringBuffer incomingData) throws IOException {
+		int incomingByte = 0;
+		incomingByte = input.read();
+		while (!isCommunicationError() && input.available() > 0) {
+			if (incomingByte != '\r') {
+				incomingData.append((char) incomingByte);
+			}
+			System.out.println("Reading2...");
+			incomingByte = input.read();
+		}
+		
+		
+		// we should only reach the end of a stream when the socket
+		// is closed, therefore error on it.
+		if (incomingByte == -1) {
+			throw new CommunicationException();
 		}
 	}
 
@@ -392,9 +323,26 @@ public class TelnetCommunicator implements Communicator {
 		try {
 			socket.close();
 			Server.decrementConnections();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void setConnectCallback(Callback callback) {
+		connCallback = callback;
+	}
+	
+	public void setDisconnectCallback(Callback callback) {
+		dcCallback = callback;
+	}
+	
+	public Callback getConnectCallback() {
+		return connCallback;
+	}
+	
+	public Callback getDisconnectCallback() {
+		return dcCallback;
 	}
 }

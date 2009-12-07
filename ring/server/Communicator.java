@@ -1,5 +1,7 @@
 package ring.server;
 
+import ring.server.callbacks.*;
+
 /**
  * This class facilitates communication between a user and the server. This is a
  * standardized method of sending data back and forth. It also alleviates issues
@@ -11,7 +13,7 @@ package ring.server;
 public interface Communicator {
 	
 	/**
-	 * Whether or not this communicator is considered "secure."
+	 * Whether or not this communicator is considered secure.
 	 * A secure Communicator has its communications encrypted.
 	 * Most administration commands will not work when the connection
 	 * is not secure.
@@ -120,4 +122,10 @@ public interface Communicator {
 	 * @return true or false.
 	 */
 	public boolean getScreenWidthParsing();
+	
+	public void setConnectCallback(Callback callback);
+	public void setDisconnectCallback(Callback callback);
+	
+	public Callback getConnectCallback();
+	public Callback getDisconnectCallback();
 }

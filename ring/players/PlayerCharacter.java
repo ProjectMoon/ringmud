@@ -12,6 +12,7 @@ import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.server.CommunicationException;
 import ring.server.Communicator;
+import ring.server.callbacks.CallbackEvent;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 import ring.world.World;
@@ -116,8 +117,37 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 								+ super.getName()
 								+ " appears in the world once more!",
 						"You hear a loud bang and smell acrid smoke. Someone has appeared in the world once more!");
-		doCommand("look");
+		
+		gameLoop();
 
+		// Close the player's connection once their loop is done.
+		// Handle either graceful quit or forced quit/disconnect.
+		if (quitting && !communicator.isCommunicationError()) {
+			// Save and REMOVE player from world.
+			// Send quit message
+			communicator.send("You have successfully quit. Good-bye.");
+			communicator.close();
+			log.info(this + " quit gracefully");
+			communicator.getDisconnectCallback().execute(CallbackEvent.GRACEFUL_QUIT);
+			return;
+		}
+		else if (communicator.isCommunicationError()) {
+			//TODO wait for a certain amount of time for the person to
+			//come back. If so, restart their game loop.
+			// Save player.
+			log.info(this + " experienced disconnect/forced quit.");
+			communicator.close();
+			communicator.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
+			return;
+		}
+	}
+	
+	/**
+	 * The main game loop for a player. Begins with a look command, and
+	 * then waits for further commands.
+	 */
+	private void gameLoop() {
+		doCommand("look");
 		// Wait for commands.
 		while (!quitting && !communicator.isCommunicationError()) {
 			Thread.yield();
@@ -125,27 +155,11 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 													// to prompt info.
 			try {
 				doCommand(communicator.receiveData());
-			} catch (CommunicationException e) {
+			} 
+			catch (CommunicationException e) {
 				log.info("There was a socket error for " + this);
 				break;
 			}
-		}
-
-		// Close the player's connection once their loop is done.
-		// Handle either graceful quit or forced quit/disconnect.
-		if (quitting && !communicator.isCommunicationError()) {
-			// Save player
-			// Send quit message
-			communicator.send("You have successfully quit. Good-bye.");
-			communicator.close();
-			log.info(this + " quit gracefully");
-			return;
-		} else if (communicator.isCommunicationError()) {
-			//TODO wait for a certain amount of time for the person to
-			//come back. If so, restart their game loop.
-			// Save player.
-			log.info(this + " experienced disconnect/forced quit.");
-			return;
 		}
 	}
 

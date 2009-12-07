@@ -12,26 +12,21 @@ import ring.system.MUDConfig;
 /**
  * This class provides command handling service to a CommandSender (usually a mobile).
  * The CommandHandler class maintains a global store of all indexed command objects, as
- * well as the sender's list of aliased commands. The main methd of this class is the 
- * sendCommand method which returns a CommandResult indicating success or failure of the
- * given command.
+ * well as the sender's list of aliased commands. The most important method of this class 
+ * is the sendCommand method which returns a CommandResult indicating success or failure 
+ * of the given command.
  * @author projectmoon
  *
  */
 public final class CommandHandler {
-	// This is the class that contains code for all commands. It returns a
-	// CommandResult object with a
-	// boolean value and a String. The boolean indicates if the command
-	// "failed." The String is what gets
-	// sent back to the mobile if it is a PlayerCharacter.
-
 	// The Command-Sending object this handler is linked to.
 	private CommandSender sender;
 	
 	//Map of all built-in commands. This is shared across
 	//all instances for performance/space reasons.
 	//Doesn't need to be synchronized because Commands are immutable.
-	//TreeMap for guaranteed entry order.
+	//TreeMap for guaranteed entry order so that command completion
+	//behavior is always the same.
 	private static Map<String, Command> commands = new TreeMap<String, Command>();
 												
 	//Map of alternate (aliased) commands. Stored per class instance
@@ -128,6 +123,7 @@ public final class CommandHandler {
 	 * @return The Command object corresponding to the string name, or the Bad command if nothing is found.
 	 */
 	private Command lookup(String cmd) {
+		//First try direct lookup.
 		Command comm = commands.get(cmd);
 		
 		//Next try alternate commands
