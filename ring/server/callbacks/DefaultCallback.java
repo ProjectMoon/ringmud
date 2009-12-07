@@ -9,7 +9,7 @@ public class DefaultCallback implements Callback {
 			System.out.println("DLC: incrementing connections");
 			Server.incrementConnections();
 		}
-		else {
+		else if (event.wasDisconnected()) {
 			System.out.println("DLC: decrementing connections.");
 			Server.decrementConnections();
 		}
