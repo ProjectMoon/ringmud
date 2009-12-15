@@ -1,39 +1,69 @@
 package ring.nrapi.business;
 
-import ring.nrapi.aggregate.ResourceAggregate;
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-public abstract class AbstractBusinessObject<T extends ResourceAggregate> implements BusinessObject<T> {
-	private T agg;
+public abstract class AbstractBusinessObject implements BusinessObject {
+	private String id;
+	private boolean storeAsUpdate;
 	
-	public abstract boolean load(String id);
 	public abstract void save();
-	
-	public boolean loadFromAggregate(T aggregate) {
-		throw new UnsupportedOperationException();
-	}
+
 	
 	/**
-	 * Returns the aggregate's ID.
-	 * @return
+	 * Returns the objects unique's ID.
+	 * @return the id
 	 */
-	protected String getID() {
-		return agg.getID();
+	public String getID() {
+		return id;
 	}
 	
-	/**
-	 * Protected-level method to get the aggregate. Currently all business objects go in one
-	 * package, so protected is used. May change to public later.
-	 * @return
-	 */
-	protected T getAggregate() {
-		return agg;
+	public void setID(String id) {
+		this.id = id;
 	}
 	
-	/**
-	 * Sets the aggregate.
-	 * @param agg
-	 */
-	protected void setAggregate(T agg) {
-		this.agg = agg;
+	@Override
+	public void setStoreAsUpdate(boolean val) {
+		storeAsUpdate = val;
 	}
+
+	@Override
+	public boolean storeAsUpdate() {
+		return storeAsUpdate;
+	}
+	
+	@Override
+	public String toXML() {
+		try {
+			JAXBContext ctx = JAXBContext.newInstance(this.getClass());
+			Marshaller m = ctx.createMarshaller();
+			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			StringWriter writer = new StringWriter();
+			m.marshal(this, writer);
+			String xml = writer.toString();
+			
+			//TODO find a MUCH better way to do this... so hackish.
+			return xml.substring(xml.indexOf("?>") + 2);
+		}
+		catch (JAXBException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}	
 }

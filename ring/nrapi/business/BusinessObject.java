@@ -1,9 +1,13 @@
 package ring.nrapi.business;
 
-import ring.nrapi.aggregate.ResourceAggregate;
+import ring.nrapi.data.Persistable;
 
-public interface BusinessObject<T extends ResourceAggregate> {
-	public boolean load(String id);
-	public boolean loadFromAggregate(T aggregate);
+/**
+ * Represents a game business object. All BusinessObjects are also
+ * Persistable.
+ * @author projectmoon
+ * @see Persistable
+ */
+public interface BusinessObject extends Persistable {
 	public void save();
 }

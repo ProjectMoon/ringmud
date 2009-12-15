@@ -5,68 +5,61 @@ import java.util.Scanner;
 import org.xmldb.api.base.XMLDBException;
 
 import ring.main.RingModule;
-import ring.nrapi.aggregate.TestAggregate;
 import ring.nrapi.data.ExistDB;
-import ring.nrapi.data.XMLDataStore;
-import ring.nrapi.data.XMLDataStoreFactory;
-import ring.nrapi.resources.TestResource;
+import ring.nrapi.data.DataStore;
+import ring.nrapi.data.DataStoreFactory;
+
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import javax.xml.bind.*;
+import ring.nrapi.entities.*;
+import ring.nrapi.movement.*;
 
 public class TestDriver implements RingModule {
 	@Override
 	public void start(String[] args) {
-//		//Set up db
-		System.out.println("Resetting database.");
-		ExistDB db = new ExistDB();
+		//XML Test
+		RoomModel model = new RoomModel();
+		Zone z = new Zone();
+		Room room = new Room();
+		
+		model.setDepth(1);
+		model.setLength(2);
+		model.setWidth(4);
+		model.setTitle("A test room");
+		model.setDescription("A description for the test room.");
+		
+		room.setID("roomID1");
+		
+		Entity e1 = new Entity();
+		Entity e2 = new Entity();
+		e1.setID("e1");
+		e2.setID("e2");
+		
+		room.setModel(model);
+		room.setZone(z);
+		
+		room.addEntity(e1);
+		room.addEntity(e2);
+		
+		String xml = room.toXML();
+		
+		System.out.println(xml);
+		System.out.println();
+		
 		try {
-			db.removeAllResources();
-			db.createRingDatabase();
+			JAXBContext ctx = JAXBContext.newInstance(Room.class);
+			Unmarshaller um = ctx.createUnmarshaller();
+			System.out.println("Have unmarshaller...");
+			Room r = (Room)um.unmarshal(new StreamSource(new StringReader(xml)));
+			System.out.println("Got a room.");
+			
+			System.out.println(r);
+			System.out.println(r.getModel().getTitle());
+			System.out.println(r.getModel().getEntityIDs().get(0));
 		}
-		catch (XMLDBException e) {
+		catch (Exception e) {
 			e.printStackTrace();
-		}
-		
-		//Populate db
-		System.out.println("Creating test aggregate");
-		TestResource tr = new TestResource();
-		tr.setAmount(500);
-		tr.setName("a test resource");
-		
-		TestAggregate agg = new TestAggregate();
-		agg.setID("tr1");
-		agg.setTestResource(tr);
-		
-		System.out.println(agg.toXML());
-		
-		System.out.println("Storing...");
-		XMLDataStore store = XMLDataStoreFactory.getDefaultStore();
-		System.out.println("Stored? " + store.storeAggregate(agg));
-		
-		//Read from db
-		Test t = new Test();
-		if (t.load("tr1")) {
-			System.out.println("Loaded!");
-			System.out.println(t.getTestResource().getAmount());
-			System.out.println(t.getTestResource().getName());
-			//Make some changes...
-			System.out.println("Making a change, and saving...");
-			t.getTestResource().setAmount(600);
-			t.save();
-		}
-		
-		System.out.println("Query the database!");
-		
-		String input = "";
-		Scanner scan = new Scanner(System.in);
-		while (input.equals("q") == false && input.equals("quit") == false) {
-			input = scan.nextLine();
-			if (input.equals("q") == false && input.equals("quit") == false) {
-				try {
-					db.testQuery(input);
-				} catch (XMLDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 	
