@@ -1,5 +1,7 @@
 package ring.nrapi.mobiles;
 
+import ring.effects.Affectable;
+
 /**
  * Represents the combat model of a mobile in the game: base attack bonus,
  * hp, armor class, etc. These values can change frequently due to Effects
@@ -21,7 +23,7 @@ public class MobileCombatModel {
 	public int getCurrentHP() { return currentHP + bonusHP; }
 	public String getCurrentHPString() { return String.valueOf(getCurrentHP()); }
 	public int getCurrentBaseHP() { return currentHP; }
-	public int setCurrentBaseHP(int hp) { currentHP = hp; }
+	public void setCurrentBaseHP(int hp) { currentHP = hp; }
 	
 	// The HP bonus of the mobile. This number is added on to the maxHP variable
 	// when HP is being displayed. It is also added on to the currentHP variable.

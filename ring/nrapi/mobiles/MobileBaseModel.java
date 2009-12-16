@@ -1,5 +1,7 @@
 package ring.nrapi.mobiles;
 
+import java.util.List;
+
 /**
  * Represents the base model of a mobile in the game: its race, alignment,
  * class, etc. The values stored in this model are generally unchanging.
@@ -114,7 +116,7 @@ public class MobileBaseModel {
 	//Body of the mobile. This is set by race at first, but the body
 	//can be changed by a polymorph, having a limb cut off, etc.
 	private Body body;
-	public Body getBody() { return body }
+	public Body getBody() { return body; }
 	public void setBody(Body body) { this.body = body; }
 
 	//Class of the mobile.

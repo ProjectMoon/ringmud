@@ -1,4 +1,4 @@
-package ring.mobiles;
+package ring.nrapi.mobiles;
 
 /**
  * <p>Title: RingMUD Codebase</p>
@@ -11,6 +11,7 @@ package ring.mobiles;
 
 import java.util.*;
 
+import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.entities.*;
 import ring.commands.CommandHandler;
 import ring.commands.CommandSender;

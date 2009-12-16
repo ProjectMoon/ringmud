@@ -1,6 +1,5 @@
 package ring.server.callbacks;
 
-import ring.server.Communicator;
 import ring.server.Server;
 
 public class DefaultCallback implements Callback {
