@@ -3,7 +3,7 @@ package ring.mobiles;
 import static ring.mobiles.Body.*;
 
 /**
- * The BodyFactory class creates stock  bodies for a host of creatures. There
+ * The BodyFactory class creates stock bodies for a host of creatures. There
  * are bodies available for all the default races, as well as generic/specific
  * NPC body creation methods.
  * @author projectmoon

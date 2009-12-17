@@ -1,124 +1,90 @@
 package ring.mobiles;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
-
 import java.io.Serializable;
 
+/**
+ * Class that represents the alignment of something in the game. Generally,
+ * this is a Mobile. However, sometimes items can have alignments.
+ * @author projectmoon
+ */
 public class Alignment implements Serializable {
 	public static final long serialVersionUID = 1;
-	// This class is used for the alignment of mobiles. It condenses the boolean
-	// array into an
-	// easy-to-use class. The class provides useful methods related to
-	// alignment.
+	
+	/**
+	 * Enum describing ethical components: Lawful, Neutral, or Chaotic.
+	 */
+	public enum Ethical { 
+		LAWFUL("[B][WHITE]Lawful[R]"), NEUTRAL("[R][CYAN]Neutral[WHITE]"), CHAOTIC("[B][GREEN]Chaotic[R][WHITE]"); 
+		
+		private String name;
+		
+		Ethical(String name) { this.name = name; }
+		
+		public String toString() { return name; }
+	};
+	
+	/**
+	 * Enum describing moral components: Good, Neutral, or Evil.
+	 */
+	public enum Moral {
+		GOOD("[B][WHITE]Good[R]"), NEUTRAL("[R][CYAN]Neutral[WHITE]"), EVIL("[B][RED]Evil[R][WHITE]");
+		
+		private String name;
+		
+		Moral(String name) { this.name = name; }
+		
+		public String toString() { return name; }
+	};
 
-	// Instance variables.
-	// alignment and type ints. These ints store the type of alignment.
-	private int type;
-	private int alignment;
+	//The two components of an alignment.
+	private Ethical ethical;
+	private Moral moral;
 
-	// Constants.
-	// These constants are used for accessing alignments.
-	public static final int LAWFUL = 0;
-	public static final int NEUTRAL = 1;
-	public static final int CHAOTIC = 2;
-	public static final int GOOD = 0;
-	public static final int EVIL = 2;
-
-	// This constructor constructs a default alignment of true neutral.
+	/**
+	 * Creates a new Alignment object set to True Neutral alignment.
+	 */
 	public Alignment() {
-		// Set type.
-		type = NEUTRAL;
-		// Set alignment.
-		type = NEUTRAL;
+		ethical = Ethical.NEUTRAL;
+		moral = Moral.NEUTRAL;
 	}
 
-	// This constructor constructs an alignment of the specified type.
-	public Alignment(int type, int alignment) {
-		if ((type < LAWFUL) && (type > CHAOTIC)) {
-			type = NEUTRAL;
-		}
-
-		if ((alignment < GOOD) && (alignment > EVIL)) {
-			alignment = NEUTRAL;
-		}
-
-		this.type = type;
-		this.alignment = alignment;
+	/**
+	 * Creates the alignment of the specified ethical and moral components.
+	 */
+	public Alignment(Ethical ethical, Moral moral) {
+		this.ethical = ethical;
+		this.moral = moral;
 	}
 
-	// ###################
-	// METHODS
+	/**
+	 * Returns a user-friendly representation of this Alignment. This
+	 * is what gets sent back to the user.
+	 */
+	public String toString() {
+		String res = ethical.toString() + " " + moral.toString();
 
-	// Get and Set methods.
-	// These methods get alignment and set alignment.
-
-	// getAlignmentString method.
-	// This method returns the alignment as a string viewable to the player.
-	// This is generally used in
-	// the score command.
-	public String getAlignmentString() {
-		String type = convertType(getEthical());
-		String alignment = convertAlignment(getMoral());
-		String res = type + alignment;
-
-		if (res.equals("[R][CYAN]Neutral[WHITE] [R][CYAN]Neutral[WHITE]")) {
+		//Handle true neutral alignment
+		if (res.equals(Ethical.NEUTRAL.toString() + " " + Moral.NEUTRAL.toString())) {
 			res = "[R][CYAN]True Neutral[WHITE]";
 		}
-
-		return res;
+		else {
+			return res;
+		}
 	}
 
-	// getType method.
-	// This method returns the type of alignment (lawful, neutral, chaotic) as
-	// an int.
-	public int getEthical() {
-		return type;
+	public Ethical getEthical() {
+		return ethical;
 	}
 	
-	public void setEthical(int type) {
-		this.type = type;
+	public void setEthical(Ethical ethical) {
+		this.ethical = ethical;
 	}
 
-	// getAlignment method.
-	// This method returns the alignment (good, neutral, evil) as an int.
-	public int getMoral() {
-		return alignment;
+	public Moral getMoral() {
+		return moral;
 	}
 	
-	public void setMoral(int align) {
-		alignment = align;
-	}
-
-	// convertType method.
-	// This private method converts an int-based type to a String.
-	private String convertType(int type) {
-		if (type == LAWFUL)
-			return "[B][WHITE]Lawful[R] ";
-		if (type == NEUTRAL)
-			return "[R][CYAN]Neutral[WHITE] ";
-		if (type == CHAOTIC)
-			return "[B][GREEN]Chaotic[R][WHITE] ";
-
-		return "TYPE ERROR";
-	}
-
-	// convertAlignment method.
-	// This private method converts an int-based alignment to a String.
-	private String convertAlignment(int alignment) {
-		if (alignment == GOOD)
-			return "[B][WHITE]Good[R]";
-		if (alignment == NEUTRAL)
-			return "[R][CYAN]Neutral[WHITE]";
-		if (alignment == EVIL)
-			return "[B][RED]Evil[R][WHITE]";
-
-		return "ALIGNMENT ERROR";
+	public void setMoral(Moral moral) {
+		this.moral = moral;
 	}
 }

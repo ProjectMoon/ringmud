@@ -20,14 +20,12 @@ import ring.world.WorldObject;
  * @author projectmoon
  * 
  */
-public class BodyPart extends WorldObject {
+public class BodyPart {
 	public static final long serialVersionUID = 1;
 	// This class is used for a body part.
 
-	// Instance variables.
-	// All the constant BodyParts are maintained in class Body.
-
 	// Description of the body part.
+	private String name;
 	private String description;
 
 	public BodyPart() {}
@@ -42,50 +40,20 @@ public class BodyPart extends WorldObject {
 		this.name = other.name;
 		this.longDescription = other.description;
 	}
-
-	@Override
-	public boolean isAttackable() {
-		return false;
-	}
-
-	@Override
-	public boolean isEntity() {
-		return false;
-	}
-
-	@Override
-	public boolean isNPC() {
-		return false;
-	}
-
-	@Override
-	public boolean isPlayer() {
-		return false;
+	
+	public String getName() {
+		return name;
 	}
 	
-	@Override
-	public boolean isItem() {
-		return false;
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	public int getAC() {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public String getDescription() {
+		return description;
 	}
-
-	public int getCurrentHP() {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
-
-	public int getEntityType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public int getMaxHP() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
