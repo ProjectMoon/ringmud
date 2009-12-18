@@ -30,7 +30,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	
 	public abstract void save();
 
-	@XmlAttribute(name = "reference")
+	@XmlAttribute(name = "ref")
 	public boolean isReferential() {
 		return referential;
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	 * Returns the objects unique's ID.
 	 * @return the id
 	 */
-	@XmlElement(name = "id", required = true)
+	@XmlAttribute(name = "id", required = true)
 	public String getID() {
 		return id;
 	}
