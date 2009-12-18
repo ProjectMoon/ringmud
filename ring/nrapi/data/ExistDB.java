@@ -130,9 +130,9 @@ public class ExistDB {
 		CollectionManagementService service = (CollectionManagementService)root.getService(
 				COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
 		
-		//Aggregates
-		service.removeCollection(ExistDBStore.AGGREGATES_COLLECTION);
-		service.removeCollection(ExistDBStore.RESOURCES_COLLECTION);
+		//Drop all collections.
+		service.removeCollection(ExistDBStore.STATIC_COLLECTION);
+		service.removeCollection(ExistDBStore.GAME_COLLECTION);
 	}
 	
 	public XMLResource querySingleResource(String xquery) throws XMLDBException {
@@ -183,7 +183,7 @@ public class ExistDB {
 	}
 	
 	public void addRootNode(Collection col, String rootNode) throws XMLDBException {
-		XMLResource res = (XMLResource)col.createResource(null, "XMLResource");
+		XMLResource res = (XMLResource)col.createResource("root", "XMLResource");
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 		xml += "<" + rootNode + "></" + rootNode + ">";
 		res.setContent(xml);
@@ -199,11 +199,12 @@ public class ExistDB {
 		CollectionManagementService service = (CollectionManagementService)root.getService(
 				COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
 		
-		//Aggregates
-		Collection aggregates = service.createCollection(ExistDBStore.AGGREGATES_COLLECTION);
-		addRootNode(aggregates, "aggregates");
+		//Static content: loaded during server boot
+		Collection staticCol = service.createCollection(ExistDBStore.STATIC_COLLECTION);
+		addRootNode(staticCol, "ring");
 		
-		//Resources
-		service.createCollection(ExistDBStore.RESOURCES_COLLECTION);
+		//Game collection: Stores world state
+		Collection gameCol = service.createCollection(ExistDBStore.GAME_COLLECTION);
+		addRootNode(gameCol, "ring");
 	}
 }

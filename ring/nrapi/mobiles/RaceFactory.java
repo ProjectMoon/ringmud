@@ -38,7 +38,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][YELLOW]Human[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -49,7 +49,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[MAGENTA]Drow[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -60,7 +60,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[CYAN]Moon Elf[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -71,7 +71,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][BLUE]Ogre[R][WHITE]");
 		r.setBody(BodyFactory.createLargeHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -82,7 +82,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][GREEN]Dwarf[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -93,7 +93,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[RED]Duergar[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -104,7 +104,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[GREEN]Half-Elf[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -115,7 +115,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][MAGENTA]Illithid[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -127,7 +127,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][RED]Gnome[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -138,7 +138,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[GREEN]Troll[R][WHITE]");
 		r.setBody(BodyFactory.createLargeHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -149,7 +149,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[B][WHITE]Aasimar[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}
@@ -160,7 +160,7 @@ public class RaceFactory {
 		Race r = new Race();
 		r.setName("[R][YELLOW]Tiefling[R][WHITE]");
 		r.setBody(BodyFactory.createMediumHumanoidBody());
-		r.setClassAllowed(null);
+		r.setClassesAllowed(null);
 		r.setPCRace(true);
 		return r;
 	}

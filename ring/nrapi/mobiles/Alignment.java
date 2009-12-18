@@ -1,4 +1,4 @@
-package ring.mobiles;
+package ring.nrapi.mobiles;
 
 import java.io.Serializable;
 
@@ -67,9 +67,8 @@ public class Alignment implements Serializable {
 		if (res.equals(Ethical.NEUTRAL.toString() + " " + Moral.NEUTRAL.toString())) {
 			res = "[R][CYAN]True Neutral[WHITE]";
 		}
-		else {
-			return res;
-		}
+		
+		return res;		
 	}
 
 	public Ethical getEthical() {

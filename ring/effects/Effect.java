@@ -1,26 +1,12 @@
 package ring.effects;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- *
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar
- * to DikuMUD</p>
- *
- * <p>Copyright: Copyright (c) 2004</p>
- *
- * <p>Company: RaiSoft/Thermetics</p>
- *
- * @author Jeff Hair
- * @version 1.0
- */
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * This class represents an "effect.: The effect could be part of a spell,
+ * This class represents an "effect." The effect could be part of a spell,
  * a skill, magic items, or various other things. An Effect encapsulates
  * one or more EffectCreators (which contain the actual modifications to the
  * Affectable target) and the rules on how the effect is applied and removed.
@@ -31,7 +17,7 @@ public class Effect implements Serializable {
 	public static final long serialVersionUID = 1;
 
 	// Target of this effect.
-	Affectable target;
+	private Affectable target;
 
 	//The effect creators and their parameters.
 	private HashMap<String, EffectCreator> effectCreators;

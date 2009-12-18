@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -20,8 +21,8 @@ namespace = RingConstants.RING_NAMESPACE,
 propOrder = {
 	"title",
 	"description",
-	"mobileIDCollection",
-	"entityIDCollection",
+	"mobileIDs",
+	"entityIDs",
 	"depth",
 	"width",
 	"length"
@@ -36,10 +37,18 @@ propOrder = {
  */
 public class RoomModel {
 	//See bottom of class for EntityIDCollection object definition.
-	private EntityIDCollection entityIDs = new EntityIDCollection();
+	//private EntityIDCollection entityIDs = new EntityIDCollection();
 	
 	//See bottom of class for MobileIDCollection object definition.
-	private MobileIDCollection mobileIDs = new MobileIDCollection();
+	//private MobileIDCollection mobileIDs = new MobileIDCollection();
+	
+	@XmlElementWrapper(name = "entities")
+	@XmlElement(name = "id")
+	private List<String> entityIDs = new ArrayList<String>();
+	
+	@XmlElementWrapper(name = "mobiles")
+	@XmlElement(name = "id")
+	private List<String> mobileIDs = new ArrayList<String>();
 	
 	private String title;
 	private String description;
@@ -47,6 +56,7 @@ public class RoomModel {
 	private int width;
 	private int depth;
 	
+	/*
 	@XmlElement(name = "entityIDs")
 	public EntityIDCollection getEntityIDCollection() {
 		return entityIDs;
@@ -55,6 +65,7 @@ public class RoomModel {
 	public void setEntityIDCollection(EntityIDCollection entityIDs) {
 		this.entityIDs = entityIDs;	
 	}
+	*/
 	
 	@XmlTransient
 	/**
@@ -63,9 +74,15 @@ public class RoomModel {
 	 * @return the list of entity IDs.
 	 */
 	public List<String> getEntityIDs() {
-		return getEntityIDCollection().getIDs();
-	}	
+		//return getEntityIDCollection().getIDs();
+		return entityIDs;
+	}
 	
+	public void setEntityIDs(List<String> ids) {
+		entityIDs = ids;
+	}
+	
+	/*
 	@XmlElement(name = "mobileIDs")
 	public MobileIDCollection getMobileIDCollection() {
 		return mobileIDs;
@@ -74,6 +91,7 @@ public class RoomModel {
 	public void setMobileIDCollection(MobileIDCollection mobileIDs) {
 		this.mobileIDs = mobileIDs;
 	}
+	*/
 	
 	@XmlTransient
 	/**
@@ -82,7 +100,20 @@ public class RoomModel {
 	 * @return the list of mobile IDs.
 	 */	
 	public List<String> getMobileIDs() {
-		return getEntityIDCollection().getIDs();
+		//return getEntityIDCollection().getIDs();
+		return mobileIDs;
+	}
+	
+	public void setMobileIDs(List<String> ids) {
+		mobileIDs = ids;
+	}
+	
+	public void addEntityID(String id) {
+		entityIDs.add(id);
+	}
+	
+	public boolean removeEntityID(String id) {
+		return entityIDs.remove(id);
 	}
 	
 	public void setDepth(int depth) {

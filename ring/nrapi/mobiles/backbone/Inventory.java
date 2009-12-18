@@ -1,33 +1,62 @@
-package ring.mobiles.backbone;
+package ring.nrapi.mobiles.backbone;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ring.entities.Item;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import ring.nrapi.data.RingConstants;
+import ring.nrapi.entities.Item;
 
 /**
  * A class representing a Mobile's inventory. Really just a fancy List containing Item objects.
  * @author projectmoon
  *
  */
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlRootElement
+@XmlType(
+namespace = RingConstants.RING_NAMESPACE,
+propOrder= {
+	"capacity", "items"
+})
 public class Inventory implements Iterable<Item>, Serializable {
+	//JAXB type for XML serializing of items.
+	@XmlAccessorType(XmlAccessType.PROPERTY)
+	@XmlType
+	public static class ItemCollection {
+		private List<Item> items;
+		
+		public ItemCollection() { items = new ArrayList<Item>(); }
+		public ItemCollection (int capacity) { items = new ArrayList<Item>(capacity); }
+		
+		@XmlElement(name = "item")
+		public List<Item> getItems() { return items; }
+		public void setItems(List<Item> items) { this.items = items; }
+	}
+	
 	public static final long serialVersionUID = 1;
 	
-	protected List<Item> inv;
+	private ItemCollection inv;
 	private int capacity;
 	
 	public Inventory() {
-		inv = new ArrayList<Item>(30);
+		inv = new ItemCollection(30);
 		capacity = 30;
 	}
 	
 	public Inventory(int capacity) {
-		inv = new ArrayList<Item>(capacity);
+		inv = new ItemCollection(capacity);
 		this.capacity = capacity;
 	}
 	
+	@XmlElement
 	public int getCapacity() {
 		return capacity;
 	}
@@ -36,8 +65,21 @@ public class Inventory implements Iterable<Item>, Serializable {
 		this.capacity = capacity;
 	}
 	
+	@XmlElement(name = "items")
+	public ItemCollection getItems() {
+		return inv;
+	}
+	
+	public void setItems(ItemCollection items) {
+		inv = items;
+	}
+	
+	public List<Item> getItemList() {
+		return inv.items;
+	}
+	
 	public int size() {
-		return inv.size();
+		return inv.items.size();
 	}
 	
 	/**
@@ -53,7 +95,7 @@ public class Inventory implements Iterable<Item>, Serializable {
 		
 		name = name.toLowerCase();
 	
-		for (Item item : inv) {
+		for (Item item : inv.items) {
 			if (item.getName().toLowerCase().indexOf(name) != -1) {
 				return item;
 			}
@@ -65,7 +107,7 @@ public class Inventory implements Iterable<Item>, Serializable {
 	
 	public boolean removeItem(Item item) {
 		if (!item.isCursed()) {
-			return inv.remove(item);
+			return inv.items.remove(item);
 		}
 		else {
 			return false;
@@ -74,22 +116,22 @@ public class Inventory implements Iterable<Item>, Serializable {
 	
 	//TODO later this will need weight checks or something.
 	public boolean addItem(Item item) {
-		inv.add(item);
+		inv.items.add(item);
 		return true;
 	}
 	
 	public void setItem(Item[] items) {
 		for (Item item : items) {
-			inv.add(item);
+			inv.items.add(item);
 		}
 	}
 	
 	public void setItem(int i, Item item) {
-		inv.add(i, item);
+		inv.items.add(i, item);
 	}
 	
 	public Item getItem(int index) {
-		return inv.get(index);
+		return inv.items.get(index);
 	}
 
 	public Iterator<Item> iterator() {

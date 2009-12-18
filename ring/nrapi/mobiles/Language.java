@@ -1,4 +1,4 @@
-package ring.mobiles;
+package ring.nrapi.mobiles;
 
 public class Language {
 	//This class describes and implements a language in the MUD. The objective for this class is

@@ -1,6 +1,7 @@
-package ring.mobiles;
+package ring.nrapi.mobiles;
 
-import static ring.mobiles.Body.*;
+//Static import for all of the BodyPart constants.
+import static ring.nrapi.mobiles.Body.*;
 
 /**
  * The BodyFactory class creates stock bodies for a host of creatures. There

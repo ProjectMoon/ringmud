@@ -1,24 +1,42 @@
 package ring.nrapi.mobiles;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
+import java.util.Random;
 
-import java.util.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.entities.*;
 import ring.commands.CommandHandler;
 import ring.commands.CommandSender;
+import ring.effects.Affectable;
+import ring.effects.Effect;
+import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.data.RingConstants;
+import ring.nrapi.entities.Armor;
+import ring.nrapi.entities.Item;
+import ring.nrapi.mobiles.backbone.Equipment;
+import ring.world.TickerEvent;
+import ring.world.TickerListener;
 
-//This is the class that all mobiles (NPC and PC) extend from. This class will hold basic
-//information for a mobile such as body shape, HP, race, etc.
-public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener, Movable {
+/**
+ * The main business object for Mobiles. Aggregates all the mobile data models and
+ * provides business methods.
+ * @author projectmoon
+ *
+ */
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlRootElement
+@XmlType(
+namespace = RingConstants.RING_NAMESPACE,
+propOrder= {
+	"baseModel",
+	"dynamicModel",
+	"combatModel"
+})
+public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -26,22 +44,24 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	private MobileDynamicModel dynamicModel = new MobileDynamicModel();
 	private MobileCombatModel combatModel = new MobileCombatModel();
 
-	//If the mob is "locked."
+	//If the mob is locked: if so, they cannot take actions.
 	private boolean isLocked;
 	
 	//CommandHandler. This CommandHandler is protected so it can drop down into
 	//the PlayerCharacter class.
 	protected transient CommandHandler handler = new CommandHandler(this);
 
-	// lockTimeRemaining: The time left before this mob can act again.
+	//The time left before this mob can act again.
 	protected int lockTimeRemaining;
 	
-	// defaultmessages to display while the mob is locked, and when it is finished.
+	//default messages to display while the mob is locked, and when it is finished.
 	protected String lockMessage = "You are currently focused on an activity."; 
 	protected String lockFinishedMessage = "You become aware of the world again."; 
 	
 	public Mobile() {
-
+		baseModel = new MobileBaseModel();
+		dynamicModel = new MobileDynamicModel();
+		combatModel = new MobileCombatModel();
 	}
 
 	// Creates a mobile from the given models.
@@ -50,39 +70,84 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 		dynamicModel = dynamics;
 		combatModel = combat;
 	}
+	
+	@Override
+	public void save() {
+		//TODO implement Mobile save.
+	}
+	
+	@XmlElement
+	public MobileBaseModel getBaseModel() {
+		return baseModel;
+	}
+	
+	public void setBaseModel(MobileBaseModel model) {
+		baseModel = model;
+	}
+	
+	@XmlElement
+	public MobileDynamicModel getDynamicModel() {
+		return dynamicModel;
+	}
+	
+	public void setDynamicModel(MobileDynamicModel model) {
+		dynamicModel = model;
+	}
+	
+	@XmlElement
+	public MobileCombatModel getCombatModel() {
+		return combatModel;
+	}
+	
+	public void setCombatModel(MobileCombatModel model) {
+		combatModel = model;
+	}
+	
+	/**
+	 * Gets the modifier for a given score based on the standard
+	 * formula: (score - 10) / 2, rounded down.
+	 * @param score
+	 * @return the modifier
+	 */
+	public int getModifier(int score) {
+		return (score - 10) / 2;
+	}
 
 	// Meant to be overridden.
 	public void sendData(String text) {
 
 	}
 
-	// isPlayer method.
-	// This checks to see if the mobile is a player. This is used in numerous
-	// method that only
-	// or only need to affect the players.
-	@Override
+	/**
+	 * Checks to see if this Mobile is a player.
+	 * @return true or false
+	 */
+	@XmlTransient
 	public boolean isPlayer() {
-		return this instanceof PlayerCharacter;
+		//TODO implement isPlayer
+		//return this instanceof PlayerCharacter;
+		return false;
 	}
 
-	// isNPC method.
-	@Override
+	/**
+	 * Checks to see if this Mobile is an NPC.
+	 * @return true or false
+	 */
+	@XmlTransient
 	public boolean isNPC() {
-		return this instanceof NPC;
+		//TODO implement isNPC
+		//return this instanceof NPC;
+		return false;
 	}
 	
-	public void isLocked() {
+	@XmlTransient
+	public boolean isLocked() {
 		return isLocked;
 	}
-
-	// getEntityType method.
-	// This method returns the entity type of the mobile... Which is living.
-	public int getEntityType() {
-		return Affectable.LIVING;
-	}
-
+ 
 	// getLockTimeRemaining method.
 	// Returns the time left on this mob's locked status.
+	@XmlTransient
 	public int getLockTimeRemaining() {
 		return lockTimeRemaining;
 	}
@@ -92,68 +157,47 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	public void setLocked(boolean locked) {
 		isLocked = locked;
 	}
-
-	// ########################
-	// Combat methods.
-	// ########################
-
-	// attack method.
-	// This method is the main one used for attacks. It quite literally makes an
-	// attack roll
-	// and returns a true or false depending on if it exceeded the target's AC
-	// or not. It
-	// calculates a modifier of the mob's class BAB (if it has one), The
-	// Strength or Dexterity
-	// modifier (depending on melee or ranged), and any other bonuses given to
-	// the mobile by
-	// its changeAttackBonus method.
-	// TODO:
-	// The melee variable will eventually be changed to an enum from the
-	// ring.combat package... i.e.
-	// Combat.MELEE or Combat.RANGED. this works for now though
+	
 	public boolean attack(Affectable target, boolean melee) {
-		// start calculations by finding the mobile's base attack bonus.
-		int attackModifier = (int) (getMobileClass().getBaseAttackBonus()
-				.getModifier() * level);
+		//start calculations by finding the mobile's base attack bonus.
+		int attackModifier = (int) (getBaseModel().getMobileClass().getBaseAttackBonus()
+				.getModifier() * getBaseModel().getLevel());
 
-		// now add everything else
-		if (melee)
-			attackModifier += getModifier(STRENGTH);
-		else
-			attackModifier += getModifier(DEXTERITY);
-		attackModifier += attackBonus;
+		//handle ranged vs melee modifiers
+		if (melee) {
+			attackModifier += getModifier(getBaseModel().getStrength());
+		}
+		else {
+			attackModifier += getModifier(getBaseModel().getDexterity());
+		}
+		
+		//add any other generic bonuses
+		attackModifier += getCombatModel().getAttackBonus();
 
-		// now do the actual attack roll
+		//now do the actual attack roll
 		Random gen = new Random(System.nanoTime());
 		int opponentAC = target.getAC();
 		int baseRoll = gen.nextInt(20);
 
-		// results:
+		//results:
 		// always fail on a natural 1, always hit on a natural 20.
 		if (baseRoll == 1)
 			return false;
 		if (baseRoll == 20)
 			return true;
 
-		// otherwise we compare.
+		//otherwise we compare.
 		if ((baseRoll + opponentAC) >= opponentAC)
 			return true;
 		else
 			return false;
 	}
 
-	// calculateXPGiven method.
-	// This method calculates an XP amount to give based on this Mobile's level,
-	// racial hit dice, and other
-	// various things.
-	public int calculateXP() {
-		return 1;
-	}
-
-	// gainXP method.
-	// This method increases the current XP of the mobile. If the XP is great
-	// enough for a level up,
-	// then call the level up methods.
+	/**
+	 * This method gives this Mobile XP. If the XP is enough for a
+	 * levelup, a levelup is automatically performed.
+	 * @param amount
+	 */
 	public void gainXP(int amount) {
 
 	}
@@ -166,7 +210,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return true or false based on whether item adding was successful.
 	 */
 	public boolean addItemToInventory(Item item) {
-		return inventory.addItem(item);
+		return getDynamicModel().getInventory().addItem(item);
 	}
 
 	/**
@@ -176,7 +220,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return true or false if the removal was successful or not.
 	 */
 	public boolean removeItemFromInventory(Item item) {
-		return inventory.removeItem(item);
+		return getDynamicModel().getInventory().removeItem(item);
 	}
 
 	/**
@@ -187,8 +231,9 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return true if equipping was successful, false otherwise.
 	 */
 	public boolean equip(BodyPart part, Item item) {
+		Equipment equipment = getDynamicModel().getEquipment();
 		if (!equipment.hasItem(part)) {
-			equipment.setItem(part, item);
+			equipment.putItem(part, item);
 			applyEffectsFromItem(item);
 			return true;
 		} else {
@@ -203,7 +248,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return the Item removed, if there was one. null otherwise.
 	 */
 	public Item dequip(BodyPart part) {
-		Item i = equipment.removeItem(part);
+		Item i = getDynamicModel().getEquipment().removeItem(part);
 
 		// Now we need to unapply all effects........
 		unapplyEffectsFromItem(i);
@@ -221,24 +266,14 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 		if (item.isArmor()) {
 			System.out.println("It's an armor... Applying AC bonus...");
 			Armor a = (Armor) item;
-			currentAC += a.getAC();
+			getCombatModel().changeCurrentAC(a.getAC());
 		}
 
-		// Second: Loop through the SpellList and cast everything. EVERY ITEM
-		// HAS A SpellList!!
-		// Many SpellLists just have no spells in them :)
-		System.out.println("Applying the spells...");
-		Effect itemEffects = item.getPassiveEffects();
-		itemEffects.setTarget(this);
-		super.addEffect(itemEffects);
-
-		System.out.println("Spells applied...");
-
-		// Third: Call the item's special code block in case it does something
-		// requiring
-		// special programming.
-		item.specialCode(this);
-		System.out.println("Special code applied...");
+		//TODO implement apply effects from item.
+		//System.out.println("Applying the spells...");
+		//Effect itemEffects = item.getPassiveEffects();
+		//itemEffects.setTarget(this);
+		//super.addEffect(itemEffects);
 	}
 
 	// unapplyEffectsFromItem method.
@@ -246,12 +281,10 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	// inverse of the
 	// above.
 	public void unapplyEffectsFromItem(Item item) {
-		System.out.println("Whoa param: " + item);
 		// First: AC.
 		if (item.isArmor()) {
-			System.out.println("YEP!");
 			Armor a = (Armor) item;
-			currentAC -= a.getAC();
+			getCombatModel().changeCurrentAC(-1 * a.getAC());
 		}
 
 		// Second: Loop through the SpellList and decast everything.
@@ -271,39 +304,34 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	// sec.
 	// TODO: investigate issues with bonus HP and regen.
 	private void regenHP() {
-		if (currentHP + 2 > maxHP)
-			currentHP = maxHP; // make sure we don't go over.
+		MobileCombatModel model = getCombatModel();
+		if (model.getCurrentHP() + 2 > model.getMaxHP())
+			model.setCurrentHP(model.getMaxHP()); // make sure we don't go over.
 		else
-			currentHP += 2;
+			model.changeCurrentHP(2);
 	}
 
 	// regenMV method.
 	// This method regenerates 5 MV every 3 ticks. It does this if the mobile is
 	// below max MV.
 	private void regenMV() {
-		if (currentMV + 5 > maxMV)
-			currentMV = maxMV; // make sure we don't go over...
+		MobileDynamicModel model = getDynamicModel();
+		if (model.getCurrentMV() + 1 > model.getMaxMV())
+			model.setCurrentMV(model.getMaxMV());
 		else
-			currentMV += 1;
-	}
-
-	// resetChecks method.
-	// This method resets spot, listen, and search checks. Used for when a
-	// mobile enters a new room.
-	public void resetChecks() {
-		spotCheck = 0;
-		listenCheck = 0;
-		hiddenExitSearchCheck = 0;
+			model.changeCurrentMV(1);
 	}
 
 	// levelUp method.
 	// This method levels the Mobile up!
 	public void levelup() {
+		//TODO implement levelup
+		/*
 		int hitDie = mobClass.getHitDie();
 		System.out.println("Got hit die...: " + hitDie);
 		Random gen = new Random(System.nanoTime());
 		System.out.println("Instantiated generator...");
-		int newHP = gen.nextInt(hitDie) + 0;/* will eventually be con modifier! */
+		int newHP = gen.nextInt(hitDie) + 0;
 		System.out.println("Updated HP...");
 		currentHP += newHP;
 		maxHP += newHP;
@@ -317,8 +345,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 			pc.sendData("[B][GREEN]You have leveled up to level " + level
 					+ "![R][WHITE]");
 		}
-
-		// Some for loops dealing with spells and skills or something later...
+		*/
 	}
 
 	// increaseLockTime method.
@@ -346,15 +373,13 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 		lockMessage = msg;
 	}
 
-	// processTick method.
-	// This method processes Effects for this mobile and deals with command
-	// locking.
-	// PlayerCharacters and NPCs should override this method to deal things in
-	// their
-	// own unique fashion. However, they MUST call super.processTick()
-	// or there will be problems... big problems.
+	/**
+	 * This is the main processing method for Mobiles, both NPC and PC. Any class
+	 * that extends Mobile should call this method in order to get basic command
+	 * locking and stat regen facilities.
+	 */
 	public void processTick(TickerEvent e) {
-		super.removeDeadEffects();		
+		//super.removeDeadEffects();		
 		
 		// Deal with locking.
 		if (this.isLocked)
@@ -366,19 +391,20 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 		}
 
 		// Regenerate some movement and HP.
-		if ((getCurrentMV() < getMaxMV()) && (e.getCurrentTick() % 3 == 0))
+		if ((getDynamicModel().getCurrentMV() < getDynamicModel().getMaxMV()) && (e.getCurrentTick() % 3 == 0))
 			regenMV();
-		if (getCurrentHP() < getMaxHP())
+		
+		if (getCombatModel().getCurrentHP() < getCombatModel().getMaxHP())
 			regenHP();
 
 	}
 
 	public boolean canMove() {
-		if (this.isFighting) {
+		if (getBaseModel().isFighting()) {
 			sendData("[GREEN]You may not leave during combat![WHITE]");
 			return false;
 		}
-		else if (getCurrentMV() - 1 <= 0) {
+		else if (getDynamicModel().getCurrentMV() - 1 <= 0) {
 			sendData("[R][WHITE]You are too exhausted to move any further. Rest for awhile to regain your strength.");
 			return true;
 		}
@@ -393,6 +419,8 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return true if the Mobile was able to move in the specified direction, false otherwise.
 	 */
 	public final boolean move(String direction) {
+		/*
+		TODO implement movement for mobiles
 		try {
 			return LocationManager.move(this, LocationManager.getPortal(
 					currLocation, direction));
@@ -405,20 +433,17 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Override
-	public boolean isAttackable() {
-		return true;
-	}
-
-	@Override
-	public boolean isEntity() {
+		*/
 		return false;
 	}
-
-	@Override
-	public boolean isItem() {
-		return false;
+	
+	public static void main(String[] args) {
+		Mobile m = new Mobile();
+		m.setID("an id");
+		m.equip(Body.FACE, new Item());
+		m.getDynamicModel().getInventory().addItem(new Item());
+		m.setReferential(true);
+		String xml = m.toXML();
+		System.out.println(xml);
 	}
 }

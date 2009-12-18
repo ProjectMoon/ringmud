@@ -1,14 +1,4 @@
-package ring.mobiles;
-
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
-import ring.world.WorldObject;
+package ring.nrapi.mobiles;
 
 /**
  * This class represents an individual body part, such as a face, a finger, a
@@ -31,14 +21,14 @@ public class BodyPart {
 	public BodyPart() {}
 	
 	public BodyPart(String description) {
-		super.name = description;
-		super.longDescription = description;
+		this.name = description;
+		this.description = description;
 	}
 
 	// Copy constructor
 	public BodyPart(BodyPart other) {
 		this.name = other.name;
-		this.longDescription = other.description;
+		this.description = other.description;
 	}
 	
 	public String getName() {

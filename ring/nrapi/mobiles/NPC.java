@@ -1,13 +1,4 @@
-package ring.mobiles;
-
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
+package ring.nrapi.mobiles;
 
 import ring.commands.CommandSender;
 import ring.world.*;
@@ -51,7 +42,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 
 		int number = rand.nextInt(AI_CHANCE);
 		if (number == 1) {
-			doCommand("say Hohoho I'm " + getName());
+			doCommand("say Hohoho I'm " + super.getBaseModel().getName());
 		}
 
 		if (number == 2) {
@@ -93,6 +84,6 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	}
 
 	public String toString() {
-		return super.getName();
+		return super.getBaseModel().getName();
 	}
 }

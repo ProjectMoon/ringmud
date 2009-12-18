@@ -3,21 +3,16 @@ package ring.nrapi.movement;
 import java.util.ArrayList;
 import java.util.List;
 
-import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.DataStore;
-import ring.nrapi.data.DataStoreFactory;
-import ring.nrapi.entities.Entity;
-import ring.nrapi.movement.RoomModel;
-import ring.nrapi.movement.Zone;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
+import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.data.RingConstants;
+import ring.nrapi.entities.Entity;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -29,7 +24,7 @@ propOrder= {
 })
 public class Room extends AbstractBusinessObject {
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
-	private RoomModel model;
+	private RoomModel model = new RoomModel();
 	private Zone zone;
 	
 	@XmlElement
@@ -70,11 +65,11 @@ public class Room extends AbstractBusinessObject {
 	
 	public void addEntity(Entity ent) {
 		entities.add(ent);
-		getModel().getEntityIDCollection().addEntityID(ent.getID());
+		getModel().addEntityID(ent.getID());
 	}
 	
 	public boolean removeEntity(Entity ent) {
-		getModel().getEntityIDCollection().removeEntityID(ent.getID());
+		getModel().removeEntityID(ent.getID());
 		return entities.remove(ent);
 	}
 		

@@ -1,4 +1,4 @@
-package ring.mobiles.backbone;
+package ring.nrapi.mobiles.backbone;
 
 import java.io.Serializable;
 import java.math.BigInteger;

@@ -19,8 +19,8 @@ public class ExistDBStore implements DataStore {
 	public static final String XML_RESOURCE = "XMLResource";
 	
 	//Collection mappings
-	public static final String AGGREGATES_COLLECTION = "aggregate";
-	public static final String RESOURCES_COLLECTION = "resource";
+	public static final String STATIC_COLLECTION = "static";
+	public static final String GAME_COLLECTION = "game";
 	
 	@Override
 	public Room retrieveRoom(String id) {
@@ -124,9 +124,9 @@ public class ExistDBStore implements DataStore {
 	
 	private XMLResource retrieveResource(String id) throws XMLDBException {
 		ExistDB db = new ExistDB();
-		Collection col = db.getCollection(AGGREGATES_COLLECTION);
+		Collection col = db.getCollection(STATIC_COLLECTION);
 		XQueryService xq = db.getXQueryService(col);
-		String query = "for $doc in collection(\"" + AGGREGATES_COLLECTION+ "\")/aggregates/*[id=\"" + id + "\"] return $doc";
+		String query = "for $doc in collection(\"" + STATIC_COLLECTION + "\")/ring/*[id=\"" + id + "\"] return $doc";
 		ResourceSet resources = xq.query(query);
 		if (resources.getSize() > 0) {
 			if (resources.getSize() > 1) {
@@ -144,9 +144,9 @@ public class ExistDBStore implements DataStore {
 	private boolean insertPersistable(Persistable p) {
 		ExistDB db = new ExistDB();
 		try {
-			Collection col = db.getCollection(AGGREGATES_COLLECTION);
+			Collection col = db.getCollection(STATIC_COLLECTION);
 			XQueryService xq = db.getXQueryService(col);
-			String where = "collection(\"" + AGGREGATES_COLLECTION+ "\")/aggregates";
+			String where = "collection(\"" + STATIC_COLLECTION+ "\")/ring";
 			String query = "for $doc in " + where + " return update insert " + p.toXML() + " into " + where;
 			System.out.println("Query: " + query);
 			xq.query(query);
@@ -161,9 +161,9 @@ public class ExistDBStore implements DataStore {
 	private boolean updatePersistable(Persistable p) {
 		ExistDB db = new ExistDB();
 		try {
-			Collection col = db.getCollection(AGGREGATES_COLLECTION);
+			Collection col = db.getCollection(STATIC_COLLECTION);
 			XQueryService xq = db.getXQueryService(col);
-			String where = "collection(\"" + AGGREGATES_COLLECTION + "\")/aggregates/*[id=\"" + p.getID() + "\"]";
+			String where = "collection(\"" + STATIC_COLLECTION + "\")/ring/*[id=\"" + p.getID() + "\"]";
 			String query = "for $doc in " + where + " return update replace $doc with " + p.toXML();
 			System.out.println("xq:" + query);
 			xq.query(query);

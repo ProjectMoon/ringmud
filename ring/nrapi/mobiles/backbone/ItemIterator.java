@@ -1,10 +1,10 @@
-package ring.mobiles.backbone;
+package ring.nrapi.mobiles.backbone;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ring.entities.Item;
+import ring.nrapi.entities.Item;
 
 public class ItemIterator implements Iterator<Item> {
 	private int pos;
@@ -32,7 +32,7 @@ public class ItemIterator implements Iterator<Item> {
 	private void initInventory(Inventory inv) {
 		items = new ArrayList<Item>(inv.size());
 		
-		for (Item item : inv.inv) {
+		for (Item item : inv.getItemList()) {
 			items.add(item);
 		}
 	}

@@ -1,11 +1,21 @@
-package ring.mobiles.backbone;
+package ring.nrapi.mobiles.backbone;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
-import ring.entities.Item;
-import ring.mobiles.BodyPart;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import ring.nrapi.data.RingConstants;
+import ring.nrapi.entities.Item;
+import ring.nrapi.mobiles.BodyPart;
 
 /**
  * This class represents the equipment a mobile is currently wearing. Because
@@ -15,20 +25,69 @@ import ring.mobiles.BodyPart;
  * @author projectmoon
  * 
  */
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlRootElement
+@XmlType(
+namespace = RingConstants.RING_NAMESPACE,
+propOrder= {
+	"entries"
+})
 public class Equipment implements Iterable<Item>, Serializable {
 	public static final long serialVersionUID = 1;
 	
-	protected HashMap<BodyPart, Item> equipment;
+	/**
+	 * Inner class for transforming this object into something JAXB
+	 * can understand.
+	 * @author projectmoon
+	 *
+	 */
+	@XmlAccessorType(XmlAccessType.PROPERTY)
+	@XmlType
+	public static class EquipmentTuple {
+		private BodyPart part;
+		private Item item;
+		
+		public EquipmentTuple() {}
+		public EquipmentTuple(BodyPart part, Item item) {
+			this.part = part;
+			this.item = item;
+		}
+		
+		@XmlElement
+		public BodyPart getBodyPart() { return part; }
+		public void setBodyPart(BodyPart part) { this.part = part; }
+		
+		@XmlElement
+		public Item getItem() { return item; }
+		public void setItem(Item item) { this.item = item; }
+	}
+	
+	protected HashMap<BodyPart, Item> equipment = new HashMap<BodyPart, Item>();
 
-	public Equipment() {
-		equipment = new HashMap<BodyPart, Item>();
+	public Equipment() {}
+	
+	@XmlElement(name = "entry")
+	public List<EquipmentTuple> getEntries() {
+		List<EquipmentTuple> entries = new ArrayList<EquipmentTuple>(equipment.keySet().size());
+		for (BodyPart part : equipment.keySet()) {
+			EquipmentTuple tuple = new EquipmentTuple(part, equipment.get(part));
+			entries.add(tuple);
+		}
+		
+		return entries;
+	}
+	
+	public void setEntries(List<EquipmentTuple> entries) {
+		for (EquipmentTuple tuple : entries) {
+			equipment.put(tuple.getBodyPart(), tuple.getItem());
+		}
 	}
 
 	public Item getItem(BodyPart part) {
 		return equipment.get(part);
 	}
 
-	public void setItem(BodyPart part, Item item) {
+	public void putItem(BodyPart part, Item item) {
 		item.setPartWornOn(part);
 		equipment.put(part, item);
 	}
