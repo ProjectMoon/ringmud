@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -20,10 +21,11 @@ import ring.nrapi.entities.Entity;
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
 	"model",
+	"entities",
 	"zoneID"
 })
 public class Room extends AbstractBusinessObject {
-	private ArrayList<Entity> entities = new ArrayList<Entity>();
+	private List<Entity> entities = new ArrayList<Entity>();
 	private RoomModel model = new RoomModel();
 	private Zone zone;
 	
@@ -57,20 +59,40 @@ public class Room extends AbstractBusinessObject {
 		this.zone = zone;
 		setZoneID(zone.getID());
 	}
-
+	
 	@Override
-	public void save() {
-		//XMLDataStoreFactory.getDefaultStore().storeAggregate(super.getAggregate());		
+	public void createChildRelationships() {
+		for (Entity ent : entities) {
+			ent.setParent(this);
+		}
+		
+		//TODO implement cPR for Mobiles in Room.
+	}
+	
+	@XmlElementWrapper(name = "entities")
+	@XmlElement(name = "entity")
+	public List<Entity> getEntities() {
+		return entities;
+	}
+	
+	public void setEntities(List<Entity> entities) {
+		this.entities = entities;
+		createChildRelationships();
 	}
 	
 	public void addEntity(Entity ent) {
 		entities.add(ent);
-		getModel().addEntityID(ent.getID());
+		ent.setParent(this);
 	}
 	
 	public boolean removeEntity(Entity ent) {
-		getModel().removeEntityID(ent.getID());
-		return entities.remove(ent);
+		if (entities.contains(ent)) {
+			ent.setParent(null);
+			return entities.remove(ent);
+		}
+		else {
+			return false;
+		}
 	}
 		
 	public String generateBlindExitsString(int searchCheck) {
@@ -79,9 +101,5 @@ public class Room extends AbstractBusinessObject {
 	
 	public String generateRandomOccupantsList(int searchCheck) {
 		throw new UnsupportedOperationException();
-	}
-	
-	public List<Entity> getEntities() {
-		return entities;
 	}
 }

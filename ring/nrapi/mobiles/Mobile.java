@@ -72,8 +72,17 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	}
 	
 	@Override
-	public void save() {
-		//TODO implement Mobile save.
+	/**
+	 * Sets parent relationships for items in inventory and equipment.
+	 */
+	public void createChildRelationships() {
+		for (Item i : getDynamicModel().getInventory()) {
+			i.setParent(this);
+		}
+		
+		for (Item i : getDynamicModel().getEquipment()) {
+			i.setParent(this);
+		}
 	}
 	
 	@XmlElement

@@ -1,6 +1,7 @@
 package ring.nrapi.business;
 
 import java.io.StringWriter;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,6 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import ring.nrapi.data.DataStoreFactory;
+import ring.nrapi.data.Persistable;
 import ring.nrapi.data.RingConstants;
 import ring.nrapi.xml.JAXBAnnotationReader;
 
@@ -24,11 +27,58 @@ propOrder= {
 	"ID"
 })
 public abstract class AbstractBusinessObject implements BusinessObject {
+	private AbstractBusinessObject parent;
+	private String docID;
+	
 	private String id;
 	private boolean storeAsUpdate;
 	private boolean referential;
+	private boolean isUnique = false;
 	
-	public abstract void save();
+	public void save() {
+		DataStoreFactory.getDefaultStore().storePersistable(this);
+	}
+	
+	/**
+	 * Creates the parent relationships for all child business
+	 * objects of this AbstractBusinessObject.
+	 */
+	public abstract void createChildRelationships();
+	
+	@Override
+	public Persistable getRoot() {
+		if (getParent() == null) {
+			return this;
+		}
+		else {
+			Persistable root = getParent();
+			while (root.getParent() != null) {
+				root = root.getParent();
+			}
+			
+			return root;
+		}
+	}
+	
+	@Override
+	@XmlTransient
+	public Persistable getParent() {
+		return parent;
+	}
+	
+	public void setDocumentID(String id) {
+		docID = id;
+	}
+	
+	@Override
+	@XmlTransient
+	public String getDocumentID() {
+		return docID;
+	}
+	
+	public void setParent(AbstractBusinessObject obj) {
+		parent = obj;
+	}
 
 	@XmlAttribute(name = "ref")
 	public boolean isReferential() {
@@ -63,6 +113,22 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	}
 	
 	@Override
+	public void makeUnique() {
+		if (!isUnique) {
+			id += UUID.randomUUID().toString();
+			isUnique = true;
+		}
+	}
+	
+	public String toXMLDocument() {
+		String xml = marshalledXMLDocument();
+		String body = xml.substring(xml.indexOf("?>") + 2);
+		body = "<ring>" + body + "</ring>";
+		String xmlHeader = xml.substring(0, xml.indexOf("?>") + 2);
+		return xmlHeader + body;
+	}
+	
+	@Override
 	public String toXML() {
 		if (isReferential()) {
 			JAXBAnnotationReader reader = new JAXBAnnotationReader(this.getClass());
@@ -74,15 +140,15 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 			return xml;
 		}
 		else {
-			return marshalledXML();
+			return marshalledXMLFragment();
 		}
 	}
 	
-	private String marshalledXML() {
+	private String marshalledXMLFragment() {
 		try {
 			JAXBContext ctx = JAXBContext.newInstance(this.getClass());
 			Marshaller m = ctx.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			StringWriter writer = new StringWriter();
 			m.marshal(this, writer);
 			String xml = writer.toString();
@@ -94,5 +160,22 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 			e.printStackTrace();
 			return null;
 		}
-	}	
+	}
+	
+	private String marshalledXMLDocument() {
+		try {
+			JAXBContext ctx = JAXBContext.newInstance(this.getClass());
+			Marshaller m = ctx.createMarshaller();
+			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			StringWriter writer = new StringWriter();
+			m.marshal(this, writer);
+			String xml = writer.toString();
+			
+			return xml;
+		}
+		catch (JAXBException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

@@ -36,6 +36,11 @@ public class Zone extends AbstractBusinessObject {
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
+	public void createChildRelationships() {
+		// Does nothing
+	}
+	
 	@XmlElement
 	public String getName() {
 		return name;

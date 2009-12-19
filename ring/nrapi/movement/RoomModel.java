@@ -21,8 +21,6 @@ namespace = RingConstants.RING_NAMESPACE,
 propOrder = {
 	"title",
 	"description",
-	"mobileIDs",
-	"entityIDs",
 	"depth",
 	"width",
 	"length"
@@ -35,86 +33,12 @@ propOrder = {
  * @author projectmoon
  *
  */
-public class RoomModel {
-	//See bottom of class for EntityIDCollection object definition.
-	//private EntityIDCollection entityIDs = new EntityIDCollection();
-	
-	//See bottom of class for MobileIDCollection object definition.
-	//private MobileIDCollection mobileIDs = new MobileIDCollection();
-	
-	@XmlElementWrapper(name = "entities")
-	@XmlElement(name = "id")
-	private List<String> entityIDs = new ArrayList<String>();
-	
-	@XmlElementWrapper(name = "mobiles")
-	@XmlElement(name = "id")
-	private List<String> mobileIDs = new ArrayList<String>();
-	
+public class RoomModel {	
 	private String title;
 	private String description;
 	private int length;
 	private int width;
 	private int depth;
-	
-	/*
-	@XmlElement(name = "entityIDs")
-	public EntityIDCollection getEntityIDCollection() {
-		return entityIDs;
-	}
-	
-	public void setEntityIDCollection(EntityIDCollection entityIDs) {
-		this.entityIDs = entityIDs;	
-	}
-	*/
-	
-	@XmlTransient
-	/**
-	 * Convenience method for getting the list of entity IDs.
-	 * Same as calling getIDs from the entity ID collection object.
-	 * @return the list of entity IDs.
-	 */
-	public List<String> getEntityIDs() {
-		//return getEntityIDCollection().getIDs();
-		return entityIDs;
-	}
-	
-	public void setEntityIDs(List<String> ids) {
-		entityIDs = ids;
-	}
-	
-	/*
-	@XmlElement(name = "mobileIDs")
-	public MobileIDCollection getMobileIDCollection() {
-		return mobileIDs;
-	}
-	
-	public void setMobileIDCollection(MobileIDCollection mobileIDs) {
-		this.mobileIDs = mobileIDs;
-	}
-	*/
-	
-	@XmlTransient
-	/**
-	 * Convenience method for getting the list of mobile IDs.
-	 * Same as calling getIDs from the mobile ID collection object.
-	 * @return the list of mobile IDs.
-	 */	
-	public List<String> getMobileIDs() {
-		//return getEntityIDCollection().getIDs();
-		return mobileIDs;
-	}
-	
-	public void setMobileIDs(List<String> ids) {
-		mobileIDs = ids;
-	}
-	
-	public void addEntityID(String id) {
-		entityIDs.add(id);
-	}
-	
-	public boolean removeEntityID(String id) {
-		return entityIDs.remove(id);
-	}
 	
 	public void setDepth(int depth) {
 		this.depth = depth;
@@ -160,50 +84,4 @@ public class RoomModel {
 	public String getTitle() {
 		return title;
 	}
-	
-	@XmlAccessorType(XmlAccessType.PROPERTY)
-	@XmlType
-	public static class EntityIDCollection {
-		private List<String> entityIDs = new ArrayList<String>();
-		
-		@XmlElement(name = "id")
-		public List<String> getIDs() {
-			return entityIDs;
-		}
-		
-		public void setIDs(List<String> entityIDs) {
-			this.entityIDs = entityIDs;
-		}
-
-		public void addEntityID(String id) {
-			entityIDs.add(id);
-		}
-	
-		public boolean removeEntityID(String id) {
-			return entityIDs.remove(id);
-		}		
-	}
-	
-	@XmlAccessorType(XmlAccessType.PROPERTY)
-	@XmlType
-	public static class MobileIDCollection {
-		private List<String> mobileIDs = new ArrayList<String>();
-		
-		@XmlElement(name = "id")
-		public List<String> getIDs() {
-			return mobileIDs;
-		}
-		
-		public void setIDs(List<String> mobileIDs) {
-			this.mobileIDs = mobileIDs;
-		}
-
-		public void addMobileID(String id) {
-			mobileIDs.add(id);
-		}
-	
-		public boolean removeMobileID(String id) {
-			return mobileIDs.remove(id);
-		}		
-	}	
 }

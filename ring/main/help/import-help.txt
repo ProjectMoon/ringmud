@@ -1,0 +1,15 @@
+RingMUD Import module: Import XML into the database
+usage: ringmud.sh import <file.xml> [file2.xml ...]
+
+The import module imports XML documents into the database. XML documents can
+contain any number of different object descriptions within the root <ring>
+element.
+
+The import module will validate each document to be imported by attempting to
+construct objects from each of the objects defined in the document. It will not
+follow inline reference pointers, because the pointers to be referenced may be 
+part of the import operation.
+
+Once validated, the document will be imported directly in to the database as it
+appears in the file. The module then moves on to the next document, and shows
+the success for the previous document.

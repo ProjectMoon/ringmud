@@ -1,12 +1,19 @@
 package ring.nrapi.business;
 
 import java.io.StringReader;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.XMLDBException;
+
 import ring.main.RingModule;
+import ring.nrapi.data.DataStore;
+import ring.nrapi.data.DataStoreFactory;
+import ring.nrapi.data.ExistDB;
 import ring.nrapi.entities.Entity;
 import ring.nrapi.entities.Item;
 import ring.nrapi.mobiles.Body;
@@ -18,39 +25,57 @@ public class TestDriver implements RingModule {
 	@Override
 	public void start(String[] args) {
 		/*
-		Mobile m = new Mobile();
-		m.setID("an id");
-		Item i = new Item();
-		i.setReferential(true);
-		m.equip(Body.FACE, i);
-		String xml = m.toXML();
-		*/
+		ExistDB db = new ExistDB();
+		try {
+			db.removeAllResources();
+			db.createRingDatabase();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		Room r = new Room();
 		Entity e = new Entity();
+		e.setReferential(true);
 		e.setID("entid");
 		r.setID("room id");
 		r.addEntity(e);
-		String xml = r.toXML();
-		
-		System.out.println(xml);
-		System.out.println();
+		r.save();
 		
 		try {
-			JAXBContext ctx = JAXBContext.newInstance(Room.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			System.out.println("Have unmarshaller...");
-			Room r1 = (Room)um.unmarshal(new StreamSource(new StringReader(xml)));
-			System.out.println("Got a room.");
-			
-			System.out.println(r1);
-			System.out.println(r1.getID());
-			System.out.println(r1.getModel().getEntityIDs().get(0));
+			Collection col = db.getCollection("static");
+			System.out.println(col.getResource("room id.xml").getContent());
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}	
+		
+		DataStore ds = DataStoreFactory.getDefaultStore();
+		Room r2 = ds.retrieveRoom("room id");
+		System.out.println(r2.getID());
+		r2.getEntities().get(0).setID("new entid");
+		r2.save();
+		
+		Room r3 = ds.retrieveRoom("room id");
+		System.out.println(r3.getEntities().get(0).getID());
+	
+		try {
+		Collection col = db.getCollection("static");
+		
+		System.out.println(col.getResource("room id.xml").getContent());
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		*/
 		
+		Room r = DataStoreFactory.getDefaultStore().retrieveRoom("room id");
+		System.out.println(r);
+		System.out.println(r.getID());
+		r.getModel().setDepth(5);
+		r.getModel().setDescription("A room");
+		r.getModel().setTitle("A room's title");
+		r.save();
 	}
 	
 	@Override
@@ -59,7 +84,7 @@ public class TestDriver implements RingModule {
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws XMLDBException {
 		new TestDriver().start(null);
 	}
 }

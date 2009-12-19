@@ -4,7 +4,7 @@ import ring.nrapi.business.AbstractBusinessObject;
 
 public class Entity extends AbstractBusinessObject {
 	@Override
-	public void save() {
-		throw new UnsupportedOperationException();
+	public void createChildRelationships() {
+		//Does nothing
 	}
 }

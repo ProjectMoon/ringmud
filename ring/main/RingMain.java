@@ -6,6 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import ring.nrapi.data.ExistDB;
 import ring.system.MUDConfig;
 
 /**
@@ -15,36 +20,58 @@ import ring.system.MUDConfig;
  *
  */
 public class RingMain {
-	public static String USAGE_LOCATION = "ring/main/usage.txt";
+	public static String USAGE_LOCATION = "ring/main/help/";
 	public static String MODULES_LOCATION = "ring/main/modules.properties";
 	
 	public static void main(String[] args) {
 		RingMain main = new RingMain();
-		if (args.length < 1) {
-			main.usage();
+		if (args.length < 1 || args[0].equals("help")) {
+			if (args.length <= 1) {
+				main.usage(null);
+			}
+			else {
+				main.usage(args[1]);
+			}
 		}
 		else {
 			//Load configuration as the very first thing.
 			MUDConfig.loadProperties();
 			
+			//Set up basic logging crap for eXist.
+			//TODO handle this properly with a config file.
+			BasicConfigurator.configure();
+			Logger.getRootLogger().setLevel(Level.ERROR);
+			
+			//Load the specified module.
 			String app = args[0];
 			String[] appArgs = new String[args.length - 1];
 			System.arraycopy(args, 1, appArgs, 0, args.length - 1);
 			main.executeModule(app, appArgs);
+			
+			//Shut down eXist.
+			//This looks a bit odd, but the DB reference is static.
+			new ExistDB().shutdown();
 		}
 	}
 	
-	public void usage() {
+	public void usage(String module) {
+		if (module == null || module.equals("")) {
+			module = "main";
+		}
+		
+		String moduleHelp = module + "-help.txt";
+		
 		try {
-			InputStream input = this.getClass().getClassLoader().getResourceAsStream(USAGE_LOCATION);
+			InputStream input = this.getClass().getClassLoader().getResourceAsStream(USAGE_LOCATION + moduleHelp);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				System.out.println(line);
 			}
+			reader.close();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("There is no help for \"" + module + "\"");
 		}
 	}
 	
@@ -73,6 +100,5 @@ public class RingMain {
 			e.printStackTrace();
 			System.err.println(app + " is not a defined RingMUD module");
 		}
-		
 	}
 }

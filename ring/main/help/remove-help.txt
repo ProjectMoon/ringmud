@@ -1,0 +1,10 @@
+RingMUD Remove module: Remove XML from the database
+usage: ringmud.sh remove <docID> [docID2 ...]
+
+The remove module removes XML documents from the database. It locates documents
+by document ID. Normally, the document ID is the same as the filename that was
+originally imported into the database.
+
+The remove module will remove all document IDs specified in the list as command
+line arguments, and as it attempts to remove each, it will report on the status
+of each one.

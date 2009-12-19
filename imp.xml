@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ring>
+    <room ref="false" id="room id">
+        <model>
+            <depth>0</depth>
+            <width>0</width>
+            <length>0</length>
+        </model>
+        <entities>
+            <entity ref="true" id="new entid"/>
+        </entities>
+        <zoneID>testID</zoneID>
+    </room>
+</ring>
+

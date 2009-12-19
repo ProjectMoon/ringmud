@@ -1,5 +1,10 @@
 package ring.nrapi.data;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import org.exist.xmldb.DatabaseInstanceManager;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -38,8 +43,12 @@ public class ExistDB {
 	private static final String[] XQUERY_SERVICE = { "XQueryService", "1.0" };
 	private static final String[] COLLECTION_MGMT_SERVICE = { "CollectionManagementService", "1.0" };
 	
+	//Service caches: Not necessary right now
+	//private static Map<Collection, XQueryService> xqServiceCache = new WeakHashMap<Collection, XQueryService>();
+	
 	//Other stuff
 	private static boolean shutdownHookExists;
+	private static boolean shutdown = false;
 	
 	static {
 		System.setProperty("exist.initdb", "true");
@@ -84,21 +93,29 @@ public class ExistDB {
 		}
 	}
 	
+	public void shutdown() {
+		System.out.print("Shutting down eXist... ");
+		try {
+			DatabaseInstanceManager manager = (DatabaseInstanceManager)getRootCollection().getService("DatabaseInstanceManager", "1.0"); 
+			manager.shutdown();
+		}
+		catch (XMLDBException e) {
+			System.err.println("There was an error shutting down eXist:");
+			e.printStackTrace();
+		}
+		
+		shutdown = true;
+		System.out.println("Done.");
+	}
+	
 	private void setupShutdownHook(final Collection col) {
 		Runnable hook = new Runnable() {
 			@Override
 			public void run() {
-				System.out.print("Shutting down eXist... ");
-				try {
-					DatabaseInstanceManager manager = (DatabaseInstanceManager)col.getService("DatabaseInstanceManager", "1.0"); 
-					manager.shutdown();
+				//This only runs in the event of an abnormal shutdown.
+				if (!shutdown) {
+					shutdown();
 				}
-				catch (XMLDBException e) {
-					System.err.println("There was an error shutting down eXist:");
-					e.printStackTrace();
-				}
-				
-				System.out.println("Done.");
 			}
 		};
 		
@@ -107,8 +124,7 @@ public class ExistDB {
 	}
 	
 	public XQueryService getXQueryService(Collection col) throws XMLDBException {
-		XQueryService service = (XQueryService)col.getService(XQUERY_SERVICE[SVCNAME], XQUERY_SERVICE[SVCVER]);
-		return service;
+		return (XQueryService)col.getService(XQUERY_SERVICE[SVCNAME], XQUERY_SERVICE[SVCVER]);
 	}
 	
 	public Collection getRootCollection() throws XMLDBException {
@@ -206,5 +222,30 @@ public class ExistDB {
 		//Game collection: Stores world state
 		Collection gameCol = service.createCollection(ExistDBStore.GAME_COLLECTION);
 		addRootNode(gameCol, "ring");
+	}
+	
+	public void listResources(PrintStream out) {
+		try {
+			Collection col = getCollection(ExistDBStore.STATIC_COLLECTION);
+			
+			out.println("Static Collection:");
+			String[] res = col.listResources();
+			for (String r : res) {
+				out.println(r);
+			}
+			
+			col = getCollection(ExistDBStore.GAME_COLLECTION);
+			
+			out.println("Game Collection:");
+			res = col.listResources();
+			for (String r : res) {
+				out.println(r);
+			}
+		}
+		catch (XMLDBException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
