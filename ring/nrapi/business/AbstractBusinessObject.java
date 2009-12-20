@@ -166,7 +166,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		try {
 			JAXBContext ctx = JAXBContext.newInstance(this.getClass());
 			Marshaller m = ctx.createMarshaller();
-			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			StringWriter writer = new StringWriter();
 			m.marshal(this, writer);
 			String xml = writer.toString();

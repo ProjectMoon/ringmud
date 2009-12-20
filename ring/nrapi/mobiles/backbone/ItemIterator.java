@@ -32,7 +32,7 @@ public class ItemIterator implements Iterator<Item> {
 	private void initInventory(Inventory inv) {
 		items = new ArrayList<Item>(inv.size());
 		
-		for (Item item : inv.getItemList()) {
+		for (Item item : inv.getItems()) {
 			items.add(item);
 		}
 	}

@@ -3,7 +3,8 @@ usage: ringmud.sh import <file.xml> [file2.xml ...]
 
 The import module imports XML documents into the database. XML documents can
 contain any number of different object descriptions within the root <ring>
-element.
+element. Documents are imported into the STATIC collection. You cannot import
+into the game collection.
 
 The import module will validate each document to be imported by attempting to
 construct objects from each of the objects defined in the document. It will not

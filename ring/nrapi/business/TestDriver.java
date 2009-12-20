@@ -14,10 +14,13 @@ import ring.main.RingModule;
 import ring.nrapi.data.DataStore;
 import ring.nrapi.data.DataStoreFactory;
 import ring.nrapi.data.ExistDB;
+import ring.nrapi.data.Loadpoint;
 import ring.nrapi.entities.Entity;
 import ring.nrapi.entities.Item;
 import ring.nrapi.mobiles.Body;
 import ring.nrapi.mobiles.Mobile;
+import ring.nrapi.mobiles.Alignment.Ethical;
+import ring.nrapi.mobiles.Alignment.Moral;
 import ring.nrapi.movement.Room;
 
 //TODO implement RefListener for referential object logic
@@ -69,13 +72,27 @@ public class TestDriver implements RingModule {
 		}
 		*/
 		
-		Room r = DataStoreFactory.getDefaultStore().retrieveRoom("room id");
-		System.out.println(r);
-		System.out.println(r.getID());
+		/*
+		Room r = DataStoreFactory.getDefaultStore().retrieveRoom("roomid");
+		System.out.println("Found r: " + r);
+		System.out.println("r.id = " + r.getID());
 		r.getModel().setDepth(5);
 		r.getModel().setDescription("A room");
 		r.getModel().setTitle("A room's title");
 		r.save();
+		
+		Room r2 = DataStoreFactory.getDefaultStore().retrieveRoom("roomid");
+		System.out.println("Found r2: " + r2);
+		System.out.println("r2.id = " + r2.getID());
+		System.out.println("r2.model.description = " + r2.getModel().getDescription());
+		*/
+		
+		DataStore ds = DataStoreFactory.getDefaultStore();
+		ds.setLoadpoint(Loadpoint.STATIC);
+		Mobile m = DataStoreFactory.getDefaultStore().retrieveMobile("mob1");
+		System.out.println("m.id = " + m.getID());
+		System.out.println("item.id = " + m.getDynamicModel().getInventory().getItems().get(0).getID());
+		m.save();
 	}
 	
 	@Override

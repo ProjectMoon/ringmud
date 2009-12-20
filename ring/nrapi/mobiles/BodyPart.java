@@ -1,5 +1,20 @@
 package ring.nrapi.mobiles;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import ring.nrapi.data.RingConstants;
+
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlRootElement
+@XmlType(
+namespace = RingConstants.RING_NAMESPACE,
+propOrder = {
+	"name"
+})
 /**
  * This class represents an individual body part, such as a face, a finger, a
  * head, etc. There are a host of BodyPart constants in the Body class. An
@@ -16,34 +31,24 @@ public class BodyPart {
 
 	// Description of the body part.
 	private String name;
-	private String description;
 
 	public BodyPart() {}
 	
-	public BodyPart(String description) {
-		this.name = description;
-		this.description = description;
+	public BodyPart(String name) {
+		this.name = name;
 	}
 
 	// Copy constructor
 	public BodyPart(BodyPart other) {
 		this.name = other.name;
-		this.description = other.description;
 	}
 	
+	@XmlAttribute
 	public String getName() {
 		return name;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
 	}
 }

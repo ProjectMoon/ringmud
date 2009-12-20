@@ -445,14 +445,4 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 		*/
 		return false;
 	}
-	
-	public static void main(String[] args) {
-		Mobile m = new Mobile();
-		m.setID("an id");
-		m.equip(Body.FACE, new Item());
-		m.getDynamicModel().getInventory().addItem(new Item());
-		m.setReferential(true);
-		String xml = m.toXML();
-		System.out.println(xml);
-	}
 }

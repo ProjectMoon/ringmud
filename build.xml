@@ -11,8 +11,7 @@
     	lib/excalibur-cli-1.0.jar lib/jEdit-syntax.jar lib/javax.servlet-1.4.jar lib/jgroups-all-2.2.6.jar 
     	lib/jline-0.9.94.jar lib/jta-1.1.jar lib/log4j-1.2.15.jar lib/quartz-1.6.5.jar lib/stax-api-1.0.1.jar 
     	lib/sunxacml-1.2.jar lib/ws-commons-util-1.0.2.jar lib/xmldb.jar lib/xmlrpc-client-3.1.2.jar 
-    	lib/xmlrpc-common-3.1.2.jar lib/xmlrpc-server-3.1.2.jar lib/exist.jar lib/exist-modules.jar
-    	ring/main/log4j.xml" />
+    	lib/xmlrpc-common-3.1.2.jar lib/xmlrpc-server-3.1.2.jar lib/exist.jar lib/exist-modules.jar" />
 
 	<fileset id="resources" dir="${src.dir}/ring/main/">
 		<include name="**/*.properties" />

@@ -8,7 +8,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.CompiledExpression;
-import org.xmldb.api.base.ResourceIterator;
 import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
@@ -16,6 +15,8 @@ import org.xmldb.api.modules.XQueryService;
 
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.entities.Entity;
+import ring.nrapi.entities.Item;
+import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
 import ring.nrapi.movement.Zone;
 
@@ -28,7 +29,12 @@ public class ExistDBStore implements DataStore {
 	public static final String GAME_COLLECTION = "game";
 	
 	//Compiled expressions
-	private static CompiledExpression retrieveExpression;
+	private static CompiledExpression staticRetrieve;
+	private static CompiledExpression gameRetrieve;
+	
+	//Loadpoint: Whether to do default load method, load explictly from game,
+	//or explicitly from static.
+	private Loadpoint loadpoint;
 	
 	private void initializeBusinessObject(AbstractBusinessObject bo, String docID) {
 		bo.setDocumentID(docID);
@@ -41,14 +47,18 @@ public class ExistDBStore implements DataStore {
 			XMLResource res = retrieveResource(id);
 			JAXBContext ctx = JAXBContext.newInstance(Room.class);
 			Unmarshaller um = ctx.createUnmarshaller();
-			Room r = (Room)um.unmarshal(res.getContentAsDOM());
+			um.setListener(new ReferenceLoader());
 			
-			if (r != null) {
-				r.setStoreAsUpdate(true);
-				initializeBusinessObject(r, res.getDocumentId());
+			if (res != null) {
+				Room r = (Room)um.unmarshal(res.getContentAsDOM());
+				
+				if (r != null) {
+					r.setStoreAsUpdate(true);
+					initializeBusinessObject(r, res.getDocumentId());
+				}
+				
+				return r;
 			}
-			
-			return r;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -69,14 +79,18 @@ public class ExistDBStore implements DataStore {
 			XMLResource res = retrieveResource(id);
 			JAXBContext ctx = JAXBContext.newInstance(Entity.class);
 			Unmarshaller um = ctx.createUnmarshaller();
-			Entity e = (Entity)um.unmarshal(res.getContentAsDOM());
+			um.setListener(new ReferenceLoader());
 			
-			if (e != null) {
-				e.setStoreAsUpdate(true);
-				initializeBusinessObject(e, res.getDocumentId());
+			if (res != null) {
+				Entity e = (Entity)um.unmarshal(res.getContentAsDOM());
+				
+				if (e != null) {
+					e.setStoreAsUpdate(true);
+					initializeBusinessObject(e, res.getDocumentId());
+				}
+				
+				return e;
 			}
-			
-			return e;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -97,14 +111,18 @@ public class ExistDBStore implements DataStore {
 			XMLResource res = retrieveResource(id);
 			JAXBContext ctx = JAXBContext.newInstance(Zone.class);
 			Unmarshaller um = ctx.createUnmarshaller();
-			Zone z = (Zone)um.unmarshal(res.getContentAsDOM());
+			um.setListener(new ReferenceLoader());
 			
-			if (z != null) {
-				z.setStoreAsUpdate(true);
-				initializeBusinessObject(z, res.getDocumentId());
+			if (res != null) {
+				Zone z = (Zone)um.unmarshal(res.getContentAsDOM());
+				
+				if (z != null) {
+					z.setStoreAsUpdate(true);
+					initializeBusinessObject(z, res.getDocumentId());
+				}
+				
+				return z;
 			}
-			
-			return z;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -118,6 +136,70 @@ public class ExistDBStore implements DataStore {
 		//Nothing to return
 		return null;
 	}
+	
+	@Override
+	public Item retrieveItem(String id) {
+		try {
+			XMLResource res = retrieveResource(id);
+			JAXBContext ctx = JAXBContext.newInstance(Item.class);
+			Unmarshaller um = ctx.createUnmarshaller();
+			um.setListener(new ReferenceLoader());
+			
+			if (res != null) {
+				Item i = (Item)um.unmarshal(res.getContentAsDOM());
+				
+				if (i != null) {
+					i.setStoreAsUpdate(true);
+					initializeBusinessObject(i, res.getDocumentId());
+				}
+				
+				return i;
+			}
+		} 
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//Nothing to return
+		return null;
+	}
+	
+	@Override
+	public Mobile retrieveMobile(String id) {
+		try {
+			XMLResource res = retrieveResource(id);
+			JAXBContext ctx = JAXBContext.newInstance(Mobile.class);
+			Unmarshaller um = ctx.createUnmarshaller();
+			um.setListener(new ReferenceLoader());
+			
+			if (res != null) {
+				Mobile m = (Mobile)um.unmarshal(res.getContentAsDOM());
+				
+				if (m != null) {
+					m.setStoreAsUpdate(true);
+					initializeBusinessObject(m, res.getDocumentId());
+				}
+				
+				return m;
+			}
+		} 
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//Nothing to return
+		return null;
+	}	
 
 	@Override
 	/**
@@ -132,7 +214,7 @@ public class ExistDBStore implements DataStore {
 				p.setDocumentID(p.getID() + ".xml");
 			}
 			
-			Collection col = db.getCollection(STATIC_COLLECTION);
+			Collection col = db.getCollection(GAME_COLLECTION);
 			
 			//Find the existing document, or create a new one.
 			XMLResource doc = (XMLResource)col.getResource(p.getDocumentID());
@@ -152,7 +234,11 @@ public class ExistDBStore implements DataStore {
 		}
 	}
 	
-	private void initializeRetrievalExpression() throws XMLDBException {
+	/**
+	 * Initialize expressions for retrieving from static and game.
+	 * @throws XMLDBException
+	 */
+	private void initializeRetrievalExpressions() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = db.getCollection(STATIC_COLLECTION);
 		XQueryService xq = db.getXQueryService(col);
@@ -161,27 +247,75 @@ public class ExistDBStore implements DataStore {
 		xq.declareVariable("id", "");
 		
 		String query = "for $doc in collection(\"" + STATIC_COLLECTION + "\")/ring/*[@id=$id] return $doc";
-		retrieveExpression = xq.compile(query);		
+		staticRetrieve = xq.compile(query);
+		
+		query = "for $doc in collection(\"" + GAME_COLLECTION + "\")/ring/*[@id=$id] return $doc";
+		col = db.getCollection(GAME_COLLECTION);
+		xq = db.getXQueryService(col);
+		xq.declareVariable("id", "");
+		gameRetrieve = xq.compile(query);
 	}
 	
 	private XMLResource retrieveResource(String id) throws XMLDBException {
-		if (retrieveExpression == null) {
-			initializeRetrievalExpression();
+		//First initialize expressions if necessary.
+		if (gameRetrieve == null || staticRetrieve == null) {
+			initializeRetrievalExpressions();
 		}
 		
+		//Now, load the resource from the proper place based
+		//on configured "loadpoint."
+		if (loadpoint == Loadpoint.DEFAULT) {
+			return defaultLoadMethod(id);
+		}
+		else if (loadpoint == Loadpoint.GAME) {
+			return loadFromGame(id);
+		}
+		else if (loadpoint == Loadpoint.STATIC) {
+			return loadFromStatic(id);
+		}
+		//else, default to defaultLoadMethod
+		else {
+			return defaultLoadMethod(id);
+		}
+	}
+	
+	private XMLResource defaultLoadMethod(String id) throws XMLDBException {
+		XMLResource res = loadFromGame(id);
+		if (res == null) {
+			System.out.println("Falling back to static for " + id);
+			res = loadFromStatic(id);
+		}
+		
+		return res;		
+	}
+	
+	private XMLResource loadFromGame(String id) throws XMLDBException {
+		//First try game collection, then static.
+		ExistDB db = new ExistDB();
+		Collection col = db.getCollection(GAME_COLLECTION);
+		XQueryService xq = db.getXQueryService(col);
+		xq.declareVariable("id", id);
+		ResourceSet resources = xq.execute(gameRetrieve);
+		
+		if (resources.getSize() > 0) {
+			//TODO log duplicate resources?
+			return (XMLResource)resources.getIterator().nextResource();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private XMLResource loadFromStatic(String id) throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = db.getCollection(STATIC_COLLECTION);
 		XQueryService xq = db.getXQueryService(col);
 		xq.declareVariable("id", id);
-		ResourceSet resources = xq.execute(retrieveExpression);
+		ResourceSet resources = xq.execute(staticRetrieve);
 		
 		if (resources.getSize() > 0) {
-			if (resources.getSize() > 1) {
-				System.err.println("Warning: there are duplicate resources for " + id + ". Returning the first.");
-			}
-			
-			ResourceIterator i = resources.getIterator();
-			return (XMLResource)i.nextResource();
+			//TODO log duplicate resources?
+			return (XMLResource)resources.getIterator().nextResource();
 		}
 		else {
 			return null;
@@ -233,5 +367,15 @@ public class ExistDBStore implements DataStore {
 			e.printStackTrace();
 			return false;
 		}		
+	}
+
+	@Override
+	public Loadpoint getLoadpoint() {
+		return loadpoint;
+	}
+
+	@Override
+	public void setLoadpoint(Loadpoint point) {
+		loadpoint = point;
 	}
 }

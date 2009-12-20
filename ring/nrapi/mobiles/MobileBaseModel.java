@@ -146,7 +146,7 @@ public class MobileBaseModel {
 	public void setMobileClass(MobileClass mobClass) { this.mobClass = mobClass; }
 	
 	//Alignment of the mob: LG, NG, CG, N, LE, NE, CE.
-	private Alignment alignment;
+	private Alignment alignment = new Alignment();
 	@XmlElement public Alignment getAlignment() { return alignment; }
 	public void setAlignment(Alignment alignment) { this.alignment = alignment; }
 	

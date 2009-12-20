@@ -6,7 +6,6 @@ import org.xmldb.api.modules.XMLResource;
 
 import ring.main.RingModule;
 import ring.nrapi.data.ExistDB;
-import ring.nrapi.data.ExistDBStore;
 
 public class StdOutDumpModule implements RingModule {
 
@@ -14,7 +13,7 @@ public class StdOutDumpModule implements RingModule {
 	public void start(String[] args) {
 		try {
 			ExistDB db = new ExistDB();
-			Collection col = db.getCollection(ExistDBStore.STATIC_COLLECTION);
+			Collection col = db.getCollection(args[0]);
 			
 			for (String resName : col.listResources()) {
 				XMLResource res = (XMLResource)col.getResource(resName);
@@ -35,5 +34,4 @@ public class StdOutDumpModule implements RingModule {
 		// TODO Auto-generated method stub
 		
 	}
-
 }
