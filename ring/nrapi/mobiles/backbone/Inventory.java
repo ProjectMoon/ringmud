@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.data.RingConstants;
-import ring.nrapi.entities.Item;
+import ring.nrapi.items.Item;
 
 /**
  * A class representing a Mobile's inventory. Really just a fancy List containing Item objects.

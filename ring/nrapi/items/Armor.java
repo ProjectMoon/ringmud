@@ -1,4 +1,5 @@
-package ring.nrapi.entities;
+package ring.nrapi.items;
+
 
 public class Armor extends Item {
 

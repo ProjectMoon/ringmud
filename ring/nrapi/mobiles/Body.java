@@ -3,6 +3,7 @@ package ring.nrapi.mobiles;
 import java.util.*;
 import java.io.Serializable;
 import ring.nrapi.entities.*;
+import ring.nrapi.items.Item;
 
 /**
  * This class defines a body and equipment slots. Numerous different body parts

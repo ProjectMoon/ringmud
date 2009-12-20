@@ -27,11 +27,11 @@ public class MobileCombatModel {
 	// The maximum HP of the mobile. We don't need a maximum mana because the
 	// MUD has no mana system. Spells are prepared and do not use mana.
 	private int maxHP;
-	@XmlTransient public int getMaxHP() { return maxHP + bonusHP; }
-	public String getMaxHPString() { return String.valueOf(getMaxHP()); }
 	@XmlElement(name = "maxHP") public int getMaxBaseHP() { return maxHP; }
 	public void setMaxBaseHP(int hp) { maxHP = hp; }
-		
+	@XmlTransient public int getMaxHP() { return maxHP + bonusHP; }
+	public String getMaxHPString() { return String.valueOf(getMaxHP()); }
+			
 	// The current HP of the mobile. If it goes below -10, the mobile's isDead
 	// boolean value is set to true. This, of course, will kill the mobile.	
 	private int currentHP;

@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.data.RingConstants;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder = {

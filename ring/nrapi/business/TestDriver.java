@@ -16,7 +16,7 @@ import ring.nrapi.data.DataStoreFactory;
 import ring.nrapi.data.ExistDB;
 import ring.nrapi.data.Loadpoint;
 import ring.nrapi.entities.Entity;
-import ring.nrapi.entities.Item;
+import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Body;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.mobiles.Alignment.Ethical;

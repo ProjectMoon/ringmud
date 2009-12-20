@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.Unmarshaller;
 
-import ring.nrapi.entities.Item;
 import ring.nrapi.entities.Entity;
+import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.mobiles.backbone.Equipment;
 import ring.nrapi.mobiles.backbone.Inventory;

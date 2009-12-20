@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.data.RingConstants;
 import ring.nrapi.entities.Entity;
+import ring.nrapi.mobiles.Mobile;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -26,6 +27,8 @@ propOrder= {
 })
 public class Room extends AbstractBusinessObject {
 	private List<Entity> entities = new ArrayList<Entity>();
+	private List<Mobile> mobiles = new ArrayList<Mobile>();
+	
 	private RoomModel model = new RoomModel();
 	private Zone zone;
 	
@@ -78,6 +81,31 @@ public class Room extends AbstractBusinessObject {
 	public void setEntities(List<Entity> entities) {
 		this.entities = entities;
 		createChildRelationships();
+	}	
+	
+	@XmlElementWrapper(name = "mobiles")
+	@XmlElement(name = "mobile")
+	public List<Mobile> getMobiles() {
+		return mobiles;
+	}
+	
+	public void setMobiles(List<Mobile> mobiles) {
+		this.mobiles = mobiles;
+	}
+	
+	public void addMobile(Mobile mob) {
+		mobiles.add(mob);
+		mob.setParent(this);
+	}
+	
+	public boolean removeMobile(Mobile mob) {
+		if (mobiles.contains(mob)) {
+			mob.setParent(null);
+			return mobiles.remove(mob);
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public void addEntity(Entity ent) {

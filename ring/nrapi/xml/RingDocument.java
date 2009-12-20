@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.data.RingConstants;
 import ring.nrapi.entities.Entity;
-import ring.nrapi.entities.Item;
+import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
 

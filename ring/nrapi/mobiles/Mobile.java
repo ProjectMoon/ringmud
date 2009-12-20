@@ -15,8 +15,8 @@ import ring.effects.Affectable;
 import ring.effects.Effect;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.data.RingConstants;
-import ring.nrapi.entities.Armor;
-import ring.nrapi.entities.Item;
+import ring.nrapi.items.Armor;
+import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.backbone.Equipment;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
@@ -272,7 +272,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	public void applyEffectsFromItem(Item item) {
 		System.out.println("Checking AC...");
 		// First: AC.
-		if (item.isArmor()) {
+		if (item instanceof Armor) {
 			System.out.println("It's an armor... Applying AC bonus...");
 			Armor a = (Armor) item;
 			getCombatModel().changeCurrentAC(a.getAC());
@@ -291,7 +291,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	// above.
 	public void unapplyEffectsFromItem(Item item) {
 		// First: AC.
-		if (item.isArmor()) {
+		if (item instanceof Armor) {
 			Armor a = (Armor) item;
 			getCombatModel().changeCurrentAC(-1 * a.getAC());
 		}

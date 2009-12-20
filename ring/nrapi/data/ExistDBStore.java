@@ -15,7 +15,7 @@ import org.xmldb.api.modules.XQueryService;
 
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.entities.Entity;
-import ring.nrapi.entities.Item;
+import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
 import ring.nrapi.movement.Zone;

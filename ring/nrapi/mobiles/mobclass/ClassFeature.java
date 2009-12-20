@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles;
+package ring.nrapi.mobiles.mobclass;
 
 import java.util.*;
 import ring.effects.*;

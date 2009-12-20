@@ -1,0 +1,44 @@
+package ring.nrapi.mobiles.npc;
+
+import ring.commands.CommandSender;
+import ring.nrapi.mobiles.Mobile;
+import ring.world.*;
+
+import java.io.PrintStream;
+import java.util.*;
+
+public class NPC extends Mobile implements CommandSender, TickerListener {
+	public static final long serialVersionUID = 1;
+	
+	private MobAI ai;
+
+	public NPC() {
+		super();
+	}
+
+	public synchronized void processTick(TickerEvent e) {
+		super.processTick(e);
+		ai.act();
+	}
+
+	public void doCommand(String command) {
+		// Was anything even "typed?"
+		if (command.length() <= 0)
+			return;
+
+		// Send the command.
+		super.handler.sendCommand(command);
+	}
+
+	public String toString() {
+		return super.getBaseModel().getName();
+	}
+	
+	public MobAI getAI() {
+		return ai;
+	}
+	
+	public void setAI(MobAI ai) {
+		this.ai = ai;
+	}
+}
