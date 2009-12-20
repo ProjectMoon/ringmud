@@ -18,6 +18,11 @@ import ring.nrapi.data.RingConstants;
 import ring.nrapi.items.Armor;
 import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.backbone.Equipment;
+import ring.nrapi.movement.LocationManager;
+import ring.nrapi.movement.Movable;
+import ring.nrapi.movement.MovementAssertionException;
+import ring.nrapi.movement.PortalNotFoundException;
+import ring.nrapi.movement.Room;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 
@@ -36,7 +41,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener {
+public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener, Movable {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -44,6 +49,9 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	private MobileDynamicModel dynamicModel = new MobileDynamicModel();
 	private MobileCombatModel combatModel = new MobileCombatModel();
 
+	//Location: Where the mobile is.
+	private Room currLocation;
+	
 	//If the mob is locked: if so, they cannot take actions.
 	private boolean isLocked;
 	
@@ -428,8 +436,6 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	 * @return true if the Mobile was able to move in the specified direction, false otherwise.
 	 */
 	public final boolean move(String direction) {
-		/*
-		TODO implement movement for mobiles
 		try {
 			return LocationManager.move(this, LocationManager.getPortal(
 					currLocation, direction));
@@ -442,7 +448,16 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 			e.printStackTrace();
 			return false;
 		}
-		*/
-		return false;
+	}
+
+	@Override
+	@XmlTransient
+	public Room getLocation() {
+		return currLocation;
+	}
+
+	@Override
+	public void setLocation(Room loc) {
+		currLocation = loc;
 	}
 }

@@ -1,33 +1,19 @@
 package ring.nrapi.business;
 
-import java.io.StringReader;
-import java.util.UUID;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
-import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.XMLDBException;
 
 import ring.main.RingModule;
 import ring.nrapi.data.DataStore;
 import ring.nrapi.data.DataStoreFactory;
 import ring.nrapi.data.ExistDB;
-import ring.nrapi.data.Loadpoint;
-import ring.nrapi.entities.Entity;
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Body;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.mobiles.Alignment.Ethical;
-import ring.nrapi.mobiles.Alignment.Moral;
-import ring.nrapi.movement.Room;
+import ring.nrapi.players.Player;
+import ring.nrapi.players.PlayerCharacter;
 
 //TODO implement RefListener for referential object logic
 public class TestDriver implements RingModule {
 	@Override
 	public void start(String[] args) {
-		/*
+		System.out.println("Setting up database.");
 		ExistDB db = new ExistDB();
 		try {
 			db.removeAllResources();
@@ -37,62 +23,27 @@ public class TestDriver implements RingModule {
 			e.printStackTrace();
 		}
 		
-		Room r = new Room();
-		Entity e = new Entity();
-		e.setReferential(true);
-		e.setID("entid");
-		r.setID("room id");
-		r.addEntity(e);
-		r.save();
+		Player p = new Player();
+		p.setID("aUser");
+		PlayerCharacter pc = new PlayerCharacter();
+		pc.getBaseModel().setName("Bob");
+		pc.getBaseModel().setDescription("This guy is awesome.");
 		
-		try {
-			Collection col = db.getCollection("static");
-			System.out.println(col.getResource("room id.xml").getContent());
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}	
+		p.addCharacter(pc);
 		
+		System.out.println("Storing player and character");
 		DataStore ds = DataStoreFactory.getDefaultStore();
-		Room r2 = ds.retrieveRoom("room id");
-		System.out.println(r2.getID());
-		r2.getEntities().get(0).setID("new entid");
-		r2.save();
+		ds.storePersistable(p);
+		ds.storePersistable(pc);
 		
-		Room r3 = ds.retrieveRoom("room id");
-		System.out.println(r3.getEntities().get(0).getID());
-	
-		try {
-		Collection col = db.getCollection("static");
+		System.out.println("Reading back out");
+		Player p2 = ds.retrievePlayer("aUser");
+		PlayerCharacter pc2 = p2.getCharacter("Bob");
 		
-		System.out.println(col.getResource("room id.xml").getContent());
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		*/
+		System.out.println("p2 id = " + p2.getID());
+		System.out.println("pc2 id = " + pc2.getID());
+		System.out.println("pc2 name = " + pc2.getBaseModel().getName());
 		
-		/*
-		Room r = DataStoreFactory.getDefaultStore().retrieveRoom("roomid");
-		System.out.println("Found r: " + r);
-		System.out.println("r.id = " + r.getID());
-		r.getModel().setDepth(5);
-		r.getModel().setDescription("A room");
-		r.getModel().setTitle("A room's title");
-		r.save();
-		
-		Room r2 = DataStoreFactory.getDefaultStore().retrieveRoom("roomid");
-		System.out.println("Found r2: " + r2);
-		System.out.println("r2.id = " + r2.getID());
-		System.out.println("r2.model.description = " + r2.getModel().getDescription());
-		*/
-		
-		DataStore ds = DataStoreFactory.getDefaultStore();
-		ds.setLoadpoint(Loadpoint.STATIC);
-		Mobile m = DataStoreFactory.getDefaultStore().retrieveMobile("mob1");
-		System.out.println("m.id = " + m.getID());
-		System.out.println("item.id = " + m.getDynamicModel().getInventory().getItems().get(0).getID());
-		m.save();
 	}
 	
 	@Override

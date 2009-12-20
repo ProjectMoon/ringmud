@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.data.RingConstants;
@@ -23,9 +24,9 @@ import ring.nrapi.mobiles.mobclass.MobileClass;
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
 	"level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma",
-	"name", "title", "lastName", "height", "gender", "type", "weightLimit", "race", "body",
-	"mobileClass", "alignment", "raceAggressiveList", "alignmentAggressiveList", "aggressive",
-	"dead", "deaf", "blind", "silent", "flying", "floating", "mounted", "fighting",
+	"name", "title", "lastName", "description", "height", "gender", "type", "weightLimit", "race",
+	"body",	"mobileClass", "alignment", "raceAggressiveList", "alignmentAggressiveList", 
+	"aggressive", "dead", "deaf", "blind", "silent", "flying", "floating", "mounted", "fighting",
 	"leftHanded", "prone", "lyingDown", "sitting"
 })
 public class MobileBaseModel {
@@ -43,6 +44,8 @@ public class MobileBaseModel {
 		
 		public boolean isGod() { return (this == LESSER_GOD || this == GOD || this == FORGER); }
 		public String getName() { return name; }
+		
+		public String toString() { return getName(); }
 	};
 	
 	public enum Gender {
@@ -109,7 +112,13 @@ public class MobileBaseModel {
 	
 	private String lastName;
 	@XmlElement public String getLastName() { return lastName; }
-	public void setLastName(String name) { lastName = name;	}	
+	public void setLastName(String name) { lastName = name;	}
+	
+	private String lookDescription;
+	@XmlElement public String getDescription() { return lookDescription; }
+	public void setDescription(String desc) { lookDescription = desc; }
+	
+	@XmlTransient public String getShortDescription() { return getName() + " " + getLastName() + getTitle(); }
 	
 	//Misc descriptive variables.
 	private double height;

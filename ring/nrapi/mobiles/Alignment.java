@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.data.RingConstants;
+import ring.util.TextParser;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -88,6 +89,23 @@ public class Alignment implements Serializable {
 		
 		return res;		
 	}
+	
+	/**
+	 * Returns a user-friendly representation of this Alignment. This
+	 * is what gets sent back to the user.
+	 */
+	public String toNonFormattedString() {
+		String res = ethical.toString() + " " + moral.toString();
+
+		//Handle true neutral alignment
+		if (res.equals(Ethical.NEUTRAL.toString() + " " + Moral.NEUTRAL.toString())) {
+			res = "[R][CYAN]True Neutral[WHITE]";
+		}
+		
+		res = TextParser.stripFormatting(res);
+		
+		return res;
+	}	
 
 	@XmlAttribute
 	public Ethical getEthical() {

@@ -19,6 +19,8 @@ import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
 import ring.nrapi.movement.Zone;
+import ring.nrapi.players.Player;
+import ring.nrapi.players.PlayerCharacter;
 
 public class ExistDBStore implements DataStore {
 	//XMLDB mappings
@@ -27,10 +29,12 @@ public class ExistDBStore implements DataStore {
 	//Collection mappings
 	public static final String STATIC_COLLECTION = "static";
 	public static final String GAME_COLLECTION = "game";
+	public static final String PLAYERS_COLLECTION = "players";
 	
 	//Compiled expressions
 	private static CompiledExpression staticRetrieve;
 	private static CompiledExpression gameRetrieve;
+	private static CompiledExpression playersRetrieve;
 	
 	//Loadpoint: Whether to do default load method, load explictly from game,
 	//or explicitly from static.
@@ -39,6 +43,86 @@ public class ExistDBStore implements DataStore {
 	private void initializeBusinessObject(AbstractBusinessObject bo, String docID) {
 		bo.setDocumentID(docID);
 		bo.createChildRelationships();
+	}
+
+	@Override
+	/**
+	 * Explicitly pulls from the players collection. 
+	 */
+	public Player retrievePlayer(String id) {
+		Loadpoint prevLoadpoint = getLoadpoint();
+		setLoadpoint(Loadpoint.PLAYERS);
+		
+		try {
+			XMLResource res = retrieveResource(id);
+			JAXBContext ctx = JAXBContext.newInstance(Player.class);
+			Unmarshaller um = ctx.createUnmarshaller();
+			um.setListener(new ReferenceLoader());
+			
+			if (res != null) {
+				Player p = (Player)um.unmarshal(res.getContentAsDOM());
+				
+				if (p != null) {
+					p.setStoreAsUpdate(true);
+					initializeBusinessObject(p, res.getDocumentId());
+				}
+				
+				return p;
+			}
+		} 
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			setLoadpoint(prevLoadpoint);
+		}
+		
+		//Nothing to return
+		return null;
+	}
+	
+	@Override
+	public PlayerCharacter retrievePlayerCharacter(String id) {
+		//Explicitly pull from players collection.
+		Loadpoint prevLoadpoint = getLoadpoint();
+		setLoadpoint(Loadpoint.PLAYERS);
+		
+		try {
+			XMLResource res = retrieveResource(id);
+			JAXBContext ctx = JAXBContext.newInstance(PlayerCharacter.class);
+			Unmarshaller um = ctx.createUnmarshaller();
+			um.setListener(new ReferenceLoader());
+			
+			if (res != null) {
+				PlayerCharacter p = (PlayerCharacter)um.unmarshal(res.getContentAsDOM());
+				
+				if (p != null) {
+					p.setStoreAsUpdate(true);
+					initializeBusinessObject(p, res.getDocumentId());
+				}
+				
+				return p;
+			}
+		} 
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			setLoadpoint(prevLoadpoint);
+		}
+		
+		//Nothing to return
+		return null;
 	}
 	
 	@Override
@@ -207,14 +291,22 @@ public class ExistDBStore implements DataStore {
 	 * Due to the nature of this method, other changes to the
 	 * parent document will be committed as well.
 	 */
-	public boolean storePersistable(Persistable p) {
+	public boolean storePersistable(Persistable p) {		
 		ExistDB db = new ExistDB();
 		try {
 			if (p.getDocumentID() == null) {
 				p.setDocumentID(p.getID() + ".xml");
 			}
 			
-			Collection col = db.getCollection(GAME_COLLECTION);
+			Collection col = null;
+			if (p instanceof Player || p instanceof PlayerCharacter) {
+				col = db.getCollection(PLAYERS_COLLECTION);
+			}
+			else {
+				col = db.getCollection(GAME_COLLECTION);
+			}
+			
+			assert(col != null);
 			
 			//Find the existing document, or create a new one.
 			XMLResource doc = (XMLResource)col.getResource(p.getDocumentID());
@@ -254,11 +346,17 @@ public class ExistDBStore implements DataStore {
 		xq = db.getXQueryService(col);
 		xq.declareVariable("id", "");
 		gameRetrieve = xq.compile(query);
+		
+		query = "for $doc in collection(\"" + PLAYERS_COLLECTION + "\")/ring/*[@id=$id] return $doc";
+		col = db.getCollection(PLAYERS_COLLECTION);
+		xq = db.getXQueryService(col);
+		xq.declareVariable("id", "");
+		playersRetrieve = xq.compile(query);
 	}
 	
 	private XMLResource retrieveResource(String id) throws XMLDBException {
 		//First initialize expressions if necessary.
-		if (gameRetrieve == null || staticRetrieve == null) {
+		if (gameRetrieve == null || staticRetrieve == null || playersRetrieve == null) {
 			initializeRetrievalExpressions();
 		}
 		
@@ -272,6 +370,9 @@ public class ExistDBStore implements DataStore {
 		}
 		else if (loadpoint == Loadpoint.STATIC) {
 			return loadFromStatic(id);
+		}
+		else if (loadpoint == Loadpoint.PLAYERS) {
+			return loadFromPlayers(id);
 		}
 		//else, default to defaultLoadMethod
 		else {
@@ -312,6 +413,22 @@ public class ExistDBStore implements DataStore {
 		XQueryService xq = db.getXQueryService(col);
 		xq.declareVariable("id", id);
 		ResourceSet resources = xq.execute(staticRetrieve);
+		
+		if (resources.getSize() > 0) {
+			//TODO log duplicate resources?
+			return (XMLResource)resources.getIterator().nextResource();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private XMLResource loadFromPlayers(String id) throws XMLDBException {
+		ExistDB db = new ExistDB();
+		Collection col = db.getCollection(PLAYERS_COLLECTION);
+		XQueryService xq = db.getXQueryService(col);
+		xq.declareVariable("id", id);
+		ResourceSet resources = xq.execute(playersRetrieve);
 		
 		if (resources.getSize() > 0) {
 			//TODO log duplicate resources?

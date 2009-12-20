@@ -1,9 +1,6 @@
 package ring.nrapi.data;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import org.exist.xmldb.DatabaseInstanceManager;
 import org.xmldb.api.DatabaseManager;
@@ -141,14 +138,20 @@ public class ExistDB {
 		return EMBEDDED_URI + name;
 	}
 	
-	public void removeAllResources() throws XMLDBException {
-		Collection root = getRootCollection();
-		CollectionManagementService service = (CollectionManagementService)root.getService(
-				COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
-		
-		//Drop all collections.
-		service.removeCollection(ExistDBStore.STATIC_COLLECTION);
-		service.removeCollection(ExistDBStore.GAME_COLLECTION);
+	public void removeAllResources() {
+		try {
+			Collection root = getRootCollection();
+			CollectionManagementService service = (CollectionManagementService)root.getService(
+					COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
+			
+			//Drop all collections.
+			service.removeCollection(ExistDBStore.STATIC_COLLECTION);
+			service.removeCollection(ExistDBStore.GAME_COLLECTION);
+			service.removeCollection(ExistDBStore.PLAYERS_COLLECTION);
+		}
+		catch (XMLDBException e) {
+			System.err.println("DB Warning: was unable to remove all collections");
+		}
 	}
 	
 	public XMLResource querySingleResource(String xquery) throws XMLDBException {
@@ -222,6 +225,10 @@ public class ExistDB {
 		//Game collection: Stores world state
 		Collection gameCol = service.createCollection(ExistDBStore.GAME_COLLECTION);
 		addRootNode(gameCol, "ring");
+		
+		//Players collection: Stores player information. 
+		Collection playersCol = service.createCollection(ExistDBStore.PLAYERS_COLLECTION);
+		addRootNode(playersCol, "ring");
 	}
 	
 	public void listResources(PrintStream out) {

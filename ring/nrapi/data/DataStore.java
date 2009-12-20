@@ -6,6 +6,8 @@ import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
 import ring.nrapi.movement.Zone;
+import ring.nrapi.players.Player;
+import ring.nrapi.players.PlayerCharacter;
 import ring.nrapi.entities.Entity;
 
 public interface DataStore {	
@@ -80,4 +82,18 @@ public interface DataStore {
 	 * @return The requested object, or null if one was not found.
 	 */
 	public Mobile retrieveMobile(String id);
+	
+	/**
+	 * Gets a Player from the datastore by the specified ID.
+	 * @param id
+	 * @return The requested object, or null if one was not found.
+	 */
+	public Player retrievePlayer(String id);
+	
+	/**
+	 * Get a PlayerCharacter from the datastore by the specified ID.
+	 * @param id
+	 * @return The requested object, or null if one was not found.
+	 */
+	public PlayerCharacter retrievePlayerCharacter(String id);
 }
