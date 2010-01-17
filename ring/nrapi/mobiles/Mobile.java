@@ -17,6 +17,7 @@ import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.data.RingConstants;
 import ring.nrapi.items.Armor;
 import ring.nrapi.items.Item;
+import ring.nrapi.magic.SpellCaster;
 import ring.nrapi.mobiles.backbone.Equipment;
 import ring.nrapi.movement.LocationManager;
 import ring.nrapi.movement.Movable;
@@ -41,7 +42,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener, Movable {
+public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener, Movable, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.

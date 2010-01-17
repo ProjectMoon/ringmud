@@ -298,6 +298,7 @@ public class ExistDBStore implements DataStore {
 				p.setDocumentID(p.getID() + ".xml");
 			}
 			
+			//TODO implement update lock checking: all parts of a document must be ready for update. Could be good use of AspectJ?
 			Collection col = null;
 			if (p instanceof Player || p instanceof PlayerCharacter) {
 				col = db.getCollection(PLAYERS_COLLECTION);
@@ -315,7 +316,7 @@ public class ExistDBStore implements DataStore {
 			}
 			
 			//Now update the document's content with all of the
-			//info that the root of p has.
+			//info that the root of p has.f
 			doc.setContent(p.getRoot().toXMLDocument());
 			col.storeResource(doc);
 			return true;

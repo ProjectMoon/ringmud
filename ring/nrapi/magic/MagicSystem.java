@@ -10,7 +10,28 @@ import java.util.List;
  * @author projectmoon
  *
  */
-public interface MagicSystem {
+public interface MagicSystem<M extends SpellMetadataImplementation> {
+	/**
+	 * Determines if this MagicSystem works with the specified type of
+	 * SpellCaster. For example, a magic system might only be compatible
+	 * with Mobiles.
+	 * @param caster
+	 * @return true or false
+	 */
+	public boolean isCompatibleWith(SpellCaster caster);
+	
+	/**
+	 * Gets the SpellCaster object for this MagicSystem.
+	 * @return
+	 */
+	public SpellCaster getSpellCaster();
+	
+	/**
+	 * Sets the SpellCaster object for this MagicSystem.
+	 * @param caster
+	 */
+	public void setSpellCaster(SpellCaster caster);
+	
 	/**
 	 * Whether or not the specified spell can be cast by this MagicSystem.
 	 * Reasons for failure include not being on the spell list, not having
@@ -66,7 +87,14 @@ public interface MagicSystem {
 	 */
 	public void setSpells(List<Spell> spells);
 	
-	public void addSpell(Spell spell, SpellMetadata metadata);
+	/**
+	 * Gets the metadata implementation for the specified Spell.
+	 * @param spell
+	 * @return
+	 */
+	public M getMetadata(Spell spell);
+	
+	public void addSpell(Spell spell);
 	
 	public void removeSpell(Spell spell);
 }

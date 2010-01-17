@@ -28,9 +28,9 @@ propOrder= {
  * Metadata is stored as Strings, but the parameters can be converted
  * to any of the primitive types.
  * 
- * MagicSystem implementations typically have their own implementation
- * of spell metadata that they convert this object into in order to have
- * some semblance of type safety.
+ * MagicSystem implementations have their own implementation of spell
+ * metadata that they convert this object into in order to have some
+ * semblance of type safety.
  * @author projectmoon
  *
  */

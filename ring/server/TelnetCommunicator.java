@@ -209,8 +209,7 @@ public class TelnetCommunicator implements Communicator {
 
 	/**
 	 * Waits for the user on the other end of this Communicator to send us some
-	 * data. The wait is indefinite until the idle timeout; the thread will
-	 * sleep for 50 milliseconds every time it has to wait. After a while the
+	 * data. The wait is indefinite until the idle timeout. After a while the
 	 * server will terminate the connection and the communication error variable
 	 * will be set.
 	 * 

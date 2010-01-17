@@ -111,11 +111,11 @@ public class Spell {
 	}
 	
 	@XmlElement
-	public SpellMetadata getSpellMetadata() {
+	public SpellMetadata getMetadata() {
 		return metadata;
 	}
 	
-	public void setSpellMetadata(SpellMetadata metadata) {
+	public void setMetadata(SpellMetadata metadata) {
 		this.metadata = metadata;
 	}
 	
