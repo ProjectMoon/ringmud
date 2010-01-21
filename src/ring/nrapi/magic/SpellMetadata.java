@@ -21,7 +21,7 @@ import ring.nrapi.xml.XMLParameterException;
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
-	"parameters",
+	"parameters"
 })
 /**
  * This is a very generic class that stores metadata about spells.
