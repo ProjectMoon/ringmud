@@ -28,8 +28,10 @@ import ring.world.World;
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
 	"model",
-	"entities",
-	"zoneID"
+	"zoneID",
+	"items",
+	"mobiles",
+	"entities"
 })
 public class Room extends AbstractBusinessObject {
 	private static final String NO_EXITS_STRING = "[B][RED]NO EXITS![R][WHITE]";

@@ -7,6 +7,6 @@ package ring.main;
  *
  */
 public interface RingModule {
-	public void start(String[] args);
-	public void stop();
+	public void execute(String[] args);
+	public boolean usesDatabase();
 }

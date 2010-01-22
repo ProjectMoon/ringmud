@@ -12,7 +12,7 @@ import ring.persistence.ExistDB;
 //TODO implement RefListener for referential object logic
 public class TestDriver implements RingModule {
 	@Override
-	public void start(String[] args) {
+	public void execute(String[] args) {
 		System.out.println("Setting up database.");
 		ExistDB db = new ExistDB();
 		try {
@@ -46,13 +46,12 @@ public class TestDriver implements RingModule {
 		
 	}
 	
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public static void main(String[] args) throws XMLDBException {
-		new TestDriver().start(null);
+		new TestDriver().execute(null);
+	}
+
+	@Override
+	public boolean usesDatabase() {
+		return true;
 	}
 }

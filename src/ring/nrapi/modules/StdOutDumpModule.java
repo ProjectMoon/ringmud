@@ -10,7 +10,7 @@ import ring.persistence.ExistDB;
 public class StdOutDumpModule implements RingModule {
 
 	@Override
-	public void start(String[] args) {
+	public void execute(String[] args) {
 		try {
 			ExistDB db = new ExistDB();
 			Collection col = db.getCollection(args[0]);
@@ -28,10 +28,9 @@ public class StdOutDumpModule implements RingModule {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
+	public boolean usesDatabase() {
+		return true;
 	}
 }

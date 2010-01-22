@@ -56,6 +56,7 @@
 		<jar destfile="${jar.dir}/ringmud-core-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
+			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
 			<!-- <zipfileset dir="${classes.dir}" includes="ring/movement/**"/> --> <!-- waiting on NRAPI integration -->
 			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>

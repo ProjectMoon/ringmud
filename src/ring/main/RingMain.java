@@ -47,10 +47,6 @@ public class RingMain {
 			String[] appArgs = new String[args.length - 1];
 			System.arraycopy(args, 1, appArgs, 0, args.length - 1);
 			main.executeModule(app, appArgs);
-			
-			//Shut down eXist.
-			//This looks a bit odd, but the DB reference is static.
-			new ExistDB().shutdown();
 		}
 	}
 	
@@ -85,7 +81,13 @@ public class RingMain {
 			Class appClass = Class.forName(appClassStr);
 			Object appInstance = appClass.newInstance();
 			RingModule module = (RingModule)appInstance;
-			module.start(appArgs);			
+			module.execute(appArgs);
+			
+			//Shut down eXist if necessary.
+			if (module.usesDatabase()) {
+				//This looks a bit odd, but the DB reference is static.
+				//new ExistDB().shutdown();
+			}
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -94,7 +96,7 @@ public class RingMain {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			System.err.println("Module " + app + " is defined, but points to an invalid Java class.");
+			System.err.println("Module " + app + " is defined, but the module class could not be found.");
 		}
 		catch (NullPointerException e) {
 			e.printStackTrace();

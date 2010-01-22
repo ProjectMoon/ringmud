@@ -24,7 +24,7 @@ import ring.nrapi.players.PlayerCharacter;
 
 public class ExistDBStore implements DataStore {
 	//XMLDB mappings
-	public static final String XML_RESOURCE = "XMLResource";
+	public static final String XML_RESOURCE_TYPE = "XMLResource";
 	
 	//Collection mappings
 	public static final String STATIC_COLLECTION = "static";
@@ -441,7 +441,7 @@ public class ExistDBStore implements DataStore {
 	}
 	
 	private XMLResource createXMLResource(Collection col, String id) throws XMLDBException {
-		return (XMLResource) col.createResource(id, XML_RESOURCE);
+		return (XMLResource) col.createResource(id, XML_RESOURCE_TYPE);
 	}
 
 	@Override

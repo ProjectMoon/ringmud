@@ -35,7 +35,7 @@ public class Server implements RingModule {
 
 	public static void main(String[] args) {
 		MUDConfig.loadProperties();
-		new Server().start(new String[] { "-a", "localhost" });
+		new Server().execute(new String[] { "-a", "localhost" });
 	}
 	
 	public static void incrementConnections() {
@@ -46,7 +46,7 @@ public class Server implements RingModule {
 		currentConnections--;
 	}
 
-	public void start(String[] args) {
+	public void execute(String[] args) {
 		String addr = "localhost";
 		if (args.length > 0) { // check for options
 			if (args[0].equals("-a"))
@@ -118,8 +118,8 @@ public class Server implements RingModule {
 
 	}
 
-	public void stop() {
-		// TODO Auto-generated method stub
-
+	@Override
+	public boolean usesDatabase() {
+		return true;
 	}
 }

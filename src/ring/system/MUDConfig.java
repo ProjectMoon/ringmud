@@ -24,15 +24,15 @@ public class MUDConfig {
         config = new Properties(loadDefaults());
         try {
         	String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
-            System.out.println("Loading MUD configuration: " + path);
+            //System.out.println("Loading MUD configuration: " + path);
             config.load(new FileInputStream(path));
         }
         catch (FileNotFoundException e) {
-            System.out.println("Couldn't find the config file. Loading default values.");
+            System.out.println("[WARNING] Couldn't find the config file. Loading default values.");
             loadDefaults();
         }
         catch (Exception e) {
-            System.err.println("There was an error loading the program configuration:");
+            System.err.println("[ERROR] There was an error loading the program configuration:");
             e.printStackTrace();
             System.exit(1);
         }
@@ -139,6 +139,18 @@ public class MUDConfig {
 		}
 		
 		return pluginProps;
+	}
+
+	public static String getDatabaseURI() {
+		return config.getProperty("db.uri");
+	}
+
+	public static String getDatabaseUser() {
+		return config.getProperty("db.user");
+	}
+	
+	public static String getDatabasePassword() {
+		return config.getProperty("db.password");
 	}
 
 }

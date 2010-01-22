@@ -6,7 +6,7 @@ import ring.persistence.DataStoreFactory;
 public class RemoveModule implements RingModule {
 
 	@Override
-	public void start(String[] args) {
+	public void execute(String[] args) {
 		System.out.println("Beginning removal of " + args.length + " documents.");
 		int docCount = 0;
 		for (String docID : args) {
@@ -22,10 +22,9 @@ public class RemoveModule implements RingModule {
 		
 		System.out.println("Finished. " + docCount + "/" + args.length + " removed.");
 	}
-
+	
 	@Override
-	public void stop() {
-		
+	public boolean usesDatabase() {
+		return true;
 	}
-
 }

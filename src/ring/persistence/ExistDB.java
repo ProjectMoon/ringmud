@@ -14,6 +14,8 @@ import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
+import ring.system.MUDConfig;
+
 /**
  * Class used to access the eXist XND. Provides a cleaner method of querying the database.
  * @author projectmoon
@@ -21,15 +23,14 @@ import org.xmldb.api.modules.XQueryService;
  */
 @SuppressWarnings("unchecked")
 public class ExistDB {
-	private static Database xmlDB;
 	
 	//Constants mapping to various strings necessary for XML:DB API.
 	//URI mappings
-	private static final String EMBEDDED_URI = "xmldb:exist:///";
+	private static final String EMBEDDED_URI = MUDConfig.getDatabaseURI();
 	
 	//User mappings
-	private static final String DB_USER = "admin";
-	private static final String DB_PASSWORD = "exist";
+	private static final String DB_USER = MUDConfig.getDatabaseUser();
+	private static final String DB_PASSWORD = MUDConfig.getDatabasePassword();
 	
 	//Collection mappings
 	private static final String ROOT_COLLECTION = "db";
@@ -48,12 +49,12 @@ public class ExistDB {
 	private static boolean shutdown = false;
 	
 	static {
-		System.setProperty("exist.initdb", "true");
-		System.setProperty("exist.home", "/etc/ringmud/");
+		//System.setProperty("exist.initdb", "true");
+		//System.setProperty("exist.home", "/etc/ringmud/");
 		
 		try {
 			Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
-			xmlDB = (Database)cl.newInstance();
+			Database xmlDB = (Database)cl.newInstance();
 			xmlDB.setProperty("create-database", "true");
 			DatabaseManager.registerDatabase(xmlDB);
 		}
@@ -62,8 +63,9 @@ public class ExistDB {
 			e.printStackTrace();
 		}
 		catch (XMLDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("XMLDB Error:" + e.getMessage());
+			System.err.println("Is the XML database running?");
+			System.exit(1);
 		} 
 		catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -72,6 +74,10 @@ public class ExistDB {
 		catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		catch (Exception e) {
+			System.err.println("lol broke" + e);
+			System.exit(1);
 		}
 	
 		//Hook doesn't exist until the constructor is first called.
@@ -116,7 +122,7 @@ public class ExistDB {
 			}
 		};
 		
-		Runtime.getRuntime().addShutdownHook(new Thread(hook));
+		//1Runtime.getRuntime().addShutdownHook(new Thread(hook));
 		shutdownHookExists = true;
 	}
 	
@@ -130,12 +136,24 @@ public class ExistDB {
 	}
 	
 	public Collection getCollection(String name) throws XMLDBException {
-		Collection col = (Collection)DatabaseManager.getCollection(craftCollectionURI(name), DB_USER, DB_PASSWORD);
+		String colName = ROOT_COLLECTION + "/" + name;
+		Collection col = (Collection)DatabaseManager.getCollection(craftCollectionURI(colName), DB_USER, DB_PASSWORD);
+		
+		if (col == null) {
+			throw new XMLDBException(-1, "Collection " + colName + " is null. Is the database running?");
+		}
+		
 		return col;
 	}
 	
-	private String craftCollectionURI(String name) {
-		return EMBEDDED_URI + name;
+	private static String craftCollectionURI(String name) {
+		String ret = EMBEDDED_URI;
+		
+		if (!EMBEDDED_URI.endsWith("/")) {
+			ret += "/";
+		}
+		
+		return ret + name;
 	}
 	
 	public void removeAllResources() {

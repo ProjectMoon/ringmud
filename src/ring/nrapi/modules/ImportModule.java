@@ -18,7 +18,7 @@ import ring.persistence.DataStoreFactory;
  */
 public class ImportModule implements RingModule {
 	@Override
-	public void start(String[] args) {
+	public void execute(String[] args) {
 		//TODO use schema validation instead of "unmarshalling validation"
 		System.out.println("Beginning import of " + args.length + " documents.");
 		
@@ -42,11 +42,6 @@ public class ImportModule implements RingModule {
 		System.out.println("Finished. " + docCount + "/" + args.length + " imported.");
 	}
 
-	@Override
-	public void stop() {
-		
-	}
-	
 	private boolean validate(File f) {
 		try {
 			JAXBContext ctx = JAXBContext.newInstance(RingDocument.class);
@@ -63,6 +58,11 @@ public class ImportModule implements RingModule {
 			}
 			return false;
 		}
+	}
+
+	@Override
+	public boolean usesDatabase() {
+		return true;
 	}
 	
 }
