@@ -8,9 +8,8 @@ for managing the MUD. To launch an individual module of the MUD, specify
 it as an argument to java. Arguments after that will be forwarded on to
 the module.
 
-Example: Starting/stopping the MUD server
-java -jar RingMUD.jar Server start
-java -jar RingMUD.jar Server stop
+Example: Starting the MUD server
+ringmud.sh server
 
 Example: Using the preferences manager
-java -jar RingMUD.jar PreferencesManager get ring.system.MUDConfig.configLocation 
+ringmud.sh prefs get ring.system.MUDConfig.configLocation 

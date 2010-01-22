@@ -2,7 +2,6 @@ package ring.persistence;
 
 import java.io.PrintStream;
 
-import org.exist.xmldb.DatabaseInstanceManager;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
@@ -21,12 +20,11 @@ import ring.system.MUDConfig;
  * @author projectmoon
  *
  */
-@SuppressWarnings("unchecked")
 public class ExistDB {
 	
 	//Constants mapping to various strings necessary for XML:DB API.
 	//URI mappings
-	private static final String EMBEDDED_URI = MUDConfig.getDatabaseURI();
+	private static final String DB_URI = MUDConfig.getDatabaseURI();
 	
 	//User mappings
 	private static final String DB_USER = MUDConfig.getDatabaseUser();
@@ -45,15 +43,15 @@ public class ExistDB {
 	//private static Map<Collection, XQueryService> xqServiceCache = new WeakHashMap<Collection, XQueryService>();
 	
 	//Other stuff
-	private static boolean shutdownHookExists;
-	private static boolean shutdown = false;
+	//private static boolean shutdownHookExists;
+	//private static boolean shutdown = false;
 	
 	static {
 		//System.setProperty("exist.initdb", "true");
 		//System.setProperty("exist.home", "/etc/ringmud/");
 		
 		try {
-			Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
+			Class<?> cl = Class.forName("org.exist.xmldb.DatabaseImpl");
 			Database xmlDB = (Database)cl.newInstance();
 			xmlDB.setProperty("create-database", "true");
 			DatabaseManager.registerDatabase(xmlDB);
@@ -81,10 +79,11 @@ public class ExistDB {
 		}
 	
 		//Hook doesn't exist until the constructor is first called.
-		shutdownHookExists = false;
+		//shutdownHookExists = false;
 	}
 	
 	public ExistDB() {
+		/*
 		//Add a shutdown hook for the root collection only, if it's not already there
 		if (!shutdownHookExists) {
 			try {
@@ -94,8 +93,10 @@ public class ExistDB {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 	
+	/*
 	public void shutdown() {
 		System.out.print("Shutting down eXist... ");
 		try {
@@ -110,7 +111,10 @@ public class ExistDB {
 		shutdown = true;
 		System.out.println("Done.");
 	}
+	*/
 	
+	/*
+	//This will come back later when support for embedded DBs is reintroduced.
 	private void setupShutdownHook(final Collection col) {
 		Runnable hook = new Runnable() {
 			@Override
@@ -122,9 +126,10 @@ public class ExistDB {
 			}
 		};
 		
-		//1Runtime.getRuntime().addShutdownHook(new Thread(hook));
+		Runtime.getRuntime().addShutdownHook(new Thread(hook));
 		shutdownHookExists = true;
 	}
+	*/
 	
 	public XQueryService getXQueryService(Collection col) throws XMLDBException {
 		return (XQueryService)col.getService(XQUERY_SERVICE[SVCNAME], XQUERY_SERVICE[SVCVER]);
@@ -147,9 +152,9 @@ public class ExistDB {
 	}
 	
 	private static String craftCollectionURI(String name) {
-		String ret = EMBEDDED_URI;
+		String ret = DB_URI;
 		
-		if (!EMBEDDED_URI.endsWith("/")) {
+		if (!DB_URI.endsWith("/")) {
 			ret += "/";
 		}
 		

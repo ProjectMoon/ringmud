@@ -13,6 +13,7 @@ import ring.nrapi.mobiles.backbone.Inventory;
 import ring.nrapi.mobiles.backbone.Equipment.EquipmentTuple;
 import ring.nrapi.movement.Room;
 
+//TODO add items in ReferenceLoader
 /**
  * Unmarshaller listener for following referenced data in the XML.
  * Referenced data is always loaded from the static collection.

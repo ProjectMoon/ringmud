@@ -4,12 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ring.server.Server;
 import ring.server.callbacks.Callback;
 import ring.system.MUDConfig;
 import ring.util.TextParser;

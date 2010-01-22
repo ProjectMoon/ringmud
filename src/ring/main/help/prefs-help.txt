@@ -1,0 +1,10 @@
+RingMUD Preferences module: Manage system preferences
+usage: ringmud.sh prefs <get | set> prefName [prefValue]
+
+The preferences module gets and sets system preferences. These preferences are
+rather low-level and stored using the Java Preferences API. On UNIX-like
+systems, they are stored in flat files. In Windows, the registry is used.
+
+This module shouldn't need to be used generally, but it exists in case it does
+need to be used. Currently it only stores the location of the MUD's config
+directory.

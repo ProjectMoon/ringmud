@@ -73,11 +73,14 @@ public class RingMain {
 			RingModule module = (RingModule)appInstance;
 			module.execute(appArgs);
 			
+			/*
+			//Support for embedded databases removed right now.
 			//Shut down eXist if necessary.
 			if (module.usesDatabase()) {
 				//This looks a bit odd, but the DB reference is static.
-				//new ExistDB().shutdown();
+				new ExistDB().shutdown();
 			}
+			*/
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
