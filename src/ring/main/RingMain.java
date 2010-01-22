@@ -6,11 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import ring.persistence.ExistDB;
 import ring.system.MUDConfig;
 
 /**
@@ -36,12 +31,7 @@ public class RingMain {
 		else {
 			//Load configuration as the very first thing.
 			MUDConfig.loadProperties();
-			
-			//Set up basic logging crap for eXist.
-			//TODO handle this properly with a config file.
-			BasicConfigurator.configure();
-			Logger.getRootLogger().setLevel(Level.ERROR);
-			
+					
 			//Load the specified module.
 			String app = args[0];
 			String[] appArgs = new String[args.length - 1];
