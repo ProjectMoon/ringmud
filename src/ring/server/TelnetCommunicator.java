@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ring.server.callbacks.Callback;
 import ring.system.MUDConfig;
 import ring.util.TextParser;
 
@@ -29,9 +28,6 @@ public class TelnetCommunicator implements Communicator {
 	private String suffix;
 	private boolean screenWidthParsing = false;
 	
-	private Callback connCallback;
-	private Callback dcCallback;
-
 	/**
 	 * Constructs a new Communicator given a connection (socket) to use.
 	 * 
@@ -318,27 +314,12 @@ public class TelnetCommunicator implements Communicator {
 	public void close() {
 		try {
 			socket.close();
-			Server.decrementConnections();
+			//Server.decrementConnections();
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public void setConnectCallback(Callback callback) {
-		connCallback = callback;
-	}
-	
-	public void setDisconnectCallback(Callback callback) {
-		dcCallback = callback;
-	}
-	
-	public Callback getConnectCallback() {
-		return connCallback;
-	}
-	
-	public Callback getDisconnectCallback() {
-		return dcCallback;
-	}
+
 }

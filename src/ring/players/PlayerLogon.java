@@ -23,8 +23,6 @@ import ring.mobiles.Race;
 import ring.server.Server;
 import ring.server.CommunicationException;
 import ring.server.Communicator;
-import ring.server.callbacks.*;
-import ring.server.callbacks.CallbackEvent;
 import ring.server.TelnetCommunicator;
 import ring.world.World;
 
@@ -65,9 +63,9 @@ public class PlayerLogon extends Thread {
 	 * Ifthey choose no, they go to the login screen.
 	 */
 	public void run() {
-		comms.setConnectCallback(new DefaultCallback());
-		comms.setDisconnectCallback(new DefaultCallback());
-		comms.getConnectCallback().execute(CallbackEvent.CONNECTED);
+		//comms.setConnectCallback(new DefaultCallback());
+		//comms.setDisconnectCallback(new DefaultCallback());
+		//comms.getConnectCallback().execute(CallbackEvent.CONNECTED);
 		PlayerCharacter enteringPlayer = null;
 
 		// wait for log on.
@@ -103,13 +101,13 @@ public class PlayerLogon extends Thread {
 				if (enteringPlayer != null) {
 					waiting = false;
 					comms.setSuffix(enteringPlayer.getPrompt());
-					comms.setDisconnectCallback(new PlayerExitingCallback(enteringPlayer));
+					//comms.setDisconnectCallback(new PlayerExitingCallback(enteringPlayer));
 					Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(), enteringPlayer, "Player ["
 							+ enteringPlayer.getName() + "] ");
 					playerThread.setDaemon(true);
 					enteringPlayer.setThread(playerThread);
 					playerThread.start();
-					Server.getPlayerList().addPlayer(enteringPlayer);
+					//Server.getPlayerList().addPlayer(enteringPlayer);
 				}
 			} catch (CommunicationException e) {
 				waiting = false;
@@ -118,7 +116,7 @@ public class PlayerLogon extends Thread {
 
 		if (comms.isCommunicationError()) {
 			log.info("Logon connection dead; abandoning login.");
-			comms.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
+			//comms.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
 		}
 	}
 
@@ -438,7 +436,7 @@ public class PlayerLogon extends Thread {
 			// TODO: check both active and inactive players by querying the
 			// player store.
 			playerActive = false;
-			
+			/*
 			List<PlayerCharacter> currentPlayers = Server.getPlayerList().getPlayers();
 			for (PlayerCharacter player : currentPlayers) {
 				if (player.checkAlias(playerName.toUpperCase())) {
@@ -446,6 +444,7 @@ public class PlayerLogon extends Thread {
 					break;
 				}
 			}
+			*/
 
 			if (playerActive) {
 				comms

@@ -11,7 +11,6 @@ import ring.nrapi.movement.LocationManager;
 import ring.nrapi.movement.Room;
 import ring.server.CommunicationException;
 import ring.server.Communicator;
-import ring.server.callbacks.CallbackEvent;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 import ring.world.World;
@@ -100,7 +99,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 			communicator.send("You have successfully quit. Good-bye.");
 			communicator.close();
 			log.info(this + " quit gracefully");
-			communicator.getDisconnectCallback().execute(CallbackEvent.GRACEFUL_QUIT);
+			//communicator.getDisconnectCallback().execute(CallbackEvent.GRACEFUL_QUIT);
 			return;
 		}
 		else if (communicator.isCommunicationError()) {
@@ -109,7 +108,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 			// Save player.
 			log.info(this + " experienced disconnect/forced quit.");
 			communicator.close();
-			communicator.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
+			//communicator.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
 			return;
 		}
 	}
