@@ -5,3 +5,5 @@ that draws inspiration from popular tabletop RPG systems and adds a dash or
 two of its own flavor. 
 
 It is written in Java and aims to be a complete MUD solution.
+
+Build RingMUD with ant.
