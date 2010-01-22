@@ -1,4 +1,4 @@
-package ring.nrapi.data;
+package ring.persistence;
 
 public class DataStoreFactory {
 	public static DataStore getDefaultStore() {

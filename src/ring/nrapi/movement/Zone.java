@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import ring.nrapi.data.RingConstants;
+import ring.persistence.RingConstants;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement

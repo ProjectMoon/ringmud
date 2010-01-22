@@ -14,7 +14,6 @@ import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.effects.Effect;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.items.Armor;
 import ring.nrapi.items.Item;
 import ring.nrapi.magic.SpellCaster;
@@ -24,6 +23,7 @@ import ring.nrapi.movement.Movable;
 import ring.nrapi.movement.MovementAssertionException;
 import ring.nrapi.movement.PortalNotFoundException;
 import ring.nrapi.movement.Room;
+import ring.persistence.RingConstants;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 

@@ -5,7 +5,7 @@ import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
 import ring.main.RingModule;
-import ring.nrapi.data.ExistDB;
+import ring.persistence.ExistDB;
 
 public class StdOutDumpModule implements RingModule {
 

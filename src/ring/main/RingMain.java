@@ -10,7 +10,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import ring.nrapi.data.ExistDB;
+import ring.persistence.ExistDB;
 import ring.system.MUDConfig;
 
 /**

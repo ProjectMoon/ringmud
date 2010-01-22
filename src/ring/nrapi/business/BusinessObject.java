@@ -1,6 +1,6 @@
 package ring.nrapi.business;
 
-import ring.nrapi.data.Persistable;
+import ring.persistence.Persistable;
 
 /**
  * Represents a game business object. All BusinessObjects are also

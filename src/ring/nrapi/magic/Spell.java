@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.effects.Affectable;
 import ring.effects.Effect;
-import ring.nrapi.data.RingConstants;
+import ring.persistence.RingConstants;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement

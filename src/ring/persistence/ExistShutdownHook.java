@@ -1,4 +1,4 @@
-package ring.nrapi.data;
+package ring.persistence;
 
 public class ExistShutdownHook implements Runnable {
 

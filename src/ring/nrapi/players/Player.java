@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.DataStoreFactory;
+import ring.persistence.DataStoreFactory;
 
 @XmlRootElement
 /**

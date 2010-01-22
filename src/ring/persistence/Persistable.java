@@ -1,4 +1,4 @@
-package ring.nrapi.data;
+package ring.persistence;
 
 /**
  * Interface representing something persistable to an XMLDataStore.

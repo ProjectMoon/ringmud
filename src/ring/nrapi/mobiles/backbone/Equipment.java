@@ -13,9 +13,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.BodyPart;
+import ring.persistence.RingConstants;
 
 /**
  * This class represents the equipment a mobile is currently wearing. Because

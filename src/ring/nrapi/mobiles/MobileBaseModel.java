@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.mobiles.mobclass.MobileClass;
+import ring.persistence.RingConstants;
 
 /**
  * Represents the base model of a mobile in the game: its race, alignment,

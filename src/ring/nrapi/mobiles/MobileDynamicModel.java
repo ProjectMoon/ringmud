@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.movement.Location;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.mobiles.backbone.Bank;
 import ring.nrapi.mobiles.backbone.Equipment;
 import ring.nrapi.mobiles.backbone.Inventory;
+import ring.persistence.RingConstants;
 
 /**
  * This class represents data of a mobile that changes rather frequently,

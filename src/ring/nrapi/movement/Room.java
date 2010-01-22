@@ -16,10 +16,10 @@ import ring.nrapi.movement.LocationManager;
 import ring.nrapi.movement.Movable;
 import ring.nrapi.movement.Portal;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.entities.Entity;
 import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
+import ring.persistence.RingConstants;
 import ring.world.World;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)

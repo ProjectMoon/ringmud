@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.xml.XMLParameterException;
+import ring.persistence.RingConstants;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement

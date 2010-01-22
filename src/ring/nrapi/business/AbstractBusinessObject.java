@@ -14,10 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.data.DataStoreFactory;
-import ring.nrapi.data.Persistable;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.xml.JAXBAnnotationReader;
+import ring.persistence.DataStoreFactory;
+import ring.persistence.Persistable;
+import ring.persistence.RingConstants;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement

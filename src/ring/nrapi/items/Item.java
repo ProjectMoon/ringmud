@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.mobiles.Body;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.mobiles.BodyPart;
+import ring.persistence.RingConstants;
 import ring.effects.Effect;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)

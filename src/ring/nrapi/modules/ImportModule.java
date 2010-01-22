@@ -7,9 +7,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import ring.main.RingModule;
-import ring.nrapi.data.DataStore;
-import ring.nrapi.data.DataStoreFactory;
 import ring.nrapi.xml.RingDocument;
+import ring.persistence.DataStore;
+import ring.persistence.DataStoreFactory;
 
 /**
  * Imports XML documents into the database.

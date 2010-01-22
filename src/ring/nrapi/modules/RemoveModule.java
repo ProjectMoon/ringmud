@@ -1,7 +1,7 @@
 package ring.nrapi.modules;
 
 import ring.main.RingModule;
-import ring.nrapi.data.DataStoreFactory;
+import ring.persistence.DataStoreFactory;
 
 public class RemoveModule implements RingModule {
 

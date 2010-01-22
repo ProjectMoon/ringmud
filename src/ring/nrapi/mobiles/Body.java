@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.data.RingConstants;
+import ring.persistence.RingConstants;
 
 /**
  * This class defines a body and equipment slots. Numerous different body parts

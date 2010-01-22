@@ -9,11 +9,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.data.RingConstants;
 import ring.nrapi.entities.Entity;
 import ring.nrapi.items.Item;
 import ring.nrapi.mobiles.Mobile;
 import ring.nrapi.movement.Room;
+import ring.persistence.RingConstants;
 
 /**
  * Object representation for a RingMUD XML document. Used to

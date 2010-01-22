@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.effects.Affectable;
-import ring.nrapi.data.RingConstants;
+import ring.persistence.RingConstants;
 
 /**
  * Represents the combat model of a mobile in the game: base attack bonus,
