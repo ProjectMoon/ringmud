@@ -3,6 +3,7 @@ package ring.server;
 import java.io.IOException;
 
 import ring.main.RingModule;
+import ring.server.telnet.TelnetServer;
 
 public class StartServer implements RingModule {
 

@@ -1,6 +1,5 @@
-package ring.server;
+package ring.server.telnet;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -12,13 +11,15 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import ring.server.Server;
+
 public class TelnetServer implements Server {
 	private TelnetD telnet;
 	
 	@Override
 	public void start() throws IOException {
 		Properties props = new Properties();
-		InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/server/telnet.properties");
+		InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/server/resources/telnet.properties");
 		props.load(input);
 		
 		Logger root = Logger.getRootLogger();

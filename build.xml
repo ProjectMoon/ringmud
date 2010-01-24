@@ -16,7 +16,7 @@
 		<include name="**/*.xml" />
 	</fileset>
 	
-	<fileset id="server-resources" dir="${src.dir}/ring/server/">
+	<fileset id="server-resources" dir="${src.dir}/ring/server/resources/">
 		<include name="**/*.properties" />
 	</fileset>
 	
@@ -51,9 +51,9 @@
 	</target>
 	
 	<target name="jar-resources" depends="compile">
-		<jar destfile="${jar.dir}/ring-resources-${app.version}.jar">
+		<jar destfile="${jar.dir}/ringmud-resources-${app.version}.jar">
 			<zipfileset refid="resources" prefix="ring/main" />
-			<zipfileset refid="server-resources" prefix="ring/server" />
+			<zipfileset refid="server-resources" prefix="ring/server/resources" />
 		</jar>
 	</target>
 
