@@ -156,8 +156,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isDeaf) player.getCommunicator().sendWithPreLine(text);
-				else if ((deafText != null) || (!deafText.equals(""))) player.getCommunicator().sendWithPreLine(deafText);
+				if (!player.isDeaf) player.getCommunicator().printWithPreline(text);
+				else if ((deafText != null) || (!deafText.equals(""))) player.getCommunicator().printWithPreline(deafText);
 			}
 		}
 	}
@@ -173,8 +173,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if (mob.isPlayer()) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+				if (!player.isBlind) player.getCommunicator().printWithPreline(text);
+				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
 
 			}
 		}
@@ -189,8 +189,8 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+				if (!player.isBlind) player.getCommunicator().printWithPreline(text);
+				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
 			}
 		}
 	}
@@ -216,14 +216,14 @@ public class World implements TickerListener {
 				//conditions to worry about.
 				if (mobile.moveSilentlyCheck > 0) { //yes, he's moving silently
 					if ((!player.isDeaf) && (player.listenCheck >= mobile.moveSilentlyCheck)) { //we beat the MS check
-						if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-						else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+						if (!player.isBlind) player.getCommunicator().printWithPreline(text);
+						else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
 					}
 				}
 				
 				else { //mobile is moving regularly.
-					if (!player.isBlind) player.getCommunicator().sendWithPreLine(text);
-					else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().sendWithPreLine(blindText);
+					if (!player.isBlind) player.getCommunicator().printWithPreline(text);
+					else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
 				}
 			} //end player if condition
 		} //end for loop
@@ -239,7 +239,7 @@ public class World implements TickerListener {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				player.getCommunicator().sendWithPreLine(text);
+				player.getCommunicator().printWithPreline(text);
 			}
 		}
 	}

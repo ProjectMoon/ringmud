@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.commands.CommandHandler;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.effects.Effect;
@@ -460,5 +461,11 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	@Override
 	public void setLocation(Room loc) {
 		currLocation = loc;
+	}
+
+	@Override
+	public CommandResult doCommand(String cmd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

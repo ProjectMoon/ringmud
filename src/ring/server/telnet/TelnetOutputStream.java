@@ -5,9 +5,19 @@ import java.io.OutputStream;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
 
+/**
+ * OutputStream implementation built on top of telnetd2. Allows standard Java I/O classes and
+ * practices to be used to get and send data to the connected user.
+ * @author projectmoon
+ *
+ */
 public class TelnetOutputStream extends OutputStream {
 	private BasicTerminalIO io;
 	
+	/**
+	 * Creates a new output stream with the provided BasicTerminalIO object.
+	 * @param io The IO object. Usually gotten from a telnet connection.
+	 */
 	public TelnetOutputStream(BasicTerminalIO io) {
 		this.io = io;
 	}

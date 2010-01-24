@@ -1,167 +1,29 @@
-package ring.players;
+package ring.server.telnet;
 
-/**
- * <p>Title: RingMUD Codebase</p>
- * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: RaiSoft/Thermetics</p>
- * @author Jeff Hair
- * @version 1.0
- */
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Logger;
 
 import ring.mobiles.Alignment;
 import ring.mobiles.Mobile;
 import ring.mobiles.MobileClass;
 import ring.mobiles.MobileClassFactory;
 import ring.mobiles.Race;
-import ring.server.Server;
-import ring.server.CommunicationException;
+import ring.players.PlayerCharacter;
 import ring.server.Communicator;
-import ring.server.TelnetCommunicator;
-import ring.world.World;
 
-public class PlayerLogon extends Thread {
-
-	// This socket is the player-server connection.
-	private Socket socket;
-
-	// A communicator to facilitate sending data back and forth
-	// for this login session. This gets forwarded to the player thread.
+/**
+ * Class for creating a player character.
+ * 
+ * @author projectmoon
+ * 
+ */
+public class PlayerCharacterCreation {
 	private Communicator comms;
-
-	// The ever-ubiqutious logger.
-	private static final Logger log = Logger.getLogger(PlayerLogon.class
-			.getName());
-
-	// Useful stuff.
-	private boolean invalidLogin;
-	private boolean waiting = true;
-	private static String welcomeText = "\n\n[CYAN]                                   RingMUD Alpha[CYAN]\n                              A [WHITE]Forgotten Realms[CYAN] MUD.\n\n[WHITE]                                     Forgers:\n                                [CYAN] Ao (Code & Areas)\n                                 Rillifane (Code)\n                                 Istishia (Code)\n                                 Erevan (Code)\n                                 Fenmarel (Areas & RP)\n                                 Kelemvor (Admin)[WHITE]\n";
-	private static String newsText = "\n[YELLOW]There is currently no news.[WHITE]\n";
-	private World world;
-
-	public PlayerLogon(Socket connection) {
-		super();
-		comms = new TelnetCommunicator(connection);
-		comms.setSuffix("\n[R][GREEN]>[R]");
-		socket = connection;
+	
+	public PlayerCharacterCreation(Communicator comms) {
+		this.comms = comms;
 	}
-
-	/**
-	 * This method is where we wait for the player to log on. The player is
-	 * first prompted if they want to create a new character. At this point they
-	 * may type yes or no. If they choose yes, the method createNewCharacter()
-	 * is called. In this method, all of the information is gathered for a new
-	 * character. The information is then written to the player file.
-	 * 
-	 * Ifthey choose no, they go to the login screen.
-	 */
-	public void run() {
-		//comms.setConnectCallback(new DefaultCallback());
-		//comms.setDisconnectCallback(new DefaultCallback());
-		//comms.getConnectCallback().execute(CallbackEvent.CONNECTED);
-		PlayerCharacter enteringPlayer = null;
-
-		// wait for log on.
-		waiting = true;
-		
-		//Explicitly ignore screen width parsing so formatting for title
-		//is preserved.
-		comms.setScreenWidthParsing(false);
-		comms.print(welcomeText + "\n[WHITE]Create new character? (Y/N)");
-		comms.setScreenWidthParsing(true);
-
-		while (waiting) {
-			try {
-				String answer = comms.receiveData();
-
-				if (answer.toLowerCase().equals("y")) {
-					enteringPlayer = createNewCharacter();
-				} else if (answer.toLowerCase().equals("n")) {
-					comms.print("Please type your name: ");
-					String name = comms.receiveData();
-					try {
-						enteringPlayer = loadCharacter(name);
-					} catch (IOException e) {
-						enteringPlayer = null;
-						// Need to log it, but we should be able to continue.
-					}
-				} else {
-					comms.print("Please enter Y or N.");
-				}
-
-				// We should now have a player to load. If not, we start the
-				// whole process again.
-				if (enteringPlayer != null) {
-					waiting = false;
-					comms.setSuffix(enteringPlayer.getPrompt());
-					//comms.setDisconnectCallback(new PlayerExitingCallback(enteringPlayer));
-					Thread playerThread = new Thread(World.getWorld().getPlayerThreadGroup(), enteringPlayer, "Player ["
-							+ enteringPlayer.getName() + "] ");
-					playerThread.setDaemon(true);
-					enteringPlayer.setThread(playerThread);
-					playerThread.start();
-					//Server.getPlayerList().addPlayer(enteringPlayer);
-				}
-			} catch (CommunicationException e) {
-				waiting = false;
-			}
-		}
-
-		if (comms.isCommunicationError()) {
-			log.info("Logon connection dead; abandoning login.");
-			//comms.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
-		}
-	}
-
-	public Socket getConnection() {
-		return socket;
-	}
-
-	public PlayerCharacter loadCharacter(String name) throws IOException,
-			SocketException {
-				/*
-		comms.send("Please enter your password:");
-		String pw = comms.receiveData();
-		PlayerCharacter pc = (PlayerCharacter) MobileLoader.loadMobile(name
-				+ ".mob");
-		if (pc.getPassword().equals(pw)) {
-			pc.setLastLogon();
-			pc.setCommunicator(comms);
-			return pc;
-		} else {
-			comms.send("Invalid password.");
-			return null;
-		}
-		*/
-		throw new UnsupportedOperationException();
-	}
-
-	public PlayerCharacter createNewCharacter() {
-		try {
-			comms
-					.print("[RED]Entering new character creation mode...\n[WHITE]Please enter a name for this character:");
-
-			String name = comms.receiveData();
-			if (comms.isCommunicationError()) {
-				log.severe("Error creating character; returning null");
-				return null;
-			}
-
-			PlayerCharacter character = doCreateNewCharacter(name);
-			return character;
-		} catch (Exception e) {
-			log.severe("Error creating character; returning null");
-			return null;
-		}
-	}
-
+	
 	/**
 	 * This method handles the actual creation of a new character given a name.
 	 * The method is further broken down into several smaller helper methods so
@@ -172,7 +34,7 @@ public class PlayerLogon extends Thread {
 	 * @throws java.io.IOException
 	 *             If there is an error saving the player to a file.
 	 */
-	private PlayerCharacter doCreateNewCharacter(String playerName)
+	public PlayerCharacter doCreateNewCharacter(String playerName)
 			throws IOException, SocketException {
 		String password;
 		int gender;
@@ -220,8 +82,9 @@ public class PlayerLogon extends Thread {
 		// Save the player and print a message
 		newPlayer.setLastLogon();
 		newPlayer.savePlayer();
-		comms.printlnNoSuffix("[CYAN]The [B][WHITE]" + newPlayer.getTypeString()
-				+ "[R][CYAN] " + newPlayer.getRaceString() + " [R][WHITE]"
+		comms.printlnNoSuffix("[CYAN]The [B][WHITE]"
+				+ newPlayer.getTypeString() + "[R][CYAN] "
+				+ newPlayer.getRaceString() + " [R][WHITE]"
 				+ newPlayer.getMobileClass().getDisplayName() + " "
 				+ newPlayer.getName() + " [CYAN]has been created.\n");
 
@@ -235,7 +98,7 @@ public class PlayerLogon extends Thread {
 	 * 
 	 * @return A valid password string.
 	 */
-	private String createPassword() throws IOException, SocketException {
+	public String createPassword() throws IOException, SocketException {
 		String password = null;
 		String validatePassword = null;
 
@@ -269,7 +132,7 @@ public class PlayerLogon extends Thread {
 	 * 
 	 * @return The race chosen by the user in the form of a Race object.
 	 */
-	private Race chooseRace() throws IOException, SocketException {
+	public Race chooseRace() throws IOException, SocketException {
 		Race race = null;
 
 		do {
@@ -296,7 +159,7 @@ public class PlayerLogon extends Thread {
 	 * @return An integer representing the player's gender
 	 *         (Male/female/asexual);
 	 */
-	private int chooseGender(Race race) throws IOException, SocketException {
+	public int chooseGender(Race race) throws IOException, SocketException {
 		String raceName = race.getShortName();
 
 		// Illithids are only asexual
@@ -327,7 +190,7 @@ public class PlayerLogon extends Thread {
 	 * 
 	 * @return The constructed alignment object.
 	 */
-	private Alignment chooseAlignment() throws IOException, SocketException {
+	public Alignment chooseAlignment() throws IOException, SocketException {
 		int ethical = -1;
 		int moral = -1;
 		String choice = "";
@@ -366,7 +229,7 @@ public class PlayerLogon extends Thread {
 	 * 
 	 * @return The MobileClass object representing the chosen class.
 	 */
-	private MobileClass chooseClass() throws IOException, SocketException {
+	public MobileClass chooseClass() throws IOException, SocketException {
 		String choice = "";
 		MobileClass mc = null;
 
@@ -382,13 +245,6 @@ public class PlayerLogon extends Thread {
 		return mc;
 	}
 
-	// #############################################
-	// #############################################
-	// BEGIN BIG CLUNKY METHODS
-	// These methods are big, hard to read, but very necessary.
-
-	// getPlayerName method.
-	// Used for logging in.
 	public String getPlayerName() throws IOException, SocketException {
 		String playerName = null;
 		boolean playerActive;
@@ -430,21 +286,16 @@ public class PlayerLogon extends Thread {
 				}
 			}
 
-			System.out.println("Player [" + getConnection().getInetAddress()
-					+ "] logged on as " + playerName);
-
 			// TODO: check both active and inactive players by querying the
 			// player store.
 			playerActive = false;
 			/*
-			List<PlayerCharacter> currentPlayers = Server.getPlayerList().getPlayers();
-			for (PlayerCharacter player : currentPlayers) {
-				if (player.checkAlias(playerName.toUpperCase())) {
-					playerActive = true;
-					break;
-				}
-			}
-			*/
+			 * List<PlayerCharacter> currentPlayers =
+			 * Server.getPlayerList().getPlayers(); for (PlayerCharacter player
+			 * : currentPlayers) { if
+			 * (player.checkAlias(playerName.toUpperCase())) { playerActive =
+			 * true; break; } }
+			 */
 
 			if (playerActive) {
 				comms

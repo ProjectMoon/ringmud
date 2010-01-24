@@ -1,5 +1,6 @@
 package ring.nrapi.mobiles.npc;
 
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.nrapi.mobiles.Mobile;
 import ring.world.*;
@@ -21,13 +22,13 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 		ai.act();
 	}
 
-	public void doCommand(String command) {
+	public CommandResult doCommand(String command) {
 		// Was anything even "typed?"
 		if (command.length() <= 0)
-			return;
+			return null;
 
 		// Send the command.
-		super.handler.sendCommand(command);
+		return super.handler.sendCommand(command);
 	}
 
 	public String toString() {

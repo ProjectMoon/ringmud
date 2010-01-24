@@ -238,7 +238,7 @@ public final class CommandHandler {
 				if (cr == null) {
 					log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult! Creating a wrapper result.");
 					cr = new CommandResult();
-					cr.setReturnData(false);
+					cr.setReturnableData(false);
 				}
 				
 				return cr;

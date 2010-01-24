@@ -34,33 +34,33 @@ public interface Communicator {
 	 * 
 	 * @param data
 	 */
-	public void send(String data) throws CommunicationException;
+	public void print(String data) throws CommunicationException;
 
 	/**
 	 * Sends a line of text to the client.
 	 * 
 	 * @param data
 	 */
-	public void sendln(String data) throws CommunicationException;
+	public void println(String data) throws CommunicationException;
 
 	/**
 	 * Sends a newline character to the client without the suffix.
 	 */
-	public void sendln() throws CommunicationException;
+	public void println() throws CommunicationException;
 
 	/**
 	 * Sends some text without appending the suffix.
 	 * 
 	 * @param data
 	 */
-	public void sendNoSuffix(String data) throws CommunicationException;
+	public void printNoSuffix(String data) throws CommunicationException;
 
 	/**
 	 * Sends a line of text without appending the suffix.
 	 * 
 	 * @param data
 	 */
-	public void sendlnNoSuffix(String data) throws CommunicationException;
+	public void printlnNoSuffix(String data) throws CommunicationException;
 
 	/**
 	 * Prepends a newline character to the data after having parsed it normally
@@ -70,15 +70,14 @@ public interface Communicator {
 	 * 
 	 * @param data
 	 */
-	public void sendWithPreLine(String data) throws CommunicationException;
+	public void printWithPreline(String data) throws CommunicationException;
 
 	/**
 	 * Sets the suffix that is appended to outgoing data in most versions of the
 	 * send command. In general, the suffix is a command prompt of some kind.
 	 * However, it can be used for other things.
 	 * 
-	 * @param s
-	 *            - The suffix to use.
+	 * @param s The suffix to use.
 	 */
 	public void setSuffix(String s);
 

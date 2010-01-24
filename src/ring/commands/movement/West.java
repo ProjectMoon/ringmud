@@ -18,7 +18,7 @@ public class West implements Command {
 		res.setSuccessful(success);
 		//A bit odd, but the data sending is handled by the movement system in this case.
 		if (success) {
-			res.setReturnData(false);
+			res.setReturnableData(false);
 		}
 
 		// Return the CommandResult.

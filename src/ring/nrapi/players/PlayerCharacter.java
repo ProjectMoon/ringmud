@@ -96,7 +96,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		if (quitting && !communicator.isCommunicationError()) {
 			// Save and REMOVE player from world.
 			// Send quit message
-			communicator.send("You have successfully quit. Good-bye.");
+			communicator.print("You have successfully quit. Good-bye.");
 			communicator.close();
 			log.info(this + " quit gracefully");
 			//communicator.getDisconnectCallback().execute(CallbackEvent.GRACEFUL_QUIT);
@@ -135,26 +135,14 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 	}
 
 	/**
-	 * Returns the prompt for this player. Protected access because only this package
-	 * cares about this method.
+	 * Returns the prompt for this player.
 	 * @return The prompt.
 	 */
 	@XmlTransient
-	protected String getPrompt() {
+	public String getPrompt() {
 		return "\n\n[B][GREEN]HP: " + getCombatModel().getCurrentHPString() + "/"
 				+ getCombatModel().getMaxHPString() + " MV: " + getDynamicModel().getCurrentMV() + "/"
 				+ getDynamicModel().getMaxMV() + " ]> [R][WHITE]";
-	}
-
-	/**
-	 * Returns the same as getPrompt, but with one newline instead of two at the front.
-	 * @return The prompt.
-	 */
-	@XmlTransient
-	private String getSingleLinePrompt() {
-		return "\n[B][GREEN]HP: " + getCombatModel().getCurrentHPString() + "/"
-		+ getCombatModel().getMaxHPString() + " MV: " + getDynamicModel().getCurrentMV() + "/"
-		+ getDynamicModel().getMaxMV() + " ]> [R][WHITE]";
 	}
 
 	/**
@@ -165,7 +153,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 	public void decrementLockTime() {
 		super.decrementLockTime();
 		if (super.lockTimeRemaining <= 0) {
-			communicator.send(super.lockFinishedMessage);
+			communicator.print(super.lockFinishedMessage);
 		}
 	}
 
@@ -173,20 +161,19 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 	 * Overriden to deal with player-specific options for commands.
 	 * @param command
 	 */
-	public void doCommand(String command) {
+	public CommandResult doCommand(String command) {
 		// Was anything even typed?
 		if (command.length() <= 0) {
-			communicator.setSuffix(getSingleLinePrompt());
-			communicator.send("");
-			communicator.setSuffix(getPrompt());
-			return;
+			return null;
 		}
-
+		
+		CommandResult res;
 		// Is the player locked?
 		if (super.isLocked()) {
-			communicator.send(super.lockMessage + " ("
-					+ super.lockTimeRemaining * 2 + " seconds left)");
-			return;
+			res = new CommandResult();
+			res.setFailText(super.lockMessage + " (" + super.lockTimeRemaining * 2 + " seconds left)");
+			res.setSuccessful(false);
+			return res;
 		}
 
 		// Is the player requesting to repeat the last command?
@@ -194,26 +181,16 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 			command = lastCommand;
 
 		// Send the command.
-		CommandResult res = super.handler.sendCommand(command);
+		res = super.handler.sendCommand(command);
 
-		if (res.getReturnData()) {
-			String result = res.getText();
-			communicator.send(result);
-		}
-
-		// Only update last command if the last command wasn't !!
-		if (!command.equals("!!"))
-			lastCommand = command;
-
-		// Necessary in case of updates to prompt info.
-		communicator.setSuffix(getPrompt()); 
+		return res;
 	}
 
 	/**
 	 * Sends some data to the player.
 	 */
 	public void sendData(String data) {
-		communicator.send(data);
+		communicator.print(data);
 	}
 
 	public String toString() {

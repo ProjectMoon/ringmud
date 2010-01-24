@@ -62,7 +62,7 @@ public class CommandResult {
 	 * in a different way than normal (the movement system, for example).
 	 * @return
 	 */
-	public boolean getReturnData() {
+	public boolean hasReturnableData() {
 		return returnData;
 	}
 	
@@ -70,7 +70,7 @@ public class CommandResult {
 	 * Sets whether or not to return data from this CommandResult.
 	 * @param returnData
 	 */
-	public void setReturnData(boolean returnData) {
+	public void setReturnableData(boolean returnData) {
 		this.returnData = returnData;
 	}
 

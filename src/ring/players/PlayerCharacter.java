@@ -124,7 +124,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		if (quitting && !communicator.isCommunicationError()) {
 			// Save and REMOVE player from world.
 			// Send quit message
-			communicator.send("You have successfully quit. Good-bye.");
+			communicator.print("You have successfully quit. Good-bye.");
 			communicator.close();
 			log.info(this + " quit gracefully");
 			return;
@@ -185,7 +185,7 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 	public void decrementLockTime() {
 		super.decrementLockTime();
 		if (super.lockTimeRemaining <= 0) {
-			communicator.send(super.lockFinishedMessage);
+			communicator.print(super.lockFinishedMessage);
 		}
 	}
 
@@ -193,20 +193,20 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 	// This is the main way to send commands to the world so it parses, handles
 	// them, and
 	// returns a result.
-	public void doCommand(String command) {
+	public CommandResult doCommand(String command) {
 		// Was anything even typed?
 		if (command.length() <= 0) {
 			communicator.setSuffix(getSingleLinePrompt());
-			communicator.send("");
+			communicator.print("");
 			communicator.setSuffix(getPrompt());
-			return;
+			return null;
 		}
 
 		// Is the player locked?
 		if (this.isLocked) {
-			communicator.send(super.lockMessage + " ("
+			communicator.print(super.lockMessage + " ("
 					+ super.lockTimeRemaining * 2 + " seconds left)");
-			return;
+			return null;
 		}
 
 		// Is the player requesting to repeat the last command?
@@ -216,9 +216,9 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		// Send the command.
 		CommandResult res = super.handler.sendCommand(command);
 
-		if (res.getReturnData()) {
+		if (res.hasReturnableData()) {
 			String result = res.getText();
-			communicator.send(result);
+			communicator.print(result);
 		}
 
 		// Only update last command if the last command wasn't !!
@@ -227,10 +227,12 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 
 		communicator.setSuffix(getPrompt()); // Necessary in case of updates to
 												// prompt info.
+		
+		return null;
 	}
 
 	public void sendData(String data) {
-		communicator.send(data);
+		communicator.print(data);
 	}
 
 	/**

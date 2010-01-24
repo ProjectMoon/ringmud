@@ -1,29 +1,21 @@
 package ring.server.telnet;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.util.Scanner;
-
-import ring.nrapi.players.PlayerCharacter;
-import ring.server.CommunicationException;
-import ring.server.MUDConnection;
-import ring.server.MUDConnectionManager;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
+import ring.commands.CommandResult;
+import ring.nrapi.players.PlayerCharacter;
+import ring.server.MUDConnection;
+import ring.server.MUDConnectionManager;
 
 public class PlayerShell implements Shell {
+	//"System-level" things we might care about
 	private Connection connection;
-	private PlayerCharacter player;
+	private TelnetStreamCommunicator comms;
 	
-	private Scanner input;
-	private TelnetInputStream llInput;
-	private PrintStream output;
+	//Shell variables
+	private PlayerCharacter player;
+	private String lastCommand;
 	
 	public static Shell createShell() {
 		return new PlayerShell();
@@ -33,27 +25,9 @@ public class PlayerShell implements Shell {
 	public void run(Connection conn) {
 		System.out.println("-------HI FROM PLAYER SHELL-------");
 		init(conn);
-		//gameLoop();
-		output.print("Type something to echo: ");
-		try {
-			/*
-			StringBuilder echo = new StringBuilder();
-		
-			for (int c = 0; c < 10; c++) {
-				echo.append((char)(llInput.read()));
-			}
-			*/
-			String echo = input.nextLine();
-			output.println();
-			output.println("Echo: " + echo.toString());
-		}
-		catch (Exception e) { e.printStackTrace(); }
-		output.println();
-		
-		input.close();
-		output.close();
+		gameLoop();
 	}
-	
+
 	/**
 	 * Initializes this shell for use.
 	 * @param conn
@@ -61,8 +35,7 @@ public class PlayerShell implements Shell {
 	private void init(Connection conn) {
 		connection = conn;
 		connection.addConnectionListener(this);		
-		
-		/*
+				
 		MUDConnection mudConnection = MUDConnectionManager.getConnection(connection.getConnectionData().getInetAddress());
 		
 		//There is no way this should ever be null.
@@ -70,11 +43,11 @@ public class PlayerShell implements Shell {
 		assert(mudConnection != null);
 		
 		player = mudConnection.getPlayerCharacter();
-		*/
-		//Initialize input and output streams
-		llInput = new TelnetInputStream(connection.getTerminalIO());
-		input = new Scanner(llInput);
-		output = new PrintStream(new TelnetOutputStream(connection.getTerminalIO()));
+		
+		
+		//Initialize the communicator.
+		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
+				new TelnetOutputStream(connection.getTerminalIO()));
 	}
 	
 	private void gameLoop() {
@@ -82,13 +55,32 @@ public class PlayerShell implements Shell {
 		
 		// Wait for commands.
 		while (!player.isQuitting()) {
-			//communicator.setSuffix(getPrompt()); <-- Needs telnetd2 eqiuvalent
+			comms.setSuffix(player.getPrompt());
 			
-			String cmd = input.nextLine();
-			player.doCommand(cmd);
+			String command = "";
+			if (command.equals("!!")) {
+				command = lastCommand;
+			}
+			else {
+				command = comms.receiveData();
+			}
+			
+			CommandResult res = player.doCommand(command);
+			
+			if (res.hasReturnableData()) {
+				String result = res.getText();
+				comms.print(result);
+			}
+
+			// Only update last command if the last command wasn't !!
+			if (!command.equals("!!"))
+				lastCommand = command;
+
+			// Necessary in case of updates to prompt info.
+			comms.setSuffix(player.getPrompt());
 		}
 	}
-
+	
 	@Override
 	public void connectionIdle(ConnectionEvent arg0) {
 		// TODO Auto-generated method stub

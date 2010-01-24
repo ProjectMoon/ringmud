@@ -20,6 +20,7 @@ import ring.effects.*;
 import ring.players.*;
 import ring.world.*;
 import ring.commands.CommandHandler;
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.resources.RingResource;
 import ring.resources.beans.MobileBean;
@@ -1220,5 +1221,11 @@ public class Mobile extends WorldObject implements CommandSender,
 	public void populateFromBean(MobileBean bean) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public CommandResult doCommand(String cmd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

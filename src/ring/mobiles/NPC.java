@@ -9,6 +9,7 @@ package ring.mobiles;
  * @version 1.0
  */
 
+import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.world.*;
 
@@ -82,14 +83,13 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	public void sendData(String data) {
 		
 	}
-	public void doCommand(String command) {
+	public CommandResult doCommand(String command) {
 		// Was anything even typed?
 		if (command.length() <= 0)
-			return;
+			return null;
 
 		// Send the command.
-		ring.commands.CommandResult res = super.handler.sendCommand(command);
-		sendData(res.getText());
+		return super.handler.sendCommand(command);
 	}
 
 	public String toString() {

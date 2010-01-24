@@ -11,10 +11,7 @@ import ring.system.MUDConfig;
 import ring.util.TextParser;
 
 /**
- * This class facilitates communication between a user and the server. This is a
- * standardized method of sending data back and forth. It also alleviates issues
- * with the newline character, as there are now defined methods for newlines or
- * not newlines.
+ * This class makes it a bit simpler to use the telnet input and output streams.
  * 
  * @author jeff
  */
@@ -116,7 +113,7 @@ public class TelnetCommunicator implements Communicator {
 	 * 
 	 * @param data
 	 */
-	public void send(String data) throws CommunicationException {
+	public void print(String data) throws CommunicationException {
 		if (isValid(data)) {
 			data = formatData(data, true, false);
 			doSend(data);
@@ -128,7 +125,7 @@ public class TelnetCommunicator implements Communicator {
 	 * 
 	 * @param data
 	 */
-	public void sendln(String data) throws CommunicationException {
+	public void println(String data) throws CommunicationException {
 		if (isValid(data)) {
 			data = formatData(data, true, true);
 			doSend(data);
@@ -138,7 +135,7 @@ public class TelnetCommunicator implements Communicator {
 	/**
 	 * Sends a newline character to the client without the suffix.
 	 */
-	public void sendln() throws CommunicationException {
+	public void println() throws CommunicationException {
 		try {
 			output.write("\n".getBytes());
 			output.write(0);
@@ -154,7 +151,7 @@ public class TelnetCommunicator implements Communicator {
 	 * 
 	 * @param data
 	 */
-	public void sendNoSuffix(String data) throws CommunicationException {
+	public void printNoSuffix(String data) throws CommunicationException {
 		if (isValid(data)) {
 			data = formatData(data, false, false);
 			doSend(data);
@@ -166,7 +163,7 @@ public class TelnetCommunicator implements Communicator {
 	 * 
 	 * @param data
 	 */
-	public void sendlnNoSuffix(String data) {
+	public void printlnNoSuffix(String data) {
 		if (isValid(data)) {
 			data = formatData(data, false, true);
 			doSend(data);
@@ -176,12 +173,12 @@ public class TelnetCommunicator implements Communicator {
 	/**
 	 * Prepends a newline character to the data after having parsed it normally
 	 * as per the send method. Also appends the suffix. This is mostly used for
-	 * sending data to the user from other sources. Instead of the text
+	 * sending data to the user from code external to the shell. Instead of the text
 	 * appearing in the middle of their command line it appears below it.
 	 * 
 	 * @param data
 	 */
-	public void sendWithPreLine(String data) throws CommunicationException {
+	public void printWithPreline(String data) throws CommunicationException {
 		if (isValid(data)) {
 			data = formatData(data, true, true);
 			data = "\n" + data;
@@ -289,14 +286,14 @@ public class TelnetCommunicator implements Communicator {
 				// if command is WILL echo DON'T
 				if (dataByte == '\373') {
 					dataByte = data.charAt(++x);
-					sendNoSuffix("\377\376" + dataByte);
+					printNoSuffix("\377\376" + dataByte);
 					continue;
 				}
 
 				// if command is DO echo WON'T
 				if (dataByte == '\375') {
 					dataByte = data.charAt(++x);
-					sendNoSuffix("\377\374" + dataByte);
+					printNoSuffix("\377\374" + dataByte);
 					continue;
 				}
 			} else {

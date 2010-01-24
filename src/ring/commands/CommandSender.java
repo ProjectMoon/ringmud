@@ -10,6 +10,5 @@ package ring.commands;
  */
 
 public interface CommandSender {
-  //The classes that implement CommandSender theoretically send commands to the server. Currently only Mobiles implement
-  //CommandSender.
+	public CommandResult doCommand(String cmd);
 }
