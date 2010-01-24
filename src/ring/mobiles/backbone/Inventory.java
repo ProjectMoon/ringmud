@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles.backbone;
+package ring.mobiles.backbone;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.items.Item;
+import ring.items.Item;
 import ring.persistence.RingConstants;
 
 /**

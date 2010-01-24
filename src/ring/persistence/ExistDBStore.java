@@ -14,13 +14,13 @@ import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.entities.Entity;
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.movement.Room;
-import ring.nrapi.movement.Zone;
-import ring.nrapi.players.Player;
-import ring.nrapi.players.PlayerCharacter;
+import ring.entities.Entity;
+import ring.items.Item;
+import ring.mobiles.Mobile;
+import ring.movement.Room;
+import ring.movement.Zone;
+import ring.players.Player;
+import ring.players.PlayerCharacter;
 
 public class ExistDBStore implements DataStore {
 	//XMLDB mappings

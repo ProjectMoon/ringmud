@@ -6,11 +6,12 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.skills.Skill;
-import ring.skills.SkillList;
 
 public class Listen implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Listen to be implemented in Python");
+		/*
 		CommandResult res = new CommandResult();
 		res.setFailText("You listen for the sounds of the world.");
 
@@ -36,7 +37,7 @@ public class Listen implements Command {
 		res.setText("[R][WHITE]You begin listening intently for any interesting (or suspicious) sounds... (check: "	+ check + ")");
 		res.setSuccessful(true);
 		return res;
-
+		*/
 	}
 
 	public String getCommandName() {

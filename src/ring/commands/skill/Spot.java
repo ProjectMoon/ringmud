@@ -6,11 +6,12 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.skills.Skill;
-import ring.skills.SkillList;
 
 public class Spot implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Spot to be implemented in python");
+		/*
 		CommandResult res = new CommandResult();
 		res.setFailText("You spot something off in the distance.");
 
@@ -35,6 +36,7 @@ public class Spot implements Command {
 		res.setText("[R][WHITE]You begin scanning the area for anything interesting... (check: " + check + ")");
 		res.setSuccessful(true);
 		return res;
+		*/
 	}
 
 	public String getCommandName() {

@@ -4,7 +4,7 @@ import ring.commands.Command;
 import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.entities.Item;
+import ring.items.Item;
 import ring.mobiles.Mobile;
 
 public class Equipment implements Command {
@@ -17,7 +17,7 @@ public class Equipment implements Command {
 		Mobile mob = (Mobile) sender;
 		
 		//FQCN because of ambiguous reference
-		ring.mobiles.backbone.Equipment mobEquipment = mob.getEquipment();
+		ring.mobiles.backbone.Equipment mobEquipment = mob.getDynamicModel().getEquipment();
 
 		if ((mobEquipment == null) || (mobEquipment.size() == 0))
 			return res;

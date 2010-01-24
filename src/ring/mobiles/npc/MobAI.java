@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles.npc;
+package ring.mobiles.npc;
 
 /**
  * Base class representing artificial intelligence for NPC mobiles.

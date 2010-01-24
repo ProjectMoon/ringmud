@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import ring.mobiles.Alignment;
-import ring.mobiles.Mobile;
-import ring.mobiles.MobileClass;
-import ring.mobiles.MobileClassFactory;
+import ring.mobiles.MobileBaseModel;
+import ring.mobiles.RaceFactory;
+import ring.mobiles.Alignment.Ethical;
+import ring.mobiles.Alignment.Moral;
+import ring.mobiles.MobileBaseModel.Gender;
+import ring.mobiles.mobclass.MobileClass;
 import ring.mobiles.Race;
 import ring.players.PlayerCharacter;
 import ring.server.Communicator;
@@ -37,7 +40,7 @@ public class PlayerCharacterCreation {
 	public PlayerCharacter doCreateNewCharacter(String playerName)
 			throws IOException, SocketException {
 		String password;
-		int gender;
+		Gender gender;
 		Race race;
 		Alignment alignment;
 		MobileClass playerClass;
@@ -55,7 +58,7 @@ public class PlayerCharacterCreation {
 
 		alignment = chooseAlignment();
 		comms.printlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]"
-				+ alignment.getAlignmentString() + "[R]\n");
+				+ alignment.toString() + "[R]\n");
 
 		playerClass = chooseClass();
 		comms.printlnNoSuffix("[CYAN][B]Class chosen: [WHITE]"
@@ -63,30 +66,27 @@ public class PlayerCharacterCreation {
 
 		System.out.println("Setting various player attributes...");
 		// Set basic info
-		newPlayer.setName(playerName);
+		newPlayer.getBaseModel().setName(playerName);
 		newPlayer.setPassword(password);
-		newPlayer.setType(PlayerCharacter.MORTAL);
-		newPlayer.setLongDescription("You see nothing special about "
-				+ newPlayer.getHimHerIt() + ".");
+		newPlayer.getBaseModel().setType(MobileBaseModel.Type.MORTAL);
+		newPlayer.getBaseModel().setDescription("You see nothing special about " + newPlayer.getBaseModel().getGender().getObject() + ".");
 
 		// Set some physical and alignment characteristics
-		newPlayer.setRace(race);
-		newPlayer.setBody(race.getBody());
-		newPlayer.setSpeed(30);
-		newPlayer.setGender(gender);
-		newPlayer.setAlignment(alignment);
+		newPlayer.getBaseModel().setRace(race);
+		newPlayer.getBaseModel().setBody(race.getBody());
+		newPlayer.getDynamicModel().setSpeed(30);
+		newPlayer.getBaseModel().setGender(gender);
+		newPlayer.getBaseModel().setAlignment(alignment);
 
 		// Set class, skills, etc.
-		newPlayer.setMobileClass(playerClass);
+		newPlayer.getBaseModel().setMobileClass(playerClass);
 
 		// Save the player and print a message
-		newPlayer.setLastLogon();
-		newPlayer.savePlayer();
 		comms.printlnNoSuffix("[CYAN]The [B][WHITE]"
-				+ newPlayer.getTypeString() + "[R][CYAN] "
-				+ newPlayer.getRaceString() + " [R][WHITE]"
-				+ newPlayer.getMobileClass().getDisplayName() + " "
-				+ newPlayer.getName() + " [CYAN]has been created.\n");
+				+ newPlayer.getBaseModel().getType().getName() + "[R][CYAN] "
+				+ newPlayer.getBaseModel().getRace().getName() + " [R][WHITE]"
+				+ newPlayer.getBaseModel().getMobileClass().getDisplayName() + " "
+				+ newPlayer.getBaseModel().getName() + " [CYAN]has been created.\n");
 
 		return newPlayer;
 	}
@@ -140,7 +140,7 @@ public class PlayerCharacterCreation {
 			comms
 					.print("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
 			String choice = comms.receiveData();
-			race = Race.determineRace(choice);
+			race = RaceFactory.determineRace(choice);
 
 			if (race == null) {
 				comms.printlnNoSuffix("That is not a valid choice.");
@@ -159,27 +159,25 @@ public class PlayerCharacterCreation {
 	 * @return An integer representing the player's gender
 	 *         (Male/female/asexual);
 	 */
-	public int chooseGender(Race race) throws IOException, SocketException {
+	public Gender chooseGender(Race race) throws IOException, SocketException {
 		String raceName = race.getShortName();
 
 		// Illithids are only asexual
 		if (raceName.equals("Ill")) {
-			return Mobile.IT; // Otherwise we move on to choosing M/F
+			return Gender.IT; // Otherwise we move on to choosing M/F
 		}
 		String choice = "";
-		int gender = -1; // 0 is male, 1 female, 2 asexual
+		Gender gender = null;
 
 		do {
 			comms.print("Please enter a gender (M/F):");
 			choice = comms.receiveData();
 			if (choice.toLowerCase().equals("m")) {
-				gender = Mobile.MALE;
+				gender = Gender.MALE;
 			} else if (choice.toLowerCase().equals("f")) {
-				gender = Mobile.FEMALE;
-			} else {
-				gender = -1;
+				gender = Gender.FEMALE;
 			}
-		} while (gender < 0);
+		} while (gender == null);
 
 		return gender;
 	}
@@ -191,33 +189,33 @@ public class PlayerCharacterCreation {
 	 * @return The constructed alignment object.
 	 */
 	public Alignment chooseAlignment() throws IOException, SocketException {
-		int ethical = -1;
-		int moral = -1;
+		Ethical ethical = null;
+		Moral moral = null;
 		String choice = "";
 
 		do {
 			comms.print("Please choose an ethical perspective (L, N, C):");
 			choice = comms.receiveData();
 			if (choice.toLowerCase().equals("l")) {
-				ethical = Alignment.LAWFUL;
+				ethical = Ethical.LAWFUL;
 			} else if (choice.toLowerCase().equals("n")) {
-				ethical = Alignment.NEUTRAL;
+				ethical = Ethical.NEUTRAL;
 			} else if (choice.toLowerCase().equals("c")) {
-				ethical = Alignment.CHAOTIC;
+				ethical = Ethical.CHAOTIC;
 			}
-		} while (ethical == -1);
+		} while (ethical == null);
 
 		do {
 			comms.print("Please input a moral perspective (G, N, E):");
 			choice = comms.receiveData();
 			if (choice.toLowerCase().equals("g")) {
-				moral = Alignment.GOOD;
+				moral = Moral.GOOD;
 			} else if (choice.toLowerCase().equals("n")) {
-				moral = Alignment.NEUTRAL;
+				moral = Moral.NEUTRAL;
 			} else if (choice.toLowerCase().equals("e")) {
-				moral = Alignment.EVIL;
+				moral = Moral.EVIL;
 			}
-		} while (moral == -1);
+		} while (moral == null);
 
 		Alignment a = new Alignment(ethical, moral);
 		return a;
@@ -230,6 +228,7 @@ public class PlayerCharacterCreation {
 	 * @return The MobileClass object representing the chosen class.
 	 */
 	public MobileClass chooseClass() throws IOException, SocketException {
+		/*
 		String choice = "";
 		MobileClass mc = null;
 
@@ -243,6 +242,9 @@ public class PlayerCharacterCreation {
 		} while (mc == null);
 
 		return mc;
+		*/
+		comms.println("Class choosing not implemented yet");
+		return null;
 	}
 
 	public String getPlayerName() throws IOException, SocketException {

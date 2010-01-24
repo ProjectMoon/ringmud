@@ -14,20 +14,18 @@ public class Score implements Command {
 		res.setFailText("[B]FATAL ERROR IN SCORE METHOD.[R]");
 		Mobile mob = (Mobile) sender;
 		String score = "\n[R][WHITE]Score and Statistics for [B][GREEN]"
-				+ mob.getName()
+				+ mob.getBaseModel().getName()
 				+ "[R][WHITE]"
 				+ "\nAlignment: "
-				+ mob.getAlignment().getAlignmentString()
+				+ mob.getBaseModel().getAlignment().toString()
 				+ "\nHP: [B][RED]"
-				+ mob.getCurrentHPString()
+				+ mob.getCombatModel().getCurrentHPString()
 				+ "/"
-				+ mob.getMaxHPString()
+				+ mob.getCombatModel().getMaxHPString()
 				+ " [R][WHITE]Class: "
-				+ mob.getMobileClass().getDisplayName()
+				+ mob.getBaseModel().getMobileClass().getDisplayName()
 				+ " [R][WHITE]Level: [B][MAGENTA]"
-				+ mob.getLevel()
-				+ "[R][WHITE] Class Type: "
-				+ mob.getMobileClass().getClassification().getDisplayName()
+				+ mob.getBaseModel().getLevel()
 				+ "\nCurrent XP Amount: [YELLOW]0% [WHITE]Guild: [B][GREEN]None[R][WHITE]";
 
 		res.setText(score);

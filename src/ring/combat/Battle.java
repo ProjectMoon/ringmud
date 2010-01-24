@@ -91,7 +91,7 @@ public class Battle implements TickerListener {
 	//if mob is null.
 	public boolean addParticipant(Mobile mob, double xpModifier) {
 		if (mob == null) return false;
-		if (mob.isDead) return false;
+		if (mob.getBaseModel().isDead()) return false;
 		if (mobList.contains(mob)) return false;
 		
 		//all of the conditions check out so add the participant and return true.
@@ -120,7 +120,7 @@ public class Battle implements TickerListener {
 	public void processTick(TickerEvent e) {
 		//first, check death states
 		for (Mobile mob : mobList) {
-			if (mob.isDead) {
+			if (mob.getBaseModel().isDead()) {
 				giveXP(mob); //give the xp of this mobile to all participants, factoring in the xp modifiers
 				removeParticipant(mob);
 			}
@@ -128,8 +128,8 @@ public class Battle implements TickerListener {
 		
 		//then do attacks.
 		for (Mobile mob : mobList) {
-			boolean hit = mob.attack(mob.currentTarget(), true); //later factor in the weapon they have.
-			if (hit) mob.sendData("You hit " + mob.currentTarget() + " for some damage."); //implement damage here!
+			boolean hit = mob.attack(mob.getCombatModel().getTarget(), true); //later factor in the weapon they have.
+			if (hit) mob.sendData("You hit " + mob.getCombatModel().getTarget() + " for some damage."); //implement damage here!
 		}
 	}
 	
@@ -139,7 +139,8 @@ public class Battle implements TickerListener {
 	private void giveXP(Mobile mob) {
 		for (Mobile m : mobList) {
 			if (mob != m) { //make sure we're not giving a mob XP for its own death...
-				m.gainXP(mob.calculateXP() * xpModifiers.get(m).intValue());
+				//TODO re-add mob exp calcuation back in here.
+				m.gainXP(xpModifiers.get(m).intValue());
 			}
 		}
 	}

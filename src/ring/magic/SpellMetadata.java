@@ -1,4 +1,4 @@
-package ring.nrapi.magic;
+package ring.magic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.business.AbstractBusinessObject;
 import ring.nrapi.xml.XMLParameterException;
 import ring.persistence.RingConstants;
 

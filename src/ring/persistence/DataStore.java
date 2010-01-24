@@ -2,13 +2,13 @@ package ring.persistence;
 
 import java.io.File;
 
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.movement.Room;
-import ring.nrapi.movement.Zone;
-import ring.nrapi.players.Player;
-import ring.nrapi.players.PlayerCharacter;
-import ring.nrapi.entities.Entity;
+import ring.items.Item;
+import ring.mobiles.Mobile;
+import ring.movement.Room;
+import ring.movement.Zone;
+import ring.players.Player;
+import ring.players.PlayerCharacter;
+import ring.entities.Entity;
 
 public interface DataStore {	
 	/**

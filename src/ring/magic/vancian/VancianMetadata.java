@@ -1,7 +1,7 @@
-package ring.nrapi.magic.vancian;
+package ring.magic.vancian;
 
-import ring.nrapi.magic.SpellMetadata;
-import ring.nrapi.magic.SpellMetadataImplementation;
+import ring.magic.SpellMetadata;
+import ring.magic.SpellMetadataImplementation;
 
 public class VancianMetadata implements SpellMetadataImplementation {
 	private int level;

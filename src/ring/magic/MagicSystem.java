@@ -1,4 +1,4 @@
-package ring.nrapi.magic;
+package ring.magic;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.effects.Affectable;
-import ring.entities.Item;
+import ring.items.Item;
 import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
 
@@ -39,7 +39,7 @@ public class Remove implements Command {
 		mob.addItemToInventory(item);
 
 		res.setText("[R][WHITE]You remove "
-				+ item.getIndefiniteDescriptor().toLowerCase() + " "
+				+ item.getIdlePrefix().toLowerCase() + " "
 				+ item.getName() + " from your " + part.getName().toLowerCase()
 				+ ".");
 

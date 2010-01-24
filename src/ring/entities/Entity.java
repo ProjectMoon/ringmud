@@ -1,4 +1,4 @@
-package ring.nrapi.entities;
+package ring.entities;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.RingConstants;
+import ring.world.WorldObject;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -24,7 +25,7 @@ propOrder= {
  * @author projectmoon
  *
  */
-public class Entity extends AbstractBusinessObject {
+public class Entity extends WorldObject {
 	private String name;
 	private String descriptor;
 	

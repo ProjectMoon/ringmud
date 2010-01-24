@@ -1,10 +1,10 @@
-package ring.nrapi.mobiles.backbone;
+package ring.mobiles.backbone;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ring.nrapi.items.Item;
+import ring.items.Item;
 
 public class ItemIterator implements Iterator<Item> {
 	private int pos;

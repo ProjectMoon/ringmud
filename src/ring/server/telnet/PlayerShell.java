@@ -4,9 +4,12 @@ import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
 import ring.commands.CommandResult;
-import ring.nrapi.players.PlayerCharacter;
+import ring.movement.LocationManager;
+import ring.movement.Room;
+import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
+import ring.world.World;
 
 public class PlayerShell implements Shell {
 	//"System-level" things we might care about
@@ -51,6 +54,16 @@ public class PlayerShell implements Shell {
 	}
 	
 	private void gameLoop() {
+		/*
+		// Start up character.
+		log.info("Creating player in the world: " + getBaseModel().getName());
+		World.getWorld().getTicker().addTickerListener(this, "PULSE");
+		// Set location.
+		Room room = (Room)LocationManager.getOrigin();
+		room.addMobile(this);
+		setLocation(room);
+		*/
+
 		player.doCommand("look");
 		
 		// Wait for commands.

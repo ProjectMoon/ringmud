@@ -1,4 +1,4 @@
-package ring.nrapi.skills;
+package ring.skills;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

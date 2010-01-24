@@ -1,7 +1,7 @@
 package ring.server;
 
-import ring.nrapi.players.Player;
-import ring.nrapi.players.PlayerCharacter;
+import ring.players.Player;
+import ring.players.PlayerCharacter;
 
 /**
  * Implements information about a player's connection to the MUD. This is sort of a

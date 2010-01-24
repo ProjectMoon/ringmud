@@ -1,11 +1,10 @@
 package ring.commands;
 
-import java.util.Vector;
+import java.util.List;
 
 import ring.entities.Entity;
 import ring.mobiles.Mobile;
 import ring.mobiles.backbone.Inventory;
-import ring.movement.Location;
 import ring.movement.Room;
 import ring.world.WorldObject;
 
@@ -227,7 +226,7 @@ public final class CommandParameters {
 			mob = null;
 		}
 
-		Inventory inventory = mob.getInventory();
+		Inventory inventory = mob.getDynamicModel().getInventory();
 		return inventory.getItemByName(name);
 	}
 
@@ -243,7 +242,7 @@ public final class CommandParameters {
 			mob = null;
 		}
 
-		return mob.getEquipment().getItemByName(name);
+		return mob.getDynamicModel().getEquipment().getItemByName(name);
 	}
 
 	// getWorldObjectByName method.
@@ -254,34 +253,33 @@ public final class CommandParameters {
 	private WorldObject getWorldObjectFromRoomByName(String name) {
 		if (name.equals("a"))
 			return null;
-		Mobile o;
+		Mobile mob;
 		name = name.toLowerCase();
 		try {
-			o = (Mobile) sender;
+			mob = (Mobile) sender;
 		} catch (NullPointerException e) {
 			System.out.println(e);
 			e.printStackTrace();
 			// System.out.println("WARNING: NULL SENDER SOURCE");
-			o = null;
+			return null;
 		}
 
-		Location location = o.getLocation();
-		Room room = (Room)location;
+		Room room = mob.getLocation();
 		// First loop through mobiles to see if the thing we're looking for is a
 		// mobile...
 		try {
-			Vector<Mobile> mobiles = room.getMobiles();
+			List<Mobile> mobiles = room.getMobiles();
 			if (mobiles.size() > 0) {
 				for (int c = 0; c < mobiles.size(); c++) {
-					Mobile mob = (Mobile) mobiles.get(c);
-					if ((mob.getShortDescription().toLowerCase()).indexOf(name) != -1) {
+					Mobile m = (Mobile) mobiles.get(c);
+					if ((m.getBaseModel().getShortDescription().toLowerCase()).indexOf(name) != -1) {
 						return mob;
 					}
 				}
 			}
 
 			// next try the entities...
-			Vector<Entity> entities = room.getEntities();
+			List<Entity> entities = room.getEntities();
 			if (entities.size() > 0) {
 				for (int c = 0; c < entities.size(); c++) {
 					Entity ent = (Entity) entities.get(c);

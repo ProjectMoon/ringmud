@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 import ring.nrapi.business.AbstractBusinessObject;
 

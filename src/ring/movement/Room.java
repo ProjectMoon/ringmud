@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +11,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.movement.PortalNotFoundException;
-import ring.nrapi.movement.LocationManager;
-import ring.nrapi.movement.Movable;
-import ring.nrapi.movement.Portal;
+import ring.movement.PortalNotFoundException;
+import ring.movement.LocationManager;
+import ring.movement.Movable;
+import ring.movement.Portal;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.entities.Entity;
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Mobile;
+import ring.entities.Entity;
+import ring.items.Item;
+import ring.mobiles.Mobile;
 import ring.persistence.RingConstants;
 import ring.world.World;
 

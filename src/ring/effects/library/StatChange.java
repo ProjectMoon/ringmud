@@ -13,41 +13,52 @@ package ring.effects.library;
  * @author Jeff Hair
  * @version 1.0
  */
-import ring.world.*;
-import ring.effects.*;
-import ring.mobiles.*;
+import ring.effects.Affectable;
+import ring.effects.EffectCreator;
+import ring.mobiles.Mobile;
 
+@SuppressWarnings("serial")
 public class StatChange extends EffectCreator {
-  private int[] stats = new int[7];
+	private int str, dex, con, intel, wis, cha;
+	private int oldStr, oldDex, oldCon, oldIntel, oldWis, oldCha;
+	
+	public StatChange() {
+		super();
+	}
 
-  public StatChange() { super(); }
+	public void effectLife(Affectable target) {
+		str = super.params.getInt("strength");
+		dex = super.params.getInt("dexterity");
+		con = super.params.getInt("constitution");
+		intel = super.params.getInt("intelligence");
+		wis = super.params.getInt("wisdom");
+		cha = super.params.getInt("charisma");
+		
+		Mobile mob = (Mobile) target;
+		
+		oldStr = mob.getBaseModel().getStrength();
+		oldDex = mob.getBaseModel().getDexterity();
+		oldCon = mob.getBaseModel().getConstitution();
+		oldIntel = mob.getBaseModel().getIntelligence();
+		oldWis = mob.getBaseModel().getWisdom();
+		oldCha = mob.getBaseModel().getCharisma();
+		
+		mob.getBaseModel().setStrength(str);
+		mob.getBaseModel().setDexterity(dex);
+		mob.getBaseModel().setConstitution(con);
+		mob.getBaseModel().setIntelligence(intel);
+		mob.getBaseModel().setWisdom(wis);
+		mob.getBaseModel().setCharisma(cha);
+	}
 
-  public void effectLife(Affectable target) {
-    stats[Mobile.STRENGTH] = super.params.getInt("strength");
-    stats[Mobile.DEXTERITY] = super.params.getInt("dexterity");
-    stats[Mobile.CONSTITUTION] = super.params.getInt("constitution");
-    stats[Mobile.INTELLIGENCE] = super.params.getInt("intelligence");
-    stats[Mobile.WISDOM] = super.params.getInt("wisdom");
-    stats[Mobile.CHARISMA] = super.params.getInt("charisma");
+	public void effectDeath(Affectable target) {
+		Mobile mob = (Mobile) target;
 
-    Mobile mob = (Mobile)target;
-    mob.setStat(Mobile.STRENGTH, mob.getStat(Mobile.STRENGTH) + stats[0]);
-    mob.setStat(Mobile.DEXTERITY, mob.getStat(Mobile.DEXTERITY) + stats[1]);
-    mob.setStat(Mobile.CONSTITUTION, mob.getStat(Mobile.CONSTITUTION) + stats[2]);
-    mob.changeBonusHP((stats[2] / 2) * mob.getLevel()); //change bonus HP to account for con increase.
-    mob.setStat(Mobile.INTELLIGENCE, mob.getStat(Mobile.INTELLIGENCE) + stats[3]);
-    mob.setStat(Mobile.WISDOM, mob.getStat(Mobile.WISDOM) + stats[4]);
-    mob.setStat(Mobile.CHARISMA, mob.getStat(Mobile.CHARISMA) + stats[5]);
-  }
-
-  public void effectDeath(Affectable target) {
-    Mobile mob = (Mobile)target;
-    mob.setStat(Mobile.STRENGTH, mob.getStat(Mobile.STRENGTH) - stats[0]);
-    mob.setStat(Mobile.DEXTERITY, mob.getStat(Mobile.DEXTERITY) - stats[1]);
-    mob.setStat(Mobile.CONSTITUTION, mob.getStat(Mobile.CONSTITUTION) - stats[2]);
-    mob.changeBonusHP(-1 * ((stats[2] / 2) * mob.getLevel()));
-    mob.setStat(Mobile.INTELLIGENCE, mob.getStat(Mobile.INTELLIGENCE) - stats[3]);
-    mob.setStat(Mobile.WISDOM, mob.getStat(Mobile.WISDOM) - stats[4]);
-    mob.setStat(Mobile.CHARISMA, mob.getStat(Mobile.CHARISMA) - stats[5]);
-  }
+		mob.getBaseModel().setStrength(oldStr);
+		mob.getBaseModel().setDexterity(oldDex);
+		mob.getBaseModel().setConstitution(oldCon);
+		mob.getBaseModel().setIntelligence(oldIntel);
+		mob.getBaseModel().setWisdom(oldWis);
+		mob.getBaseModel().setCharisma(oldCha);
+	}
 }

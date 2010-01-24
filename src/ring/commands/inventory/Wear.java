@@ -5,7 +5,8 @@ import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
-import ring.entities.Item;
+import ring.items.Armor;
+import ring.items.Item;
 import ring.mobiles.Body;
 import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
@@ -24,21 +25,18 @@ public class Wear implements Command {
 			res.setFailText("[R][WHITE]Wear what?");
 			return res;
 		}
-		if (!(t instanceof Item)) {
+		if (!(t instanceof Armor)) {
 			return res;
 		}
 
-		Item target = (Item) t;
-		if (!target.isWearable())
-			return res;
+		Armor target = (Armor)t;
 
 		// We've checked everything dealing with if the thing is wearable or
 		// not.
 		Mobile mob = (Mobile) sender;
-		Body mobBody = mob.getBody();
 
 		// Check if the target is wearable.
-		if (!(target.isWearable()))
+		if (!(target.isWearableFor(mob)))
 			return res;
 
 		// Check if the wearer meets all the requirements to wear target
@@ -51,26 +49,9 @@ public class Wear implements Command {
 		// on the wearer's body. If this number is greater than one, the next
 		// step has a special
 		// addition.
-		BodyPart[] eligibleParts = mobBody.getEligibleBodyParts(target);
-
-		// Were there any parts actually found?
-		if (eligibleParts == null)
-			return res;
-
-		// Check if the wearer has room on the body part. If the number from the
-		// previous step was
-		// greater than 1, start a for loop equal to the amount of body parts
-		// remaining (# of them - 1).
-		// Try to equip on each of those body parts.
+		
 		boolean success = false;
-		BodyPart thePart = null;
-
-		for (int c = 0; c < eligibleParts.length; c++) {
-			thePart = eligibleParts[c];
-			success = mob.equip(thePart, target);
-			if (success)
-				break;
-		}
+		success = mob.equip(target.getPartWornOn(), target);
 		
 		if (!success) {
 			res.setFailText("[R][WHITE]You lack the proper body shape to wear that!");
@@ -82,16 +63,16 @@ public class Wear implements Command {
 
 		// Set text and stuff.
 		res.setText("[R][WHITE]You wear "
-				+ target.getIndefiniteDescriptor().toLowerCase() + " "
+				+ target.getIdlePrefix().toLowerCase() + " "
 				+ target.getName() + " on your "
-				+ thePart.getName().toLowerCase() + ".");
+				+ target.getPartWornOn().getName().toLowerCase() + ".");
 		res.setSuccessful(true);
 
 		// Notify other players.
-		World.sendVisualToLocation(mob, "[R][WHITE]" + mob.getName()
-				+ " wears " + target.getIndefiniteDescriptor().toLowerCase()
-				+ " " + target.getName() + " on " + mob.getHisHerIts() + " "
-				+ thePart.getName().toLowerCase() + ".", null);
+		World.sendVisualToLocation(mob, "[R][WHITE]" + mob.getBaseModel().getName()
+				+ " wears " + target.getIdlePrefix().toLowerCase()
+				+ " " + target.getName() + " on " + mob.getBaseModel().getGender().getPossessive() + " "
+				+ target.getPartWornOn().getName().toLowerCase() + ".", null);
 
 		return res;
 

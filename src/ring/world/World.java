@@ -12,14 +12,13 @@ package ring.world;
 import ring.commands.*;
 import ring.entities.*;
 import ring.mobiles.*;
+import ring.mobiles.MobileBaseModel.Type;
 import ring.players.*;
-import ring.spells.*;
 import ring.effects.*;
 import ring.effects.library.*;
 import ring.movement.*;
 import ring.util.*;
 import java.util.*;
-import ring.resources.ClassFeatureLoader;
 
 public class World implements TickerListener {
 	private static World world;
@@ -36,12 +35,11 @@ public class World implements TickerListener {
 
 	//Other stuff.
 	private static Date serverStarted;
-	private static int minimumPlayerType = PlayerCharacter.MORTAL;
+	private static Type minimumPlayerType = Type.MORTAL;
 
 	//World Constants.
 	public static final int TIMEOUT_LIMIT = 15;
-	public Room r1 = new Room("Room 1", "This is the description for room 1");
-	
+		
 	public World() {                
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
@@ -54,66 +52,6 @@ public class World implements TickerListener {
 		//Start up the world ticker.
 		System.out.println("Instantiating the World Ticker...");
 		worldTicker = new Ticker();
-		System.out.println("Done.");
-
-		//Build zones.
-		//RIGHT NOW THIS IS A TEST PIECE OF CODE FOR THE WORLD
-		//YEP
-		//System.out.println("Building zones...");
-		Room r2 = new Room("Room 2", "This is the description for room 2");
-		Room r3 = new Room("Room 3", "This is the description for room 3");
-		Room r4 = new Room("Room 4", "This is the description for room 4");
-		
-		//System.out.println("Room information:");
-		//System.out.println("Room1: " + r1);
-		//System.out.println("Room2: " + r2);
-		//System.out.println("Room3: " + r3);
-		//System.out.println("Room4: " + r4);
-	
-		//Room portals.
-		//Room 2 is north of room 1.
-		Portal r2port = new Portal(r2, "north");
-		
-		//Room 3 is east of room 2.
-		Portal r3port = new Portal(r3, "east");
-		
-		//Room 4 is south of room 3.
-		Portal r4port = new Portal(r4, "south");
-		
-		//Room 1 is west of room 4.
-		Portal r1port = new Portal(r1, "west");
-		
-//		System.out.println("Portal information: ");
-//		System.out.println(r2port);
-//		System.out.println(r3port);
-//		System.out.println(r4port);
-//		System.out.println(r1port);
-	
-		//Link the rooms.
-		//System.out.println("Link room 1 to room 2: " + LocationManager.addToGrid(r1, r2port, true));
-		//System.out.println("Link room 2 to room 3: " + LocationManager.addToGrid(r2, r3port, true));
-		//System.out.println("Link room 3 to room 4: " + LocationManager.addToGrid(r3, r4port, true));
-		//System.out.println("Link room 4 to room 1: " + LocationManager.addToGrid(r4, r1port, true));
-		
-		Effect hpe = new Effect(Effect.Duration.PERMANENT, 0);
-		hpe.addEffectCreator("hpchange", new HPChange());
-		hpe.addParameter("hpchange", "amount", 40);
-
-		Armor armor = new Armor(40, hpe, Body.HEAD, "[B][CYAN]Head Helm [RED]X90[R][WHITE]", "A", "lies here, gleaming");
-		r1.addEntity(armor);
-		NPC mob = new NPC();
-		String n = "[B][YELLOW]A Human Commoner[R][WHITE]";
-		String r = "[B][YELLOW]Human[R][WHITE]";
-		mob.setName(n);
-		mob.setLongDescription("A human commoner. Doesn't look very dangerous.");
-		Race ra2 = new Race();
-		ra2.setName(r);
-		mob.setRace(ra2);
-		//worldTicker.addTickerListener(mob, "0001");
-		
-		//mob.setLocation(r1);
-		//r1.addMobile(mob);
-		
 		System.out.println("Done.");
 
 		//Add a listener and start the ticker.
@@ -151,13 +89,17 @@ public class World implements TickerListener {
 	//Mainly used for the say command.
 	public static synchronized void sendAudioToLocation(Mobile mobile, String text, String deafText) {
 		Room room = (Room)mobile.getLocation();
-		Vector mobiles = room.getMobiles();
+		List<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isDeaf) player.getCommunicator().printWithPreline(text);
-				else if ((deafText != null) || (!deafText.equals(""))) player.getCommunicator().printWithPreline(deafText);
+				if (!player.getBaseModel().isDeaf()) { 
+					player.getCommunicator().printWithPreline(text);
+				}
+				else if (deafText != null && !deafText.equals("")) { 
+					player.getCommunicator().printWithPreline(deafText);
+				}
 			}
 		}
 	}
@@ -168,14 +110,17 @@ public class World implements TickerListener {
 
 	//This version sends the data to non-blind characters in the room.
 	public static synchronized void sendVisualToLocation(Room room, String text, String blindText) {
-		Vector<Mobile> mobiles = room.getMobiles();
+		List<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if (mob.isPlayer()) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().printWithPreline(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
-
+				if (!player.getBaseModel().isBlind()) {
+					player.getCommunicator().printWithPreline(text);
+				}
+				else if ((blindText != null) && (!blindText.equals(""))) {
+					player.getCommunicator().printWithPreline(blindText);
+				}
 			}
 		}
 	}
@@ -184,13 +129,17 @@ public class World implements TickerListener {
 	//Mainly used for the say command.
 	public static synchronized void sendVisualToLocation(Mobile mobile, String text, String blindText) {
 		Room room = (Room)mobile.getLocation();
-		Vector mobiles = room.getMobiles();
+		List<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
 				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.isBlind) player.getCommunicator().printWithPreline(text);
-				else if ((blindText != null) || (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
+				if (!player.getBaseModel().isBlind()) {
+					player.getCommunicator().printWithPreline(text);
+				}
+				else if ((blindText != null) && (!blindText.equals(""))) {
+					player.getCommunicator().printWithPreline(blindText);
+				}
 			}
 		}
 	}
@@ -204,26 +153,27 @@ public class World implements TickerListener {
 	//moving silently broadcast no matter what.
 	public static synchronized void roomArriveLeaveToLocation(Mobile mobile, String text, String blindText) {
 		Room room = (Room)mobile.getLocation();
-		Vector<Mobile> mobiles = room.getMobiles();
+		List<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = mobiles.get(c);
 			
 			if ((!mob.equals(mobile)) && (mob.isPlayer())) {
 				PlayerCharacter player = (PlayerCharacter)mob;
 				
-				//we have now established that this mob is a player and should receive this message.
-				//but is our excluded mobile ("mobile") moving silently? if so, we have other
-				//conditions to worry about.
+				//TODO check move silently here
+				/*
 				if (mobile.moveSilentlyCheck > 0) { //yes, he's moving silently
 					if ((!player.isDeaf) && (player.listenCheck >= mobile.moveSilentlyCheck)) { //we beat the MS check
 						if (!player.isBlind) player.getCommunicator().printWithPreline(text);
 						else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
 					}
 				}
-				
-				else { //mobile is moving regularly.
-					if (!player.isBlind) player.getCommunicator().printWithPreline(text);
-					else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
+				*/
+				if (!player.getBaseModel().isBlind()) { 
+					player.getCommunicator().printWithPreline(text);
+				}
+				else if ((blindText != null) && (!blindText.equals(""))) {
+					player.getCommunicator().printWithPreline(blindText);
 				}
 			} //end player if condition
 		} //end for loop
@@ -234,7 +184,7 @@ public class World implements TickerListener {
 	//Useful for the voice of the gods!
 	public static synchronized void notifyPlayersAtLocation(Mobile mobile, String text) {
 		Room room = (Room)mobile.getLocation();
-		Vector mobiles = room.getMobiles();
+		List<Mobile> mobiles = room.getMobiles();
 		for (int c = 0; c < mobiles.size(); c++) {
 			Mobile mob = (Mobile)mobiles.get(c);
 			if ((mob.isPlayer()) && (!mob.equals(mobile))) {

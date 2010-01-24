@@ -18,19 +18,19 @@ public class Say implements Command {
 		Mobile mob = (Mobile) sender;
 		
 		// Someone silenced can't talk...
-		if (mob.isSilent)
+		if (mob.getBaseModel().isSilent())
 			return res;
 
 		String message = "";
 		String textBackToPlayer;
 
 		// check for speaker's deafness.
-		if (mob.isDeaf)
+		if (mob.getBaseModel().isDeaf())
 			textBackToPlayer = "You say something, but you're not entirely sure what since you cannot hear!";
 		else
 			textBackToPlayer = "You say, \"";
 
-		String textToOtherPlayers = mob.getName() + " says, \"";
+		String textToOtherPlayers = mob.getBaseModel().getName() + " says, \"";
 
 		// Get the "parameters" as words.
 		int length = params.length();
@@ -43,7 +43,7 @@ public class Say implements Command {
 		}
 
 		// check for speaker's deafness deafness again.
-		if (!mob.isDeaf) {
+		if (!mob.getBaseModel().isDeaf()) {
 			textBackToPlayer += message;
 			textBackToPlayer += "\"";
 		}
@@ -53,7 +53,7 @@ public class Say implements Command {
 
 		res.setText(textBackToPlayer);
 
-		World.sendAudioToLocation(mob, textToOtherPlayers, mob.getName()
+		World.sendAudioToLocation(mob, textToOtherPlayers, mob.getBaseModel().getName()
 				+ " says something, but you cannot hear it!\n");
 
 		res.setSuccessful(true);

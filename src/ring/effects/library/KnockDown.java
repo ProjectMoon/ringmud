@@ -17,6 +17,7 @@ package ring.effects.library;
 import ring.effects.*;
 import ring.mobiles.*;
 
+@SuppressWarnings("serial")
 public class KnockDown extends EffectCreator {
   //This EffectCreator defines an effect that knocks its target it down. This sets it
   //into a prone status. The target must then stand back up on its own.
@@ -27,7 +28,7 @@ public class KnockDown extends EffectCreator {
     if (!(target instanceof Mobile)) return;
    else {
      Mobile mob = (Mobile) target;
-     mob.isProne = true;
+     mob.getBaseModel().setProne(true);
    }
   }
 

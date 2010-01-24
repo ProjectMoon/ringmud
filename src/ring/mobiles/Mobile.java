@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles;
+package ring.mobiles;
 
 import java.util.Random;
 
@@ -15,18 +15,19 @@ import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.effects.Effect;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.items.Armor;
-import ring.nrapi.items.Item;
-import ring.nrapi.magic.SpellCaster;
-import ring.nrapi.mobiles.backbone.Equipment;
-import ring.nrapi.movement.LocationManager;
-import ring.nrapi.movement.Movable;
-import ring.nrapi.movement.MovementAssertionException;
-import ring.nrapi.movement.PortalNotFoundException;
-import ring.nrapi.movement.Room;
+import ring.items.Armor;
+import ring.items.Item;
+import ring.magic.SpellCaster;
+import ring.mobiles.backbone.Equipment;
+import ring.movement.LocationManager;
+import ring.movement.Movable;
+import ring.movement.MovementAssertionException;
+import ring.movement.PortalNotFoundException;
+import ring.movement.Room;
 import ring.persistence.RingConstants;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
+import ring.world.WorldObject;
 
 /**
  * The main business object for Mobiles. Aggregates all the mobile data models and
@@ -43,7 +44,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public class Mobile extends AbstractBusinessObject implements CommandSender, TickerListener, Movable, SpellCaster {
+public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -51,9 +52,6 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	private MobileDynamicModel dynamicModel = new MobileDynamicModel();
 	private MobileCombatModel combatModel = new MobileCombatModel();
 
-	//Location: Where the mobile is.
-	private Room currLocation;
-	
 	//If the mob is locked: if so, they cannot take actions.
 	private boolean isLocked;
 	
@@ -440,7 +438,7 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	public final boolean move(String direction) {
 		try {
 			return LocationManager.move(this, LocationManager.getPortal(
-					currLocation, direction));
+					getLocation(), direction));
 		} catch (MovementAssertionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -455,12 +453,12 @@ public class Mobile extends AbstractBusinessObject implements CommandSender, Tic
 	@Override
 	@XmlTransient
 	public Room getLocation() {
-		return currLocation;
+		return getDynamicModel().getCurrLocation();
 	}
 
 	@Override
 	public void setLocation(Room loc) {
-		currLocation = loc;
+		getDynamicModel().setCurrLocation(loc);
 	}
 
 	@Override

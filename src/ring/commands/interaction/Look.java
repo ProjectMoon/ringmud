@@ -6,7 +6,6 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.mobiles.Mobile;
-import ring.movement.Location;
 import ring.movement.Room;
 import ring.world.World;
 
@@ -25,30 +24,26 @@ public class Look implements Command {
 		// First check to see if we are just looking at the room. ie: sending
 		// just the "look" command.
 		if (t == null) {
-			Location loc = mob.getLocation();
+			Room room = mob.getLocation();
 
-			if (loc instanceof Room) {
-				Room room = (Room) loc;
-
-				if (mob.isBlind) {
-					res.setFailText("You see nothing, for you are blind!");
-					World.sendVisualToLocation(mob, mob.getName()
-							+ " stumbles about blindly.", null);
-					return res;
-				}
-
-				else {
-					String lookText = room.getTitle() + "\n"
-							+ room.getDescription() + "\n"
-							+ room.getExitsString(mob.hiddenExitSearchCheck)
-							+ "\n" + room.getMobileList(mob, mob.spotCheck)
-							+ room.getEntityList();
-
-					res.setText(lookText);
-					res.setSuccessful(true);
-				}
+			if (mob.getBaseModel().isBlind()) {
+				res.setFailText("You see nothing, for you are blind!");
+				World.sendVisualToLocation(mob, mob.getBaseModel().getName()
+						+ " stumbles about blindly.", null);
+				return res;
 			}
-		}
+
+			else {
+				String lookText = room.getModel().getTitle() + "\n"
+						+ room.getModel().getDescription() + "\n"
+						+ room.getExitsString(mob.getDynamicModel().getSearchCheck())
+						+ "\n" + room.getMobileList(mob, mob.getDynamicModel().getSpotCheck())
+						+ room.getEntityList();
+
+				res.setText(lookText);
+				res.setSuccessful(true);
+			}
+			}
 
 		// Now check to see if we are looking at something specific, if true,
 		// return the look description
@@ -58,7 +53,7 @@ public class Look implements Command {
 				return res;
 
 			// is our looker blind?
-			if (mob.isBlind) {
+			if (mob.getBaseModel().isBlind()) {
 				res.setFailText("You have nothing to look at, for you are blind!");
 				return res;
 			}

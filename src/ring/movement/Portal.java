@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -6,7 +6,7 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.effects.Affectable;
-import ring.entities.Item;
+import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.world.World;
@@ -36,17 +36,17 @@ public class Drop implements Command {
 		if (mob.removeItemFromInventory(item)) {
 			// Put it back in the room the mobile is in.
 			Room room = (Room)mob.getLocation();
-			room.addEntity(item);
+			room.addItem(item);
 			System.out.println("added.");
 	
 			// Set the text.
 			res.setText("[R][WHITE]You drop "
-					+ item.getIndefiniteDescriptor().toLowerCase() + " "
+					+ item.getIdlePrefix().toLowerCase() + " "
 					+ item.getName() + "[R][WHITE].");
 	
 			// Notify other people in the world.
-			World.sendVisualToLocation(mob, mob.getName() + " drops "
-					+ item.getIndefiniteDescriptor().toLowerCase() + " "
+			World.sendVisualToLocation(mob, mob.getBaseModel().getName() + " drops "
+					+ item.getIdlePrefix().toLowerCase() + " "
 					+ item.getName() + "[R][WHITE].",
 					"\nYou hear the thud of something being dropped.\n");
 	

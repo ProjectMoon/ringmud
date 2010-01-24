@@ -25,7 +25,7 @@ public class Emote implements Command {
 
 		// so they did.
 		Mobile mob = (Mobile) sender;
-		emoteText = mob.getName() + " " + emoteText;
+		emoteText = mob.getBaseModel().getName() + " " + emoteText;
 
 		// broadcast to the world and player.
 		World.notifyPlayersAtLocation(mob, emoteText);

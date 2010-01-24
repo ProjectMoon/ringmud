@@ -10,12 +10,13 @@ import ring.movement.Portal;
 import ring.movement.PortalNotFoundException;
 import ring.movement.Room;
 import ring.skills.Skill;
-import ring.skills.SkillList;
 
 //TODO refactor search
 public class Search implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Search to be implemented in python");
+		/*
 		params.init(CommandType.TEXT);
 		String dir = (String) params.getParameter(0); // the direction to search
 														// in
@@ -129,6 +130,7 @@ public class Search implements Command {
 		}
 
 		return res;
+		*/
 	}
 
 	public String getCommandName() {

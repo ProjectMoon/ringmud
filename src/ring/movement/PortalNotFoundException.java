@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 public class PortalNotFoundException extends Exception {
 	private static final long serialVersionUID = 1L;

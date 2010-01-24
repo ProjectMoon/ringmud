@@ -1,4 +1,4 @@
-package ring.nrapi.items;
+package ring.items;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,10 +7,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.mobiles.Body;
+import ring.mobiles.Body;
 import ring.nrapi.business.AbstractBusinessObject;
-import ring.nrapi.mobiles.BodyPart;
+import ring.mobiles.BodyPart;
 import ring.persistence.RingConstants;
+import ring.world.WorldObject;
 import ring.effects.Effect;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -25,7 +26,7 @@ propOrder= {
 	"idlePrefix",
 	"idleSuffix"
 })
-public class Item extends AbstractBusinessObject {
+public class Item extends WorldObject {
 	private BodyPart partWornOn;
 	private String name;
 	private String description;

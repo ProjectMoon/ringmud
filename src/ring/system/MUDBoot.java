@@ -7,8 +7,6 @@ import ring.commands.Command;
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
-import ring.resources.loaders.LoaderFactory;
-import ring.resources.loaders.RoomLoader;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the
@@ -25,11 +23,8 @@ public class MUDBoot {
     public static void boot() {
         System.out.println("Loading RingMUD.");
         
-        //Init resource loaders
-        LoaderFactory.initLoaders();
-        
-        //Load all beans.
-        LoaderFactory.loadAllBeans();
+        //Restore world state from DB
+        System.err.println("ERROR: Restoring of world state not implemented yet.");
         
         //Load commands
         System.out.println("Loading commands...");
@@ -78,7 +73,6 @@ public class MUDBoot {
 	}
     
     private static void buildUniverse() {
-    	RoomLoader roomLoader = (RoomLoader) LoaderFactory.getRoomLoader();
-    	roomLoader.constructWorld();
+    	throw new UnsupportedOperationException("Need to reimplement building rooms");
     }
 }

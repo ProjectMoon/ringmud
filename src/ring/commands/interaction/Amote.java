@@ -25,7 +25,7 @@ public class Amote implements Command {
 
 		// so they did.
 		Mobile mob = (Mobile) sender;
-		emoteText = mob.getName() + "'s " + emoteText;
+		emoteText = mob.getBaseModel().getName() + "'s " + emoteText;
 
 		// broadcast to the world and player.
 		World.notifyPlayersAtLocation(mob, emoteText);

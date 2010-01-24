@@ -17,7 +17,7 @@ public class Setdesc implements Command {
 		if (text == null)
 			return res;
 		Mobile mob = (Mobile) sender;
-		mob.setLongDescription(text);
+		mob.getBaseModel().setDescription(text);
 		res.setText("[R][WHITE]Description changed to: " + text);
 		res.setSuccessful(true);
 		return res;

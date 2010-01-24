@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles;
+package ring.mobiles;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,10 +7,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.movement.Location;
-import ring.nrapi.mobiles.backbone.Bank;
-import ring.nrapi.mobiles.backbone.Equipment;
-import ring.nrapi.mobiles.backbone.Inventory;
+import ring.mobiles.backbone.Bank;
+import ring.mobiles.backbone.Equipment;
+import ring.mobiles.backbone.Inventory;
+import ring.movement.Room;
 import ring.persistence.RingConstants;
 
 /**
@@ -28,8 +28,8 @@ propOrder= {
 	"maxMV", "movementMultiplier", "speed"
 })
 public class MobileDynamicModel {
-	//The current location of the mobile.
-	private Location currLocation;
+	//Where the mobile is.
+	private Room currLocation;
 	
 	//Money on the mobile, and money in its bank account.
 	private Bank money = new Bank();
@@ -54,6 +54,24 @@ public class MobileDynamicModel {
 	//current search check for viewing hidden exits. reset every room change.	
 	private int hiddenExitSearchCheck = 0;
 	
+	public void setSearchCheck(int check) {
+		hiddenExitSearchCheck = check;
+	}
+	
+	@XmlTransient
+	public int getSearchCheck() {
+		return hiddenExitSearchCheck;
+	}
+	
+	public void setSpotCheck(int check) {
+		spotCheck = check;
+	}
+	
+	@XmlTransient
+	public int getSpotCheck() {
+		return spotCheck;
+	}
+	
 	// resetChecks method.
 	// This method resets spot, listen, and search checks. Used for when a
 	// mobile enters a new room.
@@ -63,12 +81,12 @@ public class MobileDynamicModel {
 		hiddenExitSearchCheck = 0;
 	}
 	
-	public void setCurrLocation(Location currLocation) {
-		this.currLocation = currLocation;
+	public void setCurrLocation(Room room) {
+		currLocation = room;
 	}
 	
 	@XmlTransient
-	public Location getCurrLocation() {
+	public Room getCurrLocation() {
 		return currLocation;
 	}
 	

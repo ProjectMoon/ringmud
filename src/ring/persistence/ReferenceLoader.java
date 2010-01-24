@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.xml.bind.Unmarshaller;
 
-import ring.nrapi.entities.Entity;
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.mobiles.backbone.Equipment;
-import ring.nrapi.mobiles.backbone.Inventory;
-import ring.nrapi.mobiles.backbone.Equipment.EquipmentTuple;
-import ring.nrapi.movement.Room;
+import ring.entities.Entity;
+import ring.items.Item;
+import ring.mobiles.Mobile;
+import ring.mobiles.backbone.Equipment;
+import ring.mobiles.backbone.Inventory;
+import ring.mobiles.backbone.Equipment.EquipmentTuple;
+import ring.movement.Room;
 
 //TODO add items in ReferenceLoader
 /**

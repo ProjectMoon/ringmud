@@ -5,7 +5,7 @@ import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
-import ring.entities.Item;
+import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.world.World;
@@ -29,23 +29,23 @@ public class Get implements Command {
 		WorldObject thing = (WorldObject) target;
 
 		// Check if thing is gettable.
-		if (!thing.isItem())
+		if (!(thing instanceof Item))
 			return res;
 
 		// If yes, remove thing from room and add to getter's inventory.
 		Item i = (Item) thing;
-		getter.addItemToInventory((Item) thing);
+		getter.addItemToInventory(i);
 
 		// Remove the item from the room.
 		Room room = (Room)getter.getLocation();
-		room.removeEntity((Item) thing);
+		room.removeItem(i);
 
-		res.setText("You get " + i.getIndefiniteDescriptor().toLowerCase()
+		res.setText("You get " + i.getIdlePrefix().toLowerCase()
 				+ " " + i.getName() + "[R][WHITE].");
 
 		// Notify other people in room
-		World.sendVisualToLocation(getter, getter.getName() + " picks up "
-				+ i.getIndefiniteDescriptor().toLowerCase() + " " + i.getName()
+		World.sendVisualToLocation(getter, getter.getBaseModel().getName() + " picks up "
+				+ i.getIdlePrefix().toLowerCase() + " " + i.getName()
 				+ "[R][WHITE].", null);
 
 		res.setSuccessful(true);

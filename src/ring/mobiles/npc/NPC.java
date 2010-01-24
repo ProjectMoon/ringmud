@@ -1,8 +1,8 @@
-package ring.nrapi.mobiles.npc;
+package ring.mobiles.npc;
 
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.nrapi.mobiles.Mobile;
+import ring.mobiles.Mobile;
 import ring.world.*;
 
 import java.io.PrintStream;

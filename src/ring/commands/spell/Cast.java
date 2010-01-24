@@ -10,14 +10,14 @@ import ring.commands.CommandParameters.CommandType;
 import ring.effects.Affectable;
 import ring.effects.Effect;
 import ring.mobiles.Mobile;
-import ring.spells.Spell;
-import ring.spells.SpellList;
 import ring.world.WorldObject;
 
 public class Cast implements Command {
 	private static final Logger log = Logger.getLogger(Cast.class.getName());
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Due to NRAPI, cast needs to be reimplemented");
+		/*
 		CommandResult res = new CommandResult();
 		params.init(CommandType.SPELL);
 
@@ -128,7 +128,7 @@ public class Cast implements Command {
 		// Finish this method.
 
 		return res;
-
+		*/
 	}
 
 	public String getCommandName() {

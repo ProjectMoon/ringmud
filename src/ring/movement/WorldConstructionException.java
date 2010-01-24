@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 /**
  * A class that denoates something has gone wrong with world construction. Usually

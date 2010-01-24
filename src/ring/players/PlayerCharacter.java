@@ -1,19 +1,14 @@
-package ring.nrapi.players;
-import java.util.logging.Logger;
+package ring.players;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.movement.LocationManager;
-import ring.nrapi.movement.Room;
-import ring.server.CommunicationException;
+import ring.mobiles.Mobile;
 import ring.server.Communicator;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
-import ring.world.World;
 
 @XmlRootElement(name = "playerCharacter")
 /**
@@ -23,18 +18,16 @@ import ring.world.World;
  * @author projectmoon
  * 
  */
-public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
-		TickerListener {
+public class PlayerCharacter extends Mobile implements CommandSender, TickerListener {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(PlayerCharacter.class
-			.getName());
-
-	// Player-Server connection.
-	private transient Communicator communicator;
-
+	
+	//Player-server connection reference
+	private Communicator communicator;
+	
 	// Other variables
 	private transient String lastCommand = null;
 	private transient boolean quitting;
+	private String password;
 
 	public PlayerCharacter() {
 		super();
@@ -67,72 +60,6 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		super.processTick(e);
 	}
 
-	/**
-	 * Starts up the player and then goes into a loop waiting for commands.
-	 */
-	public void run() {
-		// Start up character.
-		log.info("Creating player in the world: " + getBaseModel().getName());
-		World.getWorld().getTicker().addTickerListener(this, "PULSE");
-		// Set location.
-		Room room = (Room)LocationManager.getOrigin();
-		room.addMobile(this);
-		setLocation(room);
-
-		// The player has to poof into existence!
-		//TODO pending NRAPI integration
-		/*
-		World.sendVisualToLocation(this,
-						"There is a loud bang and a puff of smoke, and "
-								+ getBaseModel().getName()
-								+ " appears in the world once more!",
-						"You hear a loud bang and smell acrid smoke. Someone has appeared in the world once more!");
-		*/
-		
-		gameLoop();
-
-		// Close the player's connection once their loop is done.
-		// Handle either graceful quit or forced quit/disconnect.
-		if (quitting && !communicator.isCommunicationError()) {
-			// Save and REMOVE player from world.
-			// Send quit message
-			communicator.print("You have successfully quit. Good-bye.");
-			communicator.close();
-			log.info(this + " quit gracefully");
-			//communicator.getDisconnectCallback().execute(CallbackEvent.GRACEFUL_QUIT);
-			return;
-		}
-		else if (communicator.isCommunicationError()) {
-			//TODO wait for a certain amount of time for the person to
-			//come back. If so, restart their game loop.
-			// Save player.
-			log.info(this + " experienced disconnect/forced quit.");
-			communicator.close();
-			//communicator.getDisconnectCallback().execute(CallbackEvent.UNEXPECTED_QUIT);
-			return;
-		}
-	}
-	
-	/**
-	 * The main game loop for a player. Begins with a look command, and
-	 * then waits for further commands.
-	 */
-	private void gameLoop() {
-		doCommand("look");
-		// Wait for commands.
-		while (!quitting && !communicator.isCommunicationError()) {
-			Thread.yield();
-			communicator.setSuffix(getPrompt()); // Necessary in case of updates
-													// to prompt info.
-			try {
-				doCommand(communicator.receiveData());
-			} 
-			catch (CommunicationException e) {
-				log.info("There was a socket error for " + this);
-				break;
-			}
-		}
-	}
 
 	/**
 	 * Returns the prompt for this player.
@@ -186,13 +113,6 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		return res;
 	}
 
-	/**
-	 * Sends some data to the player.
-	 */
-	public void sendData(String data) {
-		communicator.print(data);
-	}
-
 	public String toString() {
 		return getBaseModel().getName();
 	}
@@ -234,5 +154,13 @@ public class PlayerCharacter extends Mobile implements Runnable, CommandSender,
 		sb.append(getBaseModel().getType().getName()).append(' ');
 
 		return sb.toString().toLowerCase();
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 }

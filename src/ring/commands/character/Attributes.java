@@ -14,22 +14,22 @@ public class Attributes implements Command {
 		Mobile mob = (Mobile) sender;
 
 		String attributes = "[R][WHITE]Character Attributes for [B][GREEN]"
-				+ mob.getName()
+				+ mob.getBaseModel().getName()
 				+ "[R][WHITE]:\nStrength: "
-				+ mob.getStat(Mobile.STRENGTH)
+				+ mob.getBaseModel().getStrength()
 				+ " Intelligence: "
-				+ mob.getStat(Mobile.INTELLIGENCE)
+				+ mob.getBaseModel().getIntelligence()
 				+ " Wisdom: "
-				+ mob.getStat(Mobile.WISDOM)
+				+ mob.getBaseModel().getWisdom()
 				+ " Dexterity: "
-				+ mob.getStat(Mobile.DEXTERITY)
+				+ mob.getBaseModel().getDexterity()
 				+ " Charisma: "
-				+ mob.getStat(Mobile.CHARISMA)
+				+ mob.getBaseModel().getCharisma()
 				+ " Constitution: "
-				+ mob.getStat(Mobile.CONSTITUTION)
+				+ mob.getBaseModel().getConstitution()
 				+ "\n\nSaving Throws: Fort [B][YELLOW]+0[R][WHITE] Ref [B][YELLOW]+0[R][WHITE] Will [[B][YELLOW]+0]"
 				+ "\n[R][WHITE]Spell Resistance: [MAGENTA]0[WHITE] Armor Class: [B][WHITE]"
-				+ mob.getAC() + "[R][WHITE]";
+				+ mob.getCombatModel().getCurrentAC() + "[R][WHITE]";
 
 		res.setText(attributes);
 		res.setSuccessful(true);

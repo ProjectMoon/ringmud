@@ -12,7 +12,7 @@ public abstract class AbstractAdminCommand {
 		}
 		else {
 			PlayerCharacter player = (PlayerCharacter)sender;
-			return (player.getType() >= Mobile.GOD);
+			return (player.getBaseModel().getType().isGod());
 		}
 	}
 }

@@ -1,10 +1,10 @@
 package ring.server;
 
-import ring.mobiles.Mobile;
-import ring.players.PlayerCharacter;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import ring.mobiles.MobileBaseModel;
+import ring.players.PlayerCharacter;
 
 /**
  * Class that holds logged-in player information.
@@ -34,7 +34,7 @@ public class PlayerList {
 		ArrayList<PlayerCharacter> mortals = new ArrayList<PlayerCharacter>();
 		
 		for (PlayerCharacter player : getPlayers()) {
-			if (player.getType() == Mobile.MORTAL) {
+			if (player.getBaseModel().getType() == MobileBaseModel.Type.MORTAL) {
 				mortals.add(player);
 			}
 		}
@@ -45,7 +45,7 @@ public class PlayerList {
 	public List<PlayerCharacter> getAdmins() {
 		ArrayList<PlayerCharacter> admins = new ArrayList<PlayerCharacter>();
 		for (PlayerCharacter player : getPlayers()) {
-			if (player.getType() >= Mobile.LESSER_GOD) {
+			if (player.getBaseModel().getType().isGod()) {
 				admins.add(player);
 			}
 		}

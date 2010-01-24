@@ -6,11 +6,12 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.skills.Skill;
-import ring.skills.SkillList;
 
 public class Hide implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Hide to be implemented in Python");
+		/*
 		CommandResult res = new CommandResult();
 		res.setFailText("[R][WHITE]You don't seem to be one for hiding...");
 
@@ -81,6 +82,7 @@ public class Hide implements Command {
 		res.setSuccessful(true);
 
 		return res;
+		*/
 	}
 
 	public String getCommandName() {

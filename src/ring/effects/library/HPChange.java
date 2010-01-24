@@ -17,8 +17,8 @@ package ring.effects.library;
 import ring.effects.*;
 import ring.mobiles.*;
 
+@SuppressWarnings("serial")
 public class HPChange extends EffectCreator {
-	private static final long serialVersionUID = 1L;
 	private int hpChange;
 
 	public HPChange() {
@@ -31,7 +31,7 @@ public class HPChange extends EffectCreator {
 		hpChange = super.params.getInt("amount");
 		System.out.println("changing HP by " + hpChange);
 		Mobile mob = (Mobile) target;
-		mob.changeBonusHP(hpChange);
+		mob.getCombatModel().changeBonusHP(hpChange);
 	}
 
 	public void effectDeath(Affectable target) {
@@ -39,6 +39,6 @@ public class HPChange extends EffectCreator {
 			return; // only mobiles are valid targets
 		System.out.println("removing HP change of " + hpChange);
 		Mobile mob = (Mobile) target;
-		mob.changeBonusHP(hpChange * -1);
+		mob.getCombatModel().changeBonusHP(hpChange * -1);
 	}
 }

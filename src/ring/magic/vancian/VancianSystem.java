@@ -1,14 +1,14 @@
-package ring.nrapi.magic.vancian;
+package ring.magic.vancian;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ring.nrapi.magic.AbstractMagicSystem;
-import ring.nrapi.magic.Spell;
-import ring.nrapi.magic.SpellCaster;
-import ring.nrapi.mobiles.Mobile;
+import ring.magic.AbstractMagicSystem;
+import ring.magic.Spell;
+import ring.magic.SpellCaster;
+import ring.mobiles.Mobile;
 
 public class VancianSystem extends AbstractMagicSystem<VancianMetadata> {
 	private List<Spell> spellList = new ArrayList<Spell>();

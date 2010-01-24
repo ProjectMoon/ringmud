@@ -6,12 +6,12 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
-import ring.spells.Spell;
-import ring.spells.SpellList;
 
 public class Prepare implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Due to NRAPI, prepare needs to be reimplemented");
+		/*
 		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
 		Mobile mob = (Mobile) sender;
@@ -53,6 +53,7 @@ public class Prepare implements Command {
 		res.setSuccessful(true);
 
 		return res;
+		*/
 	}
 
 	public String getCommandName() {

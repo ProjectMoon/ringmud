@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles;
+package ring.mobiles;
 
 import java.io.Serializable;
 

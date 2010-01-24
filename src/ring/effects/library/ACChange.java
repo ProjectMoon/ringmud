@@ -17,8 +17,8 @@ package ring.effects.library;
 import ring.effects.*;
 import ring.mobiles.*;
 
+@SuppressWarnings("serial")
 public class ACChange extends EffectCreator {
-	private static final long serialVersionUID = 1L;
 	private int acChange;
 
 	public ACChange() {
@@ -28,11 +28,11 @@ public class ACChange extends EffectCreator {
 	public void effectLife(Affectable target) {
 		acChange = super.params.getInt("amount");
 		Mobile mob = (Mobile) target;
-		mob.changeAC(acChange);
+		mob.getCombatModel().changeCurrentAC(acChange);
 	}
 
 	public void effectDeath(Affectable target) {
 		Mobile mob = (Mobile) target;
-		mob.changeAC(acChange * -1);
+		mob.getCombatModel().changeCurrentAC(acChange * -1);
 	}
 }

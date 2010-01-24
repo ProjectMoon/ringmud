@@ -14,7 +14,7 @@ public class SearchCheck extends AbstractAdminCommand implements Command {
 		res.setFailText("Yes, you do have one of those...");
 		if (super.isAccessAllowed(sender)) {
 			Mobile mob = (Mobile) sender;
-			res.setText("Your current search check: " + mob.hiddenExitSearchCheck);
+			res.setText("Your current search check: " + mob.getDynamicModel().getSearchCheck());
 			res.setSuccessful(true);
 		}
 		return res;

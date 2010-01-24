@@ -1,4 +1,4 @@
-package ring.nrapi.movement;
+package ring.movement;
 
 /**
  * The Movable interface defines something that moves in the game world.

@@ -1,4 +1,4 @@
-package ring.nrapi.players;
+package ring.players;
 
 import java.util.ArrayList;
 import java.util.Date;

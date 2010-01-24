@@ -3,8 +3,8 @@ package ring.nrapi.business;
 import org.xmldb.api.base.XMLDBException;
 
 import ring.main.RingModule;
-import ring.nrapi.players.Player;
-import ring.nrapi.players.PlayerCharacter;
+import ring.players.Player;
+import ring.players.PlayerCharacter;
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.persistence.ExistDB;

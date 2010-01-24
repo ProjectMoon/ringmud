@@ -1,4 +1,4 @@
-package ring.nrapi.magic;
+package ring.magic;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

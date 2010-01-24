@@ -1,10 +1,10 @@
-package ring.nrapi.mobiles;
+package ring.mobiles;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-import ring.nrapi.mobiles.mobclass.MobileClass;
+import ring.mobiles.mobclass.MobileClass;
 
 public class Race implements Serializable {
 	public static final long serialVersionUID = 1;

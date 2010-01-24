@@ -1,4 +1,4 @@
-package ring.nrapi.mobiles;
+package ring.mobiles;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

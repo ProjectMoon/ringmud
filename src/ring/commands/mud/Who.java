@@ -31,7 +31,7 @@ public class Who implements Command {
 		for (String whoParam : whoParams) {
 			for (PlayerCharacter player : players) {
 				if (player.getWhoTag().contains(whoParam)) {
-					whoNames.add(player.getName());
+					whoNames.add(player.getBaseModel().getName());
 				}
 			}
 		}

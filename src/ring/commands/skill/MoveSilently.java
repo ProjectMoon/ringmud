@@ -6,11 +6,12 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.skills.Skill;
-import ring.skills.SkillList;
 
 public class MoveSilently implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		throw new UnsupportedOperationException("Move silently to be implemented in python");
+		/*
 		CommandResult res = new CommandResult();
 		res
 				.setFailText("[R][WHITE]You don't seem to be one for sneaking around silently...");
@@ -81,6 +82,7 @@ public class MoveSilently implements Command {
 		res.setSuccessful(true);
 
 		return res;
+		*/
 	}
 
 	public String getCommandName() {

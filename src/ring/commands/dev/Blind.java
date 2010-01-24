@@ -13,12 +13,10 @@ public class Blind extends AbstractAdminCommand implements Command {
 		CommandResult res = new CommandResult();
 		if (super.isAccessAllowed(sender)) {
 			Mobile mob = (Mobile) sender;
-			if (mob.isBlind)
-				mob.isBlind = false;
-			else
-				mob.isBlind = true;
+			mob.getBaseModel().setBlind(!mob.getBaseModel().isBlind());
+			
 			res.setFailText("Couldn't make you blind (or not blind).");
-			res.setText("Your blindess: " + mob.isBlind);
+			res.setText("Your blindess: " + mob.getBaseModel().isBlind());
 			res.setSuccessful(true);
 		}
 		return res;

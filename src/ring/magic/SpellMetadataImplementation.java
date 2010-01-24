@@ -1,4 +1,4 @@
-package ring.nrapi.magic;
+package ring.magic;
 
 /**
  * Interface that allows implementation of a specific, type-safe metadata

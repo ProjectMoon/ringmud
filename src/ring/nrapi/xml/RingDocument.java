@@ -9,10 +9,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.entities.Entity;
-import ring.nrapi.items.Item;
-import ring.nrapi.mobiles.Mobile;
-import ring.nrapi.movement.Room;
+import ring.entities.Entity;
+import ring.items.Item;
+import ring.mobiles.Mobile;
+import ring.movement.Room;
 import ring.persistence.RingConstants;
 
 /**
