@@ -6,6 +6,7 @@ import net.wimpi.telnetd.shell.Shell;
 import ring.commands.CommandResult;
 import ring.movement.LocationManager;
 import ring.movement.Room;
+import ring.players.Player;
 import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
@@ -18,6 +19,7 @@ public class PlayerShell implements Shell {
 	private TelnetStreamCommunicator comms;
 	
 	//Shell variables
+	private Player user;
 	private PlayerCharacter player;
 	private String lastCommand;
 	
@@ -47,7 +49,10 @@ public class PlayerShell implements Shell {
 		//Login shells take care of setting it up.
 		assert(mudConnection != null);
 		
+		user = mudConnection.getPlayer();
 		player = mudConnection.getPlayerCharacter();
+		
+		System.out.println("Player: " + user + "[" + player + "]");
 		
 		
 		//Initialize the communicator.
@@ -56,15 +61,12 @@ public class PlayerShell implements Shell {
 	}
 	
 	private void gameLoop() {
-		/*
-		// Start up character.
-		log.info("Creating player in the world: " + getBaseModel().getName());
-		World.getWorld().getTicker().addTickerListener(this, "PULSE");
+		World.getWorld().getTicker().addTickerListener(player, "PULSE");
 		// Set location.
-		Room room = (Room)LocationManager.getOrigin();
-		room.addMobile(this);
-		setLocation(room);
-		*/
+		Room room = LocationManager.getOrigin();
+		room.addMobile(player);
+		player.setLocation(room);
+		
 
 		player.doCommand("look");
 		
@@ -84,6 +86,7 @@ public class PlayerShell implements Shell {
 			
 			if (res.hasReturnableData()) {
 				String result = res.getText();
+				System.out.println(result);
 				comms.print(result);
 			}
 

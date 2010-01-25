@@ -35,14 +35,6 @@ class PackageIndexer implements CommandIndexer {
 		
 	}
 	
-	public static void main(String[] args) {
-		PackageIndexer i = new PackageIndexer();
-		Properties pkgProps = new Properties();
-		pkgProps.setProperty("pkgIndexer.package", "ring.commands.nc");
-		i.setProperties(pkgProps);
-		i.index();
-	}
-	
 	/**
 	 * Indexes commands from the packages specified in the properties.
 	 */

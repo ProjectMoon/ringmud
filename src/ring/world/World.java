@@ -27,16 +27,6 @@ public class World implements TickerListener {
 	//Stuff of the world.
 	private static Ticker worldTicker;
 
-	//World flags.
-	private static boolean isShutDown;
-
-	//Player threads.
-	ThreadGroup playerThreads = new ThreadGroup("Player Threads");
-
-	//Other stuff.
-	private static Date serverStarted;
-	private static Type minimumPlayerType = Type.MORTAL;
-
 	//World Constants.
 	public static final int TIMEOUT_LIMIT = 15;
 		
@@ -44,9 +34,6 @@ public class World implements TickerListener {
 		//Instantiate all of the variables.
 		System.out.println("Instantiating world variables...");
 		playerList = new ArrayList<PlayerCharacter>();
-		
-		/** room init line here? **/
-		isShutDown = false;
 		System.out.println("Done.");
 
 		//Start up the world ticker.
@@ -62,6 +49,12 @@ public class World implements TickerListener {
 		world = this;
 		System.out.println("Done.");
 		System.out.println("World Initialization complete.");
+	}
+	
+	public static void initWorld() {
+		if (world == null) {
+			world = new World();
+		}
 	}
 
 	//loadZones method.
@@ -207,22 +200,9 @@ public class World implements TickerListener {
 		return world;
 	}
 
-	//getPlayerThreadGroup method.
-	//Returns the player thread group.
-	public ThreadGroup getPlayerThreadGroup() {
-		return playerThreads;
-	}
-
 	//getPlayers method.
 	//Returns the player list.
 	public List<PlayerCharacter> getPlayers() {
 		return playerList;
 	}
-
-	//isShutdown method.
-	//Determines if the world is shutdown or not.
-	public static boolean isShutdown() {
-		return isShutDown;
-	}
-
 }

@@ -89,12 +89,16 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	 * @param command
 	 */
 	public CommandResult doCommand(String command) {
+		CommandResult res;
 		// Was anything even typed?
+		// If not, return a blank anonymous result.
 		if (command.length() <= 0) {
-			return null;
+			res = new CommandResult();
+			res.setText("");
+			res.setSuccessful(true);
+			return res;
 		}
 		
-		CommandResult res;
 		// Is the player locked?
 		if (super.isLocked()) {
 			res = new CommandResult();
@@ -102,10 +106,6 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 			res.setSuccessful(false);
 			return res;
 		}
-
-		// Is the player requesting to repeat the last command?
-		if (command.equals("!!"))
-			command = lastCommand;
 
 		// Send the command.
 		res = super.handler.sendCommand(command);

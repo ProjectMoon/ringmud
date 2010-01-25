@@ -12,6 +12,7 @@ import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
 import ring.movement.WorldBuilder;
+import ring.world.World;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the various
@@ -30,8 +31,7 @@ public class MUDBoot {
 		System.out.println("Loading RingMUD.");
 
 		// Restore world state from DB
-		System.err
-				.println("ERROR: Restoring of world state not implemented yet.");
+		System.err.println("ERROR: Restoring of world state not implemented yet.");
 
 		// Load commands
 		System.out.println("Loading commands...");
@@ -53,6 +53,7 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
+		World.initWorld();
 		try {
 			WorldBuilder.buildWorld();
 		} catch (XMLDBException e) {

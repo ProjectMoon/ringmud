@@ -9,8 +9,7 @@ package ring.world;
  * @version 1.0
  */
 
-import ring.world.*;
-import java.util.*;
+import java.util.Vector;
 
 public class Ticker extends Thread {
   //This class is what governs time in the world. It ticks every 2 seconds and fires events to
@@ -91,7 +90,7 @@ public class Ticker extends Thread {
   //This method generates ticks and sends them to all registered listeners. From there,
   //the listeners will do what they are supposed to do.
   public void run() {
-    while (!World.isShutdown()) {
+    while (true) {
       try {
         this.sleep(tickDuration);
         tickCount++;
