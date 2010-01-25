@@ -9,6 +9,7 @@ import ring.movement.Room;
 import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
+import ring.server.MUDConnectionState;
 import ring.world.World;
 
 public class PlayerShell implements Shell {
@@ -40,6 +41,7 @@ public class PlayerShell implements Shell {
 		connection.addConnectionListener(this);		
 				
 		MUDConnection mudConnection = MUDConnectionManager.getConnection(connection.getConnectionData().getInetAddress());
+		mudConnection.setState(MUDConnectionState.PLAYING);
 		
 		//There is no way this should ever be null.
 		//Login shells take care of setting it up.

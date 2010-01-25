@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
 import ring.server.Server;
+import ring.system.MUDConfig;
 
 public class TelnetServer implements Server {
 	private TelnetD telnet;
@@ -21,6 +22,9 @@ public class TelnetServer implements Server {
 		Properties props = new Properties();
 		InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/server/resources/telnet.properties");
 		props.load(input);
+		
+		//Replace whatever port is defined in the regular telnet properties with the one from mud.config
+		props.setProperty("std.port", String.valueOf(MUDConfig.getServerPort()));
 		
 		Logger root = Logger.getRootLogger();
 		root.addAppender(new ConsoleAppender(

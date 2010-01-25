@@ -37,8 +37,8 @@ public class PlayerCharacterCreation {
 	 * @throws java.io.IOException
 	 *             If there is an error saving the player to a file.
 	 */
-	public PlayerCharacter doCreateNewCharacter(String playerName)
-			throws IOException, SocketException {
+	public PlayerCharacter doCreateNewCharacter(String playerName) {
+					
 		String password;
 		Gender gender;
 		Race race;
@@ -53,23 +53,20 @@ public class PlayerCharacterCreation {
 				+ "[R]\n");
 
 		gender = chooseGender(race);
-		comms.printlnNoSuffix("[CYAN][B]Gender chosen: [WHITE]" + gender
-				+ "[R]\n");
+		comms.printlnNoSuffix("[CYAN][B]Gender chosen: [WHITE]" + gender + "[R]\n");
 
 		alignment = chooseAlignment();
-		comms.printlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]"
-				+ alignment.toString() + "[R]\n");
+		comms.printlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]" + alignment.toString() + "[R]\n");
 
 		playerClass = chooseClass();
-		comms.printlnNoSuffix("[CYAN][B]Class chosen: [WHITE]"
-				+ playerClass.getDisplayName() + "[R]\n");
+		//comms.printlnNoSuffix("[CYAN][B]Class chosen: [WHITE]" + playerClass.getDisplayName() + "[R]\n");
 
 		System.out.println("Setting various player attributes...");
 		// Set basic info
 		newPlayer.getBaseModel().setName(playerName);
 		newPlayer.setPassword(password);
 		newPlayer.getBaseModel().setType(MobileBaseModel.Type.MORTAL);
-		newPlayer.getBaseModel().setDescription("You see nothing special about " + newPlayer.getBaseModel().getGender().getObject() + ".");
+		//newPlayer.setMobileClass goes here.
 
 		// Set some physical and alignment characteristics
 		newPlayer.getBaseModel().setRace(race);
@@ -77,7 +74,8 @@ public class PlayerCharacterCreation {
 		newPlayer.getDynamicModel().setSpeed(30);
 		newPlayer.getBaseModel().setGender(gender);
 		newPlayer.getBaseModel().setAlignment(alignment);
-
+		newPlayer.getBaseModel().setDescription("You see nothing special about " + newPlayer.getBaseModel().getGender().getObject() + ".");
+		
 		// Set class, skills, etc.
 		newPlayer.getBaseModel().setMobileClass(playerClass);
 
@@ -85,7 +83,7 @@ public class PlayerCharacterCreation {
 		comms.printlnNoSuffix("[CYAN]The [B][WHITE]"
 				+ newPlayer.getBaseModel().getType().getName() + "[R][CYAN] "
 				+ newPlayer.getBaseModel().getRace().getName() + " [R][WHITE]"
-				+ newPlayer.getBaseModel().getMobileClass().getDisplayName() + " "
+				//+ newPlayer.getBaseModel().getMobileClass().getDisplayName() + " "
 				+ newPlayer.getBaseModel().getName() + " [CYAN]has been created.\n");
 
 		return newPlayer;
@@ -98,27 +96,27 @@ public class PlayerCharacterCreation {
 	 * 
 	 * @return A valid password string.
 	 */
-	public String createPassword() throws IOException, SocketException {
+	public String createPassword() {
 		String password = null;
 		String validatePassword = null;
 
 		do {
 			while (password == null || password.length() == 0) {
-				comms.print("Enter a password for your character:");
+				comms.print("Enter a password for your character: ");
 				password = comms.receiveData();
+				comms.println();
 				if (password.length() < 6) {
-					comms
-							.printlnNoSuffix("[B][RED]Passwords must be at least six characters in length.[R][WHITE]");
+					comms.printlnNoSuffix("[B][RED]Passwords must be at least six characters in length.[R][WHITE]");
 					password = null;
 				}
 			}
 
-			comms.print("Enter your password again for verification:");
+			comms.print("Enter your password again for verification: ");
 			validatePassword = comms.receiveData();
+			comms.println();
 
 			if (!password.equals(validatePassword)) {
-				comms
-						.print("[B][RED]First and second passwords do not match.[R][WHITE]");
+				comms.printlnNoSuffix("[B][RED]First and second passwords do not match.[R][WHITE]");
 				password = null;
 			}
 		} while (password == null);
@@ -132,13 +130,12 @@ public class PlayerCharacterCreation {
 	 * 
 	 * @return The race chosen by the user in the form of a Race object.
 	 */
-	public Race chooseRace() throws IOException, SocketException {
+	public Race chooseRace() {
 		Race race = null;
 
 		do {
 			comms.printlnNoSuffix("Please select a race:");
-			comms
-					.print("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
+			comms.println("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
 			String choice = comms.receiveData();
 			race = RaceFactory.determineRace(choice);
 
@@ -159,7 +156,7 @@ public class PlayerCharacterCreation {
 	 * @return An integer representing the player's gender
 	 *         (Male/female/asexual);
 	 */
-	public Gender chooseGender(Race race) throws IOException, SocketException {
+	public Gender chooseGender(Race race) {
 		String raceName = race.getShortName();
 
 		// Illithids are only asexual
@@ -170,8 +167,10 @@ public class PlayerCharacterCreation {
 		Gender gender = null;
 
 		do {
-			comms.print("Please enter a gender (M/F):");
+			comms.print("Please enter a gender (M/F): ");
 			choice = comms.receiveData();
+			comms.println();
+			
 			if (choice.toLowerCase().equals("m")) {
 				gender = Gender.MALE;
 			} else if (choice.toLowerCase().equals("f")) {
@@ -188,14 +187,16 @@ public class PlayerCharacterCreation {
 	 * 
 	 * @return The constructed alignment object.
 	 */
-	public Alignment chooseAlignment() throws IOException, SocketException {
+	public Alignment chooseAlignment() {
 		Ethical ethical = null;
 		Moral moral = null;
 		String choice = "";
 
 		do {
-			comms.print("Please choose an ethical perspective (L, N, C):");
+			comms.print("Please choose an ethical perspective (L, N, C): ");
 			choice = comms.receiveData();
+			comms.println();
+			
 			if (choice.toLowerCase().equals("l")) {
 				ethical = Ethical.LAWFUL;
 			} else if (choice.toLowerCase().equals("n")) {
@@ -206,8 +207,10 @@ public class PlayerCharacterCreation {
 		} while (ethical == null);
 
 		do {
-			comms.print("Please input a moral perspective (G, N, E):");
+			comms.print("Please input a moral perspective (G, N, E): ");
 			choice = comms.receiveData();
+			comms.println();
+			
 			if (choice.toLowerCase().equals("g")) {
 				moral = Moral.GOOD;
 			} else if (choice.toLowerCase().equals("n")) {
@@ -227,7 +230,7 @@ public class PlayerCharacterCreation {
 	 * 
 	 * @return The MobileClass object representing the chosen class.
 	 */
-	public MobileClass chooseClass() throws IOException, SocketException {
+	public MobileClass chooseClass() {
 		/*
 		String choice = "";
 		MobileClass mc = null;
@@ -247,7 +250,7 @@ public class PlayerCharacterCreation {
 		return null;
 	}
 
-	public String getPlayerName() throws IOException, SocketException {
+	public String getPlayerName() {
 		String playerName = null;
 		boolean playerActive;
 		boolean invalidName;
@@ -258,14 +261,12 @@ public class PlayerCharacterCreation {
 			invalidName = true;
 			// ask for player name and log user on
 			while (invalidName) {
-				comms
-						.print("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
+				comms.print("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
 				playerName = comms.receiveData();
 				invalidName = false;
 				if (playerName.length() > 15 || playerName.length() < 1) {
 					invalidName = true;
-					comms
-							.print("[RED]Sorry, character names must be between 1 and 15 characters long.[WHITE]\n");
+					comms.print("[RED]Sorry, character names must be between 1 and 15 characters long.[WHITE]\n");
 				} else {
 					for (int x = 0; x < playerName.length(); x++) {
 						found = false;
@@ -279,8 +280,7 @@ public class PlayerCharacterCreation {
 							}
 						}
 						if (!found) {
-							comms
-									.print("[RED]Sorry, only the uppercase and lower case letters A-Z are allowed in a character name.[WHITE]\n");
+							comms.print("[RED]Sorry, only the uppercase and lower case letters A-Z are allowed in a character name.[WHITE]\n");
 							invalidName = true;
 							break;
 						}
@@ -300,8 +300,7 @@ public class PlayerCharacterCreation {
 			 */
 
 			if (playerActive) {
-				comms
-						.print("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
+				comms.print("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
 			}
 		} while (playerActive);
 

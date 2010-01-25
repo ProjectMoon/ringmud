@@ -1,7 +1,12 @@
 package ring.server.telnet;
 
+import ring.persistence.DataStore;
+import ring.persistence.DataStoreFactory;
+import ring.players.Player;
+import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
+import ring.server.MUDConnectionState;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
@@ -16,7 +21,7 @@ public class PlayerLoginShell implements Shell {
 	
 	@Override
 	public void run(Connection conn) {
-		connection = conn;
+		init(conn);
 		
 		//First check for exisitng connection.
 		//If so, forward directly to player shell.
@@ -26,7 +31,9 @@ public class PlayerLoginShell implements Shell {
 			return;
 		}
 		else {
-			doShell();
+			MUDConnection mc = doShell();
+			MUDConnectionManager.addConnection(connection.getConnectionData().getInetAddress(), mc);
+			connection.setNextShell("player");
 		}
 		
 	}
@@ -40,8 +47,34 @@ public class PlayerLoginShell implements Shell {
 				new TelnetOutputStream(connection.getTerminalIO()));
 	}
 	
-	private void doShell() {
-		PlayerCharacterCreation creation = new PlayerCharacterCreation(comms);
+	private MUDConnection doShell() {
+		DataStore ds = DataStoreFactory.getDefaultStore();
+		comms.println("Enter username:");
+		String playerID = comms.receiveData();
+		
+		Player player = ds.retrievePlayer(playerID);
+		PlayerCharacter pc = null;
+		
+		if (player != null) {
+			//Load player character list
+		}
+		else {
+			comms.println("[R][WHITE]Entering new character creation mode...");
+			comms.print("Enter a character name: ");
+			String playerName = comms.receiveData();
+			comms.println();
+			
+			PlayerCharacterCreation creation = new PlayerCharacterCreation(comms);
+			pc = creation.doCreateNewCharacter(playerName);
+			comms.println("sup " + pc);
+		}
+		
+		MUDConnection mc = new MUDConnection();
+		mc.setPlayer(player);
+		mc.setPlayerCharacter(pc);
+		mc.setState(MUDConnectionState.LOGGING_IN);
+		
+		return mc;
 	}
 
 	@Override

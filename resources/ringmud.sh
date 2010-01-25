@@ -1,7 +1,8 @@
 #!/bin/bash
 JARDIR=`dirname $0`/jar
 LIBDIR=`dirname $0`/../lib
-#export CLASSPATH=$JARDIR/ring-persistence.jar:$JARDIR/ring-core.jar:$JARDIR/ring-legacy.jar:$JARDIR/ring-commands.jar:$JARDIR/ring-server.jar:$JARDIR/ring-nrapi.jar:$JARDIR/ringmud.jar
-#echo $CLASSPATH
+
+#Commented out for now -- was used to support embedded DB instance
 #ENDORSEDDIR=$JARDIR/lib/endorsed
-java -cp "${LIBDIR}/*:jar/*" ring.main.RingMain $*
+
+java -cp "${LIBDIR}/*:${JARDIR}/*" ring.main.RingMain $*
