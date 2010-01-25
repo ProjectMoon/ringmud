@@ -201,12 +201,10 @@ public class ExistDB {
 	}
 	
 	public ResourceSet query(Collection col, String xquery) throws XMLDBException {
-		System.out.println("Query: " + xquery);
 		XQueryService service = getXQueryService(col);
 		
 		if (service != null) {
 			ResourceSet res = service.query(xquery);
-			System.out.println("Resource size: " + res.getSize());
 			return res;			
 		}
 		else {

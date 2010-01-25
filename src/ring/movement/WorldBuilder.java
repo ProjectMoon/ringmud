@@ -23,11 +23,14 @@ import ring.system.MUDConfig;
  */
 public class WorldBuilder {
 	private static Map<String, Room> roomCache = new HashMap<String, Room>();
+	private static DataStore dataStore = DataStoreFactory.getDefaultStore();
 	
 	public static void buildWorld() throws XMLDBException, JAXBException {
 		XQuery xq = new XQuery();
 		String query = "for $loc in //location return $loc";
 		xq.setQuery(query);
+		
+		dataStore.setLoadpoint(Loadpoint.STATIC);
 		
 		//for each Location:
 		//	Add its Room to the cache
@@ -39,6 +42,8 @@ public class WorldBuilder {
 		for (Location loc : locs) {
 			Room room = loc.getRoom();
 			attemptAddToCache(room);
+			
+			System.out.println("Found room: " + room);
 			
 			for (Portal port : loc.getExits()) {
 				port.setDestination(getRoom(port.getDestinationID()));
@@ -57,7 +62,7 @@ public class WorldBuilder {
 		Room room = roomCache.get(id);
 		
 		if (room == null) {
-			room = DataStoreFactory.getDefaultStore().retrieveRoom(id);
+			room = dataStore.retrieveRoom(id);
 			
 			if (room != null) {
 				roomCache.put(id, room);
@@ -73,7 +78,5 @@ public class WorldBuilder {
 	public static void main(String[] args) throws Exception {
 		MUDConfig.loadProperties();
 		WorldBuilder.buildWorld();
-		Mobile r = DataStoreFactory.getDefaultStore().retrieveMobile("mob1");
-		System.out.println(r);
 	}
 }

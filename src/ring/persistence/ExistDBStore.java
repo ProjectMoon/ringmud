@@ -267,6 +267,7 @@ public class ExistDBStore implements DataStore {
 	
 	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
 		if (res == null) {
+			System.err.println("[Warning]: converToObject received null resource");
 			return null;
 		}
 		
@@ -364,8 +365,8 @@ public class ExistDBStore implements DataStore {
 	
 	private DBTuple defaultLoadMethod(String id) throws XMLDBException {
 		DBTuple res = loadFromGame(id);
-		if (res == null) {
-			System.out.println("Falling back to static for " + id);
+		if (res.resource == null) {
+			System.err.println("[Warning]: Falling back to static for " + id);
 			res = loadFromStatic(id);
 		}
 		
@@ -400,11 +401,10 @@ public class ExistDBStore implements DataStore {
 		if (resources.getSize() > 0) {
 			//TODO log duplicate resources?
 			tuple.resource = (XMLResource)resources.getIterator().nextResource();
-			return tuple;
 		}
-		else {
-			return null;
-		}
+		
+		//Always return tuple, even if resource is null.
+		return tuple;
 	}
 	private XMLResource createXMLResource(Collection col, String id) throws XMLDBException {
 		return (XMLResource) col.createResource(id, XML_RESOURCE_TYPE);
