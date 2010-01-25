@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
+import ring.movement.Location;
 import ring.movement.Room;
 import ring.persistence.RingConstants;
 
@@ -27,6 +28,7 @@ import ring.persistence.RingConstants;
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
 	"rooms",
+	"locations",
 	"entities",
 	"mobiles",
 	"items"
@@ -36,6 +38,7 @@ public class RingDocument {
 	private List<Room> rooms = new ArrayList<Room>();
 	private List<Entity> entities = new ArrayList<Entity>();
 	private List<Item> items = new ArrayList<Item>();
+	private List<Location> locations = new ArrayList<Location>();
 	
 	@XmlElement(name = "mobile")
 	public List<Mobile> getMobiles() {
@@ -71,6 +74,15 @@ public class RingDocument {
 
 	public void setItems(List<Item> items) {
 		this.items = items;
+	}
+	
+	@XmlElement(name = "location")
+	public List<Location> getLocations() {
+		return locations;
+	}
+	
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
 	}
 	
 }

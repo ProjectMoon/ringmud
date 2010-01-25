@@ -200,25 +200,14 @@ public class ExistDB {
 		return null;
 	}
 	
-	public List<XMLResource> query(Collection col, String xquery) throws XMLDBException {
+	public ResourceSet query(Collection col, String xquery) throws XMLDBException {
 		System.out.println("Query: " + xquery);
 		XQueryService service = getXQueryService(col);
 		
 		if (service != null) {
 			ResourceSet res = service.query(xquery);
 			System.out.println("Resource size: " + res.getSize());
-			ResourceIterator i = res.getIterator();
-			
-			List<XMLResource> results = new ArrayList<XMLResource>((int)res.getSize()); 
-			
-			while (i.hasMoreResources()) {
-				Resource r = i.nextResource();
-				if (r instanceof XMLResource) {
-					results.add((XMLResource)r);
-				}
-			}
-			
-			return results;
+			return res;			
 		}
 		else {
 			//Couldn't get an XQueryService, apparently...

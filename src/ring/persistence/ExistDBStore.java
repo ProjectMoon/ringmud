@@ -339,16 +339,16 @@ public class ExistDBStore implements DataStore {
 		//Needs to be declared in order to compile.
 		xq.declareVariable("id", "");
 		
-		String query = "for $doc in collection(\"" + STATIC_COLLECTION + "\")/ring/*[@id=$id] return $doc";
+		String query = "for $doc in collection(\"" + STATIC_COLLECTION + "\")/ring//*[@id=$id] return $doc";
 		staticRetrieve = xq.compile(query);
 		
-		query = "for $doc in collection(\"" + GAME_COLLECTION + "\")/ring/*[@id=$id] return $doc";
+		query = "for $doc in collection(\"" + GAME_COLLECTION + "\")/ring//*[@id=$id] return $doc";
 		col = db.getCollection(GAME_COLLECTION);
 		xq = db.getXQueryService(col);
 		xq.declareVariable("id", "");
 		gameRetrieve = xq.compile(query);
 		
-		query = "for $doc in collection(\"" + PLAYERS_COLLECTION + "\")/ring/*[@id=$id] return $doc";
+		query = "for $doc in collection(\"" + PLAYERS_COLLECTION + "\")/ring//*[@id=$id] return $doc";
 		col = db.getCollection(PLAYERS_COLLECTION);
 		xq = db.getXQueryService(col);
 		xq.declareVariable("id", "");

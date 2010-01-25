@@ -7,7 +7,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Node;
 import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.ResourceIterator;
+import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
@@ -55,10 +58,12 @@ public class XQuery {
 		ExistDB db = new ExistDB();
 		
 		Collection col = getCollection(db);
-		List<XMLResource> xmlDocs = db.query(col, getQuery());
-		List<T> results = new ArrayList<T>(xmlDocs.size());
+		ResourceSet xmlDocs = db.query(col, getQuery());
+		List<T> results = new ArrayList<T>((int)xmlDocs.getSize());
 		
-		for (XMLResource res : xmlDocs) {
+		ResourceIterator iter = xmlDocs.getIterator();
+		while (iter.hasMoreResources()) {
+			XMLResource res = (XMLResource)iter.nextResource();
 			T conv = convertToObject(res, cl);
 			results.add(conv);
 		}
@@ -85,8 +90,9 @@ public class XQuery {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();
 		um.setListener(new ReferenceLoader());
+		Node node = res.getContentAsDOM();
+		T conv = (T)um.unmarshal(node);
 		
-		T conv = (T)um.unmarshal(res.getContentAsDOM());
 		conv.setStoreAsUpdate(true);
 		conv.setDocumentID(res.getDocumentId());
 		conv.createChildRelationships();

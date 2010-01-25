@@ -25,13 +25,16 @@ import ring.util.TextParser;
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder = {
-	"destination",
+	"destinationID",
 	"displayName",
 	"searchDC"
 })
 public class Portal {
-	//The place to go!
+	//The place to go. This is not stored in XML.
 	private Room destination;
+	
+	//The ID of the place to go. This is stored in XML.
+	private String destinationID;
 	
 	//i.e. "north", "heavy wooden door"
 	private String displayName;
@@ -108,13 +111,22 @@ public class Portal {
 		interactiveName = name;
 	}
 	
-	@XmlAttribute
+	@XmlTransient
 	public Room getDestination() {
 		return destination;
 	}
 	
 	public void setDestination(Room loc) {
 		destination = loc;
+	}
+	
+	@XmlAttribute(name = "destID")
+	public String getDestinationID() {
+		return destinationID;
+	}
+	
+	public void setDestinationID(String id) {
+		destinationID = id;
 	}
 	
 	public String toString() {

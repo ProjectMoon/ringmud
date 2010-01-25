@@ -1,5 +1,6 @@
 package ring.movement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,7 +28,7 @@ propOrder= {
 })
 public class Location extends AbstractBusinessObject {
 	private Room room;
-	private List<Portal> exits;
+	private List<Portal> exits = new ArrayList<Portal>();
 	
 	@Override
 	public void createChildRelationships() {
@@ -43,12 +44,16 @@ public class Location extends AbstractBusinessObject {
 		this.room = room;
 	}
 	
-	@XmlElement
+	@XmlElement(name = "exit")
 	public List<Portal> getExits() {
 		return exits;
 	}
 	
 	public void setExits(List<Portal> exits) {
 		this.exits = exits;
+	}
+	
+	public void addExit(Portal port) {
+		exits.add(port);
 	}
 }
