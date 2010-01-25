@@ -1,6 +1,8 @@
 package ring.persistence;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -196,6 +198,32 @@ public class ExistDB {
 		
 		//Nothing found, return null.
 		return null;
+	}
+	
+	public List<XMLResource> query(Collection col, String xquery) throws XMLDBException {
+		System.out.println("Query: " + xquery);
+		XQueryService service = getXQueryService(col);
+		
+		if (service != null) {
+			ResourceSet res = service.query(xquery);
+			System.out.println("Resource size: " + res.getSize());
+			ResourceIterator i = res.getIterator();
+			
+			List<XMLResource> results = new ArrayList<XMLResource>((int)res.getSize()); 
+			
+			while (i.hasMoreResources()) {
+				Resource r = i.nextResource();
+				if (r instanceof XMLResource) {
+					results.add((XMLResource)r);
+				}
+			}
+			
+			return results;
+		}
+		else {
+			//Couldn't get an XQueryService, apparently...
+			return null;
+		}
 	}
 	
 	public void testQuery(String xquery) throws XMLDBException {

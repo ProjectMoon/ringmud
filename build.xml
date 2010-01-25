@@ -62,7 +62,6 @@
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
 			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
-			<!-- <zipfileset dir="${classes.dir}" includes="ring/movement/**"/> --> <!-- waiting on NRAPI integration -->
 			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/world/**"/>
@@ -87,28 +86,21 @@
 			<zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
 		</jar>
 	</target>
-
+	
 	<target name="jar-nrapi" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-nrapi-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/nrapi/**" />
-		</jar>
-	</target>
-	
-	<target name="jar-legacy" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-legacy-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/entities/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/jox/**" />
+			<zipfileset dir="${classes.dir}" includes="ring/items/**" />
+			<zipfileset dir="${classes.dir}" includes="ring/magic/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/mobiles/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/movement/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/players/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/resources/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/skills/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/spells/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/test/**" />
 		</jar>
 	</target>
 	
-    <target name="dist" depends="dist-stage,jar-main,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-legacy">
+    <target name="dist" depends="dist-stage,jar-main,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<chmod file="${dist.dir}/bin/ringmud.sh" perm="755" />
     	<copy todir="${dist.lib.dir}">

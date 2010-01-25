@@ -21,7 +21,7 @@ import ring.util.TextParser;
  *
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
+@XmlRootElement(name = "exit")
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder = {

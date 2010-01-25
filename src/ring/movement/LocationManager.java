@@ -230,7 +230,7 @@ public class LocationManager {
 	 * Utility method that returns the opposite direction of a standard direction.
 	 * @param direction
 	 * @return the opposite direction (north from south, etc)
-	 * @throws PortalNotFoundException if a non-standard direction is specified.
+	 * @throws IllegalArgumentException if a non-standard direction is specified.
 	 */
 	public static String getOppositeDirection(String direction) throws PortalNotFoundException {
 		if (direction.equalsIgnoreCase(NORTH)) return SOUTH;
@@ -240,6 +240,6 @@ public class LocationManager {
 		else if (direction.equalsIgnoreCase(UP)) return DOWN;
 		else if (direction.equalsIgnoreCase(DOWN)) return UP;
 		
-		throw new PortalNotFoundException("incorrect standard direction");
+		throw new IllegalArgumentException("incorrect standard direction");
 	}
 }
