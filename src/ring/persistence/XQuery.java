@@ -68,6 +68,8 @@ public class XQuery {
 			results.add(conv);
 		}
 		
+		col.close();
+		
 		return results;
 	}
 	
