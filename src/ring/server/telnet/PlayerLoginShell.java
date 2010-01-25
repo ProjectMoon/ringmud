@@ -1,5 +1,10 @@
 package ring.server.telnet;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.players.Player;
@@ -22,6 +27,13 @@ public class PlayerLoginShell implements Shell {
 	@Override
 	public void run(Connection conn) {
 		init(conn);
+		try {
+			conn.getTerminalIO().eraseScreen();
+			conn.getTerminalIO().homeCursor();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		//First check for exisitng connection.
 		//If so, forward directly to player shell.
@@ -31,6 +43,13 @@ public class PlayerLoginShell implements Shell {
 			return;
 		}
 		else {
+			try {
+				displayMotd();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 			MUDConnection mc = doShell();
 			MUDConnectionManager.addConnection(connection.getConnectionData().getInetAddress(), mc);
 			connection.setNextShell("player");
@@ -38,6 +57,27 @@ public class PlayerLoginShell implements Shell {
 		
 	}
 	
+	private void displayMotd() throws IOException {
+		BufferedReader reader = null;
+	
+		try {
+			InputStream motd = this.getClass().getClassLoader().getResourceAsStream("ring/server/resources/motd.txt");
+			reader = new BufferedReader(new InputStreamReader(motd));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				comms.println(line);
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+
 	private void init(Connection conn) {
 		connection = conn;
 		connection.addConnectionListener(this);		

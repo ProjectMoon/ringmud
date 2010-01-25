@@ -18,6 +18,7 @@
 	
 	<fileset id="server-resources" dir="${src.dir}/ring/server/resources/">
 		<include name="**/*.properties" />
+		<include name="**/*.txt" />
 	</fileset>
 	
 	<fileset id="sources" dir="${src.dir}">
