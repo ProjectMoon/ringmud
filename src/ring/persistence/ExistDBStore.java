@@ -6,6 +6,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Node;
+
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.CompiledExpression;
 import org.xmldb.api.base.ResourceSet;
@@ -40,6 +42,13 @@ public class ExistDBStore implements DataStore {
 	//or explicitly from static.
 	private Loadpoint loadpoint;
 	
+	//DBTuple: Stores Collection and XMLResource, so that collections may be
+	//closed after converting the object.
+	private class DBTuple {
+		public Collection collection;
+		public XMLResource resource;
+	}
+	
 	private void initializeBusinessObject(AbstractBusinessObject bo, String docID) {
 		bo.setDocumentID(docID);
 		bo.createChildRelationships();
@@ -52,23 +61,12 @@ public class ExistDBStore implements DataStore {
 	public Player retrievePlayer(String id) {
 		Loadpoint prevLoadpoint = getLoadpoint();
 		setLoadpoint(Loadpoint.PLAYERS);
+		DBTuple tuple = null;
 		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Player.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Player p = (Player)um.unmarshal(res.getContentAsDOM());
-				
-				if (p != null) {
-					p.setStoreAsUpdate(true);
-					initializeBusinessObject(p, res.getDocumentId());
-				}
-				
-				return p;
-			}
+			tuple = retrieveResource(id);
+			Player p = convertToObject(tuple.resource, Player.class);
+			return p;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -79,6 +77,9 @@ public class ExistDBStore implements DataStore {
 			e.printStackTrace();
 		}
 		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
 			setLoadpoint(prevLoadpoint);
 		}
 		
@@ -92,22 +93,12 @@ public class ExistDBStore implements DataStore {
 		Loadpoint prevLoadpoint = getLoadpoint();
 		setLoadpoint(Loadpoint.PLAYERS);
 		
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(PlayerCharacter.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				PlayerCharacter p = (PlayerCharacter)um.unmarshal(res.getContentAsDOM());
-				
-				if (p != null) {
-					p.setStoreAsUpdate(true);
-					initializeBusinessObject(p, res.getDocumentId());
-				}
-				
-				return p;
-			}
+			tuple = retrieveResource(id);
+			PlayerCharacter p = convertToObject(tuple.resource, PlayerCharacter.class);
+			return p;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -118,6 +109,9 @@ public class ExistDBStore implements DataStore {
 			e.printStackTrace();
 		}
 		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
 			setLoadpoint(prevLoadpoint);
 		}
 		
@@ -127,22 +121,12 @@ public class ExistDBStore implements DataStore {
 	
 	@Override
 	public Room retrieveRoom(String id) {
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Room.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Room r = (Room)um.unmarshal(res.getContentAsDOM());
-				
-				if (r != null) {
-					r.setStoreAsUpdate(true);
-					initializeBusinessObject(r, res.getDocumentId());
-				}
-				
-				return r;
-			}
+			tuple = retrieveResource(id);
+			Room r = convertToObject(tuple.resource, Room.class);
+			return r;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -151,6 +135,11 @@ public class ExistDBStore implements DataStore {
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			if (tuple != null && tuple.collection != null) {			
+				closeConnection(tuple.collection);
+			}
 		}
 		
 		//Nothing to return
@@ -159,22 +148,12 @@ public class ExistDBStore implements DataStore {
 	
 	@Override
 	public Entity retrieveEntity(String id) {
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Entity.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Entity e = (Entity)um.unmarshal(res.getContentAsDOM());
-				
-				if (e != null) {
-					e.setStoreAsUpdate(true);
-					initializeBusinessObject(e, res.getDocumentId());
-				}
-				
-				return e;
-			}
+			tuple = retrieveResource(id);
+			Entity e = convertToObject(tuple.resource, Entity.class);
+			return e;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -183,6 +162,11 @@ public class ExistDBStore implements DataStore {
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
 		}
 		
 		//Nothing to return
@@ -191,22 +175,12 @@ public class ExistDBStore implements DataStore {
 	
 	@Override
 	public Zone retrieveZone(String id) {
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Zone.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Zone z = (Zone)um.unmarshal(res.getContentAsDOM());
-				
-				if (z != null) {
-					z.setStoreAsUpdate(true);
-					initializeBusinessObject(z, res.getDocumentId());
-				}
-				
-				return z;
-			}
+			tuple = retrieveResource(id);
+			Zone z = convertToObject(tuple.resource, Zone.class);
+			return z;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -215,6 +189,11 @@ public class ExistDBStore implements DataStore {
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
 		}
 		
 		//Nothing to return
@@ -223,22 +202,12 @@ public class ExistDBStore implements DataStore {
 	
 	@Override
 	public Item retrieveItem(String id) {
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Item.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Item i = (Item)um.unmarshal(res.getContentAsDOM());
-				
-				if (i != null) {
-					i.setStoreAsUpdate(true);
-					initializeBusinessObject(i, res.getDocumentId());
-				}
-				
-				return i;
-			}
+			tuple = retrieveResource(id);
+			Item i = convertToObject(tuple.resource, Item.class);
+			return i;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -247,6 +216,11 @@ public class ExistDBStore implements DataStore {
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
 		}
 		
 		//Nothing to return
@@ -255,22 +229,12 @@ public class ExistDBStore implements DataStore {
 	
 	@Override
 	public Mobile retrieveMobile(String id) {
+		DBTuple tuple = null;
+		
 		try {
-			XMLResource res = retrieveResource(id);
-			JAXBContext ctx = JAXBContext.newInstance(Mobile.class);
-			Unmarshaller um = ctx.createUnmarshaller();
-			um.setListener(new ReferenceLoader());
-			
-			if (res != null) {
-				Mobile m = (Mobile)um.unmarshal(res.getContentAsDOM());
-				
-				if (m != null) {
-					m.setStoreAsUpdate(true);
-					initializeBusinessObject(m, res.getDocumentId());
-				}
-				
-				return m;
-			}
+			tuple = retrieveResource(id);
+			Mobile m = convertToObject(tuple.resource, Mobile.class);
+			return m;
 		} 
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -280,10 +244,44 @@ public class ExistDBStore implements DataStore {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally {
+			if (tuple != null && tuple.collection != null) {
+				closeConnection(tuple.collection);
+			}
+		}
 		
 		//Nothing to return
 		return null;
-	}	
+	}
+	
+	private void closeConnection(Collection col) {
+		assert(col != null);
+		
+		try {
+			col.close();
+		}
+		catch (XMLDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
+		if (res == null) {
+			return null;
+		}
+		
+		JAXBContext ctx = JAXBContext.newInstance(cl);
+		Unmarshaller um = ctx.createUnmarshaller();
+		um.setListener(new ReferenceLoader());
+		Node node = res.getContentAsDOM();
+		T conv = (T)um.unmarshal(node);
+		
+		conv.setStoreAsUpdate(true);
+		conv.setDocumentID(res.getDocumentId());
+		conv.createChildRelationships();
+		
+		return conv;
+	}
 
 	@Override
 	/**
@@ -293,13 +291,14 @@ public class ExistDBStore implements DataStore {
 	 */
 	public boolean storePersistable(Persistable p) {		
 		ExistDB db = new ExistDB();
+		Collection col = null;
+		
 		try {
 			if (p.getDocumentID() == null) {
 				p.setDocumentID(p.getID() + ".xml");
 			}
 			
 			//TODO implement update lock checking: all parts of a document must be ready for update. Could be good use of AspectJ?
-			Collection col = null;
 			if (p instanceof Player || p instanceof PlayerCharacter) {
 				col = db.getCollection(PLAYERS_COLLECTION);
 			}
@@ -325,64 +324,46 @@ public class ExistDBStore implements DataStore {
 			e.printStackTrace();
 			return false;
 		}
+		finally {
+			if (col != null) {
+				closeConnection(col);
+			}
+		}
 	}
-	
+		
 	/**
-	 * Initialize expressions for retrieving from static and game.
+	 * Gets a retrieval expression for a given collection.
 	 * @throws XMLDBException
 	 */
-	private void initializeRetrievalExpressions() throws XMLDBException {
+	private CompiledExpression getRetrievalExpression(Collection col, XQueryService xq) throws XMLDBException {
 		ExistDB db = new ExistDB();
-		Collection col = db.getCollection(STATIC_COLLECTION);
-		XQueryService xq = db.getXQueryService(col);
-		
+
 		//Needs to be declared in order to compile.
 		xq.declareVariable("id", "");
 		
-		String query = "for $doc in collection(\"" + STATIC_COLLECTION + "\")/ring//*[@id=$id] return $doc";
-		staticRetrieve = xq.compile(query);
-		
-		query = "for $doc in collection(\"" + GAME_COLLECTION + "\")/ring//*[@id=$id] return $doc";
-		col = db.getCollection(GAME_COLLECTION);
-		xq = db.getXQueryService(col);
-		xq.declareVariable("id", "");
-		gameRetrieve = xq.compile(query);
-		
-		query = "for $doc in collection(\"" + PLAYERS_COLLECTION + "\")/ring//*[@id=$id] return $doc";
-		col = db.getCollection(PLAYERS_COLLECTION);
-		xq = db.getXQueryService(col);
-		xq.declareVariable("id", "");
-		playersRetrieve = xq.compile(query);
+		String query = "for $doc in collection(\"" + col.getName() + "\")/ring//*[@id=$id] return $doc";
+		return xq.compile(query);
 	}
 	
-	private XMLResource retrieveResource(String id) throws XMLDBException {
-		//First initialize expressions if necessary.
-		if (gameRetrieve == null || staticRetrieve == null || playersRetrieve == null) {
-			initializeRetrievalExpressions();
-		}
-		
+	private DBTuple retrieveResource(String id) throws XMLDBException {
 		//Now, load the resource from the proper place based
 		//on configured "loadpoint."
-		if (loadpoint == Loadpoint.DEFAULT) {
-			return defaultLoadMethod(id);
-		}
-		else if (loadpoint == Loadpoint.GAME) {
-			return loadFromGame(id);
-		}
-		else if (loadpoint == Loadpoint.STATIC) {
-			return loadFromStatic(id);
-		}
-		else if (loadpoint == Loadpoint.PLAYERS) {
-			return loadFromPlayers(id);
-		}
-		//else, default to defaultLoadMethod
-		else {
-			return defaultLoadMethod(id);
+		switch (getLoadpoint()) {
+			case DEFAULT:
+				return defaultLoadMethod(id);
+			case GAME:
+				return loadFromGame(id);
+			case PLAYERS:
+				return loadFromPlayers(id);
+			case STATIC:
+				return loadFromStatic(id);
+			default:
+				return defaultLoadMethod(id);
 		}
 	}
 	
-	private XMLResource defaultLoadMethod(String id) throws XMLDBException {
-		XMLResource res = loadFromGame(id);
+	private DBTuple defaultLoadMethod(String id) throws XMLDBException {
+		DBTuple res = loadFromGame(id);
 		if (res == null) {
 			System.out.println("Falling back to static for " + id);
 			res = loadFromStatic(id);
@@ -391,55 +372,40 @@ public class ExistDBStore implements DataStore {
 		return res;		
 	}
 	
-	private XMLResource loadFromGame(String id) throws XMLDBException {
+	private DBTuple loadFromGame(String id) throws XMLDBException {
+		return load(GAME_COLLECTION, id);
+	}
+	
+	private DBTuple loadFromStatic(String id) throws XMLDBException {
+		return load(STATIC_COLLECTION, id);
+	}
+	
+	private DBTuple loadFromPlayers(String id) throws XMLDBException {
+		return load(PLAYERS_COLLECTION, id);
+	}
+	
+	private DBTuple load(String collectionName, String id) throws XMLDBException {
 		//First try game collection, then static.
 		ExistDB db = new ExistDB();
-		Collection col = db.getCollection(GAME_COLLECTION);
-		XQueryService xq = db.getXQueryService(col);
+		DBTuple tuple = new DBTuple();
+		Collection col = db.getCollection(collectionName);
+		tuple.collection = col;
+	
+		XQueryService xq = db.getXQueryService(col);	
+		CompiledExpression expr = getRetrievalExpression(col, xq);
+	
 		xq.declareVariable("id", id);
-		ResourceSet resources = xq.execute(gameRetrieve);
+		ResourceSet resources = xq.execute(expr);
 		
 		if (resources.getSize() > 0) {
 			//TODO log duplicate resources?
-			return (XMLResource)resources.getIterator().nextResource();
+			tuple.resource = (XMLResource)resources.getIterator().nextResource();
+			return tuple;
 		}
 		else {
 			return null;
 		}
 	}
-	
-	private XMLResource loadFromStatic(String id) throws XMLDBException {
-		ExistDB db = new ExistDB();
-		Collection col = db.getCollection(STATIC_COLLECTION);
-		XQueryService xq = db.getXQueryService(col);
-		xq.declareVariable("id", id);
-		ResourceSet resources = xq.execute(staticRetrieve);
-		
-		if (resources.getSize() > 0) {
-			//TODO log duplicate resources?
-			return (XMLResource)resources.getIterator().nextResource();
-		}
-		else {
-			return null;
-		}
-	}
-	
-	private XMLResource loadFromPlayers(String id) throws XMLDBException {
-		ExistDB db = new ExistDB();
-		Collection col = db.getCollection(PLAYERS_COLLECTION);
-		XQueryService xq = db.getXQueryService(col);
-		xq.declareVariable("id", id);
-		ResourceSet resources = xq.execute(playersRetrieve);
-		
-		if (resources.getSize() > 0) {
-			//TODO log duplicate resources?
-			return (XMLResource)resources.getIterator().nextResource();
-		}
-		else {
-			return null;
-		}
-	}
-	
 	private XMLResource createXMLResource(Collection col, String id) throws XMLDBException {
 		return (XMLResource) col.createResource(id, XML_RESOURCE_TYPE);
 	}
@@ -447,8 +413,9 @@ public class ExistDBStore implements DataStore {
 	@Override
 	public boolean importDocument(File file) {
 		ExistDB db = new ExistDB();
+		Collection col = null;
 		try {
-			Collection col = db.getCollection(STATIC_COLLECTION);
+			col = db.getCollection(STATIC_COLLECTION);
 			String name = file.getName();
 			
 			if (!name.endsWith(".xml")) name += ".xml";
@@ -464,13 +431,19 @@ public class ExistDBStore implements DataStore {
 			e.printStackTrace();
 			return false;
 		}
+		finally {
+			if (col != null) {
+				closeConnection(col);
+			}
+		}
 	}
 	
 	@Override
 	public boolean removeDocument(String docID) {
 		ExistDB db = new ExistDB();
+		Collection col = null;
 		try {
-			Collection col = db.getCollection(STATIC_COLLECTION);
+			col = db.getCollection(STATIC_COLLECTION);
 			XMLResource res = (XMLResource)col.getResource(docID);
 			if (res != null) {
 				col.removeResource(res);
@@ -484,12 +457,22 @@ public class ExistDBStore implements DataStore {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
-		}		
+		}
+		finally {
+			if (col != null) {
+				closeConnection(col);
+			}
+		}
 	}
 
 	@Override
 	public Loadpoint getLoadpoint() {
-		return loadpoint;
+		if (loadpoint != null) {
+			return loadpoint;
+		}
+		else {
+			return Loadpoint.DEFAULT;
+		}
 	}
 
 	@Override
