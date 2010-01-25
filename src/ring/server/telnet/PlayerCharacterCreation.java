@@ -104,7 +104,7 @@ public class PlayerCharacterCreation {
 			while (password == null || password.length() == 0) {
 				comms.print("Enter a password for your character: ");
 				password = comms.receiveData();
-				comms.println();
+				
 				if (password.length() < 6) {
 					comms.printlnNoSuffix("[B][RED]Passwords must be at least six characters in length.[R][WHITE]");
 					password = null;
@@ -169,8 +169,7 @@ public class PlayerCharacterCreation {
 		do {
 			comms.print("Please enter a gender (M/F): ");
 			choice = comms.receiveData();
-			comms.println();
-			
+					
 			if (choice.toLowerCase().equals("m")) {
 				gender = Gender.MALE;
 			} else if (choice.toLowerCase().equals("f")) {
@@ -195,8 +194,7 @@ public class PlayerCharacterCreation {
 		do {
 			comms.print("Please choose an ethical perspective (L, N, C): ");
 			choice = comms.receiveData();
-			comms.println();
-			
+						
 			if (choice.toLowerCase().equals("l")) {
 				ethical = Ethical.LAWFUL;
 			} else if (choice.toLowerCase().equals("n")) {
@@ -209,8 +207,7 @@ public class PlayerCharacterCreation {
 		do {
 			comms.print("Please input a moral perspective (G, N, E): ");
 			choice = comms.receiveData();
-			comms.println();
-			
+						
 			if (choice.toLowerCase().equals("g")) {
 				moral = Moral.GOOD;
 			} else if (choice.toLowerCase().equals("n")) {
@@ -261,8 +258,9 @@ public class PlayerCharacterCreation {
 			invalidName = true;
 			// ask for player name and log user on
 			while (invalidName) {
-				comms.print("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name:");
+				comms.print("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name: ");
 				playerName = comms.receiveData();
+				
 				invalidName = false;
 				if (playerName.length() > 15 || playerName.length() < 1) {
 					invalidName = true;

@@ -49,7 +49,7 @@ public class PlayerLoginShell implements Shell {
 	
 	private MUDConnection doShell() {
 		DataStore ds = DataStoreFactory.getDefaultStore();
-		comms.println("Enter username:");
+		comms.print("Enter username: ");
 		String playerID = comms.receiveData();
 		
 		Player player = ds.retrievePlayer(playerID);
@@ -62,7 +62,6 @@ public class PlayerLoginShell implements Shell {
 			comms.println("[R][WHITE]Entering new character creation mode...");
 			comms.print("Enter a character name: ");
 			String playerName = comms.receiveData();
-			comms.println();
 			
 			PlayerCharacterCreation creation = new PlayerCharacterCreation(comms);
 			pc = creation.doCreateNewCharacter(playerName);

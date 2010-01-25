@@ -45,9 +45,9 @@ public class TelnetInputStream extends InputStream {
 			if (echo) {
 				//Don't echo newlines...
 				//Might remove later.
-				if ((char)b[c - off] != '\n') {
+				//if ((char)b[c - off] != '\n') {
 					io.write(b[c - off]);
-				}
+				//}
 			}
 			
 			if ((char)b[c - off] == '\n') break;
