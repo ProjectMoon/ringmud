@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 import ring.mobiles.backbone.Bank;
 import ring.mobiles.backbone.Equipment;
 import ring.mobiles.backbone.Inventory;
+import ring.mobiles.senses.SensesGroup;
 import ring.movement.Room;
 import ring.persistence.RingConstants;
 
@@ -38,8 +39,12 @@ public class MobileDynamicModel {
 	//Inventory and equipment.
 	private Inventory inventory = new Inventory();
 	private Equipment equipment = new Equipment();
-
 	private double weightCarried;
+	
+	//Senses for this mobile: How the mobile interacts with and perceives the world
+	private SensesGroup sensesGroup;
+	public void setSensesGroup(SensesGroup group) { sensesGroup = group; }
+	@XmlTransient public SensesGroup getSensesGroup() { return sensesGroup; }
 	
 	//Skill check variables:
 	//These variables somewhat violate the extensible design philosophy of the

@@ -112,7 +112,7 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 
 		return res;
 	}
-
+	
 	public String toString() {
 		return getBaseModel().getName();
 	}

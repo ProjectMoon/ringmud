@@ -14,11 +14,11 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.effects.Effect;
-import ring.nrapi.business.AbstractBusinessObject;
 import ring.items.Armor;
 import ring.items.Item;
 import ring.magic.SpellCaster;
 import ring.mobiles.backbone.Equipment;
+
 import ring.movement.LocationManager;
 import ring.movement.Movable;
 import ring.movement.MovementAssertionException;
@@ -44,7 +44,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
+public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -440,12 +440,9 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 			return LocationManager.move(this, LocationManager.getPortal(
 					getLocation(), direction));
 		} catch (MovementAssertionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (PortalNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -465,5 +462,5 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public CommandResult doCommand(String cmd) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	} 
 }

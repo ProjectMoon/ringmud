@@ -3,10 +3,8 @@ package ring.mobiles.npc;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
-import ring.world.*;
-
-import java.io.PrintStream;
-import java.util.*;
+import ring.world.TickerEvent;
+import ring.world.TickerListener;
 
 public class NPC extends Mobile implements CommandSender, TickerListener {
 	public static final long serialVersionUID = 1;
