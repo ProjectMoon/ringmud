@@ -13,6 +13,9 @@ import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
 import ring.world.World;
 
+import ring.mobiles.senses.handlers.PlayerDepictionHandler;
+import ring.mobiles.senses.SensesGroup;
+
 public class PlayerShell implements Shell {
 	//"System-level" things we might care about
 	private Connection connection;
@@ -53,8 +56,7 @@ public class PlayerShell implements Shell {
 		player = mudConnection.getPlayerCharacter();
 		
 		System.out.println("Player: " + user + "[" + player + "]");
-		
-		
+				
 		//Initialize the communicator.
 		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
 				new TelnetOutputStream(connection.getTerminalIO()));
@@ -62,6 +64,11 @@ public class PlayerShell implements Shell {
 	
 	private void gameLoop() {
 		World.getWorld().getTicker().addTickerListener(player, "PULSE");
+		
+		//Set up senses group so the player can perceive the world.
+		PlayerDepictionHandler handler = new PlayerDepictionHandler(comms);
+		player.getDynamicModel().setSensesGroup(SensesGroup.createDefaultSensesGroup(handler));
+		
 		// Set location.
 		Room room = LocationManager.getOrigin();
 		room.addMobile(player);
@@ -95,13 +102,13 @@ public class PlayerShell implements Shell {
 	}
 	
 	private void sendCommandResult(CommandResult res) {
+		String result = "";
 		if (res.hasReturnableData()) {
-			String result = res.getText();
-			System.out.println(result);
-			comms.setSuffix(player.getPrompt());
-			comms.print(result);
+			result = res.getText();
 		}
-	
+		
+		comms.setSuffix(player.getPrompt());
+		comms.print(result);
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.world.World;
 
+import ring.mobiles.senses.stimuli.VisualStimulus;
+
 public class Look implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
@@ -26,24 +28,26 @@ public class Look implements Command {
 		if (t == null) {
 			Room room = mob.getLocation();
 
-			if (mob.getBaseModel().isBlind()) {
-				res.setFailText("You see nothing, for you are blind!");
-				World.sendVisualToLocation(mob, mob.getBaseModel().getName()
+			String lookText = "[CYAN]" + room.getModel().getTitle() + "[R]\n"
+				+ room.getModel().getDescription() + "\n"
+				+ room.getExitsString(mob.getDynamicModel().getSearchCheck())
+				+ "\n" + room.getMobileList(mob, mob.getDynamicModel().getSpotCheck())
+				+ room.getEntityList();
+				
+			VisualStimulus stimulus = new VisualStimulus();
+			stimulus.setDepiction(lookText);
+			stimulus.setBlindDepiction("You see nothing, for you are blind!");
+			
+			/*
+			 World.sendVisualToLocation(mob, mob.getBaseModel().getName()
 						+ " stumbles about blindly.", null);
-				return res;
-			}
-
-			else {
-				String lookText = room.getModel().getTitle() + "\n"
-						+ room.getModel().getDescription() + "\n"
-						+ room.getExitsString(mob.getDynamicModel().getSearchCheck())
-						+ "\n" + room.getMobileList(mob, mob.getDynamicModel().getSpotCheck())
-						+ room.getEntityList();
-
-				res.setText(lookText);
-				res.setSuccessful(true);
-			}
-			}
+			*/
+			mob.getDynamicModel().getSensesGroup().consume(stimulus);
+			res.setReturnableData(false);
+			res.setSuccessful(true);
+			
+			return res;
+		}
 
 		// Now check to see if we are looking at something specific, if true,
 		// return the look description

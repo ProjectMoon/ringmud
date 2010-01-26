@@ -22,7 +22,9 @@ public class PlayerDepictionHandler implements DepictionHandler {
 	
 	@Override
 	public void handle(ProcessedDepiction depiction) {
-		communicator.println(depiction.getDepiction());
+		//Use printNoSuffix here, otherwise we get more than one
+		//prompt.
+		communicator.printNoSuffix(depiction.getDepiction());
 	}
 	
 	public Communicator getCommunicator() {
