@@ -25,6 +25,7 @@ public class CommandResult {
 		text = "";
 		failText = "[R][GREEN]You can't do that.[R][WHITE]";
 		successful = false;
+		returnData = true;
 	}
 
 	public void clearText() {

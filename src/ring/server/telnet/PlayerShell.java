@@ -67,8 +67,8 @@ public class PlayerShell implements Shell {
 		room.addMobile(player);
 		player.setLocation(room);
 		
-
-		player.doCommand("look");
+		//A player should see where they are when they log in.
+		sendCommandResult(player.doCommand("look"));
 		
 		// Wait for commands.
 		while (!player.isQuitting()) {
@@ -83,12 +83,7 @@ public class PlayerShell implements Shell {
 			}
 			
 			CommandResult res = player.doCommand(command);
-			
-			if (res.hasReturnableData()) {
-				String result = res.getText();
-				System.out.println(result);
-				comms.print(result);
-			}
+			sendCommandResult(res);
 
 			// Only update last command if the last command wasn't !!
 			if (!command.equals("!!"))
@@ -99,6 +94,16 @@ public class PlayerShell implements Shell {
 		}
 	}
 	
+	private void sendCommandResult(CommandResult res) {
+		if (res.hasReturnableData()) {
+			String result = res.getText();
+			System.out.println(result);
+			comms.setSuffix(player.getPrompt());
+			comms.print(result);
+		}
+	
+	}
+
 	@Override
 	public void connectionIdle(ConnectionEvent arg0) {
 		// TODO Auto-generated method stub

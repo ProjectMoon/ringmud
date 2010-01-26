@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBException;
 
 import org.xmldb.api.base.XMLDBException;
 
-import ring.commands.Command;
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;

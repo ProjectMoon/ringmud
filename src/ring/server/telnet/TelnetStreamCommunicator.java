@@ -59,7 +59,8 @@ public class TelnetStreamCommunicator implements Communicator {
 	}
 
 	private boolean isValid(String data) {
-		return (!data.equals("") && data.length() > 0);
+		//return (!data.equals("") && data.length() > 0);
+		return true;
 	}
 
 	private String formatData(String data, boolean useSuffix) {
