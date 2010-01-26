@@ -1,7 +1,5 @@
 package ring.mobiles.senses.stimuli;
 
-import ring.mobiles.senses.Stimulus;
-
 /**
  * Class representing an audiovisual stimulus. Objects of this class
  * are received by StimuliListeners and processed accordingly. In the

@@ -1,8 +1,6 @@
 package ring.mobiles.senses.sensors;
 
 import ring.mobiles.senses.ProcessedDepiction;
-import ring.mobiles.senses.Sense;
-import ring.mobiles.senses.Stimulus;
 import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class VisualSense implements Sense<VisualStimulus> {

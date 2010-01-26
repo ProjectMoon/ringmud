@@ -1,4 +1,4 @@
-package ring.senses.handlers;
+package ring.mobiles.senses.handlers;
 
 import ring.mobiles.senses.DepictionHandler;
 import ring.mobiles.senses.ProcessedDepiction;

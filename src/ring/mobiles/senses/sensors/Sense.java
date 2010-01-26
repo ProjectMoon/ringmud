@@ -1,4 +1,7 @@
-package ring.mobiles.senses;
+package ring.mobiles.senses.sensors;
+
+import ring.mobiles.senses.stimuli.Stimulus;
+import ring.mobiles.senses.ProcessedDepiction;
 
 /**
  * Interface representing a "sense." A creature that has a sense can
