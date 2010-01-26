@@ -1,66 +1,195 @@
 package ring.mobiles.senses;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import ring.mobiles.senses.sensors.*;
+import ring.mobiles.senses.stimuli.*;
+
 /**
- * Represents a group of senses that a Mobile has. The senses group has a 
- * consume method that takes any kind of stimulus. It is up to the 
- * implementation of this interface to delegate the proper stimulus to the proper sense.
- * Senses are stored by name, so a Mobile may have several different ways of
- * detecting an individual stimulus.
+ * A group of senses. A senses group can have up to 5 different senses:
+ * auditory, visual, tactile, olfactory (smell), or taste. A senses group
+ * consumes stimuli sent to it. The group is capable of determining what
+ * sense to use to process the stimulus. If the group does not have a sense
+ * to consume a stimulus, it silently ignores the stimulus as if it were
+ * not perceived at all.
+ * <br/><br/>
+ * Note that there is a difference between "consuming" and "processing" a
+ * stimulus. A senses group can consume any stimulus that it has a sense for,
+ * even if that sense is disabled. A disabled sense may not be able to PROCESS
+ * a stimulus properly, however.
  * @author projectmoon
  *
  */
-public interface SensesGroup {
-	/**
-	 * Consumes a stimulus in some fashion or another. After being consumed,
-	 * the processed depiction of this stimulus is passed on to the depiction
-	 * handler for final processing and delivery to the Mobile. Note that consuming
-	 * a stimulus does not necessarily mean that stimulus is fully processed (or processed at all).
-	 * A deaf person consumes audio stimuli, but does not process it.
-	 * @param stimulus
-	 */
-	public void consume(Stimulus stimulus);
+public class SensesGroup {
+	private VisualSense visualSense;
+	private AuditorySense auditorySense;
+	private TactileSense tactileSense;
+	private OlfactorySense olfactorySense;
+	private TasteSense tasteSense;
 	
-	/**
-	 * Detect whether or not this senses group can consume the specified stimulus.
-	 * This method is not entirely intuitive; some senses groups may delegate unknown
-	 * stimulus types to another method to see if there is another way for that stimulus
-	 * to be handled. Thus, this method would return true, as the stimulus can be "consumed"
-	 * in some fashion.
-	 * @param stimulus
-	 * @return true if this stimulus can be consumed.
-	 */
-	public boolean canConsume(Stimulus stimulus);
+	private DepictionHandler handler;
 	
-	/**
-	 * Add a sense to this senses group.
-	 * @param name
-	 * @param sense
-	 */
-	public <S extends Stimulus> void addSense(Class<S> stimClass, Sense<S> sense);
+	public static SensesGroup createDefaultSensesGroup() {
+		SensesGroup group = new SensesGroup();
+		
+		//Eyes
+		VisualSense vs = new VisualSense();
+		vs.setName("eyes");
+		group.setVisualSense(vs);
+		
+		//Ears
+		AuditorySense as = new AuditorySense();
+		as.setName("ears");
+		group.setAuditorySense(as);
+		
+		//Touch
+		TactileSense ts = new TactileSense();
+		ts.setName("sense of touch");
+		group.setTactileSense(ts);
+		
+		//Nose
+		OlfactorySense os = new OlfactorySense();
+		os.setName("nose");
+		group.setOlfactorySense(os);
+		
+		//Tongue
+		TasteSense taste = new TasteSense();
+		taste.setName("tongue");
+		group.setTasteSense(taste);
+		
+		return group;
+	}
 	
-	/**
-	 * Get a sense by its name.
-	 * @param name
-	 * @return The sense, or null if none is found.
-	 */
-	public <S extends Stimulus> Sense<S> getSense(Class<S> stimClass);
+	public static SensesGroup createDefaultSensesGroup(DepictionHandler handler) {
+		SensesGroup group = createDefaultSensesGroup();
+		group.setDepictionHandler(handler);
+		return group;
+	}	
 	
-	/**
-	 * Remove a sense.
-	 * @param name
-	 * @return true if a sense was removed, false otherwise.
-	 */
-	public boolean removeSense(Class<?> stimClass);
+	public DepictionHandler getDepictionHandler() {
+		return handler;
+	}
+
+	public void setDepictionHandler(DepictionHandler handler) {
+		this.handler = handler;		
+	}
 	
-	/**
-	 * Gets the depiction handler for this senses group.
-	 * @return the handler.
-	 */
-	public DepictionHandler getDepictionHandler();
+	public boolean canConsume(Stimulus stimulus) {
+		//TODO implement something better later, as
+		//this will accept custom stimuli.
+		return true;
+	}
+
+	public void consume(VisualStimulus stimulus) {
+		if (canConsume(stimulus)) {
+			ProcessedDepiction depiction = visualSense.process(stimulus);
+			handler.handle(depiction);
+		}
+	}
 	
-	/**
-	 * Sets the depiction handler for this senses group.
-	 * @param handler
-	 */
-	public void setDepictionHandler(DepictionHandler handler);
+	public void consume(AudioStimulus stimulus) {
+		if (canConsume(stimulus)) {
+			ProcessedDepiction depiction = auditorySense.process(stimulus);
+			handler.handle(depiction);
+		}
+	}
+	
+	public void consume(TactileStimulus stimulus) {
+		if (canConsume(stimulus)) {
+			ProcessedDepiction depiction = tactileSense.process(stimulus);
+			handler.handle(depiction);
+		}
+	}
+	
+	public void consume(OlfactoryStimulus stimulus) {
+		if (canConsume(stimulus)) {
+			ProcessedDepiction depiction = olfactorySense.process(stimulus);
+			handler.handle(depiction);
+		}
+	}
+	
+	public void consume(TasteStimulus stimulus) {
+		if (canConsume(stimulus)) {
+			ProcessedDepiction depiction = tasteSense.process(stimulus);
+			handler.handle(depiction);
+		}
+	}
+	
+	//This is for unknown stimuli types.
+	public void consume(Stimulus stimulus) {
+		throw new UnsupportedOperationException("SensesGroup cannot yet consume unknown stimuli.");
+	}
+		
+	public VisualSense getVisualSense() {
+		return visualSense;
+	}
+	
+	public void setVisualSense(VisualSense sense) {
+		visualSense = sense;
+	}
+	
+	public AuditorySense getAuditorySense() {
+		return auditorySense;
+	}
+	
+	public void setAuditorySense(AuditorySense sense) {
+		auditorySense = sense;
+	}
+	
+	public OlfactorySense getOlfactorySense() {
+		return olfactorySense;
+	}
+	
+	public void setOlfactorySense(OlfactorySense sense) {
+		olfactorySense = sense;
+	}
+	
+	public TactileSense getTactileSense() {
+		return tactileSense;
+	}
+	
+	public void setTactileSense(TactileSense sense) {
+		tactileSense = sense;
+	}
+	
+	public TasteSense getTasteSense() {
+		return tasteSense;
+	}
+	
+	public void setTasteSense(TasteSense sense) {
+		tasteSense = sense;
+	}
+	
+	//Test out senses group!	
+	public static void main(String[] args) {
+		DepictionHandler handler = new DepictionHandler() {
+			@Override
+			public void handle(ProcessedDepiction depiction) {
+				System.out.println(depiction.getDepiction());
+			}
+		};
+		
+		SensesGroup group = SensesGroup.createDefaultSensesGroup(handler);
+		
+		group.getVisualSense().setDisabledFromBlindness(true);
+		VisualStimulus stimulus = new VisualStimulus();
+		stimulus.setDepiction("Hi there this is a visual stimulus");
+		stimulus.setBlindDepiction("This is the blind depiction");
+		group.consume(stimulus);
+		
+		group.getVisualSense().setDisabledFromBlindness(false);
+		group.consume(stimulus);
+		
+		//Test unknown stimulus
+		Stimulus telepathy = new Stimulus() {
+			@Override public String getDepiction() { return "WooOOoooOoo.. I'm in your MIND!"; }
+			@Override public void setDepiction(String s) {}
+		};
+		
+		//Should throw an exception
+		group.consume(telepathy);
+	}
+
+
 }

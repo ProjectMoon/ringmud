@@ -1,4 +1,4 @@
-package ring.mobiles.senses;
+package ring.mobiles.senses.stimuli;
 
 /**
  * Interface representing a sense stimulus. This could be vision, hearing,
