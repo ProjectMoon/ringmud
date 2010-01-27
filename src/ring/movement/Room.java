@@ -20,7 +20,6 @@ import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.persistence.RingConstants;
-import ring.world.World;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -106,7 +105,7 @@ public class Room extends AbstractBusinessObject {
 	public List<Mobile> getMobiles() {
 		return mobiles;
 	}
-	
+		
 	public void setMobiles(List<Mobile> mobiles) {
 		this.mobiles = mobiles;
 	}
@@ -300,66 +299,36 @@ public class Room extends AbstractBusinessObject {
 	 * @return
 	 */
 	public boolean canEnter(Movable mov) {
-		return true;
+		return (mov instanceof Mobile || mov instanceof Entity);
 	}
 	
 	/**
-	 * Callback event when a Movable enters this Room.
-	 * @param m
-	 * @param from
+	 * Adds a movable to this room.
+	 * @param mov
 	 */
-	public void movableEnters(Movable m, Portal from) {
-		RoomModel model = getModel();
-		System.out.println(m + " has arrived from " + from.getDisplayName());
-		System.out.println("new room: " + model.getTitle());
-		
-		Mobile mob = (Mobile)m;
-	
-		// default arrive and leave text to broadcast to others
-		String arriveText = mob.getBaseModel().getName() + " [R][WHITE]arrives from "
-				+ from.getDisplayName() + ".";
-
-
-		//Reset certain skill checks.
-		//TODO pending skills rewrite
-
-		//TODO pending integration of rewritten classes.
-		//World.roomArriveLeaveToLocation(mob, arriveText, "[R][WHITE]You hear the sounds of someone arriving.");
-
-		// subtract the right amount of move points.
-		mob.getDynamicModel().changeCurrentMV(-1);
-
-		// display the new information of the room
-		if (mob.getBaseModel().isBlind())
-			mob.sendData("You stumble into a new area, but you cannot see anything!");
-		else {
-			mob.sendData(model.getTitle() + "\n"
-				+ model.getDescription() + "\n"
-				//+ this.getExitsString(mob.getSearchCheck()) + "\n"
-				//+ this.getMobileList(mob, mob.getDynamicModel().getSearchCheck())
-				//TODO ^ pending skills rewrite
-				+ this.getEntityList());
+	public void addMovable(Movable mov) {
+		if (mov instanceof Mobile) {
+			addMobile((Mobile)mov);
+		}
+		else if (mov instanceof Entity) {
+			addEntity((Entity)mov);
 		}
 	}
-
+	
 	/**
-	 * Callback event when a Movable leaves this room.
-	 * @param m
-	 * @param to
+	 * Removes a movable.
+	 * @param mov
+	 * @return true if successful, false otherwise.
 	 */
-	public void movableLeaves(Movable m, Portal to) {
-		System.out.println(m + " leaves to " + to.getDisplayName());
-		
-		Mobile mob = (Mobile)m;
-		
-		// default arrive and leave text to broadcast to others
-		String arriveText = mob.getBaseModel().getName() + " [R][WHITE]leaves to "
-				+ to.getDisplayName() + ".";
-
-		// reset the character's search, listen, and spot checks.
-		//TODO pending skills rewrite
-
-		//World.roomArriveLeaveToLocation(mob, arriveText, "[R][WHITE]You hear the sounds of someone leaving.");
-		//TODO pending nrapi integration
+	public boolean removeMovable(Movable mov) {
+		if (mov instanceof Mobile) {
+			return removeMobile((Mobile)mov);
+		}
+		else if (mov instanceof Entity) {
+			return removeEntity((Entity)mov);
+		}
+		else {
+			return false;
+		}
 	}
 }

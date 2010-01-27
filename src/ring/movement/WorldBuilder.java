@@ -8,8 +8,6 @@ import javax.xml.bind.JAXBException;
 
 import org.xmldb.api.base.XMLDBException;
 
-import ring.items.Item;
-import ring.mobiles.Mobile;
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.persistence.Loadpoint;
@@ -32,19 +30,21 @@ public class WorldBuilder {
 		
 		dataStore.setLoadpoint(Loadpoint.STATIC);
 		
-		//for each Location:
-		//	Add its Room to the cache
-		//	for each Portal:
-		//		port.setDestination(getRoom(port.getDestionationID());
-		//		LocationManager.addToGrid(room, port)
-		
+		//Retrieve all locations in the static collection.
 		List<Location> locs = xq.query(Location.class);
+		
+		//Add all the rooms to the cache beforehand.
+		//We must do this beforehand to get all room references.
+		//Otherwise, we encounter exceptions.
 		for (Location loc : locs) {
 			Room room = loc.getRoom();
 			attemptAddToCache(room);
-			
 			System.out.println("Found room: " + room);
-			
+		}
+		
+		//Now construct the world.
+		for (Location loc: locs) {
+			Room room = loc.getRoom();
 			for (Portal port : loc.getExits()) {
 				port.setDestination(getRoom(port.getDestinationID()));
 				LocationManager.addToGrid(room, port);
@@ -59,19 +59,7 @@ public class WorldBuilder {
 	}
 	
 	private static Room getRoom(String id) {
-		Room room = roomCache.get(id);
-		
-		if (room == null) {
-			room = dataStore.retrieveRoom(id);
-			
-			if (room != null) {
-				roomCache.put(id, room);
-			}
-			else {
-				throw new WorldConstructionException("Couldn't find room ID \"" + id + "\" in the cache or the database. Aborting.");
-			}
-		}
-		
+		Room room = roomCache.get(id);		
 		return room;
 	}
 	

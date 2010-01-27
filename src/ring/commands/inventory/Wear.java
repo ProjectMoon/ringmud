@@ -10,6 +10,9 @@ import ring.items.Item;
 import ring.mobiles.Body;
 import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.AudioStimulus;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.world.World;
 
 public class Wear implements Command {
@@ -69,10 +72,13 @@ public class Wear implements Command {
 		res.setSuccessful(true);
 
 		// Notify other players.
-		World.sendVisualToLocation(mob, "[R][WHITE]" + mob.getBaseModel().getName()
+		VisualStimulus vs = new VisualStimulus();
+		vs.setDepiction("[R][WHITE]" + mob.getBaseModel().getName()
 				+ " wears " + target.getIdlePrefix().toLowerCase()
 				+ " " + target.getName() + " on " + mob.getBaseModel().getGender().getPossessive() + " "
-				+ target.getPartWornOn().getName().toLowerCase() + ".", null);
+				+ target.getPartWornOn().getName().toLowerCase() + ".");
+		
+		StimulusSender.sendStimulus(mob.getLocation(), vs, mob);
 
 		return res;
 

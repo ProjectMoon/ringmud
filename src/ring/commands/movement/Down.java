@@ -6,6 +6,7 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.movement.LocationManager;
+import ring.movement.PortalNotFoundException;
 
 public class Down implements Command {
 
@@ -14,9 +15,19 @@ public class Down implements Command {
 		res.setFailText("[GREEN]You can't go that way.[WHITE]");
 		Mobile mob = (Mobile) sender;
 
-		boolean success = mob.move(LocationManager.DOWN);
+		MoveAction ma = new MoveAction(mob, LocationManager.DOWN);
+
+		boolean success = false;
+
+		try {
+			success = ma.doMove();
+		} catch (PortalNotFoundException e) {
+			// can theoretically be safely ignored.
+		}
+
 		res.setSuccessful(success);
-		//A bit odd, but the data sending is handled by the movement system in this case.
+		// A bit odd, but the data sending is handled by the movement system in
+		// this case.
 		if (success) {
 			res.setReturnableData(false);
 		}
@@ -30,7 +41,7 @@ public class Down implements Command {
 	}
 
 	public void rollback() {
-		
+
 	}
 
 }

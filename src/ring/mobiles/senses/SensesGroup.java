@@ -1,10 +1,16 @@
 package ring.mobiles.senses;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import ring.mobiles.senses.sensors.*;
-import ring.mobiles.senses.stimuli.*;
+import ring.mobiles.senses.sensors.AuditorySense;
+import ring.mobiles.senses.sensors.OlfactorySense;
+import ring.mobiles.senses.sensors.TactileSense;
+import ring.mobiles.senses.sensors.TasteSense;
+import ring.mobiles.senses.sensors.VisualSense;
+import ring.mobiles.senses.stimuli.AudioStimulus;
+import ring.mobiles.senses.stimuli.OlfactoryStimulus;
+import ring.mobiles.senses.stimuli.Stimulus;
+import ring.mobiles.senses.stimuli.TactileStimulus;
+import ring.mobiles.senses.stimuli.TasteStimulus;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 
 /**
  * A group of senses. A senses group can have up to 5 different senses:
@@ -65,8 +71,8 @@ public class SensesGroup {
 		SensesGroup group = createDefaultSensesGroup();
 		group.setDepictionHandler(handler);
 		return group;
-	}	
-	
+	}
+		
 	public DepictionHandler getDepictionHandler() {
 		return handler;
 	}

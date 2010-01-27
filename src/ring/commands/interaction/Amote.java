@@ -6,6 +6,8 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.world.World;
 
 public class Amote implements Command {
@@ -28,7 +30,10 @@ public class Amote implements Command {
 		emoteText = mob.getBaseModel().getName() + "'s " + emoteText;
 
 		// broadcast to the world and player.
-		World.notifyPlayersAtLocation(mob, emoteText);
+		VisualStimulus stim = new VisualStimulus();
+		stim.setDepiction(emoteText);
+		StimulusSender.sendStimulus(mob.getLocation(), stim, mob);
+		
 		res.setText(emoteText);
 		res.setSuccessful(true);
 		return res;

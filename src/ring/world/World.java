@@ -9,16 +9,10 @@ package ring.world;
  * @version 1.0
  */
 
-import ring.commands.*;
-import ring.entities.*;
-import ring.mobiles.*;
-import ring.mobiles.MobileBaseModel.Type;
-import ring.players.*;
-import ring.effects.*;
-import ring.effects.library.*;
-import ring.movement.*;
-import ring.util.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import ring.players.PlayerCharacter;
 
 public class World implements TickerListener {
 	private static World world;
@@ -77,115 +71,6 @@ public class World implements TickerListener {
 	//sendAudioToLocation method.
 	//This method and its variants send "aduio" to a location. That is, all non-deaf characters
 	//will see it appear on their screens.
-
-	//This version sends the data to non-deaf characters in the room except for the specified Mobile.
-	//Mainly used for the say command.
-	public static synchronized void sendAudioToLocation(Mobile mobile, String text, String deafText) {
-		Room room = (Room)mobile.getLocation();
-		List<Mobile> mobiles = room.getMobiles();
-		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = (Mobile)mobiles.get(c);
-			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
-				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.getBaseModel().isDeaf()) { 
-					player.getCommunicator().printWithPreline(text);
-				}
-				else if (deafText != null && !deafText.equals("")) { 
-					player.getCommunicator().printWithPreline(deafText);
-				}
-			}
-		}
-	}
-
-	//sendVisualToLocation method.
-	//This method and its variants send "visual" information to a location. That is, all non-blind
-	//characters will see it appear on their screens.
-
-	//This version sends the data to non-blind characters in the room.
-	public static synchronized void sendVisualToLocation(Room room, String text, String blindText) {
-		List<Mobile> mobiles = room.getMobiles();
-		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = (Mobile)mobiles.get(c);
-			if (mob.isPlayer()) {
-				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.getBaseModel().isBlind()) {
-					player.getCommunicator().printWithPreline(text);
-				}
-				else if ((blindText != null) && (!blindText.equals(""))) {
-					player.getCommunicator().printWithPreline(blindText);
-				}
-			}
-		}
-	}
-
-	//This version sends the data to non-blind characters in the room except for the specified Mobile.
-	//Mainly used for the say command.
-	public static synchronized void sendVisualToLocation(Mobile mobile, String text, String blindText) {
-		Room room = (Room)mobile.getLocation();
-		List<Mobile> mobiles = room.getMobiles();
-		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = (Mobile)mobiles.get(c);
-			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
-				PlayerCharacter player = (PlayerCharacter)mob;
-				if (!player.getBaseModel().isBlind()) {
-					player.getCommunicator().printWithPreline(text);
-				}
-				else if ((blindText != null) && (!blindText.equals(""))) {
-					player.getCommunicator().printWithPreline(blindText);
-				}
-			}
-		}
-	}
-
-	//roomArriveLeaveToLocation method.
-	//This method sends a "room broadcast" message to a location. A room broadcast is an arrive/leave
-	//message that people see when a mobile leaves or arrives in their current room. This could be
-	//considered a hybrid of sendVisual and sendAudio, because it does not allow blind characters
-	//to see the text, (they "hear" something instead), but it also does not allow non-listening mobiles
-	//to see the boradcast of a mobile moving silently. Deaf mobiles will automatically not see
-	//moving silently broadcast no matter what.
-	public static synchronized void roomArriveLeaveToLocation(Mobile mobile, String text, String blindText) {
-		Room room = (Room)mobile.getLocation();
-		List<Mobile> mobiles = room.getMobiles();
-		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = mobiles.get(c);
-			
-			if ((!mob.equals(mobile)) && (mob.isPlayer())) {
-				PlayerCharacter player = (PlayerCharacter)mob;
-				
-				//TODO check move silently here
-				/*
-				if (mobile.moveSilentlyCheck > 0) { //yes, he's moving silently
-					if ((!player.isDeaf) && (player.listenCheck >= mobile.moveSilentlyCheck)) { //we beat the MS check
-						if (!player.isBlind) player.getCommunicator().printWithPreline(text);
-						else if ((blindText != null) && (!blindText.equals(""))) player.getCommunicator().printWithPreline(blindText);
-					}
-				}
-				*/
-				if (!player.getBaseModel().isBlind()) { 
-					player.getCommunicator().printWithPreline(text);
-				}
-				else if ((blindText != null) && (!blindText.equals(""))) {
-					player.getCommunicator().printWithPreline(blindText);
-				}
-			} //end player if condition
-		} //end for loop
-	}
-
-
-	//Notifies players in the room of the mobile except for the specified mobile.
-	//Useful for the voice of the gods!
-	public static synchronized void notifyPlayersAtLocation(Mobile mobile, String text) {
-		Room room = (Room)mobile.getLocation();
-		List<Mobile> mobiles = room.getMobiles();
-		for (int c = 0; c < mobiles.size(); c++) {
-			Mobile mob = (Mobile)mobiles.get(c);
-			if ((mob.isPlayer()) && (!mob.equals(mobile))) {
-				PlayerCharacter player = (PlayerCharacter)mob;
-				player.getCommunicator().printWithPreline(text);
-			}
-		}
-	}
 
 	//getTicker method.
 	public Ticker getTicker() {

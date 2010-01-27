@@ -34,7 +34,7 @@ public class LocationManager {
 		
 		return null;
 	}
-	
+		
 	public static Room getDestination(Room room, String portalName) {
 		try {
 			return getDestinationFromPortal(getPortal(room, portalName));
@@ -72,13 +72,21 @@ public class LocationManager {
 	/**
 	 * The heart of the movement system. Given a Movable and a Portal, it
 	 * implements the logic of the Movable going into that Portal and arriving
-	 * at a Location. The movement is allowed if the movable itself can move,
+	 * at a new location. The movement is allowed if the movable itself can move,
 	 * followed by checking if the portal is hidden, followed by if the movement
 	 * is actually possible. Finally, it performs the actual move.
-	 * @param mov
-	 * @param port
+	 * <br/>
+	 * <br/>
+	 * Note that this method does not produce any indication to connected users
+	 * that a move has occurred. It also does not deal with any object-specific
+	 * necessities, such as subtracting MV points for mobiles. This must be dealt
+	 * with by user code. The built-in movement commands handle this with a class
+	 * called MoveAction.
+	 * @param mov The Movable that will enter the portal <code>port</code>.
+	 * @param port The portal to enter.
 	 * @return true if the move was successful, false otherwise.
 	 * @throws MovementAssertionException if the Portal being used is not at the Movable's current Location.
+	 * @throws PortalNotFoundException if the Portal passed to the method is null.
 	 */
 	public static boolean move(Movable mov, Portal port) throws MovementAssertionException, PortalNotFoundException {
 		if (port == null) {
@@ -113,9 +121,9 @@ public class LocationManager {
 			}
 			else {
 				//Now that we know it's possible, perform the move.
-				leavingFrom.movableLeaves(mov, port);
+				leavingFrom.removeMovable(mov);
 				mov.setLocation(locToMoveTo);
-				locToMoveTo.movableEnters(mov, port);
+				locToMoveTo.addMovable(mov);
 				return true;
 			}
 		}

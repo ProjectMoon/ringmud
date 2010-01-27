@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
+import net.wimpi.telnetd.io.TerminalIO;
 
 /**
  * InputStream implementation built on top of telnetd2. Allows standard Java I/O classes and
@@ -14,7 +15,7 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
  */
 public class TelnetInputStream extends InputStream {
 	private BasicTerminalIO io;
-	private boolean echo = true;
+	private boolean echo = false;
 	
 	/**
 	 * Creates an input stream from the given BasicTerminalIO object.
@@ -27,6 +28,11 @@ public class TelnetInputStream extends InputStream {
 	@Override
 	public int read() throws IOException {
 		int i = io.read();
+		
+		if (i == TerminalIO.BACKSPACE) {
+			System.out.println("Backspace...");
+			io.moveLeft(1);
+		}
 		
 		if (echo) {
 			io.write((char)i);
@@ -41,6 +47,12 @@ public class TelnetInputStream extends InputStream {
 		for (int c = off; c < len; c++) {
 			b[c - off] = (byte)io.read();
 			bytesRead++;
+		
+			System.out.println(b[c - off] + " | " + BasicTerminalIO.BACKSPACE + " | " + BasicTerminalIO.DELETE);
+			if ((int)b[c - off] == TerminalIO.BACKSPACE) {
+				System.out.println("Backspace...");
+				io.moveLeft(1);
+			}
 			
 			if (echo) {
 				//Don't echo newlines...

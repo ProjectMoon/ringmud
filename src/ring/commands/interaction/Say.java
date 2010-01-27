@@ -6,6 +6,8 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.AudioStimulus;
 import ring.world.World;
 
 public class Say implements Command {
@@ -53,12 +55,14 @@ public class Say implements Command {
 
 		res.setText(textBackToPlayer);
 
-		World.sendAudioToLocation(mob, textToOtherPlayers, mob.getBaseModel().getName()
-				+ " says something, but you cannot hear it!\n");
+		//Send audio to other players in the room.
+		AudioStimulus as = new AudioStimulus();
+		as.setDepiction(textToOtherPlayers);
+		as.setDeafDepiction(mob.getBaseModel().getName() + " say something, but you cannot hear it!");
+		StimulusSender.sendStimulus(mob.getLocation(), as, mob);
 
+		//The text will get sent back to this player as command result data.
 		res.setSuccessful(true);
-		
-		// Return the CommandResult.
 		return res;
 
 	}

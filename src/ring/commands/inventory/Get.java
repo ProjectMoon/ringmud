@@ -7,6 +7,8 @@ import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.items.Item;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.movement.Room;
 import ring.world.World;
 import ring.world.WorldObject;
@@ -44,9 +46,12 @@ public class Get implements Command {
 				+ " " + i.getName() + "[R][WHITE].");
 
 		// Notify other people in room
-		World.sendVisualToLocation(getter, getter.getBaseModel().getName() + " picks up "
+		VisualStimulus vs = new VisualStimulus();
+		vs.setDepiction(getter.getBaseModel().getName() + " picks up "
 				+ i.getIdlePrefix().toLowerCase() + " " + i.getName()
-				+ "[R][WHITE].", null);
+				+ "[R][WHITE].");
+		
+		StimulusSender.sendStimulus(getter.getLocation(), vs, getter);
 
 		res.setSuccessful(true);
 		return res;

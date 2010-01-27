@@ -6,10 +6,6 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.mobiles.Mobile;
-import ring.movement.Room;
-import ring.world.World;
-
-import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Look implements Command {
 
@@ -24,29 +20,10 @@ public class Look implements Command {
 		Mobile mob = (Mobile) sender;
 
 		// First check to see if we are just looking at the room. ie: sending
-		// just the "look" command.
+		// just the "look" command. If so, we delegate to RoomLookAction.
 		if (t == null) {
-			Room room = mob.getLocation();
-
-			String lookText = "[CYAN]" + room.getModel().getTitle() + "[R]\n"
-				+ room.getModel().getDescription() + "\n"
-				+ room.getExitsString(mob.getDynamicModel().getSearchCheck())
-				+ "\n" + room.getMobileList(mob, mob.getDynamicModel().getSpotCheck())
-				+ room.getEntityList();
-				
-			VisualStimulus stimulus = new VisualStimulus();
-			stimulus.setDepiction(lookText);
-			stimulus.setBlindDepiction("You see nothing, for you are blind!");
-			
-			/*
-			 World.sendVisualToLocation(mob, mob.getBaseModel().getName()
-						+ " stumbles about blindly.", null);
-			*/
-			mob.getDynamicModel().getSensesGroup().consume(stimulus);
-			res.setReturnableData(false);
-			res.setSuccessful(true);
-			
-			return res;
+			new RoomLookAction(mob).doLook();
+			return CommandResult.blankResult(true);
 		}
 
 		// Now check to see if we are looking at something specific, if true,

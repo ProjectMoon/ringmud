@@ -27,6 +27,18 @@ public class CommandResult {
 		successful = false;
 		returnData = true;
 	}
+	
+	/**
+	 * Convenience method for creating a blank command result.
+	 * @param success
+	 * @return
+	 */
+	public static CommandResult blankResult(boolean success) {
+		CommandResult cr = new CommandResult();
+		cr.setSuccessful(success);
+		cr.setReturnableData(false);
+		return cr;
+	}
 
 	public void clearText() {
 		text = "";

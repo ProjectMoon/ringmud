@@ -8,8 +8,9 @@ import ring.commands.CommandParameters.CommandType;
 import ring.effects.Affectable;
 import ring.items.Item;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.movement.Room;
-import ring.world.World;
 
 public class Drop implements Command {
 
@@ -35,23 +36,26 @@ public class Drop implements Command {
 		// Remove the item from the inventory.
 		if (mob.removeItemFromInventory(item)) {
 			// Put it back in the room the mobile is in.
-			Room room = (Room)mob.getLocation();
+			Room room = (Room) mob.getLocation();
 			room.addItem(item);
 			System.out.println("added.");
-	
+
 			// Set the text.
 			res.setText("[R][WHITE]You drop "
-					+ item.getIdlePrefix().toLowerCase() + " "
-					+ item.getName() + "[R][WHITE].");
-	
+					+ item.getIdlePrefix().toLowerCase() + " " + item.getName()
+					+ "[R][WHITE].");
+
 			// Notify other people in the world.
-			World.sendVisualToLocation(mob, mob.getBaseModel().getName() + " drops "
-					+ item.getIdlePrefix().toLowerCase() + " "
-					+ item.getName() + "[R][WHITE].",
-					"\nYou hear the thud of something being dropped.\n");
-	
-			}
-		else {
+			VisualStimulus vs = new VisualStimulus();
+			vs.setDepiction(mob.getBaseModel().getName() + " drops "
+					+ item.getIdlePrefix().toLowerCase() + " " + item.getName()
+					+ "[R][WHITE].");
+
+			vs.setBlindDepiction("You hear the thud of something being dropped.");
+
+			StimulusSender.sendStimulus(mob.getLocation(), vs, mob);
+
+		} else {
 			res.setFailText("[R][WHITE]You can't drop that!");
 		}
 		res.setSuccessful(true);

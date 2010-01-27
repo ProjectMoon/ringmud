@@ -18,11 +18,7 @@ import ring.items.Armor;
 import ring.items.Item;
 import ring.magic.SpellCaster;
 import ring.mobiles.backbone.Equipment;
-
-import ring.movement.LocationManager;
 import ring.movement.Movable;
-import ring.movement.MovementAssertionException;
-import ring.movement.PortalNotFoundException;
 import ring.movement.Room;
 import ring.persistence.RingConstants;
 import ring.world.TickerEvent;
@@ -342,27 +338,7 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	// levelUp method.
 	// This method levels the Mobile up!
 	public void levelup() {
-		//TODO implement levelup
-		/*
-		int hitDie = mobClass.getHitDie();
-		System.out.println("Got hit die...: " + hitDie);
-		Random gen = new Random(System.nanoTime());
-		System.out.println("Instantiated generator...");
-		int newHP = gen.nextInt(hitDie) + 0;
-		System.out.println("Updated HP...");
-		currentHP += newHP;
-		maxHP += newHP;
-		level++;
-		mobClass.setClassLevel(level);// There's no multiclassing in RingMUD.
-		System.out.println("Updated level itself...");
-
-		if (this.isPlayer()) {
-			System.out.println("Sending to player...");
-			PlayerCharacter pc = (PlayerCharacter) this;
-			pc.sendData("[B][GREEN]You have leveled up to level " + level
-					+ "![R][WHITE]");
-		}
-		*/
+		throw new UnsupportedOperationException("Leveling up not yet implemented");
 	}
 
 	// increaseLockTime method.
@@ -396,6 +372,7 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	 * locking and stat regen facilities.
 	 */
 	public void processTick(TickerEvent e) {
+		//TODO pending effects system changes
 		//super.removeDeadEffects();		
 		
 		// Deal with locking.
@@ -427,23 +404,6 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		}
 		else {
 			return true;
-		}
-	}
-
-	/**
-	 * Convenience method that wraps around the location manager's move method.
-	 * @param direction
-	 * @return true if the Mobile was able to move in the specified direction, false otherwise.
-	 */
-	public final boolean move(String direction) {
-		try {
-			return LocationManager.move(this, LocationManager.getPortal(
-					getLocation(), direction));
-		} catch (MovementAssertionException e) {
-			e.printStackTrace();
-			return false;
-		} catch (PortalNotFoundException e) {
-			return false;
 		}
 	}
 

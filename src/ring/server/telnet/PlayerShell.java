@@ -108,6 +108,7 @@ public class PlayerShell implements Shell {
 		}
 		
 		comms.setSuffix(player.getPrompt());
+		//comms.println();
 		comms.print(result);
 	}
 

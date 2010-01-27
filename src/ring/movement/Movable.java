@@ -7,7 +7,7 @@ package ring.movement;
  * or NPC. A Movable object could be anything, but is usually a Mobile. An example of
  * a non-Mobile Movable object would be an Entity that moves from room to room providing
  * ambience.
- * 
+ * <br/><br/>
  * A Movable provides two methods: setLocation and getLocation. This allows the MUD to
  * keep track of this Movable's position.
  * @author projectmoon

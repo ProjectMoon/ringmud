@@ -6,6 +6,8 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.AudioStimulus;
 import ring.world.World;
 
 public class Godvoice extends AbstractAdminCommand implements Command {
@@ -50,8 +52,14 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 
 		res.setText(textBackToPlayer);
 		
-		//TODO make World.notifyAllPlayers
-		World.notifyPlayersAtLocation(mob, textToOtherPlayers);
+		//TODO make a way to get every connected player
+		//for now we just send to current location
+		
+		//Not even being deaf stops the power of the gods.
+		AudioStimulus as = new AudioStimulus();
+		as.setDepiction(textToOtherPlayers);
+		as.setDeafDepiction(textToOtherPlayers);
+		StimulusSender.sendStimulus(mob.getLocation(), as, mob);
 
 		res.setSuccessful(true);
 		// Return the CommandResult.

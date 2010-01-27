@@ -27,13 +27,16 @@ public class PlayerLoginShell implements Shell {
 	@Override
 	public void run(Connection conn) {
 		init(conn);
-		try {
-			conn.getTerminalIO().eraseScreen();
-			conn.getTerminalIO().homeCursor();
-		}
-		catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		
+		//Commented out for now, as it can't erase the screen
+		//properly in line mode.
+//		try {
+//			conn.getTerminalIO().eraseScreen();
+//			conn.getTerminalIO().homeCursor();
+//		}
+//		catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		
 		//First check for exisitng connection.
 		//If so, forward directly to player shell.
@@ -81,10 +84,11 @@ public class PlayerLoginShell implements Shell {
 	private void init(Connection conn) {
 		connection = conn;
 		connection.addConnectionListener(this);		
-		
+				
 		//Initialize the communicator.
 		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
 				new TelnetOutputStream(connection.getTerminalIO()));
+		
 	}
 	
 	private MUDConnection doShell() {
