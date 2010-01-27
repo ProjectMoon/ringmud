@@ -25,10 +25,12 @@ import ring.system.MUDConfig;
 public class ExistDB {
 	
 	//Constants mapping to various strings necessary for XML:DB API.
-	//URI mappings
+
+	//Database login mappings:
+	//Normally these are copied to the instance variables below.
+	//But they can be overridden by constructors that allow specifying of
+	//username and password.
 	private static final String DB_URI = MUDConfig.getDatabaseURI();
-	
-	//User mappings
 	private static final String DB_USER = MUDConfig.getDatabaseUser();
 	private static final String DB_PASSWORD = MUDConfig.getDatabasePassword();
 	
@@ -47,6 +49,11 @@ public class ExistDB {
 	//Other stuff
 	//private static boolean shutdownHookExists;
 	//private static boolean shutdown = false;
+	
+	//Object instance-specific stuff:
+	private String dbURI = DB_URI;
+	private String dbUser = DB_USER;
+	private String dbPassword = DB_PASSWORD; 
 	
 	static {
 		//System.setProperty("exist.initdb", "true");
@@ -98,6 +105,12 @@ public class ExistDB {
 		*/
 	}
 	
+	public ExistDB(String uri, String username, String password) {
+		dbURI = uri;
+		dbUser = username;
+		dbPassword = password;
+	}
+	
 	/*
 	public void shutdown() {
 		System.out.print("Shutting down eXist... ");
@@ -138,13 +151,13 @@ public class ExistDB {
 	}
 	
 	public Collection getRootCollection() throws XMLDBException {
-		Collection root = (Collection)DatabaseManager.getCollection(craftCollectionURI(ROOT_COLLECTION), DB_USER, DB_PASSWORD);
+		Collection root = (Collection)DatabaseManager.getCollection(craftCollectionURI(ROOT_COLLECTION), dbUser, dbPassword);
 		return root;
 	}
 	
 	public Collection getCollection(String name) throws XMLDBException {
 		String colName = ROOT_COLLECTION + "/" + name;
-		Collection col = (Collection)DatabaseManager.getCollection(craftCollectionURI(colName), DB_USER, DB_PASSWORD);
+		Collection col = (Collection)DatabaseManager.getCollection(craftCollectionURI(colName), dbUser, dbPassword);
 		
 		if (col == null) {
 			throw new XMLDBException(-1, "Collection " + colName + " is null. Is the database running?");
@@ -153,10 +166,10 @@ public class ExistDB {
 		return col;
 	}
 	
-	private static String craftCollectionURI(String name) {
-		String ret = DB_URI;
+	private String craftCollectionURI(String name) {
+		String ret = dbURI;
 		
-		if (!DB_URI.endsWith("/")) {
+		if (!dbURI.endsWith("/")) {
 			ret += "/";
 		}
 		

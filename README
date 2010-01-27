@@ -6,7 +6,7 @@ two of its own flavor.
 
 It is written in Java and aims to be a complete MUD solution.
 
-Super quick build instructions:
+Super quick startup instructions:
 1. Download eXist 1.4 from http://exist.sourceforge.net
 2. Install exist to where ever you want. It has an easy graphical installer.
 3. Build ringmud by running "ant" from this directory.
@@ -16,6 +16,11 @@ Super quick build instructions:
 	(Windows support coming later)
 6. This will "install" ringmud's configuration file to /etc/ringmud,
    as well as create the database collections in eXist.
+	NOTE: Don't forget to copy your database login info to the config.
 7. Import the sample world file by typing:
    ./ringmud.sh import ../../resources/loc.xml
 8. Start RingMUD: ./ringmud.sh server
+9. telnet to localhost at port 2312
+
+This should get RingMUD running on localhost with a really crappy sample
+world. A better one is coming soon.

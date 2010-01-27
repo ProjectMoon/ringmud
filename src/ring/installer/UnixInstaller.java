@@ -1,6 +1,7 @@
 package ring.installer;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -70,7 +71,22 @@ public class UnixInstaller implements Installer {
 	@Override
 	public boolean setUpDatabase() throws InstallationException {
 		try {
-			new ExistDB().createRingDatabase();
+			Console console = System.console();
+			
+			System.out.print("eXist DB URI [default: xmldb:exist://localhost:8080/exist/xmlrpc/]: ");
+			String uri = console.readLine();
+			if (uri.equals("")) uri = "xmldb:exist://localhost:8080/exist/xmlrpc/";
+			System.out.print("eXist DB username: ");
+			String user = console.readLine();
+			
+			System.out.print("eXist DB password: ");
+			String password = console.readLine();
+				
+			new ExistDB(uri, user, password).createRingDatabase();
+			
+			System.out.println("Database creation complete.");
+			System.out.println("NOTE: You will need to copy these values to mud.config!");
+			System.out.println("The installer will NOT do it for you.");
 		} catch (XMLDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -24,7 +24,6 @@ public class MUDConfig {
         config = new Properties(loadDefaults());
         try {
         	String path = PreferencesManager.getString("ring.system.MUDConfig.configLocation") + SEP + "mud.config";
-            //System.out.println("Loading MUD configuration: " + path);
             config.load(new FileInputStream(path));
         }
         catch (FileNotFoundException e) {
