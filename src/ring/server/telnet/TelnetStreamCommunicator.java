@@ -8,6 +8,9 @@ import ring.server.Communicator;
 import ring.util.TextParser;
 
 public class TelnetStreamCommunicator implements Communicator {
+	private TelnetInputStream lowlevelInput;
+	private TelnetOutputStream lowlevelOutput;
+	
 	private Scanner in;
 	private PrintStream out;
 	private String suffix = "";
@@ -15,6 +18,8 @@ public class TelnetStreamCommunicator implements Communicator {
 	private boolean screenWidthParsing = true;
 	
 	public TelnetStreamCommunicator(TelnetInputStream in, TelnetOutputStream out) {
+		lowlevelInput = in;
+		lowlevelOutput = out;
 		this.in = new Scanner(in);
 		this.out = new PrintStream(out);
 	}
@@ -180,6 +185,14 @@ public class TelnetStreamCommunicator implements Communicator {
 		catch (Exception e) {
 			return false;
 		}
+	}
+	
+	public TelnetInputStream getInputStream() {
+		return lowlevelInput;
+	}
+	
+	public TelnetOutputStream getOutputStream() {
+		return lowlevelOutput;
 	}
 
 }

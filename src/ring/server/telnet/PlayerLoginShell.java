@@ -30,13 +30,13 @@ public class PlayerLoginShell implements Shell {
 		
 		//Commented out for now, as it can't erase the screen
 		//properly in line mode.
-//		try {
-//			conn.getTerminalIO().eraseScreen();
-//			conn.getTerminalIO().homeCursor();
-//		}
-//		catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		try {
+			conn.getTerminalIO().eraseScreen();
+			conn.getTerminalIO().homeCursor();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		//First check for exisitng connection.
 		//If so, forward directly to player shell.
@@ -98,10 +98,8 @@ public class PlayerLoginShell implements Shell {
 	
 	private MUDConnection doShell() {
 		DataStore ds = DataStoreFactory.getDefaultStore();
-		comms.print("Username: ");
-		String playerID = comms.receiveData();
-		comms.print("Password: ");
-		String password = comms.receiveData();
+		String playerID = inputUsername();
+		String password = inputPassword();
 		
 		Player player = ds.retrievePlayer(playerID);
 		PlayerCharacter pc = null;
@@ -114,12 +112,8 @@ public class PlayerLoginShell implements Shell {
 			comms.println();
 			comms.println("[B]Welcome!");
 			
-			String welcomeText = "It seems you are a new user. You will now be taken into character creation mode to create your first character." +
-							"When you log in to the game again, you will have a character list, and your newly created character will appear on it.";
-			
-			comms.println(welcomeText);
-			
-			PlayerCreation nuc = new PlayerCreation(playerID, password);
+			//Go through the player creaton process.			
+			PlayerCreation nuc = new PlayerCreation(comms, playerID, password);
 			player = nuc.doCreatePlayer();
 			
 			comms.println();
@@ -135,6 +129,26 @@ public class PlayerLoginShell implements Shell {
 		mc.setState(MUDConnectionState.LOGGING_IN);
 		
 		return mc;
+	}
+	
+	private String inputUsername() {
+		String line = "";
+		while (line.equals("")) {
+			comms.print("Username: " );
+			line = comms.receiveData();
+		}
+		
+		return line;
+	}
+	
+	private String inputPassword() {
+		String line = "";
+		while (line.equals("")) {
+			comms.print("Password: " );
+			line = comms.receiveData();
+		}
+		
+		return line;
 	}
 
 	@Override

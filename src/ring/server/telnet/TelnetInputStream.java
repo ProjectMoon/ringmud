@@ -14,7 +14,7 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
  */
 public class TelnetInputStream extends InputStream {
 	private BasicTerminalIO io;
-	private boolean echo = false;
+	private boolean echo = true;
 	
 	/**
 	 * Creates an input stream from the given BasicTerminalIO object.
@@ -39,19 +39,49 @@ public class TelnetInputStream extends InputStream {
 	public int read(byte[] b, int off, int len) throws IOException {
 		int bytesRead = 0;
 		for (int c = off; c < len; c++) {
-			b[c - off] = (byte)io.read();
-			bytesRead++;
+			int i = io.read();
+				
+			//Yes, this is a terrible hack. BACKSPACE - 1 is the actual backspace key,
+			//whereas BACKSPACE is ^H key. This should cover most modern telnet connections...
+			//Depending on user settings, they could have this mapped to either BACKSPACE
+			//or BACKSPACE -1.
+			if (i == BasicTerminalIO.BACKSPACE || i == BasicTerminalIO.BACKSPACE - 1) {
+				//Can't backspace beyond the start...
+				if (bytesRead > 0) {
 					
-			if (echo) {
-				//Don't echo newlines...
-				//Might remove later.
-				//if ((char)b[c - off] != '\n') {
-					io.write(b[c - off]);
-				//}
+					//Update visually.
+					io.moveLeft(1);
+					io.write(' ');
+					io.moveLeft(1);
+					
+					//and internally.
+					b[c - off] = (byte)0;					
+					bytesRead --;
+					//needs to be decremented because we are moving backwards in the array.
+					c--; 
+					
+				}
+				
+				//decrement c because we either went backwards or nowhere.
+				//loop's c++ will offset this, but if we don't do it,
+				//c keeps increasing.
+				c--;
+				continue;
+			}
+			else {
+				//This is a regular character, so we read it into the stream.				
+				b[c - off] = (byte)i;
+				bytesRead++;
+				
+				//Echo it back, if it's turned on.
+				//Currently will also echo newlines.
+				if (echo) {
+					io.write((char)i);
+				}
 			}
 			
 			if ((char)b[c - off] == '\n') break;
-		}
+		} //end of for loop.
 		
 		return bytesRead;
 	}
