@@ -29,11 +29,6 @@ public class TelnetInputStream extends InputStream {
 	public int read() throws IOException {
 		int i = io.read();
 		
-		if (i == TerminalIO.BACKSPACE) {
-			System.out.println("Backspace...");
-			io.moveLeft(1);
-		}
-		
 		if (echo) {
 			io.write((char)i);
 		}
@@ -47,13 +42,7 @@ public class TelnetInputStream extends InputStream {
 		for (int c = off; c < len; c++) {
 			b[c - off] = (byte)io.read();
 			bytesRead++;
-		
-			System.out.println(b[c - off] + " | " + BasicTerminalIO.BACKSPACE + " | " + BasicTerminalIO.DELETE);
-			if ((int)b[c - off] == TerminalIO.BACKSPACE) {
-				System.out.println("Backspace...");
-				io.moveLeft(1);
-			}
-			
+					
 			if (echo) {
 				//Don't echo newlines...
 				//Might remove later.

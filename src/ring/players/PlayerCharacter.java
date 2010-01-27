@@ -25,7 +25,6 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	private Communicator communicator;
 	
 	// Other variables
-	private transient String lastCommand = null;
 	private transient boolean quitting;
 	private String password;
 

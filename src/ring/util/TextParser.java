@@ -85,7 +85,7 @@ public class TextParser {
       StringTokenizer st = new StringTokenizer(data, "\n[], \t", true);
         StringBuilder res = new StringBuilder();
         int count = 0;
-        boolean trimPrevious = false;
+        
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
            
@@ -129,7 +129,7 @@ public class TextParser {
         StringTokenizer st = new StringTokenizer(data, "\n[], \t", true);
         StringBuilder res = new StringBuilder();
         int count = 0;
-        boolean trimPrevious = false;
+        
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
            
@@ -148,6 +148,7 @@ public class TextParser {
             
             //handle \ns directly.
             else if (text.equals("\n")) {
+            	
                 res.append("\r\n");
                 count = 0;
                 continue;
@@ -188,10 +189,13 @@ public class TextParser {
         //make sure we return to default.
         res.append(colors.get("[R]"));
                 
-        //It is FAR simpler to remove \n\\s this way than in the parsing
-        //loop...
+        //It is FAR simpler to remove spaces on the beginning/end of lines this way
+        //instead of in the parsing loop.
+        //This funky character class is actually \s class with the \n removed.
+        //This ensures newlines in the suffix from communicators are left alone.
+        //See: http://java.sun.com/docs/books/tutorial/essential/regex/pre_char_classes.html
         String ret = res.toString();
-        return ret.replaceAll("\n\\s+", "\n");
+        return ret.replaceAll("\n[ \\t\\x0B\\f\\r]+", "\n");
     }
     
     /**
@@ -203,10 +207,6 @@ public class TextParser {
      */
 	public static String stripFormatting(String text) {
 		for (String color : colors.keySet()) {
-			CharSequence s1 = "[";
-			CharSequence s2 = "]";
-			CharSequence r1 = "\\[";
-			CharSequence r2 = "\\]";
 			color = color.replace("[", "\\[");
 			color = color.replace("]", "\\]");
 			text = text.replaceAll(color, "");
