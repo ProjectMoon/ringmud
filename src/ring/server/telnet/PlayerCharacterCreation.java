@@ -1,16 +1,18 @@
 package ring.server.telnet;
 
-import java.io.IOException;
-import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ring.mobiles.Alignment;
 import ring.mobiles.MobileBaseModel;
+import ring.mobiles.Race;
 import ring.mobiles.RaceFactory;
 import ring.mobiles.Alignment.Ethical;
 import ring.mobiles.Alignment.Moral;
 import ring.mobiles.MobileBaseModel.Gender;
 import ring.mobiles.mobclass.MobileClass;
-import ring.mobiles.Race;
+import ring.persistence.DataStoreFactory;
 import ring.players.PlayerCharacter;
 import ring.server.Communicator;
 
@@ -37,34 +39,37 @@ public class PlayerCharacterCreation {
 	 * @throws java.io.IOException
 	 *             If there is an error saving the player to a file.
 	 */
-	public PlayerCharacter doCreateNewCharacter(String playerName) {
-					
-		String password;
+	public PlayerCharacter doCreateNewCharacter() {
+		String name;
 		Gender gender;
 		Race race;
 		Alignment alignment;
 		MobileClass playerClass;
-		PlayerCharacter newPlayer = new PlayerCharacter(comms, playerName);
-
-		password = createPassword();
+		PlayerCharacter newPlayer = new PlayerCharacter();
+		
+		name = chooseName();
+		comms.printlnNoSuffix("[CYAN][B]Name chosen: [WHITE]" + name);
+		comms.println();
 
 		race = chooseRace();
-		comms.printlnNoSuffix("[CYAN][B]Race chosen: [WHITE]" + race.getName()
-				+ "[R]\n");
-
+		comms.printlnNoSuffix("[CYAN][B]Race chosen: [WHITE]" + race.getName());
+		comms.println();
+		
 		gender = chooseGender(race);
-		comms.printlnNoSuffix("[CYAN][B]Gender chosen: [WHITE]" + gender + "[R]\n");
+		comms.printlnNoSuffix("[CYAN][B]Gender chosen: [WHITE]" + gender);
+		comms.println();
 
 		alignment = chooseAlignment();
-		comms.printlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]" + alignment.toString() + "[R]\n");
+		comms.printlnNoSuffix("[CYAN][B]Alignment chosen: [WHITE]" + alignment.toString());
+		comms.println();
 
 		playerClass = chooseClass();
 		//comms.printlnNoSuffix("[CYAN][B]Class chosen: [WHITE]" + playerClass.getDisplayName() + "[R]\n");
+		comms.println();
 
 		System.out.println("Setting various player attributes...");
 		// Set basic info
-		newPlayer.getBaseModel().setName(playerName);
-		newPlayer.setPassword(password);
+		newPlayer.getBaseModel().setName(name);
 		newPlayer.getBaseModel().setType(MobileBaseModel.Type.MORTAL);
 		//newPlayer.setMobileClass goes here.
 
@@ -89,40 +94,6 @@ public class PlayerCharacterCreation {
 		return newPlayer;
 	}
 
-	/**
-	 * This method creates a valid password that the user will use to log in
-	 * once their character is created. Valid passwords must be at least 6
-	 * characters long, and has to be typed twice to validate it.
-	 * 
-	 * @return A valid password string.
-	 */
-	public String createPassword() {
-		String password = null;
-		String validatePassword = null;
-
-		do {
-			while (password == null || password.length() == 0) {
-				comms.print("Enter a password for your character: ");
-				password = comms.receiveData();
-				
-				if (password.length() < 6) {
-					comms.printlnNoSuffix("[B][RED]Passwords must be at least six characters in length.[R][WHITE]");
-					password = null;
-				}
-			}
-
-			comms.print("Enter your password again for verification: ");
-			validatePassword = comms.receiveData();
-			comms.println();
-
-			if (!password.equals(validatePassword)) {
-				comms.printlnNoSuffix("[B][RED]First and second passwords do not match.[R][WHITE]");
-				password = null;
-			}
-		} while (password == null);
-
-		return password;
-	}
 
 	/**
 	 * This method returns a race based on a letter choice the user inputs. It
@@ -136,6 +107,7 @@ public class PlayerCharacterCreation {
 		do {
 			comms.printlnNoSuffix("Please select a race:");
 			comms.println("[R][CYAN]a) Human          [B][RED]g) Drow Elf[R][CYAN]\nb) Moon Elf       [B][RED]h) Ogre[R][CYAN]\nc) Dwarf          [B][RED]i) Duergar Dwarf[R][CYAN]\nd) Half-Elf       [B][RED]j) Illithid[R][CYAN]\ne) Gnome          [B][RED]k) Troll[R][CYAN]\nf) Aasimar        [B][RED]l) Tiefling[R][WHITE]");
+			comms.print("Enter choice: ");
 			String choice = comms.receiveData();
 			race = RaceFactory.determineRace(choice);
 
@@ -247,61 +219,44 @@ public class PlayerCharacterCreation {
 		return null;
 	}
 
-	public String getPlayerName() {
+	public String chooseName() {
 		String playerName = null;
-		boolean playerActive;
-		boolean invalidName;
-		boolean found;
-		String allowableCharacters = new String("abcdefghijklmnopqrstuvwxyz");
+		String allowableCharacters = "abcdefghijklmnopqrstuvwxyz";
 
-		do {
-			invalidName = true;
-			// ask for player name and log user on
-			while (invalidName) {
-				comms.print("[RED]Skipping new character creation...[WHITE]\nPlease enter your character's name: ");
-				playerName = comms.receiveData();
-				
-				invalidName = false;
-				if (playerName.length() > 15 || playerName.length() < 1) {
-					invalidName = true;
-					comms.print("[RED]Sorry, character names must be between 1 and 15 characters long.[WHITE]\n");
-				} else {
-					for (int x = 0; x < playerName.length(); x++) {
-						found = false;
-						for (int y = 0; y < allowableCharacters.length(); y++) {
-							if (playerName.substring(x, x + 1)
-									.equalsIgnoreCase(
-											allowableCharacters.substring(y,
-													y + 1))) {
-								found = true;
-								break;
-							}
-						}
-						if (!found) {
-							comms.print("[RED]Sorry, only the uppercase and lower case letters A-Z are allowed in a character name.[WHITE]\n");
-							invalidName = true;
-							break;
-						}
+		//This loop runs forever until a user creates a name that meets the following:
+		//2 - 15 characters long.
+		//Letters only.
+		//The validation conditions use continue to iterate the loop again.
+		//A break is at the very end to kill the loop if the name is valid.
+		while (true) {
+			comms.print("Enter a character name: ");
+			playerName = comms.receiveData();
+
+			if (playerName.length() > 15 || playerName.length() < 2) {
+				comms.println("[RED]Sorry, character names must be between 2 and 15 characters long.");
+				continue;
+			}
+			else {
+				for (char ch : playerName.toCharArray()) {
+					if (allowableCharacters.indexOf(ch) < 0) {
+						comms.println("[RED]Character names must contain letters only.");
+						continue;
 					}
 				}
 			}
 
-			// TODO: check both active and inactive players by querying the
-			// player store.
-			playerActive = false;
-			/*
-			 * List<PlayerCharacter> currentPlayers =
-			 * Server.getPlayerList().getPlayers(); for (PlayerCharacter player
-			 * : currentPlayers) { if
-			 * (player.checkAlias(playerName.toUpperCase())) { playerActive =
-			 * true; break; } }
-			 */
-
-			if (playerActive) {
-				comms.print("[RED]Sorry, that character is already in use.\n[CYAN]Note: If the character was in use by you and you dropped out of the game abnormally please wait 30-60 seconds for the character to be released and try logging on again.[WHITE]");
+			PlayerCharacter pc = DataStoreFactory.getDefaultStore().retrievePlayerCharacter(playerName);
+			if (pc != null) {
+				comms.println("[RED]Sorry, that character name is already in use.");
+				continue;
 			}
-		} while (playerActive);
-
+			
+			//The name is valid at this point. End the loop.
+			break;
+		}
+	
+		//Capitalize first letter of name.
+		playerName = playerName.substring(0, 1).toUpperCase() + playerName.substring(1);
 		return playerName;
 	}
 }

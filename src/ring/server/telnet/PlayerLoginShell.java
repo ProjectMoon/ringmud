@@ -42,6 +42,7 @@ public class PlayerLoginShell implements Shell {
 		//If so, forward directly to player shell.
 		MUDConnection mudConnection = MUDConnectionManager.getConnection(connection.getConnectionData().getInetAddress());
 		if (mudConnection != null) {
+			comms.println("Restoring your session.");
 			connection.setNextShell("player");
 			return;
 		}
@@ -52,7 +53,7 @@ public class PlayerLoginShell implements Shell {
 			catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			MUDConnection mc = doShell();
 			MUDConnectionManager.addConnection(connection.getConnectionData().getInetAddress(), mc);
 			connection.setNextShell("player");
@@ -70,6 +71,10 @@ public class PlayerLoginShell implements Shell {
 			while ((line = reader.readLine()) != null) {
 				comms.println(line);
 			}
+			
+			//Two newlines after the title.
+			comms.println();
+			comms.println();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -93,8 +98,10 @@ public class PlayerLoginShell implements Shell {
 	
 	private MUDConnection doShell() {
 		DataStore ds = DataStoreFactory.getDefaultStore();
-		comms.print("Enter username: ");
+		comms.print("Username: ");
 		String playerID = comms.receiveData();
+		comms.print("Password: ");
+		String password = comms.receiveData();
 		
 		Player player = ds.retrievePlayer(playerID);
 		PlayerCharacter pc = null;
@@ -103,15 +110,25 @@ public class PlayerLoginShell implements Shell {
 			//Load player character list
 		}
 		else {
-			comms.println("[R][WHITE]Entering new character creation mode...");
-			comms.print("Enter a character name: ");
-			String playerName = comms.receiveData();
+			//New user creation.
+			comms.println();
+			comms.println("[B]Welcome!");
 			
+			String welcomeText = "It seems you are a new user. You will now be taken into character creation mode to create your first character." +
+							"When you log in to the game again, you will have a character list, and your newly created character will appear on it.";
+			
+			comms.println(welcomeText);
+			
+			PlayerCreation nuc = new PlayerCreation(playerID, password);
+			player = nuc.doCreatePlayer();
+			
+			comms.println();
+			comms.println("[R][RED]Entering new character creation mode...");
+						
 			PlayerCharacterCreation creation = new PlayerCharacterCreation(comms);
-			pc = creation.doCreateNewCharacter(playerName);
-			comms.println("sup " + pc);
+			pc = creation.doCreateNewCharacter();
 		}
-		
+				
 		MUDConnection mc = new MUDConnection();
 		mc.setPlayer(player);
 		mc.setPlayerCharacter(pc);
@@ -128,14 +145,12 @@ public class PlayerLoginShell implements Shell {
 
 	@Override
 	public void connectionLogoutRequest(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("QUITTED");		
 	}
 
 	@Override
 	public void connectionSentBreak(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("BROKED");
 	}
 
 	@Override

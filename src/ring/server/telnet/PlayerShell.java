@@ -32,8 +32,12 @@ public class PlayerShell implements Shell {
 	
 	@Override
 	public void run(Connection conn) {
-		System.out.println("-------HI FROM PLAYER SHELL-------");
 		init(conn);
+		
+		comms.println("Welcome back, [B]" + user.getName() + "[R]. You descend into the world of Orea once more as [B]" + player.getBaseModel().getName() + "[R]...");
+		comms.println();
+		comms.println();
+		
 		gameLoop();
 	}
 
@@ -99,6 +103,9 @@ public class PlayerShell implements Shell {
 			// Necessary in case of updates to prompt info.
 			comms.setSuffix(player.getPrompt());
 		}
+		
+		//Log out gracefully.
+		logout();
 	}
 	
 	private void sendCommandResult(CommandResult res) {
@@ -111,29 +118,30 @@ public class PlayerShell implements Shell {
 		//comms.println();
 		comms.print(result);
 	}
+	
+	private void logout() {
+		System.out.println(user + "[" + player + "] logged out gracefully.");
+		MUDConnectionManager.removeConnection(connection.getConnectionData().getInetAddress());
+	}
 
 	@Override
 	public void connectionIdle(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//Need to start ye countdown timer before they disappear.
 	}
 
 	@Override
 	public void connectionLogoutRequest(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//Need to start ye countdown timer before they disappear.		
 	}
 
 	@Override
 	public void connectionSentBreak(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//Need to start ye countdown timer before they disappear.
 	}
 
 	@Override
 	public void connectionTimedOut(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//Make them go poof.
 	}
 
 }

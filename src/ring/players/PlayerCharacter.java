@@ -21,22 +21,14 @@ import ring.world.TickerListener;
 public class PlayerCharacter extends Mobile implements CommandSender, TickerListener {
 	private static final long serialVersionUID = 1L;
 	
-	//Player-server connection reference
-	private Communicator communicator;
-	
-	// Other variables
 	private transient boolean quitting;
-	private String password;
 
-	public PlayerCharacter() {
-		super();
-	}
-
-	public PlayerCharacter(Communicator existing, String pName) {
-		communicator = existing;
+	public PlayerCharacter() {}
+	
+	public PlayerCharacter(String pName) {
 		super.getBaseModel().setName(pName);
 	}
-	
+
 	@Override 
 	/**
 	 * Explicitly overriden to make sure that PC IDs and names are the same.
@@ -78,9 +70,6 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	@Override
 	public void decrementLockTime() {
 		super.decrementLockTime();
-		if (super.lockTimeRemaining <= 0) {
-			communicator.print(super.lockFinishedMessage);
-		}
 	}
 
 	/**
@@ -116,15 +105,6 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 		return getBaseModel().getName();
 	}
 
-	@XmlTransient
-	public Communicator getCommunicator() {
-		return communicator;
-	}
-	
-	public void setCommunicator(Communicator c) {
-		communicator = c;
-	}
-
 	public void quit() {
 		quitting = true;
 	}
@@ -153,13 +133,5 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 		sb.append(getBaseModel().getType().getName()).append(' ');
 
 		return sb.toString().toLowerCase();
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 }

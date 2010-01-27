@@ -20,12 +20,22 @@ import ring.persistence.DataStoreFactory;
  *
  */
 public class Player extends AbstractBusinessObject {
+	private String name;
 	private String password;
 	private Date lastLogon;
 	private List<String> charIDs = new ArrayList<String>();
 	
 	@Override
 	public void createChildRelationships() {}
+	
+	@XmlElement
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	@XmlElement
 	public String getPassword() {

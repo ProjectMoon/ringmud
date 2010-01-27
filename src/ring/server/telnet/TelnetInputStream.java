@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.wimpi.telnetd.io.BasicTerminalIO;
-import net.wimpi.telnetd.io.TerminalIO;
 
 /**
  * InputStream implementation built on top of telnetd2. Allows standard Java I/O classes and
