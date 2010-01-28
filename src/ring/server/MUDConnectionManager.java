@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 
 /**
  * Keeps track of MUDConnections. The different server shells access this manager to
@@ -15,6 +16,7 @@ import java.util.Map;
 public class MUDConnectionManager {
 	//Synchronized because multiple threads will potentially be writing to this map at the same time. 
 	private static Map<InetAddress, MUDConnection> connections = Collections.synchronizedMap(new HashMap<InetAddress, MUDConnection>());
+	private static Map<InetAddress, Timer> timerMap = Collections.synchronizedMap(new HashMap<InetAddress, Timer>());
 	
 	/**
 	 * Gets a connection.
@@ -41,6 +43,37 @@ public class MUDConnectionManager {
 	 */
 	public static boolean removeConnection(InetAddress ip) {
 		return (connections.remove(ip) != null);
+	}
+	
+	/**
+	 * Gets the timer instance for the specified connection. If the timer does not exist,
+	 * null is returned.
+	 * @param ip
+	 * @return The timer instance.
+	 */
+	public static Timer getTimer(InetAddress ip) {
+		Timer timer = timerMap.get(ip);
+		return timer;
+	}
+	
+	public static Timer createTimer(InetAddress ip) {
+		Timer timer = timerMap.get(ip);
+		if (timer == null) {
+			timer = new Timer();
+			timerMap.put(ip, timer);
+		}
+		return timer;
+	}
+	
+	public static boolean deleteTimer(InetAddress ip) {
+		Timer timer = timerMap.get(ip);
+		if (timer != null) {
+			timerMap.remove(ip);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	

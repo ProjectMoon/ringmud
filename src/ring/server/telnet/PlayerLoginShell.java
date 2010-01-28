@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
@@ -12,6 +15,7 @@ import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
+import ring.server.MUDConnectionTimeout;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
@@ -88,7 +92,10 @@ public class PlayerLoginShell implements Shell {
 
 	private void init(Connection conn) {
 		connection = conn;
-		connection.addConnectionListener(this);		
+		connection.addConnectionListener(this);
+		
+		//Clear out the timer if they have one
+		MUDConnectionManager.deleteTimer(connection.getConnectionData().getInetAddress());
 				
 		//Initialize the communicator.
 		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
@@ -153,24 +160,27 @@ public class PlayerLoginShell implements Shell {
 
 	@Override
 	public void connectionIdle(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Idle connection for " + connection);
+		InetAddress ip = connection.getConnectionData().getInetAddress();
+		TimerTask task = new MUDConnectionTimeout(ip);
+		Timer timer = MUDConnectionManager.createTimer(ip);
+		//timer.schedule(task, 1000);
+		timer.schedule(task, 300000); //5 minutes = 300,000
 	}
 
 	@Override
 	public void connectionLogoutRequest(ConnectionEvent arg0) {
-		System.out.println("QUITTED");		
+		System.out.println("Logout request for " + connection);;		
 	}
 
 	@Override
 	public void connectionSentBreak(ConnectionEvent arg0) {
-		System.out.println("BROKED");
+		System.out.println("Break for " + connection);
 	}
 
 	@Override
 	public void connectionTimedOut(ConnectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Timeout for " + connection);
 	}
 
 }

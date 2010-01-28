@@ -1,9 +1,5 @@
 package ring.server.telnet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import ring.mobiles.Alignment;
 import ring.mobiles.MobileBaseModel;
 import ring.mobiles.Race;
