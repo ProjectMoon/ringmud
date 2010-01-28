@@ -9,6 +9,9 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
  * InputStream implementation built on top of telnetd2. Allows standard Java I/O classes and
  * practices to be used to get and send data to the connected user. By default, this InputStream
  * echoes all input back to the user. This can be turned off by calling setEcho(false).
+ * <br/>
+ * <br/>
+ * This class should be thread-safe, as the underlying I/O library synchronizes its read methods.
  * @author projectmoon
  *
  */

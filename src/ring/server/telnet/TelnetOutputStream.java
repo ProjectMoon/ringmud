@@ -8,6 +8,9 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
 /**
  * OutputStream implementation built on top of telnetd2. Allows standard Java I/O classes and
  * practices to be used to get and send data to the connected user.
+ * <br/>
+ * <br/>
+ * This class should be thread-safe, as the underlying I/O library synchronizes its write methods.
  * @author projectmoon
  *
  */

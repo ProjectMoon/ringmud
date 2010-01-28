@@ -1,15 +1,10 @@
 package ring.server.telnet;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import ring.players.Player;
 import ring.server.Communicator;
 import ring.util.UserUtilities;
-
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Class to create a new player object. A user logs in as a player and then
