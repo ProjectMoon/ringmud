@@ -58,7 +58,7 @@ public class TelnetInputStream extends InputStream {
 					io.moveLeft(1);
 					
 					//and internally.
-					b[c - off] = (byte)0;					
+					b[c] = (byte)0;					
 					bytesRead --;
 					//needs to be decremented because we are moving backwards in the array.
 					c--; 
@@ -73,7 +73,7 @@ public class TelnetInputStream extends InputStream {
 			}
 			else {
 				//This is a regular character, so we read it into the stream.				
-				b[c - off] = (byte)i;
+				b[c] = (byte)i;
 				bytesRead++;
 				
 				//Echo it back, if it's turned on.
@@ -83,7 +83,8 @@ public class TelnetInputStream extends InputStream {
 				}
 			}
 			
-			if ((char)b[c - off] == '\n') break;
+			//Only read up to the next line.
+			if ((char)b[c] == '\n') break;
 		} //end of for loop.
 		
 		return bytesRead;
