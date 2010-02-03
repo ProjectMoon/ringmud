@@ -210,7 +210,7 @@ public class Room extends AbstractBusinessObject {
 			return "";
 		}
 		else {
-			return exitString.substring(0, exitString.length() - 2);
+			return exitString.substring(0, exitString.length() - 2) + "[R]";
 		}
 	}	
 		
@@ -242,35 +242,22 @@ public class Room extends AbstractBusinessObject {
 	}
 	
 	public String getMobileList(Mobile excludedMobile, int spotCheck) {
-		String res = "";
-		if (mobiles == null || mobiles.isEmpty())
-			return res;
+		if (mobiles == null || mobiles.isEmpty()) {
+			return "";
+		}
 
 		StringBuilder sb = new StringBuilder();
 		
 		for (Mobile mob : getMobiles()) {
 			//TODO take care of hiding Mobiles.
-			sb.append(mob.getBaseModel().getShortDescription())
-			.append("[R][WHITE] is here.\n");
+			sb.append(mob.getBaseModel().getShortDescription()).append("[R][WHITE] is here.\n");
 		}
 
-		return res;
+		return sb.toString();
 	}
 	
 	public String getMobileList(Mobile excludedMobile) {
-		String res = "";
-		if (mobiles == null || mobiles.isEmpty())
-			return res;
-
-		StringBuilder sb = new StringBuilder();
-		
-		for (Mobile mob : getMobiles()) {
-			//TODO take care of hiding Mobiles.
-			sb.append(mob.getBaseModel().getShortDescription())
-			.append("[R][WHITE] is here.\n");
-		}
-
-		return res;
+		return getMobileList(excludedMobile, 0);
 	}
 	
 	/**

@@ -35,8 +35,8 @@ public class MUDConnectionTimeout extends TimerTask {
 			PlayerCharacter pc = conn.getPlayerCharacter();
 			
 			//Save player and PC
-			//player.save();
-			//pc.save();
+			player.save();
+			pc.save();
 			
 			//Clear connection state.
 			MUDConnectionManager.removeConnection(ip);

@@ -118,7 +118,22 @@ public class MobileBaseModel {
 	@XmlElement public String getDescription() { return lookDescription; }
 	public void setDescription(String desc) { lookDescription = desc; }
 	
-	@XmlTransient public String getShortDescription() { return getName() + " " + getLastName() + getTitle(); }
+	@XmlTransient public String getShortDescription() {
+		String res = getName();
+		String lastName = getLastName();
+		String title = getTitle();
+		String raceName = getRace().getName();
+		
+		//Append these if they exist
+		if (lastName != null && lastName.length() > 0) res += " " + lastName;
+		if (title != null && title.length() > 0) res += " " + title;
+		
+		//Finallly add race and class name.
+		res += " (" + raceName + ")";
+		//TODO add class name.
+		
+		return res; 
+	}
 	
 	//Misc descriptive variables.
 	private double height;

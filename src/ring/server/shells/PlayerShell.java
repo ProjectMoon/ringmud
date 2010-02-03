@@ -113,6 +113,12 @@ public class PlayerShell {
 	
 	private void logout() {
 		System.out.println(user + "[" + player + "] logged out gracefully.");
+		
+		//Remove them from their current room.
+		player.getLocation().removeMobile(player);
+		
+		//TODO save player's current room to restore later.
+		
 		MUDConnectionManager.removeConnection(clientIP);
 	}
 }

@@ -4,12 +4,17 @@ import ring.commands.Command;
 import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
+import ring.commands.CommandParameters.CommandType;
 import ring.effects.Affectable;
+import ring.entities.Entity;
+import ring.items.Item;
 import ring.mobiles.Mobile;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Look implements Command {
 
 	public CommandResult execute(CommandSender sender, CommandParameters params) {
+		params.init(CommandType.FROM_ROOM);
 		Object t = params.getParameter(0);
 
 		// Make the CommandResult object.
@@ -30,23 +35,27 @@ public class Look implements Command {
 		// return the look description
 		// of the thing being looked at it.
 		else {
-			if ((!(t instanceof Affectable)) && (t != null))
-				return res;
-
 			// is our looker blind?
 			if (mob.getBaseModel().isBlind()) {
 				res.setFailText("You have nothing to look at, for you are blind!");
 				return res;
 			}
-
-			Affectable target = (Affectable) t;
-			// Get the look text of the thing being looked at.
-			String lookText = target.getLongDescription();
-			// add it to the CommandResult.
-			res.setText("You look at " + target.getName() + " and see:\n"
-					+ lookText);
-			// The command succeeded.
-			res.setSuccessful(true);
+			
+			//If not, proceed with looking at stuff.
+			if (t instanceof Mobile) {
+				Mobile lookingAt = (Mobile)t;
+				VisualStimulus stimulus = new VisualStimulus();
+				stimulus.setDepiction("You look at " + lookingAt.getBaseModel().getName() + " and see:\n" + lookingAt.getBaseModel().getDescription());
+				
+				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				return CommandResult.blankResult(true);
+			}
+			else if (t instanceof Entity) {
+				throw new UnsupportedOperationException("Looking at entities not yet implemented.");
+			}
+			else if (t instanceof Item) {
+				throw new UnsupportedOperationException("Looking at items not yet implemented.");
+			}
 		}
 
 		// Return CommandResult.
