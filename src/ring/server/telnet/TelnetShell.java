@@ -38,6 +38,9 @@ public class TelnetShell implements Shell {
 		//Delegate to PlayerLoginShell.
 		new PlayerLoginShell(connection.getConnectionData().getInetAddress(), comms).run();
 		
+		//Note: the login shell always takes care of setting up the player, assuming it needs to happen.
+		//Otherwise, the player is cached by the mud connection manager.
+		
 		//Then delegate to PlayerShell
 		new PlayerShell(connection.getConnectionData().getInetAddress(), comms).run();
 		

@@ -2,10 +2,9 @@ package ring.server.shells;
 
 import java.net.InetAddress;
 
-import net.wimpi.telnetd.net.Connection;
-import net.wimpi.telnetd.net.ConnectionEvent;
-import net.wimpi.telnetd.shell.Shell;
 import ring.commands.CommandResult;
+import ring.mobiles.senses.SensesGroup;
+import ring.mobiles.senses.handlers.PlayerDepictionHandler;
 import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.players.Player;
@@ -14,13 +13,7 @@ import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
-import ring.server.telnet.TelnetInputStream;
-import ring.server.telnet.TelnetOutputStream;
-import ring.server.telnet.TelnetStreamCommunicator;
 import ring.world.World;
-
-import ring.mobiles.senses.handlers.PlayerDepictionHandler;
-import ring.mobiles.senses.SensesGroup;
 
 public class PlayerShell {
 	private Communicator comms;
@@ -68,6 +61,7 @@ public class PlayerShell {
 		World.getWorld().getTicker().addTickerListener(player, "PULSE");
 		
 		//Set up senses group so the player can perceive the world.
+		//TODO This needs to be persistable to the db.
 		PlayerDepictionHandler handler = new PlayerDepictionHandler(comms);
 		player.getDynamicModel().setSensesGroup(SensesGroup.createDefaultSensesGroup(handler));
 		

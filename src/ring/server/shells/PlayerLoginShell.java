@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
@@ -16,13 +14,7 @@ import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
-import ring.server.MUDConnectionTimeout;
-import ring.server.telnet.TelnetInputStream;
-import ring.server.telnet.TelnetOutputStream;
-import ring.server.telnet.TelnetStreamCommunicator;
-import net.wimpi.telnetd.net.Connection;
-import net.wimpi.telnetd.net.ConnectionEvent;
-import net.wimpi.telnetd.shell.Shell;
+import ring.util.UserUtilities;
 
 public class PlayerLoginShell {
 	private InetAddress clientIP;
@@ -95,7 +87,14 @@ public class PlayerLoginShell {
 		PlayerCharacter pc = null;
 		
 		if (player != null) {
-			//Load player character list
+			while (!verifyPassword(player, password)) {
+				comms.println("[R][B]Wrong password.");
+				password = inputPassword();
+			}
+			
+			//Player should now be verified.
+			PlayerCharacterList list = new PlayerCharacterList(comms, player);
+			pc = list.doPlayerList();
 		}
 		else {
 			//New user creation.
@@ -111,6 +110,11 @@ public class PlayerLoginShell {
 						
 			PlayerCharacterCreation creation = new PlayerCharacterCreation(comms);
 			pc = creation.doCreateNewCharacter();
+			
+			//Save both the playercharacter and the player!
+			player.addCharacter(pc);
+			pc.save();
+			player.save();
 		}
 				
 		MUDConnection mc = new MUDConnection();
@@ -121,6 +125,17 @@ public class PlayerLoginShell {
 		return mc;
 	}
 	
+	private boolean verifyPassword(Player player, String password) {
+		String hash = UserUtilities.sha1Hash(password);
+		
+		if (player.getPassword().equals(hash)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	private String inputUsername() {
 		String line = "";
 		while (line.equals("")) {

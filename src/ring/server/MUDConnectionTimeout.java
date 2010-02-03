@@ -27,15 +27,20 @@ public class MUDConnectionTimeout extends TimerTask {
 	public void run() {
 		System.out.println("Running timeout task for " + ip);
 		MUDConnection conn = MUDConnectionManager.getConnection(ip);
-		Player player = conn.getPlayer();
-		PlayerCharacter pc = conn.getPlayerCharacter();
 		
-		//Save player and PC
-		//player.save();
-		//pc.save();
-		
-		//Clear connection state.
-		MUDConnectionManager.removeConnection(ip);
+		//Check null because it is possible to time out at the login screen
+		//with no actual connection set up.
+		if (conn != null) {
+			Player player = conn.getPlayer();
+			PlayerCharacter pc = conn.getPlayerCharacter();
+			
+			//Save player and PC
+			//player.save();
+			//pc.save();
+			
+			//Clear connection state.
+			MUDConnectionManager.removeConnection(ip);
+		}
 	}
 
 }
