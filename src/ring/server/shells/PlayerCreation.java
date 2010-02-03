@@ -1,4 +1,4 @@
-package ring.server.telnet;
+package ring.server.shells;
 
 import java.util.Date;
 

@@ -1,4 +1,6 @@
-package ring.server.telnet;
+package ring.server.shells;
+
+import java.net.InetAddress;
 
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
@@ -8,31 +10,34 @@ import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
+import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
+import ring.server.telnet.TelnetInputStream;
+import ring.server.telnet.TelnetOutputStream;
+import ring.server.telnet.TelnetStreamCommunicator;
 import ring.world.World;
 
 import ring.mobiles.senses.handlers.PlayerDepictionHandler;
 import ring.mobiles.senses.SensesGroup;
 
-public class PlayerShell implements Shell {
-	//"System-level" things we might care about
-	private Connection connection;
-	private TelnetStreamCommunicator comms;
+public class PlayerShell {
+	private Communicator comms;
+	private InetAddress clientIP;
 	
 	//Shell variables
 	private Player user;
 	private PlayerCharacter player;
 	private String lastCommand;
 	
-	public static Shell createShell() {
-		return new PlayerShell();
+	public PlayerShell(InetAddress ip, Communicator comms) {
+		this.comms = comms;
+		clientIP = ip;
 	}
 	
-	@Override
-	public void run(Connection conn) {
-		init(conn);
+	public void run() {
+		init();
 		
 		comms.println("Welcome back, [B]" + user.getName() + "[R]. You descend into the world of Orea once more as [B]" + player.getBaseModel().getName() + "[R]...");
 		comms.println();
@@ -45,25 +50,18 @@ public class PlayerShell implements Shell {
 	 * Initializes this shell for use.
 	 * @param conn
 	 */
-	private void init(Connection conn) {
-		connection = conn;
-		connection.addConnectionListener(this);		
-				
-		MUDConnection mudConnection = MUDConnectionManager.getConnection(connection.getConnectionData().getInetAddress());
+	private void init() {
+		MUDConnection mudConnection = MUDConnectionManager.getConnection(clientIP);
 		mudConnection.setState(MUDConnectionState.PLAYING);
 		
 		//There is no way this should ever be null.
-		//Login shells take care of setting it up.
+		//Login shell take care of setting it up.
 		assert(mudConnection != null);
 		
 		user = mudConnection.getPlayer();
 		player = mudConnection.getPlayerCharacter();
 		
 		System.out.println("Player: " + user + "[" + player + "]");
-				
-		//Initialize the communicator.
-		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
-				new TelnetOutputStream(connection.getTerminalIO()));
 	}
 	
 	private void gameLoop() {
@@ -121,27 +119,6 @@ public class PlayerShell implements Shell {
 	
 	private void logout() {
 		System.out.println(user + "[" + player + "] logged out gracefully.");
-		MUDConnectionManager.removeConnection(connection.getConnectionData().getInetAddress());
+		MUDConnectionManager.removeConnection(clientIP);
 	}
-
-	@Override
-	public void connectionIdle(ConnectionEvent arg0) {
-		//Need to start ye countdown timer before they disappear.
-	}
-
-	@Override
-	public void connectionLogoutRequest(ConnectionEvent arg0) {
-		//Need to start ye countdown timer before they disappear.		
-	}
-
-	@Override
-	public void connectionSentBreak(ConnectionEvent arg0) {
-		//Need to start ye countdown timer before they disappear.
-	}
-
-	@Override
-	public void connectionTimedOut(ConnectionEvent arg0) {
-		//Make them go poof.
-	}
-
 }

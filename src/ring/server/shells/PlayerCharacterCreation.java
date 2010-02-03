@@ -1,4 +1,4 @@
-package ring.server.telnet;
+package ring.server.shells;
 
 import ring.mobiles.Alignment;
 import ring.mobiles.MobileBaseModel;

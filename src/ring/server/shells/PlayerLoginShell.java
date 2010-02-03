@@ -1,4 +1,4 @@
-package ring.server.telnet;
+package ring.server.shells;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,42 +12,34 @@ import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
+import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
 import ring.server.MUDConnectionTimeout;
+import ring.server.telnet.TelnetInputStream;
+import ring.server.telnet.TelnetOutputStream;
+import ring.server.telnet.TelnetStreamCommunicator;
 import net.wimpi.telnetd.net.Connection;
 import net.wimpi.telnetd.net.ConnectionEvent;
 import net.wimpi.telnetd.shell.Shell;
 
-public class PlayerLoginShell implements Shell {
-	private Connection connection;
-	private TelnetStreamCommunicator comms;
+public class PlayerLoginShell {
+	private InetAddress clientIP;
+	private Communicator comms;
 	
-	public static Shell createShell() {
-		return new PlayerLoginShell();
+	public PlayerLoginShell(InetAddress ip, Communicator comms) {
+		this.comms = comms;
+		clientIP = ip;
 	}
 	
-	@Override
-	public void run(Connection conn) {
-		init(conn);
-		
-		//Commented out for now, as it can't erase the screen
-		//properly in line mode.
-		try {
-			conn.getTerminalIO().eraseScreen();
-			conn.getTerminalIO().homeCursor();
-		}
-		catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
+	public void run() {
+		init();
 		//First check for exisitng connection.
 		//If so, forward directly to player shell.
-		MUDConnection mudConnection = MUDConnectionManager.getConnection(connection.getConnectionData().getInetAddress());
+		MUDConnection mudConnection = MUDConnectionManager.getConnection(clientIP);
 		if (mudConnection != null) {
-			comms.println("Restoring your session.");
-			connection.setNextShell("player");
+			comms.println("You are already logged in.");
 			return;
 		}
 		else {
@@ -59,8 +51,7 @@ public class PlayerLoginShell implements Shell {
 			}
 
 			MUDConnection mc = doShell();
-			MUDConnectionManager.addConnection(connection.getConnectionData().getInetAddress(), mc);
-			connection.setNextShell("player");
+			MUDConnectionManager.addConnection(clientIP, mc);
 		}
 		
 	}
@@ -90,17 +81,9 @@ public class PlayerLoginShell implements Shell {
 		}
 	}
 
-	private void init(Connection conn) {
-		connection = conn;
-		connection.addConnectionListener(this);
-		
+	private void init() {
 		//Clear out the timer if they have one
-		MUDConnectionManager.deleteTimer(connection.getConnectionData().getInetAddress());
-				
-		//Initialize the communicator.
-		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
-				new TelnetOutputStream(connection.getTerminalIO()));
-		
+		MUDConnectionManager.deleteTimer(clientIP);
 	}
 	
 	private MUDConnection doShell() {
@@ -157,30 +140,4 @@ public class PlayerLoginShell implements Shell {
 		
 		return line;
 	}
-
-	@Override
-	public void connectionIdle(ConnectionEvent arg0) {
-		System.out.println("Idle connection for " + connection);
-		InetAddress ip = connection.getConnectionData().getInetAddress();
-		TimerTask task = new MUDConnectionTimeout(ip);
-		Timer timer = MUDConnectionManager.createTimer(ip);
-		//timer.schedule(task, 1000);
-		timer.schedule(task, 300000); //5 minutes = 300,000
-	}
-
-	@Override
-	public void connectionLogoutRequest(ConnectionEvent arg0) {
-		System.out.println("Logout request for " + connection);;		
-	}
-
-	@Override
-	public void connectionSentBreak(ConnectionEvent arg0) {
-		System.out.println("Break for " + connection);
-	}
-
-	@Override
-	public void connectionTimedOut(ConnectionEvent arg0) {
-		System.out.println("Timeout for " + connection);
-	}
-
 }
