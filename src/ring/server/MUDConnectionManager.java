@@ -1,10 +1,15 @@
 package ring.server;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+
+import ring.players.Player;
+import ring.players.PlayerCharacter;
 
 /**
  * Keeps track of MUDConnections. The different server shells access this manager to
@@ -17,6 +22,35 @@ public class MUDConnectionManager {
 	//Synchronized because multiple threads will potentially be writing to this map at the same time. 
 	private static Map<InetAddress, MUDConnection> connections = Collections.synchronizedMap(new HashMap<InetAddress, MUDConnection>());
 	private static Map<InetAddress, Timer> timerMap = Collections.synchronizedMap(new HashMap<InetAddress, Timer>());
+	
+	
+	/**
+	 * Gets the list of all players currently logged in.
+	 * @return The list of logged in players.
+	 */
+	public static List<Player> getCurrentPlayers() {
+		ArrayList<Player> list = new ArrayList<Player>(connections.size());
+		
+		for (MUDConnection conn : connections.values()) {
+			list.add(conn.getPlayer());
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Gets the list of all player characters currently logged in.
+	 * @return The list of logged in player characters.
+	 */
+	public static List<PlayerCharacter> getCurrentCharacters() {
+		ArrayList<PlayerCharacter> list = new ArrayList<PlayerCharacter>(connections.size());
+		
+		for (MUDConnection conn : connections.values()) {
+			list.add(conn.getPlayerCharacter());
+		}
+		
+		return list;
+	}
 	
 	/**
 	 * Gets a connection.

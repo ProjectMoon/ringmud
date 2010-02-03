@@ -35,9 +35,7 @@ class JythonIndexer implements CommandIndexer {
 	private static final PythonInterpreter INTERP = new PythonInterpreter();
 	private static final Pattern JYTHON_PATTERN = Pattern.compile("^class\\s+(\\w+)\\s*\\([\\w,_\\s]*Command[\\w,_\\s]*\\):$");
 	
-	public JythonIndexer() {
-		
-	}
+	public JythonIndexer() {}
 	
 	/**
 	 * Indexes commands from Jython script files.
