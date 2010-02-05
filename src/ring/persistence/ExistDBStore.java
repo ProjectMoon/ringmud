@@ -3,26 +3,18 @@ package ring.persistence;
 import java.io.File;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.w3c.dom.Node;
 
 import org.xmldb.api.base.Collection;
-import org.xmldb.api.base.CompiledExpression;
-import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
-import org.xmldb.api.modules.XPathQueryService;
-import org.xmldb.api.modules.XQueryService;
 
-import ring.nrapi.business.AbstractBusinessObject;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.movement.Zone;
+import ring.nrapi.business.AbstractBusinessObject;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
 
@@ -220,7 +212,7 @@ public class ExistDBStore implements DataStore {
 		}
 	}
 		
-	private <T extends AbstractBusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) throws XMLDBException, JAXBException {
+	protected <T extends AbstractBusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) throws XMLDBException, JAXBException {
 		String query = "for $doc in //ring//*[@id=\"" + id + "\"] return $doc";
 		XQuery xq = new XQuery(query);
 		xq.setLoadpoint(point);
