@@ -20,9 +20,9 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 		res.setFailText("You don't feel particularly divine...");
 		
 		//Make sure person is an administrator.
-		if (super.isAccessAllowed(sender) == false) {
-			return res;
-		}
+//		if (super.isAccessAllowed(sender) == false) {
+//			return res;
+//		}
 		
 		String message = "";
 		String textBackToPlayer;
@@ -49,7 +49,7 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 
 		res.setText(textBackToPlayer);
 		
-		//Godvoice is sent to all player.s
+		//Godvoice is sent to all players.
 		List<PlayerCharacter> players = MUDConnectionManager.getCurrentCharacters();
 		
 		//Not even being deaf stops the power of the gods.
@@ -59,7 +59,10 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 		
 		//Players consume this stimulus directly.
 		for (PlayerCharacter player : players) {
-			player.getDynamicModel().getSensesGroup().consume(as);
+			//Ignore the sender.
+			if (player != sender) {
+				player.getDynamicModel().getSensesGroup().consume(as);
+			}
 		}
 
 		res.setSuccessful(true);

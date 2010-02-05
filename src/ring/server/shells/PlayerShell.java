@@ -53,8 +53,6 @@ public class PlayerShell {
 		
 		user = mudConnection.getPlayer();
 		player = mudConnection.getPlayerCharacter();
-		
-		System.out.println("Player: " + user + "[" + player + "]");
 	}
 	
 	private void gameLoop() {

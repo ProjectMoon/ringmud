@@ -13,6 +13,7 @@ import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
 import org.xmldb.api.modules.XQueryService;
 
 import ring.system.MUDConfig;
@@ -150,6 +151,10 @@ public class ExistDB {
 		return (XQueryService)col.getService(XQUERY_SERVICE[SVCNAME], XQUERY_SERVICE[SVCVER]);
 	}
 	
+	public XPathQueryService getXPathQueryService(Collection col) throws XMLDBException {
+		return (XPathQueryService)col.getService("XPathQueryService", "1.0");
+	}
+	
 	public Collection getRootCollection() throws XMLDBException {
 		Collection root = (Collection)DatabaseManager.getCollection(craftCollectionURI(ROOT_COLLECTION), dbUser, dbPassword);
 		return root;
@@ -157,7 +162,7 @@ public class ExistDB {
 	
 	public Collection getCollection(String name) throws XMLDBException {
 		String colName = ROOT_COLLECTION + "/" + name;
-		Collection col = (Collection)DatabaseManager.getCollection(craftCollectionURI(colName), dbUser, dbPassword);
+		Collection col = DatabaseManager.getCollection(craftCollectionURI(colName), dbUser, dbPassword);
 		
 		if (col == null) {
 			throw new XMLDBException(-1, "Collection " + colName + " is null. Is the database running?");
@@ -186,9 +191,12 @@ public class ExistDB {
 			service.removeCollection(ExistDBStore.STATIC_COLLECTION);
 			service.removeCollection(ExistDBStore.GAME_COLLECTION);
 			service.removeCollection(ExistDBStore.PLAYERS_COLLECTION);
+			
+			root.close();
 		}
 		catch (XMLDBException e) {
 			System.err.println("DB Warning: was unable to remove all collections");
+			e.printStackTrace();
 		}
 	}
 	
