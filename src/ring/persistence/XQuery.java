@@ -55,9 +55,49 @@ public class XQuery {
 	}
 	
 	public <T extends AbstractBusinessObject> List<T> query(Class<T> cl) throws XMLDBException, JAXBException {
+		if (getLoadpoint() == Loadpoint.DEFAULT) {
+			return loadFromDefault(cl);
+		}
+		else {
+			ExistDB db = new ExistDB();
+			
+			Collection col = getCollection(db);
+			/*
+			ResourceSet xmlDocs = db.query(col, getQuery());
+			List<T> results = new ArrayList<T>((int)xmlDocs.getSize());
+			
+			ResourceIterator iter = xmlDocs.getIterator();
+			while (iter.hasMoreResources()) {
+				XMLResource res = (XMLResource)iter.nextResource();
+				T conv = convertToObject(res, cl);
+				results.add(conv);
+			}
+			
+			col.close();
+			
+			return results;
+			*/
+			return loadFromCollection(cl, db, col);
+		}
+	}
+	
+	private <T extends AbstractBusinessObject> List<T> loadFromDefault(Class<T> cl) throws XMLDBException, JAXBException {
 		ExistDB db = new ExistDB();
 		
-		Collection col = getCollection(db);
+		Collection col = db.getCollection(ExistDBStore.GAME_COLLECTION);
+		List<T> results = loadFromCollection(cl, db, col);
+		
+		if (results.size() > 0) {
+			return results;
+		}
+		else {
+			//Fall back to static
+			col = db.getCollection(ExistDBStore.STATIC_COLLECTION);
+			return loadFromCollection(cl, db, col);
+		}
+	}
+	
+	private <T extends AbstractBusinessObject> List<T> loadFromCollection(Class<T> cl, ExistDB db, Collection col) throws XMLDBException, JAXBException {
 		ResourceSet xmlDocs = db.query(col, getQuery());
 		List<T> results = new ArrayList<T>((int)xmlDocs.getSize());
 		
