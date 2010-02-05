@@ -79,7 +79,6 @@ public class ExistDBStore implements DataStore {
 	@Override
 	public Room retrieveRoom(String id) {
 		try {
-			System.out.println("In retrieve room");
 			return retrieveResource(id, Room.class, getLoadpoint());
 		}
 		catch (XMLDBException e) {
