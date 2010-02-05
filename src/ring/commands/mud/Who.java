@@ -9,7 +9,7 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.players.PlayerCharacter;
-import ring.world.World;
+import ring.server.MUDConnectionManager;
 
 //TODO implement who
 public class Who implements Command {
@@ -25,7 +25,7 @@ public class Who implements Command {
 			return res;
 		}
 		
-		List<PlayerCharacter> players = World.getWorld().getPlayers();
+		List<PlayerCharacter> players = MUDConnectionManager.getCurrentCharacters();
 		ArrayList<String> whoNames = new ArrayList<String>();
 		
 		for (String whoParam : whoParams) {

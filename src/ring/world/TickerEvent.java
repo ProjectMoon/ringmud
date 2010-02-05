@@ -8,22 +8,26 @@ import java.util.*;
  *
  */
 public class TickerEvent extends EventObject {
+	public enum TickerType {
+		PULSE
+	}
+
 	private static final long serialVersionUID = 1L;
 	
 	private int currentTick;
-	private String tickID;
+	private TickerType type;
 
-	public TickerEvent(Object source, int currentTick, String tickID) {
+	public TickerEvent(Object source, int currentTick, TickerType type) {
 		super(source);
 		this.currentTick = currentTick;
-		this.tickID = tickID;
+		this.type = type;
 	}
 
 	public int getCurrentTick() {
 		return currentTick;
 	}
 
-	public String getTickID() {
-		return tickID;
+	public TickerType getTickType() {
+		return type;
 	}
 }

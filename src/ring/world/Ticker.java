@@ -1,119 +1,118 @@
 package ring.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ring.world.TickerEvent.TickerType;
+
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
+ * This class governs time in the MUD world. It fires TickerEvents every 2
+ * seconds to all registered TickerListeners. The world ticker is retrieved
+ * by calling the static method Ticker.getTicker(). It returns a thread-safe
+ * instance of the Ticker class for manipulation.
+ * 
+ * @author projectmoon
+ * 
  */
+public class Ticker implements Runnable {
+	//Constants.
+	public static final int MAX_TICK = 43200;
+	private static int tickDuration = 2000;
+	
+	//Instance variables for a ticker.
+	private List<TickerListener> listeners = new ArrayList<TickerListener>();
+	private int tickCount;
 
-import java.util.Vector;
+	//The singleton ticker instance
+	private static final Ticker ticker = new Ticker();
+	
+	private Ticker() {
+		this.tickCount = 0;
+	}
+	
+	/**
+	 * Gets the Ticker singleton instance.
+	 * @return
+	 */
+	public static Ticker getTicker() {
+		return ticker;
+	}
+	
+	/**
+	 * Gets the current tick. The current tick is between 0 and 43,200. Since
+	 * a tick is 2 seconds, there are 43,200 ticks in one 24 hour period. The
+	 * MUD server does not keep track of what "MUD day" it is. But it does keep
+	 * track of the time of the MUD day.
+	 * @return
+	 */
+	public synchronized int currentTick() {
+		return tickCount;
+	}
 
-public class Ticker extends Thread {
-  //This class is what governs time in the world. It ticks every 2 seconds and fires events to
-  //all of the registered listeners. There is generally only the world ticker.
+	/**
+	 * Register a ticker listener with this ticker.
+	 * @param listener
+	 */
+	public synchronized void addTickerListener(TickerListener listener) {
+		listeners.add(listener);
+	}
 
-  //This internal class is used to hold data for the listeners when firing.
-  private class ListenerData {
-    TickerListener listener = null;
-    String tickID = null;
+	/**
+	 * Remove a ticker listener from this ticker.
+	 * @param listener
+	 * @return true if the listener was removed, false if it was not removed or is not in the list.
+	 */
+	public synchronized boolean removeTickerListener(TickerListener listener) {
+		return listeners.remove(listener);
+	}
 
-    public ListenerData(TickerListener listener, String tickID) {
-      this.listener = listener;
-      this.tickID = tickID;
-    }
-  }
+	/**
+	 * Fires a PULSE event to all registered listeners on the server.
+	 */
+	public void fireTickerEvent() {
+		synchronized (listeners) {
+			for (TickerListener listener : listeners) {
+				TickerEvent event = new TickerEvent(this, tickCount, TickerType.PULSE);
+				listener.processTick(event);
+			}
+		}
+	}
 
-  //Instance variables.
-  private Vector listeners;
-  private int tickCount;
+	/**
+	 * Runs the ticker thread.
+	 */
+	public void run() {
+		//TODO change condition to "while server is not shut down"
+		while (true) {
+			try {
+				Thread.sleep(tickDuration);
+				tickCount++;
+				if (tickCount > MAX_TICK) {
+					tickCount = 1;
+				}
+				
+				fireTickerEvent();
+			}
+			catch (InterruptedException ie) {}
+		}
+	}
 
-  //Constants.
-  public static final int MAX_TICK = 86400;
-  private static int tickDuration = 2000;
+	/**
+	 * Generates a list of all registered ticker listeners. Useful
+	 * for displaying to admins on the server.
+	 * @return
+	 */
+	public synchronized String tickerList() {
+		String text = "";
+		int c = 0;
 
-  public Ticker() {
-    super();
-    this.setName("World Ticker");
-    this.tickCount = 0;
-  }
+		for (TickerListener listener : listeners) {
+			text += (c + 1) + "Registered to: " + listener.toString()
+				+ " [B][" + listener.getClass().getName() + "[R]";
+		}
+		
+		text += "\nCURRENT TICK: " + currentTick();
 
-  //addTickerListener method.
-  //This will add a listener to the ticker.
-  //Mobiles should add their listener when they are created.
-  public void addTickerListener(TickerListener listener, String tickID) {
-     if (listeners == null) listeners = new Vector();
-     listeners.addElement(new ListenerData(listener, tickID));
-  }
-
-  //removeTickerListener method.
-  //This method will remove a listener from the ticker.
-  //Mobiles should remove themselves when they die.
-  public void removeTickerListener(TickerListener listener, String tickID) {
-    ListenerData data = null;
-    if (listeners == null) return;
-
-    for (int x = 0; x < listeners.size(); x++) {
-      data = (ListenerData) listeners.elementAt(x);
-      if ( data.listener == listener && data.tickID.equals(tickID)) {
-        listeners.removeElementAt(x);
-        return;
-      }
-    }
-  }
-
-  //fireTickerEvent method.
-  //This is the main method that will fire a ticker event to all the registered listeners.
-  //When they receive the event, they will act appropriately.
-  public void fireTickerEvent() {
-    ListenerData targetData;
-    TickerListener target;
-
-    if (listeners == null) return;
-
-    Vector targets = (java.util.Vector) listeners.clone();
-
-    //fire the event to all of the registered listeners on the server.
-    for (int x = 0; x < targets.size(); x++) {
-      targetData = (ListenerData) targets.elementAt(x);
-      target = targetData.listener;
-      TickerEvent event = new TickerEvent(this, tickCount, targetData.tickID);
-      try {
-        target.processTick(event);
-      } catch (Exception e) {}
-    }
-  }
-
-  //run method.
-  //This method generates ticks and sends them to all registered listeners. From there,
-  //the listeners will do what they are supposed to do.
-  public void run() {
-    while (true) {
-      try {
-        this.sleep(tickDuration);
-        tickCount++;
-        if (tickCount > MAX_TICK) tickCount = 1;
-        fireTickerEvent();
-      } catch (InterruptedException ie) {
-      }
-    }
-  }
-
-  //tickerList method.
-  //This method returns a string list of all currently active ticker listeners and what they're
-  //attached to.
-  public String tickerList() {
-    String text = "";
-
-    for (int c = 0; c < listeners.size(); c++) {
-      ListenerData data = (ListenerData)listeners.get(c);
-      text += (c + 1) + ". Registered to: " + data.listener.toString() + " [B][" + data.listener.getClass().getName() + "][R]; id: [" + data.tickID + "]\n";
-    }
-
-    text += "\nCURRENT TICK: " + tickCount;
-
-    return text;
-  }
+		return text;
+	}
 }

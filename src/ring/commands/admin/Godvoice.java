@@ -1,14 +1,15 @@
 package ring.commands.admin;
 
+import java.util.List;
+
 import ring.commands.Command;
 import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
-import ring.mobiles.Mobile;
-import ring.mobiles.senses.StimulusSender;
 import ring.mobiles.senses.stimuli.AudioStimulus;
-import ring.world.World;
+import ring.players.PlayerCharacter;
+import ring.server.MUDConnectionManager;
 
 public class Godvoice extends AbstractAdminCommand implements Command {
 
@@ -23,16 +24,12 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 			return res;
 		}
 		
-		Mobile mob = (Mobile) sender;
-
-		// Say code here.
 		String message = "";
 		String textBackToPlayer;
 
-		// check for speaker's deafness.
 		textBackToPlayer = "You project your voice across the cosmos, saying, \"";
 
-		String textToOtherPlayers = "The voice of the gods rumbles in the sky! \"";
+		String textToOtherPlayers = "The voice of the gods rumbles in the sky: \"";
 
 		// Get the "parameters" as words.
 		int length = params.length();
@@ -52,14 +49,18 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 
 		res.setText(textBackToPlayer);
 		
-		//TODO make a way to get every connected player
-		//for now we just send to current location
+		//Godvoice is sent to all player.s
+		List<PlayerCharacter> players = MUDConnectionManager.getCurrentCharacters();
 		
 		//Not even being deaf stops the power of the gods.
 		AudioStimulus as = new AudioStimulus();
 		as.setDepiction(textToOtherPlayers);
 		as.setDeafDepiction(textToOtherPlayers);
-		StimulusSender.sendStimulus(mob.getLocation(), as, mob);
+		
+		//Players consume this stimulus directly.
+		for (PlayerCharacter player : players) {
+			player.getDynamicModel().getSensesGroup().consume(as);
+		}
 
 		res.setSuccessful(true);
 		// Return the CommandResult.

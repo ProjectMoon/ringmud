@@ -11,7 +11,7 @@ import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
 import ring.movement.WorldBuilder;
-import ring.world.World;
+import ring.world.Ticker;
 
 /**
  * This class is what "boots" the MUD. It retrieves information from the various
@@ -26,6 +26,9 @@ import ring.world.World;
 public class MUDBoot {
 	private static final Logger log = Logger.getLogger(MUDBoot.class.getName());
 
+	/**
+	 * Boots the mud server.
+	 */
 	public static void boot() {
 		System.out.println("Loading RingMUD.");
 
@@ -43,6 +46,13 @@ public class MUDBoot {
 		// String[] classFeatureFiles = MUDConfig.getClassFeaturesFiles();
 		// for (String file : classFeatureFiles)
 		// ClassFeatureLoader.loadClassFeaturesFromFile(file);
+		
+		//Start the world ticker
+		System.out.println("Starting the world ticker...");
+		Ticker ticker = Ticker.getTicker();
+		Thread t = new Thread(ticker);
+		t.setName("World Ticker");
+		t.start();
 
 		System.out.println("Done.");
 		// Load classes
@@ -52,7 +62,6 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
-		World.initWorld();
 		try {
 			WorldBuilder.buildWorld();
 		} catch (XMLDBException e) {

@@ -5,7 +5,6 @@ import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
-import ring.effects.Affectable;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;

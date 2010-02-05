@@ -13,7 +13,7 @@ import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
-import ring.world.World;
+import ring.world.Ticker;
 
 public class PlayerShell {
 	private Communicator comms;
@@ -58,7 +58,7 @@ public class PlayerShell {
 	}
 	
 	private void gameLoop() {
-		World.getWorld().getTicker().addTickerListener(player, "PULSE");
+		Ticker.getTicker().addTickerListener(player);
 		
 		//Set up senses group so the player can perceive the world.
 		//TODO This needs to be persistable to the db.

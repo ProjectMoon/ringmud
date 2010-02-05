@@ -8,7 +8,6 @@ import ring.commands.CommandParameters.CommandType;
 import ring.mobiles.Mobile;
 import ring.mobiles.senses.StimulusSender;
 import ring.mobiles.senses.stimuli.VisualStimulus;
-import ring.world.World;
 
 public class Emote implements Command {
 

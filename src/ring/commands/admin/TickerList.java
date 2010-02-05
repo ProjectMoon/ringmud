@@ -5,7 +5,6 @@ import ring.commands.CommandParameters;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.world.Ticker;
-import ring.world.World;
 
 public class TickerList extends AbstractAdminCommand implements Command {
 
@@ -15,7 +14,7 @@ public class TickerList extends AbstractAdminCommand implements Command {
 		if (super.isAccessAllowed(sender)) {
 			String resText = "";
 	
-			Ticker ticker = World.getWorld().getTicker();
+			Ticker ticker = Ticker.getTicker();
 			resText = "[R][WHITE]Ticker Information for **WORLD TICKER**:\n";
 			resText += ticker.tickerList();
 	

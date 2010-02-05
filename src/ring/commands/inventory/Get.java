@@ -10,7 +10,6 @@ import ring.mobiles.Mobile;
 import ring.mobiles.senses.StimulusSender;
 import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.movement.Room;
-import ring.world.World;
 import ring.world.WorldObject;
 
 public class Get implements Command {
