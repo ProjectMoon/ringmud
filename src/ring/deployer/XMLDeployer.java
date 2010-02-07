@@ -1,9 +1,18 @@
 package ring.deployer;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,18 +51,24 @@ public class XMLDeployer {
 	
 	public void deploy() throws XMLDBException, SAXException, IOException {
 		Collection col = db.getCollection(ExistDBStore.STATIC_COLLECTION);
+		col.setProperty(OutputKeys.INDENT, "no");
 		
 		//Determine if this document needs to be updated:
 		//Retrieve the document content of the same name from the database.
 		//Retrieve the document content of the incoming document.
 		//if shaHash(incomingDocument) == shaHash(documentInDB):
 		//	reutrn. the document does not need to be updated.
-		xmlInDocument = DeployModule.getContent(entry);
+		xmlInDocument = stripWhitespaceAndHeader(entry.getInputStream());
+	
 		XMLResource resource = (XMLResource)col.getResource(documentName);
 		if (resource != null) {
 			String xmlInDB = (String)resource.getContent();
+			xmlInDB = xmlInDB.trim();
+			//System.out.println(stripHeader(xmlInDB));
+			//System.out.println(stripHeader(xmlInDocument));
 			String hash1 = UserUtilities.sha1Hash(xmlInDB);
 			String hash2 = UserUtilities.sha1Hash(xmlInDocument);
+			
 			System.out.println("hash1: " + hash1);
 			System.out.println("hash2: " + hash2);
 			if (UserUtilities.sha1Hash(xmlInDB).equals(UserUtilities.sha1Hash(xmlInDocument))) {
@@ -197,5 +212,29 @@ public class XMLDeployer {
 		col.storeResource(res);
 			
 		col.close();
+	}
+	
+	private String stripWhitespaceAndHeader(InputStream xml) {
+		try {
+			TransformerFactory tf = TransformerFactory.newInstance();
+			InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/deployer/strip-space.xsl");
+			Transformer transformer = tf.newTransformer(new StreamSource(input));
+			
+			StreamSource src = new StreamSource(xml);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			StreamResult result = new StreamResult(stream);  
+	
+			transformer.transform(src, result);
+			return new String(stream.toByteArray());
+		}
+		catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		}
+		catch (TransformerException e) {
+			e.printStackTrace();
+			return null;
+			
+		}
 	}
 }

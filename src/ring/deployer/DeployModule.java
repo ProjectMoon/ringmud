@@ -172,7 +172,17 @@ public class DeployModule implements RingModule {
 			String line = "";
 			
 			while ((line = reader.readLine()) != null) {
-				content += line;
+				line = line.trim();
+				String line1 = line.trim();
+				
+				if (line1.length() > 0) {
+					if (line1.charAt(line1.length() - 1) == '>') {
+						content += line.trim();
+					}
+					else {
+						content += line;
+					}
+				}
 			}
 			
 			return content;
