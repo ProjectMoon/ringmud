@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -14,10 +15,16 @@ import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
 
+/**
+ * Class to validate documents during the "compilation" process. This class is NOT
+ * thread-safe.
+ * @author projectmoon
+ *
+ */
 public class DocumentValidator {
 	private static final Schema SCHEMA = loadSchema();
 	
-	private static String lastError = "";
+	private DocumentErrorHandler errorHandler = null;
 	
 	private static Schema loadSchema() {
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -38,22 +45,24 @@ public class DocumentValidator {
 		return null;
 	}
 	
-	public static boolean validate(File file) throws IOException {
+	public boolean validate(File file) throws IOException {
 		FileInputStream input = new FileInputStream(file);
 		StreamSource src = new StreamSource(input);
+		errorHandler = new DocumentErrorHandler();
+		
 		Validator validator = SCHEMA.newValidator();
+		validator.setErrorHandler(errorHandler);
 		
 		try {
 			validator.validate(src);
 			return true;
 		}
 		catch (SAXException e) {
-			lastError = e.getMessage();
 			return false;
 		}
 	}
 	
-	public static String getLastError() {
-		return lastError;
+	public List<ValidationError> getErrors() {
+		return errorHandler.getErrors();
 	}
 }

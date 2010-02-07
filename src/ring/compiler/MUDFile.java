@@ -116,7 +116,6 @@ public class MUDFile {
 	}
 	
 	public void writeTo(OutputStream stream) throws IOException {
-		System.out.println("writing to: " + stream);
 		ZipOutputStream out = new ZipOutputStream(stream);
 		BufferedInputStream fileInput = null;
 		

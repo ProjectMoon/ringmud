@@ -31,7 +31,6 @@ public class Compiler implements RingModule {
 		//Read some options
 		
 		System.out.println("Compiling mud in " + args[0] + "...");
-		System.out.println();
 		
 		mudProjectDir = args[0];
 		//Validate that necessary files exist.
@@ -101,9 +100,14 @@ public class Compiler implements RingModule {
 	private void validateDocuments() {
 		for (FileEntry entry : mudFile.getEntries("data")) {
 			try {
-				if (!DocumentValidator.validate(entry.getFile())) {
-					String msg = DocumentValidator.getLastError();
-					error(entry.getEntryName(), msg);
+				DocumentValidator dv = new DocumentValidator();
+				if (!dv.validate(entry.getFile())) {
+					List<ValidationError> errors = dv.getErrors();
+					
+					for (ValidationError error : errors) {
+						error(entry.getEntryName(), error);	
+					}
+					
 				}
 			}
 			catch (IOException e) {
@@ -119,9 +123,22 @@ public class Compiler implements RingModule {
 	 * @param message
 	 */
 	private void error(String scope, String message) {
+		System.out.println();
 		System.out.println(scope + ": " + message);
 		errorCount++;
 	}
+	
+	/**
+	 * Overloaded error method that takes a ValidationError instead of a string for its
+	 * message. This special method displays line numbers.
+	 * @param scope
+	 * @param message
+	 */
+	private void error(String scope, ValidationError message) {
+		System.out.println();
+		System.out.println(scope + "(" + message.getLine() + "):\n   " + message.getError());
+		errorCount++;
+	}	
 	
 	/**
 	 * Generates an error message, and shuts down the JVM. A severe error means validation
@@ -144,6 +161,7 @@ public class Compiler implements RingModule {
 			
 			FileOutputStream out = new FileOutputStream(dir + File.separator + filename);
 			mudFile.writeTo(out);
+			System.out.println("Wrote \"" + filename + "\"");
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
