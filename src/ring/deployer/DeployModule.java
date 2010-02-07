@@ -8,18 +8,30 @@ public class DeployModule implements RingModule {
 	public void execute(String[] args) {
 		//Create DeployableMUDFile from args[0]
 		
-		//Check hashes. If hash is the same,
-		//do nothing. Else, erase current code
-		//directories.
+		//Check hash in property file.
+		//	If hashes are different:
+		//		setupDirectories()
 		
 		//For each entry in the set:
 		//	If endsWith .xml, delegate to deployXML.
 		//	Else, delegate to deploy.
 		
 		//Call cleanUpDatabase() to remove broken references.
-		
+			
 		//System.out.println("MUD deploy complete.");
 		
+		//if codeUpdates:
+		//	Restart the currently running mud, or issue a warning that the MUD must be restarted.
+		//if !codeUpdates:
+		//	Force all MUD objects in the currently running MUD to reload themselves from the database.
+		
+	}
+	
+	private void setupDirectories() {
+		//Create a new directory for the MUD in MUDROOT.
+		//Create a new directory for the new version of the MUD in the above directory.
+		
+		//Both of the above will fail silently if directories exist.
 	}
 	
 	private void deployXMLDocument() {
@@ -48,7 +60,26 @@ public class DeployModule implements RingModule {
 	}
 	
 	private void deploy() {
-		//
+		//This deploys "everything else" that isn't XML data.
+		
+		//Determine if a code update happened: new files and updated files means code update.
+		//if (!codeUpdates):
+		//	if document does not exist:
+		//		codeUpdates = true.
+		//	else:
+		//		if shaHash(currDocument) != shaHash(incomingDocument):
+		//			codeUpdates = true
+		//		else:
+		//			return. this document does not need to be updated.
+
+		//We have now determined that this document needs to be deployed, or overwritten.
+		
+		//directoryToCreate = IMPORTROOT + entry.getEntryName()
+		//if directoryToCreate.exists() == false:
+		//	directoryToCreate.mkdirs()
+		
+		//Copy file over via BufferedInputStream.
+		//Overwrites any existing file.
 	}
 	
 	private boolean idHasOwnDocument(String id) {
