@@ -126,7 +126,7 @@ public class MUDFile {
 		generateHash();
 		Properties props = getProperties();
 		props.setProperty("hash", mudHash);
-		ZipEntry propsEntry = new ZipEntry("mud.properties");
+		ZipEntry propsEntry = new ZipEntry("mud/mud.properties");
 		out.putNextEntry(propsEntry);
 		props.store(out, createComments());
 		
@@ -135,7 +135,7 @@ public class MUDFile {
 			File file = entry.getFile();
 			
 			//Sets up the entry in the .mud file.
-			ZipEntry zipEntry = new ZipEntry(entry.getEntryName());
+			ZipEntry zipEntry = new ZipEntry("mud/" + entry.getEntryName());
 			out.putNextEntry(zipEntry);
 			
 			//Write the data of the file to this zip.
@@ -151,5 +151,20 @@ public class MUDFile {
 		
 		out.close();
 		stream.close();
+	}
+	
+	public static MUDFile read(String path) {
+		return read(new File(path));
+	}
+	
+	/**
+	 * Reads in a MUDFile from its file form. Note that no data is loaded but the entries that reside in
+	 * the MUDFile as a result of this operation.
+	 * @param file
+	 * @return
+	 */
+	public static MUDFile read(File file) {
+		
+		return null;
 	}
 }
