@@ -19,6 +19,7 @@ public class MUDConfig {
 	private static Logger log = Logger.getLogger(MUDConfig.class.getName());
     private static Properties config;
     private static final String SEP = System.getProperty("file.separator");
+    public static final String MUDROOT = "ring.system.MUDConfig.configLocation";
     
     public static void loadProperties() {
         config = new Properties(loadDefaults());

@@ -6,10 +6,11 @@ public class DeployModule implements RingModule {
 
 	@Override
 	public void execute(String[] args) {
-		//Create DeployableMUDFile from args[0]
+		//Create DeployableMUDFile from args[0]: This is the mud to be imported.
+		//Create DeployedMUD from args[0]: This is the currently imported mud, if it exists.
 		
 		//Check hash in property file.
-		//	If hashes are different:
+		//	If hashes are different || deployed mud == null:
 		//		setupDirectories()
 		
 		//For each entry in the set:
@@ -17,6 +18,8 @@ public class DeployModule implements RingModule {
 		//	Else, delegate to deploy.
 		
 		//Call cleanUpDatabase() to remove broken references.
+		
+		//updateVersionFile()
 			
 		//System.out.println("MUD deploy complete.");
 		
@@ -103,6 +106,10 @@ public class DeployModule implements RingModule {
 		//		increment brokenRefCount
 		
 		//System.out.println("Removed " + brokenRefCount + " broken references.");
+	}
+	
+	private void updateVersionFile() {
+		//Write version file with "current= " + mudFile.getVersion()
 	}
 
 	@Override

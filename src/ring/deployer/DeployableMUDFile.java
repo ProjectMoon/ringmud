@@ -1,11 +1,10 @@
 package ring.deployer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -14,9 +13,12 @@ public class DeployableMUDFile {
 	private Set<DeployableFileEntry> entries = new HashSet<DeployableFileEntry>();
 	private final ZipFile zipFile;
 	
-	public DeployableMUDFile(ZipFile file) {
+	private Properties mudProperties = new Properties();
+	
+	public DeployableMUDFile(ZipFile file) throws IOException {
 		this.zipFile = file;
 		setEntries(createEntrySet());
+		loadProperties();
 	}
 	
 	public Set<DeployableFileEntry> getEntries() {
@@ -53,18 +55,37 @@ public class DeployableMUDFile {
 		return results;
 	}
 	
-	public static void main(String[] args) throws IOException {
-		ZipFile file = new ZipFile("/Users/projectmoon/Programs/git/ringmud/RingMUD-1.0.2.mud");
-		DeployableMUDFile mudFile = new DeployableMUDFile(file);
+	public String getName() {
+		return mudProperties.getProperty("name");
+	}
+	
+	public String getAuthor() {
+		return mudProperties.getProperty("author");
+	}
+	
+	public String getVersion() {
+		return mudProperties.getProperty("version");
+	}
+	
+	public String getHash() {
+		return mudProperties.getProperty("hash");
+	}
+	
+	public Properties getProperties() {
+		return mudProperties;
+	}
+
+	private void loadProperties() throws IOException {
+		Set<DeployableFileEntry> propsEntry = getEntries("mud/mud.properties");
 		
-		for (DeployableFileEntry entry : mudFile.getEntries()) {
-			InputStream stream = entry.getInputStream();
-			InputStreamReader ir = new InputStreamReader(stream);
-			BufferedReader reader = new BufferedReader(ir);
-			
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+		if (propsEntry.size() > 1) {
+			throw new IllegalStateException("Something is funky. This mudfile has more than one properties entry.");
+		}
+		else {
+			//Looks a bit weird, but sets don't provide a .get method.
+			for (DeployableFileEntry entry : propsEntry) {
+				InputStream input = entry.getInputStream();
+				mudProperties.load(input);
 			}
 		}
 	}
