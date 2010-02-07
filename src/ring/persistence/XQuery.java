@@ -54,29 +54,30 @@ public class XQuery {
 		return query;
 	}
 	
-	public <T extends AbstractBusinessObject> List<T> query(Class<T> cl) throws XMLDBException, JAXBException {
+	public List<XMLResource> execute() throws XMLDBException {
+		ExistDB db = new ExistDB();
+		Collection col = getCollection(db);
+		ResourceSet xmlDocs = db.query(col, getQuery());
+		ArrayList<XMLResource> results = new ArrayList<XMLResource>((int)xmlDocs.getSize());
+		ResourceIterator iter = xmlDocs.getIterator();
+		
+		while (iter.hasMoreResources()) {
+			XMLResource res = (XMLResource)iter.nextResource();
+			results.add(res);
+		}
+		
+		col.close();
+		
+		return results;
+	}
+	
+	public <T extends AbstractBusinessObject> List<T> execute(Class<T> cl) throws XMLDBException, JAXBException {
 		if (getLoadpoint() == Loadpoint.DEFAULT) {
 			return loadFromDefault(cl);
 		}
 		else {
 			ExistDB db = new ExistDB();
-			
 			Collection col = getCollection(db);
-			/*
-			ResourceSet xmlDocs = db.query(col, getQuery());
-			List<T> results = new ArrayList<T>((int)xmlDocs.getSize());
-			
-			ResourceIterator iter = xmlDocs.getIterator();
-			while (iter.hasMoreResources()) {
-				XMLResource res = (XMLResource)iter.nextResource();
-				T conv = convertToObject(res, cl);
-				results.add(conv);
-			}
-			
-			col.close();
-			
-			return results;
-			*/
 			return loadFromCollection(cl, db, col);
 		}
 	}
@@ -124,7 +125,7 @@ public class XQuery {
 			return db.getCollection(ExistDBStore.PLAYERS_COLLECTION);
 		}
 		else {
-			throw new UnsupportedOperationException("Can't load from default loadpoint. Yet.");
+			throw new UnsupportedOperationException();
 		}
 	}
 	

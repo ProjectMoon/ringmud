@@ -20,7 +20,7 @@ public class DeployableFileEntry {
 		return entry.getName();
 	}
 	
-	public ZipEntry getEntry() {
+	public ZipEntry getZipEntry() {
 		return entry;
 	}
 	
@@ -33,6 +33,6 @@ public class DeployableFileEntry {
 	}
 	
 	public InputStream getInputStream() throws IOException {
-		return parentFile.getInputStream(getEntry());
+		return parentFile.getInputStream(getZipEntry());
 	}
 }

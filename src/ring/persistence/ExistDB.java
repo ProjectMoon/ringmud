@@ -1,8 +1,6 @@
 package ring.persistence;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -16,6 +14,7 @@ import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XPathQueryService;
 import org.xmldb.api.modules.XQueryService;
 
+import ring.deployer.DeployedMUD;
 import ring.system.MUDConfig;
 
 /**
@@ -24,9 +23,7 @@ import ring.system.MUDConfig;
  *
  */
 public class ExistDB {
-	
 	//Constants mapping to various strings necessary for XML:DB API.
-
 	//Database login mappings:
 	//Normally these are copied to the instance variables below.
 	//But they can be overridden by constructors that allow specifying of
@@ -36,7 +33,7 @@ public class ExistDB {
 	private static final String DB_PASSWORD = MUDConfig.getDatabasePassword();
 	
 	//Collection mappings
-	private static final String ROOT_COLLECTION = "db";
+	private static String ROOT_COLLECTION = "db/";
 	
 	//Service mappings
 	private static final int SVCNAME = 0;
@@ -147,6 +144,17 @@ public class ExistDB {
 	}
 	*/
 	
+	public static String getRootCollectionURI() {
+		return ROOT_COLLECTION;
+	}
+	
+	public static void setRootCollectionURI(String uri) {
+		ROOT_COLLECTION = uri;
+		if (!ROOT_COLLECTION.endsWith("/")) {
+			ROOT_COLLECTION += "/";
+		}
+	}
+	
 	public XQueryService getXQueryService(Collection col) throws XMLDBException {
 		return (XQueryService)col.getService(XQUERY_SERVICE[SVCNAME], XQUERY_SERVICE[SVCVER]);
 	}
@@ -160,24 +168,40 @@ public class ExistDB {
 		return root;
 	}
 	
+	public Collection getDatabaseRootCollection() throws XMLDBException {
+		Collection root = (Collection)DatabaseManager.getCollection(craftRootURI("db"), dbUser, dbPassword);
+		return root;
+	}
+	
 	public Collection getCollection(String name) throws XMLDBException {
-		String colName = ROOT_COLLECTION + "/" + name;
-		Collection col = DatabaseManager.getCollection(craftCollectionURI(colName), dbUser, dbPassword);
+		//String colName = ROOT_COLLECTION + name;
+		Collection col = DatabaseManager.getCollection(craftCollectionURI(name), dbUser, dbPassword);
 		
 		if (col == null) {
-			throw new XMLDBException(-1, "Collection " + colName + " is null. Is the database running?");
+			throw new XMLDBException(-1, "Collection " + name + " is null. Is the database running?");
 		}
 		
 		return col;
 	}
 	
-	private String craftCollectionURI(String name) {
+	private String craftRootURI(String name) {
 		String ret = dbURI;
 		
 		if (!dbURI.endsWith("/")) {
 			ret += "/";
 		}
-		
+			
+		return ret + name;
+	}
+	
+	private String craftCollectionURI(String name) {
+		name = ROOT_COLLECTION + name;
+		String ret = dbURI;
+	
+		if (!dbURI.endsWith("/")) {
+			ret += "/";
+		}
+			
 		return ret + name;
 	}
 	
@@ -233,23 +257,6 @@ public class ExistDB {
 			return null;
 		}
 	}
-	
-	public void testQuery(String xquery) throws XMLDBException {
-		Collection col = getRootCollection();
-		System.out.println("Query: " + xquery);
-		XQueryService service = getXQueryService(col);
-		if (service != null) {
-			ResourceSet res = service.query(xquery);
-			System.out.println("Resource size: " + res.getSize());
-			ResourceIterator i = res.getIterator();
-			
-			while (i.hasMoreResources()) {
-				System.out.println("------------------");
-				System.out.println(i.nextResource().getContent());
-				System.out.println("------------------");
-			}
-		}
-	}
 
 	public void addRootNode(String rootNode) throws XMLDBException {
 		Collection col = getRootCollection();
@@ -273,20 +280,26 @@ public class ExistDB {
 	 * if one already exists... yet.
 	 */
 	public void createRingDatabase() throws XMLDBException {
-		Collection root = getRootCollection();
+		Collection root = getDatabaseRootCollection();
 		CollectionManagementService service = (CollectionManagementService)root.getService(
 				COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
 		
+		Collection mudRoot = service.createCollection(craftCollectionURI(""));
+		addRootNode(mudRoot, "ring");
+		
+		CollectionManagementService mudsvc = (CollectionManagementService)mudRoot.getService(
+				COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
+		
 		//Static content: loaded during server boot
-		Collection staticCol = service.createCollection(ExistDBStore.STATIC_COLLECTION);
+		Collection staticCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.STATIC_COLLECTION));
 		addRootNode(staticCol, "ring");
 		
 		//Game collection: Stores world state
-		Collection gameCol = service.createCollection(ExistDBStore.GAME_COLLECTION);
+		Collection gameCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.GAME_COLLECTION));
 		addRootNode(gameCol, "ring");
 		
 		//Players collection: Stores player information. 
-		Collection playersCol = service.createCollection(ExistDBStore.PLAYERS_COLLECTION);
+		Collection playersCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.PLAYERS_COLLECTION));
 		addRootNode(playersCol, "ring");
 	}
 	
