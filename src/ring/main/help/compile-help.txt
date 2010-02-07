@@ -1,0 +1,17 @@
+RingMUD Compile module: Compile a MUD
+usage: ringmud.sh compile <directory>
+
+The RingMUD compiler (rmc) compiles MUDs designed to run on top of the RingMUD
+engine. Several steps are performed to fully compile a MUD for use. First, the
+existence of a mud.properties file in the target directory is tested. Next, the
+properties file itself is validated.
+
+The second step is data validation. Python-based data files are converted to 
+their corresponding XML documents. Then, validation is performed against all
+XML data files using the schemas located in the ringmud-resources jar file.
+
+Finally, assuming no errors have been found, the MUD is packed into a .mud file
+that can be deployed to the server.
+
+See the website for more directions on developing a MUD for the RingMUD engine.
+
