@@ -62,10 +62,8 @@ public class XMLDeployer {
 	
 		XMLResource resource = (XMLResource)col.getResource(documentName);
 		if (resource != null) {
-			String xmlInDB = (String)resource.getContent();
-			xmlInDB = xmlInDB.trim();
-			//System.out.println(stripHeader(xmlInDB));
-			//System.out.println(stripHeader(xmlInDocument));
+			String xmlInDB = (String)resource.getContent(); //This is already stripped of its header/whitespace
+
 			String hash1 = UserUtilities.sha1Hash(xmlInDB);
 			String hash2 = UserUtilities.sha1Hash(xmlInDocument);
 			
@@ -74,13 +72,12 @@ public class XMLDeployer {
 			if (UserUtilities.sha1Hash(xmlInDB).equals(UserUtilities.sha1Hash(xmlInDocument))) {
 				col.close();
 				System.out.println("This document does not need to be updated.");
-				return;
+				//return;
 			}
 		}
 		col.close();
 		
-		//Now, we have determined that the document needs to be updated.
-		
+		//Now, we have determined that the document needs to be updated, or imported.
 		//Next, we handle ID clashes.
 		handleClashes();
 
@@ -117,6 +114,7 @@ public class XMLDeployer {
 		XQuery xq = new XQuery();
 		xq.setLoadpoint(Loadpoint.STATIC);
 		
+		
 		for (String id : finder.getIDs()) {
 			String query = "for $doc in //ring//*[@id=\"" + id + "\"] return $doc";
 			xq.setQuery(query);
@@ -134,6 +132,16 @@ public class XMLDeployer {
 		}
 	}
 	
+	/**
+	 * Handles a clash for a given resource found in the DB. This clash is handled in one of two ways:
+	 * if the resource is determined to be its own document as per the idHasOwnDocument method, then it
+	 * is outright deleted. If the resource is determined to be embedded in a larger document, it
+	 * is instead replaced with a referential definition. This ensures that if an object definition is
+	 * refactored out of an xml file it is embedded into, that existing data will be updated. 
+	 * @param id
+	 * @param res
+	 * @throws XMLDBException
+	 */
 	private void handleClashForResource(String id, XMLResource res) throws XMLDBException {
 		System.out.println("handling clash for: " + id); 
 		//Determine if this resource is its own document.
@@ -145,11 +153,21 @@ public class XMLDeployer {
 			//So, we have to do it slightly differently.
 			Collection parent = db.getCollection(ExistDBStore.STATIC_COLLECTION);
 			Resource removeIt = parent.getResource(res.getDocumentId());
-			parent.removeResource(removeIt);
+			
+			if (removeIt != null) {
+				parent.removeResource(removeIt);
+			}
+			
 			parent.close();
 		}
 		else {
-			System.out.println("Would replace content with referential, but not implemented yet!");
+			String delete = "for $doc in //ring//*[@id=\"" + id + "\"] return (update delete $doc/*)";
+			String update = "for $doc in //ring//*[@id=\"" + id + "\"] return update value $doc/@ref with \"true\"";
+			XQuery xq = new XQuery();
+			xq.setQuery(delete);
+			xq.executeUpdate();
+			xq.setQuery(update);
+			xq.executeUpdate();
 		}
 		
 	}

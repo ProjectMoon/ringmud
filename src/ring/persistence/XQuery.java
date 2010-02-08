@@ -54,6 +54,12 @@ public class XQuery {
 		return query;
 	}
 	
+	public void executeUpdate() throws XMLDBException {
+		ExistDB db = new ExistDB();
+		Collection col = getCollection(db);
+		db.query(col, getQuery());
+	}
+	
 	public List<XMLResource> execute() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = getCollection(db);
