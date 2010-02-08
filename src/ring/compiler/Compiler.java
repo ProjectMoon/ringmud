@@ -1,12 +1,20 @@
 package ring.compiler;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import ring.main.RingModule;
 
@@ -14,8 +22,8 @@ import ring.main.RingModule;
  * Provides methods for packing and unpacking RingMUD .mud files. A .mud file
  * is actually a fancy zip file, similar to a Java jar file. A compiled MUD
  * can be deployed to the existing MUD server, or run in "development" mode, where
- * the database is not used. Instead, everything will be loaded into memory for
- * so the MUD can be tested easily. 
+ * the database is not used. Instead, everything will be loaded into memory so the
+ * MUD can be tested easily. 
  * @author projectmoon
  *
  */
@@ -52,6 +60,9 @@ public class Compiler implements RingModule {
 		
 		//Validate data/*.xml
 		validateDocuments();
+		
+		//Validate ID uniqueness.
+		validateIDs();
 		
 		//Validate python?
 		
@@ -116,6 +127,33 @@ public class Compiler implements RingModule {
 		}	
 	}
 	
+	private void validateIDs() {
+		try {
+			Set<String> duplicateChecker = new HashSet<String>();
+			
+			for (FileEntry entry : mudFile.getEntries("data")) {
+				IDFinder finder = new IDFinder();
+				XMLReader parser = XMLReaderFactory.createXMLReader();
+				parser.setContentHandler(finder);
+				FileInputStream input = new FileInputStream(entry.getFile());
+				InputSource src = new InputSource(new BufferedInputStream(input));
+				parser.parse(src);
+				
+				for (String id : finder.getIDs()) {
+					if (!duplicateChecker.add(id)) {
+						error(entry.getEntryName(), "Duplicate object ID: " + id);
+					}
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		catch (SAXException e) {
+			e.printStackTrace();
+		}
+
+	}
 	/**
 	 * Generates an error message, but signifies that the mud compiler should continue
 	 * in order to possibly find more errors.
