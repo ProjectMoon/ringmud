@@ -13,6 +13,8 @@ import ring.system.MUDConfig;
  *
  */
 public class DeployedMUDFactory {
+	private static DeployedMUD currentMUD;
+	
 	public static DeployedMUD getMUD(String name, String version) {
 		String mudPath = MUDConfig.MUDROOT;
 		mudPath += File.separator + name + File.separator + version;
@@ -20,6 +22,7 @@ public class DeployedMUDFactory {
 		DeployedMUD mud = new DeployedMUD(mudPath);
 		
 		if (mud.exists()) {
+			setCurrentMUD(mud);
 			return mud;
 		}
 		else {
@@ -50,6 +53,7 @@ public class DeployedMUDFactory {
 			DeployedMUD mud = new DeployedMUD(mudPath);
 			
 			if (mud.exists()) {
+				setCurrentMUD(mud);
 				return mud;
 			}
 			else {
@@ -59,5 +63,13 @@ public class DeployedMUDFactory {
 		else {
 			return null;
 		}
+	}
+	
+	public static DeployedMUD currentMUD() {
+		return currentMUD;
+	}
+	
+	private static void setCurrentMUD(DeployedMUD mud) {
+		currentMUD = mud;
 	}
 }

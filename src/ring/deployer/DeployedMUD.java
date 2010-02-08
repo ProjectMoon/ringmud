@@ -31,6 +31,10 @@ public class DeployedMUD {
 		return location.exists();
 	}
 	
+	public String getLocation() {
+		return location.getAbsolutePath();
+	}
+	
 	private void loadProperties() throws IOException {
 		String propsPath = location + File.separator + "mud.properties";
 		FileInputStream input = new FileInputStream(propsPath);
