@@ -9,7 +9,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 /**
- * Finds IDs in XML documents.
+ * Finds IDs in XML documents. This is defined separately from the compiler package
+ * version so the deployer does not have to rely on the compiler jar to work.
  * @author projectmoon
  *
  */

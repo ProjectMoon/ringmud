@@ -85,13 +85,8 @@ public class MUDBoot {
 				"ring.commands.PackageIndexer", pkgProps);
 		CommandHandler.addCommands(pkgIndexer.getCommands());
 
-		if (jythonProps.size() > 0) {
-			CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
-					"ring.commands.JythonIndexer", jythonProps);
-			CommandHandler.addCommands(jythonIndexer.getCommands());
-		} else {
-			System.out.println("Jython Indexer is not enabled.");
-		}
-
+		CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
+				"ring.commands.JythonIndexer", jythonProps);
+		CommandHandler.addCommands(jythonIndexer.getCommands());
 	}
 }

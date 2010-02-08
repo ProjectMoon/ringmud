@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import org.python.util.PythonInterpreter;
 
+import ring.deployer.DeployedMUDFactory;
+
 /**
  * Package-level indexer class that indexes Jython script files and turns them 
  * into RingMUD Command objects. JythonIndexer takes the following properties as parameters:<br/>
@@ -45,7 +47,7 @@ class JythonIndexer implements CommandIndexer {
 			throw new IllegalStateException("JythonIndexer: No properties! Can't index without them!");
 		}
 		
-		filePath = props.getProperty("jythonIndexer.directory");
+		filePath = DeployedMUDFactory.currentMUD().getLocation() + File.separator + "commands/";
 		initInterpreter();
 		File dir = new File(filePath);
 		if (dir.isDirectory()) {
