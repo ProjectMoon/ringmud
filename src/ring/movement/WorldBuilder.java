@@ -8,8 +8,6 @@ import javax.xml.bind.JAXBException;
 
 import org.xmldb.api.base.XMLDBException;
 
-import ring.persistence.DataStore;
-import ring.persistence.DataStoreFactory;
 import ring.persistence.Loadpoint;
 import ring.persistence.XQuery;
 import ring.system.MUDConfig;
@@ -21,17 +19,16 @@ import ring.system.MUDConfig;
  */
 public class WorldBuilder {
 	private static Map<String, Room> roomCache = new HashMap<String, Room>();
-	private static DataStore dataStore = DataStoreFactory.getDefaultStore();
 	
 	public static void buildWorld() throws XMLDBException, JAXBException {
 		XQuery xq = new XQuery();
+		xq.setLoadpoint(Loadpoint.STATIC)
+		;
 		String query = "for $loc in //location return $loc";
 		xq.setQuery(query);
-		
-		dataStore.setLoadpoint(Loadpoint.STATIC);
-		
+				
 		//Retrieve all locations in the static collection.
-		List<Location> locs = xq.query(Location.class);
+		List<Location> locs = xq.execute(Location.class);
 		
 		//Add all the rooms to the cache beforehand.
 		//We must do this beforehand to get all room references.

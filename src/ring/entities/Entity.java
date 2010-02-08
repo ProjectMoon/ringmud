@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.RingConstants;
 import ring.world.WorldObject;
 

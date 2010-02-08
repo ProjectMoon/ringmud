@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR=`dirname $0`
+RINGMUD=$DIR/ringmud.sh
+
+$RINGMUD compile $1

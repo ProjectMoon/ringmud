@@ -216,7 +216,7 @@ public class ExistDBStore implements DataStore {
 		String query = "for $doc in //ring//*[@id=\"" + id + "\"] return $doc";
 		XQuery xq = new XQuery(query);
 		xq.setLoadpoint(point);
-		List<T> results = xq.query(type);
+		List<T> results = xq.execute(type);
 		
 		if (results.size() > 0) {
 			return results.get(0);
