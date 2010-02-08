@@ -29,8 +29,8 @@ public class DeployedMUDFactory {
 	
 	public static DeployedMUD getMUD(String name) {
 		String currentVersion = null;
-		String mudPath = MUDConfig.MUDROOT + File.separator + name;
-		String versionPath = mudPath + File.separator + "version";
+		String mudPath = MUDConfig.MUDROOT + File.separator + "muds" + File.separator + name;
+		String versionPath = mudPath + File.separator + "versions";
 		
 		Properties versionProps = new Properties();
 		FileInputStream stream = null; 

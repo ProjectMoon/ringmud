@@ -1,0 +1,17 @@
+RingMUD Deploy module: Deploy a MUD
+usage: ringmud.sh compile <directory>
+
+The RingMUD deployer deploys a MUD compiled with the RingMUD compiler. The
+deployer is semi-intelligent; it will update XML files and code files that
+have changed, as well as add new ones. If there are ANY code changes, the
+entire deployment directory is remade from scratch.
+
+XML updates are slightly less invasive, and only individual documents will be
+deleted and recreated if they have been updated.
+
+After deployment is complete, a cleanup of the database will take place, and
+any broken references will be removed. This makes sure that there are no
+useless referential game object definitions sitting around.
+
+See the website for more directions on developing a MUD for the RingMUD engine.
+

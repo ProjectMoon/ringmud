@@ -148,6 +148,12 @@ public class ExistDB {
 		return ROOT_COLLECTION;
 	}
 	
+	/**
+	 * Possibly the most important method in this class. The root collection URI determines
+	 * which collection to pull data from. Collections are divided by MUD names, so this is
+	 * set at server start when a deployed MUD is discovered.
+	 * @param uri
+	 */
 	public static void setRootCollectionURI(String uri) {
 		ROOT_COLLECTION = uri;
 		if (!ROOT_COLLECTION.endsWith("/")) {

@@ -20,6 +20,11 @@ public class DeployableFileEntry {
 		return entry.getName();
 	}
 	
+	public String getStrippedEntryName() {
+		int start = getEntryName().lastIndexOf('/');
+		return getEntryName().substring(start + 1);
+	}
+	
 	public ZipEntry getZipEntry() {
 		return entry;
 	}

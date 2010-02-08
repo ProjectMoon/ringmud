@@ -61,7 +61,14 @@
 		<jar destfile="${jar.dir}/ringmud-compiler-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/compiler/**"/>			
 		</jar>
-	</target>	
+	</target>
+	
+	<target name="jar-deployer" depends="compile">
+		<jar destfile="${jar.dir}/ringmud-deployer-${app.version}.jar">
+			<zipfileset dir="${classes.dir}" includes="ring/deployer/**"/>
+			<zipfileset dir="${src.dir}/ring/deployer/" includes="*.xsl" prefix="ring/deployer" />
+		</jar>
+	</target>
 	
 	<target name="jar-resources" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-resources-${app.version}.jar">
@@ -114,7 +121,7 @@
 		</jar>
 	</target>
 		
-    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi">
+    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
     	

@@ -30,6 +30,9 @@ public class StartServer implements RingModule {
 				e.printStackTrace();
 			}
 		}
+		else {
+			System.err.println("Couldn't find a deployed MUD named \"" + args[0] + "\"");
+		}
 	}
 
 	@Override

@@ -42,11 +42,16 @@ public class XMLDeployer {
 	private DeployableFileEntry entry;
 	private String documentName;
 	private String xmlInDocument; //for the imported doc
+	private static boolean xmlUpdates = false;
 	
 	public XMLDeployer(ExistDB db, DeployableFileEntry entry) {
 		this.db = db;
 		this.entry = entry;
-		documentName = DeployModule.stripEntryPrefix(entry.getEntryName());
+		documentName = entry.getStrippedEntryName();
+	}
+	
+	public boolean xmlUpdates() {
+		return xmlUpdates;
 	}
 	
 	public void deploy() throws XMLDBException, SAXException, IOException {
@@ -67,19 +72,25 @@ public class XMLDeployer {
 			String hash1 = UserUtilities.sha1Hash(xmlInDB);
 			String hash2 = UserUtilities.sha1Hash(xmlInDocument);
 			
-			System.out.println("hash1: " + hash1);
-			System.out.println("hash2: " + hash2);
-			if (UserUtilities.sha1Hash(xmlInDB).equals(UserUtilities.sha1Hash(xmlInDocument))) {
+			if (hash1.equals(hash2)) {
 				col.close();
-				System.out.println("This document does not need to be updated.");
-				//return;
+				//System.out.println("This document does not need to be updated.");
+				return;
 			}
+			else {
+				System.out.println("Updating XML: " + documentName);
+			}
+		}
+		else {
+			System.out.println("Adding new XML: " + documentName);
 		}
 		col.close();
 		
 		//Now, we have determined that the document needs to be updated, or imported.
+		xmlUpdates = true;
 		//Next, we handle ID clashes.
-		handleClashes();
+		//COMMENTED OUT because clashing is handled by removing of existing documents, and removal of deleted documents.
+		//handleClashes();
 
 		//If a document with this name already exists in the DB:
 		//	delete it.
@@ -89,6 +100,13 @@ public class XMLDeployer {
 		importDocument();
 	}
 	
+	/**
+	 * Handles clashses. Currently not necessary.
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws XMLDBException
+	 */
+	@SuppressWarnings("unused")
 	private void handleClashes() throws SAXException, IOException, XMLDBException {
 		//First, all clashes need to be handled.
 		//For each ID found in this XML document:
