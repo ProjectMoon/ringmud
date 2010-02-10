@@ -16,6 +16,7 @@ import ring.persistence.DataStoreFactory;
  * @author projectmoon
  *
  */
+@Deprecated
 public class ImportModule implements RingModule {
 	@Override
 	public void execute(String[] args) {

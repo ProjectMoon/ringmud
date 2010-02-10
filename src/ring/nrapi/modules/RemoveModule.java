@@ -3,6 +3,7 @@ package ring.nrapi.modules;
 import ring.main.RingModule;
 import ring.persistence.DataStoreFactory;
 
+@Deprecated
 public class RemoveModule implements RingModule {
 
 	@Override

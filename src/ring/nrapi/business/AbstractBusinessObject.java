@@ -124,7 +124,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		String body = xml.substring(xml.indexOf("?>") + 2);
 		body = "<ring>" + body + "</ring>";
 		String xmlHeader = xml.substring(0, xml.indexOf("?>") + 2);
-		return xmlHeader + body;
+		return xmlHeader + "\n" + body;
 	}
 	
 	@Override

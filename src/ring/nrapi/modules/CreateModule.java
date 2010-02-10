@@ -15,6 +15,7 @@ import ring.persistence.ExistDB;
  * @author projectmoon
  *
  */
+@Deprecated
 public class CreateModule implements RingModule {
 	@Override
 	public void execute(String[] args) {
@@ -36,3 +37,4 @@ public class CreateModule implements RingModule {
 	}
 	
 }
+

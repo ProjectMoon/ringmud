@@ -1,22 +1,28 @@
 package ring.compiler;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.python.util.PythonInterpreter;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import ring.main.RingModule;
+import ring.nrapi.xml.XMLConverter;
+import ring.persistence.Persistable;
 
 /**
  * Provides methods for packing and unpacking RingMUD .mud files. A .mud file
@@ -34,6 +40,9 @@ public class Compiler implements RingModule {
 	private int stripIndex;
 	private MUDFile mudFile = null;
 	
+	public static void main(String[] args) {
+		new Compiler().execute(new String[] { "/Users/projectmoon/muddy/" });
+	}
 	@Override
 	public void execute(String[] args) {
 		//Read some options
@@ -57,6 +66,7 @@ public class Compiler implements RingModule {
 		validateProperties();
 		
 		//Convert data/*.py to XML
+		convertPython();
 		
 		//Validate data/*.xml
 		validateDocuments();
@@ -108,17 +118,81 @@ public class Compiler implements RingModule {
 		}
 	}
 	
+	private void convertPython() {
+		try {
+			PythonInterpreter interp = new PythonInterpreter();
+			List<FileEntry> entriesToRemove = new ArrayList<FileEntry>();
+			List<FileEntry> entriesToAdd = new ArrayList<FileEntry>();
+			
+			for (FileEntry entry : mudFile.getEntries("data")) {
+				if (entry.getEntryName().endsWith(".py")) {
+					//Execute script
+					interp.execfile(new FileInputStream(entry.getFile()));
+					interp.cleanup();
+					
+					//Then convert to XML
+					List<Persistable> persistables = XMLConverter.getPersistables();
+					
+					//More efficient to have one string, rather than create it
+					//in each iteration below. This will be the file name of the python file,
+					//minus the .py extension.
+					String fileRoot = entry.getEntryName();
+					fileRoot = fileRoot.substring(fileRoot.lastIndexOf("/"), fileRoot.length() - 3);
+					
+					//Generate a unique document in the form pythonFileName + "-" + persistable.getID() + ".xml"
+					for (Persistable persistable : persistables) {
+						String prefix = fileRoot + "-" + persistable.getID();
+
+						File tmp = File.createTempFile(prefix, ".xml");
+						FileOutputStream fileOut = new FileOutputStream(tmp);
+						BufferedOutputStream buffer = new BufferedOutputStream(fileOut);
+						PrintStream out = new PrintStream(buffer);
+						
+						String xml = persistable.toXMLDocument();
+						out.println(xml);
+						
+						out.close();
+						buffer.close();
+						fileOut.close();
+						
+						//Add this entry to the list of entries to remove
+						//and create a new entry to be added to the mudfile.
+						entriesToRemove.add(entry);
+						FileEntry fe = new FileEntry();
+						fe.setFile(tmp);
+						fe.setEntryName("data/" + prefix + ".xml");
+						entriesToAdd.add(fe);
+					}
+	
+					XMLConverter.clear();
+				}
+			}
+			
+			//Modify the mudfile to remove the python data files and replace them with the
+			//generated xml files.
+			mudFile.getEntries().removeAll(entriesToRemove);
+			mudFile.getEntries().addAll(entriesToAdd);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	private void validateDocuments() {
 		for (FileEntry entry : mudFile.getEntries("data")) {
 			try {
-				DocumentValidator dv = new DocumentValidator();
-				if (!dv.validate(entry.getFile())) {
-					List<ValidationError> errors = dv.getErrors();
-					
-					for (ValidationError error : errors) {
-						error(entry.getEntryName(), error);	
+				//Only operate on XML documents.
+				if (entry.getEntryName().endsWith(".xml")) {
+					DocumentValidator dv = new DocumentValidator();
+					if (!dv.validate(entry.getFile())) {
+						List<ValidationError> errors = dv.getErrors();
+						
+						for (ValidationError error : errors) {
+							error(entry.getEntryName(), error);	
+						}
+						
 					}
-					
 				}
 			}
 			catch (IOException e) {
@@ -132,16 +206,18 @@ public class Compiler implements RingModule {
 			Set<String> duplicateChecker = new HashSet<String>();
 			
 			for (FileEntry entry : mudFile.getEntries("data")) {
-				IDFinder finder = new IDFinder();
-				XMLReader parser = XMLReaderFactory.createXMLReader();
-				parser.setContentHandler(finder);
-				FileInputStream input = new FileInputStream(entry.getFile());
-				InputSource src = new InputSource(new BufferedInputStream(input));
-				parser.parse(src);
-				
-				for (String id : finder.getIDs()) {
-					if (!duplicateChecker.add(id)) {
-						error(entry.getEntryName(), "Duplicate object ID: " + id);
+				if (entry.getEntryName().endsWith(".xml")) {
+					IDFinder finder = new IDFinder();
+					XMLReader parser = XMLReaderFactory.createXMLReader();
+					parser.setContentHandler(finder);
+					FileInputStream input = new FileInputStream(entry.getFile());
+					InputSource src = new InputSource(new BufferedInputStream(input));
+					parser.parse(src);
+					
+					for (String id : finder.getIDs()) {
+						if (!duplicateChecker.add(id)) {
+							error(entry.getEntryName(), "Duplicate object ID: " + id);
+						}
 					}
 				}
 			}
