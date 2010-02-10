@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.python.core.PyObject;
-import org.python.core.PyType;
 import org.python.util.PythonInterpreter;
 
 import ring.persistence.Persistable;
@@ -104,11 +103,18 @@ public class XMLConverter {
 		persistables.clear();
 	}
 	
-	public static void main(String[] args) {
-		PythonInterpreter interp = new PythonInterpreter();
-		interp.exec("from ring.persistable import Persistable");
-		interp.exec("m = { 'sdf':'blarp' }");
-		PyObject po = interp.get("m");
-		XMLConverter.add(po);
+	/**
+	 * The preferred way to create a Persistable that will be converted to XML. This returns a
+	 * new instance of the desired Persistable type, and adds it to the list of Persistables.
+	 * @param type The Java class object for which to create this Persistable. From Jython, this is retrieved
+	 * as "ClassName". There is no need to add .class to the end.
+	 * @return A new instance of the desired type.
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public static <P extends Persistable> P create(Class<P> type) throws InstantiationException, IllegalAccessException {
+		P inst = type.newInstance();
+		persistables.add(inst);
+		return inst;
 	}
 }

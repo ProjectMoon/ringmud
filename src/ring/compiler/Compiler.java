@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -160,7 +159,7 @@ public class Compiler implements RingModule {
 						entriesToRemove.add(entry);
 						FileEntry fe = new FileEntry();
 						fe.setFile(tmp);
-						fe.setEntryName("data/" + prefix + ".xml");
+						fe.setEntryName("data" + prefix + ".xml"); //Prefix should start with a /
 						entriesToAdd.add(fe);
 					}
 	
