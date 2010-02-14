@@ -29,6 +29,7 @@ import org.xmldb.api.modules.XMLResource;
 import ring.persistence.ExistDB;
 import ring.persistence.ExistDBStore;
 import ring.persistence.Loadpoint;
+import ring.persistence.ResourceList;
 import ring.persistence.XQuery;
 import ring.util.UserUtilities;
 
@@ -137,16 +138,18 @@ public class XMLDeployer {
 			String query = "for $doc in //ring//*[@id=\"" + id + "\"] return $doc";
 			xq.setQuery(query);
 			
-			List<XMLResource> set = xq.execute();
+			ResourceList set = xq.execute();
 			
 			//If size > 0, we have a clash.
 			if (set.size() > 0) {
 				//There should be one resource.
 				//All IDs are unique per collection. This is enforced by compiler.
 				assert (set.size() == 1);
-				XMLResource res = set.get(0);
+				XMLResource res = (XMLResource)set.nextResource();
 				handleClashForResource(id, res);
 			}
+			
+			set.close();
 		}
 	}
 	

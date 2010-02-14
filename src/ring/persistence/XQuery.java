@@ -54,27 +54,27 @@ public class XQuery {
 		return query;
 	}
 	
+	
 	public void executeUpdate() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = getCollection(db);
 		db.query(col, getQuery());
+		col.close();
 	}
 	
-	public List<XMLResource> execute() throws XMLDBException {
+	/**
+	 * Queries the database and returns a ResourceList of Resources that were found.
+	 * This ResourceList can be iterated over with a foreach loop, unlike the regular
+	 * ResourceSet. It also provides a close() method for when operations on the resources
+	 * are complete. Make sure to always call close() on the ResourceList.
+	 * @return
+	 * @throws XMLDBException
+	 */
+	public ResourceList execute() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = getCollection(db);
 		ResourceSet xmlDocs = db.query(col, getQuery());
-		ArrayList<XMLResource> results = new ArrayList<XMLResource>((int)xmlDocs.getSize());
-		ResourceIterator iter = xmlDocs.getIterator();
-		
-		while (iter.hasMoreResources()) {
-			XMLResource res = (XMLResource)iter.nextResource();
-			results.add(res);
-		}
-		
-		col.close();
-		
-		return results;
+		return new ResourceList(col, xmlDocs);
 	}
 	
 	public <T extends AbstractBusinessObject> List<T> execute(Class<T> cl) throws XMLDBException, JAXBException {
@@ -99,6 +99,7 @@ public class XQuery {
 		}
 		else {
 			//Fall back to static
+			col.close(); //release previous collection
 			col = db.getCollection(ExistDBStore.STATIC_COLLECTION);
 			return loadFromCollection(cl, db, col);
 		}
