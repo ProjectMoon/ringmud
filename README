@@ -12,15 +12,18 @@ Super quick startup instructions:
 3. Build ringmud by running "ant" from this directory.
 4. cd dist/bin/
 5. Start up exist by running startup.sh in its bin directory.,
-5. ./ringmud.sh install unix 
+5. sudo ./ringmud.sh install unix 
 	(Windows support coming later)
 6. This will "install" ringmud's configuration file to /etc/ringmud,
    as well as create the database collections in eXist.
 	NOTE: Don't forget to copy your database login info to the config.
-7. Import the sample world file by typing:
-   ./ringmud.sh import ../../resources/loc.xml
-8. Start RingMUD: ./ringmud.sh server
+7. Compile the ever so exciting sample mud:
+	./rmc ../../sample/
+	(you need to give it the directory of the sample MUD)
+8. Deploy the sample MUD:
+	sudo ./ringmud.sh deploy sample-1.0.mud
+9. Start the sample MUD: ./ringmud.sh server sample
 9. telnet to localhost at port 2312
 
 This should get RingMUD running on localhost with a really crappy sample
-world. A better one is coming soon.
+world.
