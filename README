@@ -11,7 +11,7 @@ Super quick startup instructions:
 2. Install exist to where ever you want. It has an easy graphical installer.
 3. Build ringmud by running "ant" from this directory.
 4. cd dist/bin/
-5. Start up exist by running startup.sh in its bin directory.,
+5. Start up exist by running startup.sh in exist's bin directory.
 5. sudo ./ringmud.sh install unix 
 	(Windows support coming later)
 6. This will "install" ringmud's configuration file to /etc/ringmud,
