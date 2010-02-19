@@ -249,8 +249,9 @@ public class Room extends AbstractBusinessObject {
 		StringBuilder sb = new StringBuilder();
 		
 		for (Mobile mob : getMobiles()) {
-			//TODO take care of hiding Mobiles.
-			sb.append(mob.getBaseModel().getShortDescription()).append("[R][WHITE] is here.\n");
+			if (mob != excludedMobile) {
+				sb.append(mob.getBaseModel().getShortDescription()).append("[R][WHITE] is here.\n");
+			}
 		}
 
 		return sb.toString();

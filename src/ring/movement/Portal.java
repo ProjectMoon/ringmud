@@ -118,6 +118,7 @@ public class Portal {
 	
 	public void setDestination(Room loc) {
 		destination = loc;
+		setDestinationID(loc.getID());
 	}
 	
 	@XmlAttribute(name = "destID")

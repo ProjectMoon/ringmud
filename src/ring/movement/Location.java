@@ -29,6 +29,8 @@ propOrder= {
 public class Location extends AbstractBusinessObject {
 	private Room room;
 	private List<Portal> exits = new ArrayList<Portal>();
+
+	public Location() {}
 	
 	@Override
 	public void createChildRelationships() {
