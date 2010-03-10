@@ -40,7 +40,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
+public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.

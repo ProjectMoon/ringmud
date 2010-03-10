@@ -13,7 +13,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, Stimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
@@ -21,7 +24,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, VisualStimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
@@ -29,7 +35,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, AudioStimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
@@ -37,7 +46,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, OlfactoryStimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
@@ -45,7 +57,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, TactileStimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
@@ -53,7 +68,10 @@ public class StimulusSender {
 	public static void sendStimulus(Room room, TasteStimulus stimulus, Mobile excludedMobile) {
 		for (Mobile mob : room.getMobiles()) {
 			if (mob != excludedMobile) {
-				mob.getDynamicModel().getSensesGroup().consume(stimulus);
+				SensesGroup sg = mob.getDynamicModel().getSensesGroup();
+				if (sg != null) {
+					sg.consume(stimulus);
+				}
 			}
 		}
 	}
