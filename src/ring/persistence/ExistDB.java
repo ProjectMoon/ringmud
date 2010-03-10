@@ -144,7 +144,7 @@ public class ExistDB {
 	}
 	*/
 	
-	public static String getRootCollectionURI() {
+	public static String getRootURI() {
 		return ROOT_COLLECTION;
 	}
 	
@@ -154,11 +154,15 @@ public class ExistDB {
 	 * set at server start when a deployed MUD is discovered.
 	 * @param uri
 	 */
-	public static void setRootCollectionURI(String uri) {
-		ROOT_COLLECTION = uri;
-		if (!ROOT_COLLECTION.endsWith("/")) {
-			ROOT_COLLECTION += "/";
+	public static void setRootURI(String uri) {
+		if (!uri.endsWith("/")) {
+			uri = "db/" + uri + "/";
 		}
+		else {
+			uri = "db/" + uri;
+		}
+		
+		ROOT_COLLECTION = uri;
 	}
 	
 	public XQueryService getXQueryService(Collection col) throws XMLDBException {

@@ -28,7 +28,7 @@ public class XQueryModule implements RingModule {
 		DeployedMUD mud = DeployedMUDFactory.getMUD(args[0]);
 		
 		if (mud != null) {
-			ExistDB.setRootCollectionURI("db/" + mud.getName() + "/");
+			ExistDB.setRootURI(mud.getName());
 		}
 		String filename = args[1];
 		File xqueryFile = new File(filename);
@@ -43,22 +43,15 @@ public class XQueryModule implements RingModule {
 				xquery += line + "\n";
 			}
 			
-			PythonInterpreter interp = new PythonInterpreter();
 			System.out.println("Executing: " + xquery);
 			XQuery xq = new XQuery(xquery);
 			//xq.setLoadpoint(Loadpoint.STATIC);
 			ResourceList results = xq.execute();
 			
 			System.out.println("result size: " + results.size());
-			String start = "<GameContext>";
-			String end = "</GameContext>";
 			
 			for (Resource res : results) {
-				String context = (String)res.getContent();
-				context = context.substring(context.indexOf(start) + start.length());
-				context = context.substring(0, context.indexOf(end));
-				context = context.trim();
-				interp.exec(context);
+				System.out.println(res.getContent());
 			}
 			
 			results.close();

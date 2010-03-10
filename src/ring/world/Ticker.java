@@ -26,6 +26,9 @@ public class Ticker implements Runnable {
 	//The singleton ticker instance
 	private static final Ticker ticker = new Ticker();
 	
+	/**
+	 * Creates a new ticker. Private constructor for singleton instance.
+	 */
 	private Ticker() {
 		this.tickCount = 0;
 	}

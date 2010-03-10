@@ -52,7 +52,7 @@ public class DeployModule implements RingModule {
 			mudPath = mudRoot + mudFile.getVersion();
 			
 			//Set up database object
-			ExistDB.setRootCollectionURI("db/" + mudFile.getName());
+			ExistDB.setRootURI(mudFile.getName());
 			db = new ExistDB();
 						
 			//Create DeployedMUD from info found in mudFile.

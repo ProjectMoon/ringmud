@@ -16,7 +16,7 @@ public class StartServer implements RingModule {
 		//Discover the mud we are to run.
 		DeployedMUD mud = DeployedMUDFactory.getMUD(args[0]);
 		if (mud != null) {
-			ExistDB.setRootCollectionURI("db/" + mud.getName() + "/");
+			ExistDB.setRootURI(mud.getName());
 			
 			//Boot the mud
 			MUDBoot.boot();
