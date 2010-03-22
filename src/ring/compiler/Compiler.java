@@ -39,9 +39,6 @@ public class Compiler implements RingModule {
 	private int stripIndex;
 	private MUDFile mudFile = null;
 	
-	public static void main(String[] args) {
-		new Compiler().execute(new String[] { "/Users/projectmoon/muddy/" });
-	}
 	@Override
 	public void execute(String[] args) {
 		//Read some options
@@ -136,34 +133,37 @@ public class Compiler implements RingModule {
 					//in each iteration below. This will be the file name of the python file,
 					//minus the .py extension.
 					String fileRoot = entry.getEntryName();
-					fileRoot = fileRoot.substring(fileRoot.lastIndexOf("/"), fileRoot.length() - 3);
-					
-					//Generate a unique document in the form pythonFileName + "-" + persistable.getID() + ".xml"
-					for (Persistable persistable : persistables) {
-						String prefix = fileRoot + "-" + persistable.getID();
+					fileRoot = fileRoot.substring(fileRoot.lastIndexOf("/"), fileRoot.length());
 
-						File tmp = File.createTempFile(prefix, ".xml");
-						FileOutputStream fileOut = new FileOutputStream(tmp);
-						BufferedOutputStream buffer = new BufferedOutputStream(fileOut);
-						PrintStream out = new PrintStream(buffer);
-						
-						String xml = persistable.toXMLDocument();
+					File tmp = File.createTempFile(fileRoot, ".xml");
+					FileOutputStream fileOut = new FileOutputStream(tmp);
+					BufferedOutputStream buffer = new BufferedOutputStream(fileOut);
+					PrintStream out = new PrintStream(buffer);
+					
+					//Write beginning of XML document.
+					out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+					out.println("<ring>");
+									
+					//Write out each persistable to the XML document.
+					for (Persistable persistable : persistables) {						
+						String xml = persistable.toXML();
 						out.println(xml);
-						
-						out.close();
-						buffer.close();
-						fileOut.close();
-						
-						//Add this entry to the list of entries to remove
-						//and create a new entry to be added to the mudfile.
-						entriesToRemove.add(entry);
-						FileEntry fe = new FileEntry();
-						fe.setFile(tmp);
-						fe.setEntryName("data" + prefix + ".xml"); //Prefix should start with a /
-						entriesToAdd.add(fe);
 					}
+					
+					//Write end of XML document.
+					out.println("</ring>");
 	
 					XMLConverter.clear();
+					
+					out.close();
+					buffer.close();
+					fileOut.close();
+
+					FileEntry fe = new FileEntry();
+					fe.setFile(tmp);
+					fe.setEntryName("data" + fileRoot + ".xml"); //Prefix should start with a /
+					entriesToAdd.add(fe);
+					entriesToRemove.add(entry);
 				}
 			}
 			

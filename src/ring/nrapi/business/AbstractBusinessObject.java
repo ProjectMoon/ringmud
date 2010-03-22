@@ -88,6 +88,11 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		referential = val;
 	}
 	
+	@XmlTransient
+	public String getCanonicalID() {
+		return getDocumentID() + ":" + getID();
+	}
+	
 	/**
 	 * Returns the objects unique's ID.
 	 * @return the id
@@ -119,6 +124,11 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		}
 	}
 	
+	/**
+	 * Returns this object represented as a full XML document containing
+	 * the standard processing instruction and a &lt;ring&gt; element as the
+	 * root element of the document.
+	 */
 	public String toXMLDocument() {
 		String xml = marshalledXMLDocument();
 		String body = xml.substring(xml.indexOf("?>") + 2);
@@ -127,12 +137,16 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return xmlHeader + "\n" + body;
 	}
 	
+	/**
+	 * Returns this object represented as an XML fragment. The XML does not contain
+	 * the standard XML processing instruction(s), nor does it contain a root element.
+	 */
 	@Override
 	public String toXML() {
 		if (isReferential()) {
 			JAXBAnnotationReader reader = new JAXBAnnotationReader(this.getClass());
 			String element = reader.rootElementName();
-			String xml = "<" + element + " reference=\"true\">";
+			String xml = "<" + element + " ref=\"true\">";
 			xml += "<id>" + getID() + "</id>";
 			xml += "</" + element + ">";
 			

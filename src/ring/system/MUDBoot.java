@@ -5,12 +5,16 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
+import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.XMLDBException;
+import org.xmldb.api.modules.XMLResource;
 
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
 import ring.movement.WorldBuilder;
+import ring.persistence.ResourceList;
+import ring.persistence.XQuery;
 import ring.world.Ticker;
 
 /**
@@ -31,9 +35,13 @@ public class MUDBoot {
 	 */
 	public static void boot() {
 		System.out.println("Loading RingMUD.");
-
+		
+		//Load all event handlers
+		System.out.println("Loading event handlers from static...");
+		loadEventHandlers();
+		
 		// Restore world state from DB
-		System.err.println("ERROR: Restoring of world state not implemented yet.");
+		System.err.println("WARNING: Restoring of world state not implemented yet.");
 
 		// Load commands
 		System.out.println("Loading commands...");
@@ -77,7 +85,7 @@ public class MUDBoot {
 	 * Loads both internal commands (in packages) and Jython-based commands
 	 * (from script files).
 	 */
-	public static void loadCommands() {
+	private static void loadCommands() {
 		Properties pkgProps = MUDConfig.getPluginProperties("pkgIndexer");
 		Properties jythonProps = MUDConfig.getPluginProperties("jythonIndexer");
 
@@ -88,5 +96,34 @@ public class MUDBoot {
 		CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
 				"ring.commands.JythonIndexer", jythonProps);
 		CommandHandler.addCommands(jythonIndexer.getCommands());
+	}
+
+	/**
+	 * Loads event handlers.
+	 */
+	private static void loadEventHandlers() {
+		XQuery xq = new XQuery("for $doc in //*[@codebehind != \"\"] return data($doc/@codebehind");
+		try {
+			ResourceList results = xq.execute();
+			
+			for (Resource r : results) {
+				XMLResource res = (XMLResource)r;
+				String documentID = res.getDocumentId();
+				String pythonFile = res.getContent().toString();
+				
+				//The scripts are executed, and the event handler is extracted via
+				//EventHandler, or some such. Basically like XMLConverter.
+				//The event handler object is cleared between script executions and
+				//all created event handlers are stored in a hashmap with document names
+				//as the key.
+				//UnmarshalListener also will now take care of binding events by
+				//looking up event handlers in the hashmap. From there it will delegate
+				//to retrieving any events found for the specific ID.
+			}
+		}
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

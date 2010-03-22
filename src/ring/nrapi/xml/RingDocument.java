@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -27,6 +28,7 @@ import ring.persistence.RingConstants;
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
+	"codebehind",
 	"rooms",
 	"locations",
 	"entities",
@@ -39,6 +41,7 @@ public class RingDocument {
 	private List<Entity> entities = new ArrayList<Entity>();
 	private List<Item> items = new ArrayList<Item>();
 	private List<Location> locations = new ArrayList<Location>();
+	private String codebehind;
 	
 	@XmlElement(name = "mobile")
 	public List<Mobile> getMobiles() {
@@ -83,6 +86,15 @@ public class RingDocument {
 	
 	public void setLocations(List<Location> locations) {
 		this.locations = locations;
+	}
+	
+	@XmlAttribute(name="codebehind")
+	public String getCodebehind() {
+		return codebehind;
+	}
+	
+	public void setCodebehind(String codebehind) {
+		this.codebehind = codebehind;
 	}
 	
 }
