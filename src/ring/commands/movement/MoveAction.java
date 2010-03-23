@@ -31,15 +31,19 @@ public class MoveAction {
 		Room destinationRoom = destination.getDestination();
 		Room currentRoom = mob.getLocation();
 		
-		boolean success = LocationManager.move(mob, destination);
-		
-		if (success) {
-			sendLeaveMessages(currentRoom, destination);
-			sendArriveMessages(destinationRoom, destination);
-			return true;
-		}
-		else {
-			return false;
+		synchronized (currentRoom) {
+			synchronized (destinationRoom) {
+				boolean success = LocationManager.move(mob, destination);
+				
+				if (success) {
+					sendLeaveMessages(currentRoom, destination);
+					sendArriveMessages(destinationRoom, destination);
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
 		}
 	}
 	

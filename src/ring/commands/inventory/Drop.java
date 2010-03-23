@@ -14,7 +14,7 @@ import ring.movement.Room;
 
 public class Drop implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public synchronized CommandResult execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.INVENTORY);
 		Object target = params.getParameter(0);
 
