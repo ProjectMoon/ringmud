@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RingMUD" basedir="." default="main">
+	<description>
+	Build system for the RingMUD engine. Type "ant" to build the whole thing.	
+	</description>
+	<!-- List of properties. -->
 	<property name="app.version" value="0.1.0" />
     <property name="src.dir"     value="./src"/>
 	<property name="lib.dir"	value="./lib"/>
@@ -9,9 +13,9 @@
     <property name="dist.dir" value	="./dist" />
     <property name="jar.dir"     value="${dist.dir}/bin/jar"/>
 	<property name="dist.lib.dir"     value="${dist.dir}/lib"/>
-	<property name="jaxb.path" value="" />
-	
-	<!-- Schemagen task: Change jaxb path above to set location for it. -->
+	<property name="dist.docs.dir" value="./docs" />
+
+	<!-- A bunch of resource definitions for use below. -->
 	<fileset id="resources" dir="${src.dir}/ring/main/">
 		<include name="**/*.properties" />
 		<include name="**/*.txt" />
@@ -31,12 +35,13 @@
 		<include name="**/*.java" />
 	</fileset>
 	
-    <target name="clean">
+	<!-- Begin targets -->
+    <target name="clean" description="Deletes build and dist directories.">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}" />
     </target>
 
-    <target name="compile">
+    <target name="compile" description="Compiles all class files under src/ directory.">
         <mkdir dir="${classes.dir}"/>
     	<path id="project.class.path">
     		<fileset dir="${lib.dir}" includes="**/*.jar" />	
@@ -121,7 +126,8 @@
 		</jar>
 	</target>
 		
-    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi">
+    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi"
+    		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
     	
@@ -135,6 +141,11 @@
     	</copy>
     </target>
 	 
- 	<target name="main" depends="clean,dist"/>
+ 	<target name="main" depends="clean,dist" description="Build the RingMUD engine." />
+ 	
+ 	<!-- Optional Javadoc task -->
+ 	<target name="docs" description="Optional target to generate Javadocs.">
+ 		<javadoc destdir="${dist.docs.dir}" sourcepath="${src.dir}" />
+ 	</target>
 </project>
 
