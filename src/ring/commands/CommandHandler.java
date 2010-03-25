@@ -226,7 +226,9 @@ public final class CommandHandler {
 	}
 
 	/**
-	 * Invokes a Command with the specified parameters. Synchronizes on command sender.
+	 * Invokes a Command with the specified parameters. Synchronizes on
+	 * command sender. Individual commands may be further synchronized
+	 * if necessary.
 	 * @param cmd
 	 * @param params
 	 * @return the result of the command.

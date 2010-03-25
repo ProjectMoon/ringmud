@@ -14,7 +14,7 @@ import ring.world.WorldObject;
 
 public class Get implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public synchronized CommandResult execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.FROM_ROOM);
 		Object target = params.getParameter(0);
 
