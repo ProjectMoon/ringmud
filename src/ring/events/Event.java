@@ -15,4 +15,28 @@ public class Event {
 	private EventContext context;
 	private String eventName;
 	private PyFunction func;
+
+	public void setContext(EventContext ctx) {
+		context = ctx;
+	}
+	
+	public EventContext getContext() {
+		return context;
+	}
+
+	public void setName(String eventName) {
+		this.eventName = eventName;
+	}
+
+	public String getName() {
+		return eventName;
+	}
+
+	public void setFunction(PyFunction func) {
+		this.func = func;
+	}
+
+	public PyFunction getFunction() {
+		return func;
+	}
 }

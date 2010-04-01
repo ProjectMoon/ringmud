@@ -1,5 +1,6 @@
 package ring.events;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.python.core.PyFunction;
@@ -20,9 +21,21 @@ import org.python.util.PythonInterpreter;
  */
 public class EventHandler {
 	private static List<Event> events;
+	private PythonInterpreter interp;
 	
-	public static void initializeFromFile(String filename) {
-		
+	public EventHandler() {
+		PySystemState.initialize();
+		interp = new PythonInterpreter();
+		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("ring/events/events.py");
+		interp.execfile(stream);
+	}
+	
+	public void initializeEvents(String filename) {
+		interp.execfile(filename);
+	}
+	
+	public void initializeEvents(InputStream pyStream) {
+		interp.execfile(pyStream);
 	}
 	
 	public static void main(String[] args) {
@@ -40,15 +53,9 @@ public class EventHandler {
 		}
 		*/
 		
-		EventContext ctx = new EventContext();
-		//ctx.addDocument("test");
-		ctx.addID("test", "test");
-		ctx.addID("test2", "someID");
+		EventHandler eh = new EventHandler();
+		EventDispatcher.listEvents();
 		
-		System.out.println(ctx);
-		ctx.unbindID("someID");
-		System.out.println("---------");
-		System.out.println(ctx);
 	}
 	
 }
