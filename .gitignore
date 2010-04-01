@@ -4,5 +4,6 @@ bin/*
 lib/cachedir/*
 .classpath
 .project
+.pydevproject
 .settings/*
 *.mud
