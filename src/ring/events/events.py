@@ -1,11 +1,13 @@
 from ring.events import *
 from ring.events.EventDispatcher import addEvent
+import ring.mobiles
+import codecs
 
 def select(*idList):        
     def decorator(target):
         event = Event()
         ctx = EventContext()
-        document = "doc.xml"
+        document = __document__
         
         for id in idList:
             ctx.addID(document, id)
@@ -18,7 +20,13 @@ def select(*idList):
         return target
     
     return decorator
-        
-@select('mob1', 'mob2', 'mob3')
-def onLoad(x):
-    print x
+
+
+m = ring.mobiles.Mobile()
+m.baseModel.name = "someMobile"
+m.documentID = "test.xml"
+m.ID = "mob1"
+
+@select('mob1')
+def onLoad(mob):
+    print "onLoad for: " + mob.baseModel.name

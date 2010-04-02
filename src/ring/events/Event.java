@@ -1,6 +1,10 @@
 package ring.events;
 
+import org.python.core.Py;
 import org.python.core.PyFunction;
+import org.python.core.PyObject;
+
+import ring.nrapi.business.AbstractBusinessObject;
 
 /**
  * Represents a bindable (or bound) event in MUD code. An event has three
@@ -38,5 +42,10 @@ public class Event {
 
 	public PyFunction getFunction() {
 		return func;
+	}
+	
+	public void invoke(AbstractBusinessObject target) {
+		PyObject pyTarget = Py.java2py(target);
+		func.__call__(new PyObject[] { pyTarget }, new String[0]);
 	}
 }

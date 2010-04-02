@@ -1,5 +1,9 @@
 package ring.system;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -12,9 +16,12 @@ import org.xmldb.api.modules.XMLResource;
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
+import ring.deployer.DeployedMUDFactory;
+import ring.events.EventDispatcher;
 import ring.movement.WorldBuilder;
 import ring.persistence.ResourceList;
 import ring.persistence.XQuery;
+import ring.python.Interpreter;
 import ring.world.Ticker;
 
 /**
@@ -35,6 +42,9 @@ public class MUDBoot {
 	 */
 	public static void boot() {
 		System.out.println("Loading RingMUD.");
+		
+		System.out.println("Loading Jython...");
+		Interpreter.INSTANCE.getInterpreter();
 		
 		//Load all event handlers
 		System.out.println("Loading event handlers from static...");
@@ -102,7 +112,7 @@ public class MUDBoot {
 	 * Loads event handlers.
 	 */
 	private static void loadEventHandlers() {
-		XQuery xq = new XQuery("for $doc in //*[@codebehind != \"\"] return data($doc/@codebehind");
+		XQuery xq = new XQuery("for $doc in //*[@codebehind != \"\"] return data($doc/@codebehind)");
 		try {
 			ResourceList results = xq.execute();
 			
@@ -111,6 +121,16 @@ public class MUDBoot {
 				String documentID = res.getDocumentId();
 				String pythonFile = res.getContent().toString();
 				
+				try {
+					pythonFile = DeployedMUDFactory.currentMUD().getLocation() + "events" + System.getProperty("file.separator") + pythonFile;
+					System.out.println("Loading from: " + pythonFile);
+					InputStream pyStream = new FileInputStream(pythonFile);
+					//EventDispatcher.initializeEvents(documentID, pyStream);
+				} 
+				catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				//The scripts are executed, and the event handler is extracted via
 				//EventHandler, or some such. Basically like XMLConverter.
 				//The event handler object is cleared between script executions and
@@ -125,5 +145,10 @@ public class MUDBoot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		MUDConfig.loadProperties();
+		MUDBoot.loadEventHandlers();
 	}
 }

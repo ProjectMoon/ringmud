@@ -88,6 +88,7 @@
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
 			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
+			<zipfileset dir="${classes.dir}" includes="ring/python/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/world/**"/>
@@ -125,8 +126,14 @@
 			<zipfileset dir="${classes.dir}" includes="ring/skills/**" />
 		</jar>
 	</target>
+	
+	<target name="jar-events" depends="compile">
+		<jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
+			<zipfileset dir="${classes.dir}" includes="ring/events/**" />
+		</jar>
+	</target>
 		
-    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi"
+    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
     		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
