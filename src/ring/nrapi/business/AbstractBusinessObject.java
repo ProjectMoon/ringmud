@@ -1,6 +1,8 @@
 package ring.nrapi.business;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
@@ -28,6 +30,8 @@ propOrder= {
 })
 public abstract class AbstractBusinessObject implements BusinessObject {
 	private AbstractBusinessObject parent;
+	private List<AbstractBusinessObject> children = new ArrayList<AbstractBusinessObject>();
+	
 	private String docID;
 	
 	private String id;
@@ -40,12 +44,41 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	public void save() {
 		DataStoreFactory.getDefaultStore().storePersistable(this);
 	}
+
+	/**
+	 * Responsible for propagating information down the hierarchy
+	 * of objects found in the document or fragment that this
+	 * AbstractBusinessObject was loaded from. It propagates information
+	 * and calls each child's <code>createChildRelationships()</code> method. This
+	 * results in a recursive propagation of information down through the object
+	 * hierarchy.
+	 * <br/><br/>
+	 * This method only concerns objects that are created at object load. It does
+	 * not propagate information to children added later during server operation.
+	 */
+	public final void createChildRelationships() {
+		for (AbstractBusinessObject child : children) {
+			System.out.println("Creating relationship " + this + " ==> " + child);
+			child.setParent(this);
+			child.setDocumentName(this.getDocumentName());
+			child.createChildRelationships();
+		}
+	}
 	
 	/**
-	 * Creates the parent relationships for all child business
-	 * objects of this AbstractBusinessObject.
+	 * Adds a child to the list of children to propagate information
+	 * to when <code>createChildRelationships()</code> is called. This
+	 * list is only read when this abstract business object is first loaded.
+	 * Afterwards, it is not considered relevant. In other words, any new
+	 * child business objects added to this object (i.e. a mobile added to a
+	 * room) do not have parent information propagated to them. It is 
+	 * possible that this might change depending on how world state saving
+	 * is implemented.
+	 * @param child The child to add.
 	 */
-	public abstract void createChildRelationships();
+	public void addChild(AbstractBusinessObject child) {
+		children.add(child);
+	}
 	
 	@Override
 	public Persistable getRoot() {

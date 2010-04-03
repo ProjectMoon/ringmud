@@ -18,16 +18,20 @@ import ring.nrapi.business.AbstractBusinessObject;
 
 //TODO add items in ReferenceLoader
 /**
- * Unmarshaller listener for following referenced data in the XML.
- * Referenced data is always loaded from the static collection.
+ * Unmarshalling listener for following reference data and setting
+ * up parent relationships. The parent takes care of creating child
+ * relationships later, after it has been loaded into memory.
  * @author projectmoon
  *
  */
 public class ReferenceLoader extends Unmarshaller.Listener {
 	public void afterUnmarshal(Object target, Object parent) {
 		if (target instanceof AbstractBusinessObject) {
-			EventDispatcher.dispatch(SystemEvent.ON_LOAD, (AbstractBusinessObject)target);
 			
+			if (parent instanceof AbstractBusinessObject) {
+				AbstractBusinessObject po = (AbstractBusinessObject)parent;
+				po.addChild((AbstractBusinessObject)target);
+			}
 			if (target instanceof Mobile) {
 				handleMobile((Mobile)target);
 			}

@@ -75,20 +75,6 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		combatModel = combat;
 	}
 	
-	@Override
-	/**
-	 * Sets parent relationships for items in inventory and equipment.
-	 */
-	public void createChildRelationships() {
-		for (Item i : getDynamicModel().getInventory()) {
-			i.setParent(this);
-		}
-		
-		for (Item i : getDynamicModel().getEquipment()) {
-			i.setParent(this);
-		}
-	}
-	
 	@XmlElement
 	public MobileBaseModel getBaseModel() {
 		return baseModel;

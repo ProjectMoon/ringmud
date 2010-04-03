@@ -67,9 +67,6 @@ public class EventLoader {
 		public String getCodebehind() {
 			return codebehind;
 		}
-
-		@Override
-		public void createChildRelationships() {}
 	}
 	
 	/**

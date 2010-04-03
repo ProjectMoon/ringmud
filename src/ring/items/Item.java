@@ -59,9 +59,6 @@ public class Item extends WorldObject {
 		return null;
 	}
 
-	@Override
-	public void createChildRelationships() {}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}

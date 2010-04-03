@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import ring.events.EventDispatcher;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.RingConstants;
 
@@ -31,11 +32,6 @@ public class Location extends AbstractBusinessObject {
 	private List<Portal> exits = new ArrayList<Portal>();
 
 	public Location() {}
-	
-	@Override
-	public void createChildRelationships() {
-		
-	}
 	
 	@XmlElement
 	public Room getRoom() {
