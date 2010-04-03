@@ -19,7 +19,6 @@ import org.xmldb.api.base.XMLDBException;
 import ring.deployer.DeployedMUDFactory;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.ExistDB;
-import ring.persistence.ResourceList;
 import ring.persistence.RingConstants;
 import ring.persistence.XQuery;
 import ring.system.MUDConfig;

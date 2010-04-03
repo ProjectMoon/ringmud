@@ -23,13 +23,16 @@ import ring.persistence.RingConstants;
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
-	"ID"
+	"ID",
+	"documentName"
 })
 public abstract class AbstractBusinessObject implements BusinessObject {
 	private AbstractBusinessObject parent;
 	private String docID;
 	
 	private String id;
+	private String docName;
+	
 	private boolean storeAsUpdate;
 	private boolean referential;
 	private boolean isUnique = false;
@@ -90,7 +93,16 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	
 	@XmlTransient
 	public String getCanonicalID() {
-		return getDocumentID() + ":" + getID();
+		return getDocumentName() + ":" + getID();
+	}
+	
+	@XmlAttribute(name = "docname")
+	public String getDocumentName() {
+		return docName;
+	}
+	
+	public void setDocumentName(String docName) {
+		this.docName = docName;
 	}
 	
 	/**

@@ -80,6 +80,7 @@ public class EventDispatcher {
 			throw new IllegalArgumentException("target for event must not be null!");
 		}
 				
+		System.out.println("Dispatching " + eventName + " to " + target.getCanonicalID());
 		Map<String, Event> eventMap = events.get(target.getCanonicalID());
 		if (eventMap != null) {
 			Event e = eventMap.get(eventName);

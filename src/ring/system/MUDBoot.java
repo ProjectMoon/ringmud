@@ -1,29 +1,17 @@
 package ring.system;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
-import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.XMLDBException;
-import org.xmldb.api.modules.XMLResource;
 
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
-import ring.deployer.DeployedMUDFactory;
-import ring.events.EventDispatcher;
 import ring.events.EventLoader;
 import ring.movement.WorldBuilder;
-import ring.persistence.ExistDB;
-import ring.persistence.ResourceList;
-import ring.persistence.XQuery;
 import ring.python.Interpreter;
 import ring.world.Ticker;
 
@@ -79,13 +67,16 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
-		System.out.println("Buidling world...");
+		System.out.println("Building world...");
 		try {
 			WorldBuilder.buildWorld();
 		} catch (XMLDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

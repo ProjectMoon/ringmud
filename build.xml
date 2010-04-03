@@ -30,7 +30,7 @@
 	
 	<fileset id="xml-resources" dir="${src.dir}/ring/nrapi/xml/">
 		<include name="**/*.xsd" />
-	</fileset>	
+	</fileset>
 	
 	<!-- Where to find Java files -->
 	<fileset id="sources" dir="${src.dir}">
@@ -114,6 +114,7 @@
 	<target name="jar-persistence" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-persistence-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
+			<zipfileset dir="${src.dir}/ring/persistence/" includes="*.xq" prefix="ring/persistence/" />
 		</jar>
 	</target>
 	
@@ -125,6 +126,7 @@
 			<zipfileset dir="${classes.dir}" includes="ring/magic/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/mobiles/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/movement/**" />
+			<zipfileset dir="${src.dir}/ring/movement/" includes="*.xq" prefix="ring/movement/" />
 			<zipfileset dir="${classes.dir}" includes="ring/players/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/skills/**" />
 		</jar>

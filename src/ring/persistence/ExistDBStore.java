@@ -1,6 +1,10 @@
 package ring.persistence;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -30,6 +34,35 @@ public class ExistDBStore implements DataStore {
 	//Loadpoint: Whether to do default load method, load explictly from game,
 	//or explicitly from static.
 	private Loadpoint loadpoint;
+	
+	private static String LOAD_QUERY = "";
+	static {
+		//Retrieve the XQuery for loading resources.
+		InputStream xqStream = ExistDBStore.class.getClassLoader().getResourceAsStream("ring/persistence/resourceloader.xq");
+		
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(xqStream));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				LOAD_QUERY += line + "\n";
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				}
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	@Override
 	/**
@@ -212,8 +245,12 @@ public class ExistDBStore implements DataStore {
 		}
 	}
 		
-	protected <T extends AbstractBusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) throws XMLDBException, JAXBException {
-		String query = "for $doc in //ring//*[@id=\"" + id + "\"] return $doc";
+	protected <T extends AbstractBusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) 
+														throws XMLDBException, JAXBException {
+		
+		//Ghetto prepared statements!
+		String query = LOAD_QUERY.replace("$id", id);
+
 		XQuery xq = new XQuery(query);
 		xq.setLoadpoint(point);
 		List<T> results = xq.execute(type);

@@ -1,5 +1,7 @@
 package ring.movement;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +22,10 @@ import ring.system.MUDConfig;
 public class WorldBuilder {
 	private static Map<String, Room> roomCache = new HashMap<String, Room>();
 	
-	public static void buildWorld() throws XMLDBException, JAXBException {
-		XQuery xq = new XQuery();
-		xq.setLoadpoint(Loadpoint.STATIC)
-		;
-		String query = "for $loc in //location return $loc";
-		xq.setQuery(query);
+	public static void buildWorld() throws XMLDBException, JAXBException, IOException {
+		InputStream xqStream = WorldBuilder.class.getClassLoader().getResourceAsStream("ring/movement/worldbuilder.xq");
+		XQuery xq = new XQuery(xqStream);
+		xq.setLoadpoint(Loadpoint.STATIC);
 				
 		//Retrieve all locations in the static collection.
 		List<Location> locs = xq.execute(Location.class);
