@@ -79,7 +79,7 @@ public class EventDispatcher {
 		if (target == null) {
 			throw new IllegalArgumentException("target for event must not be null!");
 		}
-		
+				
 		Map<String, Event> eventMap = events.get(target.getCanonicalID());
 		if (eventMap != null) {
 			Event e = eventMap.get(eventName);
