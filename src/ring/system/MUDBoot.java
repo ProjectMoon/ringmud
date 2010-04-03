@@ -19,6 +19,7 @@ import ring.commands.IndexerFactory;
 import ring.deployer.DeployedMUDFactory;
 import ring.events.EventDispatcher;
 import ring.movement.WorldBuilder;
+import ring.persistence.ExistDB;
 import ring.persistence.ResourceList;
 import ring.persistence.XQuery;
 import ring.python.Interpreter;
@@ -35,8 +36,6 @@ import ring.world.Ticker;
  * @author jeff
  */
 public class MUDBoot {
-	private static final Logger log = Logger.getLogger(MUDBoot.class.getName());
-
 	/**
 	 * Boots the mud server.
 	 */
@@ -47,24 +46,23 @@ public class MUDBoot {
 		Interpreter.INSTANCE.getInterpreter();
 		
 		//Load all event handlers
-		System.out.println("Loading event handlers from static...");
+		System.out.println("Loading event handlers...");
 		loadEventHandlers();
 		
-		// Restore world state from DB
+		//Synchronize with static
+		System.out.println("Synchronziing with STATIC...");
+		System.err.println("WARNING: Syncing not implemented yet.");
+		
+		//Restore world state from DB
+		System.out.println("Restoring world state...");
 		System.err.println("WARNING: Restoring of world state not implemented yet.");
 
-		// Load commands
+		//Load commands
 		System.out.println("Loading commands...");
 		loadCommands();
 
-		// Load effects
+		//Load effects
 
-		// Load class features
-		System.out.println("Loading class features...");
-		// String[] classFeatureFiles = MUDConfig.getClassFeaturesFiles();
-		// for (String file : classFeatureFiles)
-		// ClassFeatureLoader.loadClassFeaturesFromFile(file);
-		
 		//Start the world ticker
 		System.out.println("Starting the world ticker...");
 		Ticker ticker = Ticker.getTicker();
@@ -72,7 +70,6 @@ public class MUDBoot {
 		t.setName("World Ticker");
 		t.start();
 
-		System.out.println("Done.");
 		// Load classes
 
 		// Load items
@@ -80,6 +77,7 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
+		System.out.println("Buidling world...");
 		try {
 			WorldBuilder.buildWorld();
 		} catch (XMLDBException e) {
@@ -89,6 +87,8 @@ public class MUDBoot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		System.out.println("Done loading RingMUD.");
 	}
 
 	/**
@@ -112,34 +112,30 @@ public class MUDBoot {
 	 * Loads event handlers.
 	 */
 	private static void loadEventHandlers() {
+		EventDispatcher.initialize();
+		
 		XQuery xq = new XQuery("for $doc in //*[@codebehind != \"\"] return data($doc/@codebehind)");
 		try {
 			ResourceList results = xq.execute();
 			
 			for (Resource r : results) {
 				XMLResource res = (XMLResource)r;
-				String documentID = res.getDocumentId();
+				String documentID = res.getId();
+				
 				String pythonFile = res.getContent().toString();
 				
 				try {
-					pythonFile = DeployedMUDFactory.currentMUD().getLocation() + "events" + System.getProperty("file.separator") + pythonFile;
-					System.out.println("Loading from: " + pythonFile);
+					pythonFile = DeployedMUDFactory.currentMUD().getLocation() + System.getProperty("file.separator") + pythonFile;
 					InputStream pyStream = new FileInputStream(pythonFile);
-					//EventDispatcher.initializeEvents(documentID, pyStream);
+					EventDispatcher.initializeEvents(documentID, pyStream);
 				} 
 				catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//The scripts are executed, and the event handler is extracted via
-				//EventHandler, or some such. Basically like XMLConverter.
-				//The event handler object is cleared between script executions and
-				//all created event handlers are stored in a hashmap with document names
-				//as the key.
-				//UnmarshalListener also will now take care of binding events by
-				//looking up event handlers in the hashmap. From there it will delegate
-				//to retrieving any events found for the specific ID.
 			}
+			
+			results.close();
 		}
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -148,6 +144,7 @@ public class MUDBoot {
 	}
 	
 	public static void main(String[] args) {
+		//ExistDB.setRootURI("sample");
 		MUDConfig.loadProperties();
 		MUDBoot.loadEventHandlers();
 	}

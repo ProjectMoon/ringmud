@@ -6,12 +6,15 @@ import java.util.List;
 import javax.xml.bind.Unmarshaller;
 
 import ring.entities.Entity;
+import ring.events.EventDispatcher;
+import ring.events.SystemEvent;
 import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.mobiles.backbone.Equipment;
 import ring.mobiles.backbone.Inventory;
 import ring.mobiles.backbone.Equipment.EquipmentTuple;
 import ring.movement.Room;
+import ring.nrapi.business.AbstractBusinessObject;
 
 //TODO add items in ReferenceLoader
 /**
@@ -22,15 +25,19 @@ import ring.movement.Room;
  */
 public class ReferenceLoader extends Unmarshaller.Listener {
 	public void afterUnmarshal(Object target, Object parent) {
-		if (target instanceof Mobile) {
-			handleMobile((Mobile)target);
+		if (target instanceof AbstractBusinessObject) {
+			EventDispatcher.dispatch(SystemEvent.ON_LOAD, (AbstractBusinessObject)target);
+			
+			if (target instanceof Mobile) {
+				handleMobile((Mobile)target);
+			}
+		 	else if (target instanceof Room) {
+		 		handleRoom((Room)target);
+		 	}
+		 	else if (target instanceof Entity) {
+		 		handleEntity((Entity)target);
+		 	}
 		}
-	 	else if (target instanceof Room) {
-	 		handleRoom((Room)target);
-	 	}
-	 	else if (target instanceof Entity) {
-	 		handleEntity((Entity)target);
-	 	}
 	}
 
 	private void handleEntity(Entity entity) {

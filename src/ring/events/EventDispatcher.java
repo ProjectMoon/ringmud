@@ -1,7 +1,9 @@
 package ring.events;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.python.util.PythonInterpreter;
@@ -43,6 +45,7 @@ public class EventDispatcher {
 	}
 	
 	public static void addEvent(Event event) {
+		System.out.println("Adding event: " + event);
 		EventContext ctx = event.getContext();
 		for (String document : ctx.getDocuments()) {
 			for (String id : ctx.getIDs(document)) { 
@@ -59,6 +62,18 @@ public class EventDispatcher {
 				eventMap.put(event.getName(), event);
 			}
 		}
+	}
+	
+	public static List<Event> getEvents() {
+		List<Event> evts = new ArrayList<Event>();
+		
+		for (Map<String, Event> eventMap : events.values()) {
+			for (Event e : eventMap.values()) {
+				evts.add(e);
+			}
+		}
+		
+		return evts;
 	}
 	
 	public static void dispatch(String eventName, AbstractBusinessObject target) {

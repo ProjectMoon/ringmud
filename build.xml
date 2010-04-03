@@ -31,6 +31,15 @@
 		<include name="**/*.xsd" />
 	</fileset>	
 	
+	<fileset id="compiler-resources" dir="${src.dir}/ring/compiler/">
+		<include name="**/*.py" />
+	</fileset>
+	
+	<fileset id="events-resources" dir="${src.dir}/ring/events/">
+		<include name="**/*.py" />
+	</fileset>	
+	
+	<!-- Where to find Java files -->
 	<fileset id="sources" dir="${src.dir}">
 		<include name="**/*.java" />
 	</fileset>
@@ -80,6 +89,8 @@
 			<zipfileset refid="resources" prefix="ring/main" />
 			<zipfileset refid="server-resources" prefix="ring/server/resources" />
 			<zipfileset refid="xml-resources" prefix="ring/nrapi/xml/" />
+			<zipfileset refid="compiler-resources" prefix="ring/compiler/" />
+			<zipfileset refid="events-resources" prefix="ring/events/" />
 		</jar>
 	</target>
 
