@@ -1,5 +1,12 @@
 package ring.persistence;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +38,26 @@ public class XQuery {
 	
 	public XQuery(String query) {
 		this.query = query;
+	}
+	
+	public XQuery(File xqFile) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(xqFile));
+		String line = "";
+		query = "";
+			
+		while ((line = reader.readLine()) != null) {
+			query += line + "\n";
+		}
+	}
+	
+	public XQuery(InputStream xqStream) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(xqStream));
+		String line = "";
+		query = "";
+			
+		while ((line = reader.readLine()) != null) {
+			query += line + "\n";
+		}		
 	}
 	
 	public XQuery(Loadpoint loadpoint, String query) {

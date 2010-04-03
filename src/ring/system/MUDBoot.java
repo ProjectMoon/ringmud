@@ -3,6 +3,7 @@ package ring.system;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -18,6 +19,7 @@ import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
 import ring.deployer.DeployedMUDFactory;
 import ring.events.EventDispatcher;
+import ring.events.EventLoader;
 import ring.movement.WorldBuilder;
 import ring.persistence.ExistDB;
 import ring.persistence.ResourceList;
@@ -112,40 +114,21 @@ public class MUDBoot {
 	 * Loads event handlers.
 	 */
 	private static void loadEventHandlers() {
-		EventDispatcher.initialize();
-		
-		XQuery xq = new XQuery("for $doc in //*[@codebehind != \"\"] return data($doc/@codebehind)");
+		EventLoader loader = new EventLoader();
 		try {
-			ResourceList results = xq.execute();
-			
-			for (Resource r : results) {
-				XMLResource res = (XMLResource)r;
-				String documentID = res.getId();
-				
-				String pythonFile = res.getContent().toString();
-				
-				try {
-					pythonFile = DeployedMUDFactory.currentMUD().getLocation() + System.getProperty("file.separator") + pythonFile;
-					InputStream pyStream = new FileInputStream(pythonFile);
-					EventDispatcher.initializeEvents(documentID, pyStream);
-				} 
-				catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			results.close();
+			loader.loadEvents();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		catch (XMLDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public static void main(String[] args) {
-		//ExistDB.setRootURI("sample");
-		MUDConfig.loadProperties();
-		MUDBoot.loadEventHandlers();
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

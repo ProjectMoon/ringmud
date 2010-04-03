@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RingMUD" basedir="." default="main">
 	<description>
-	Build system for the RingMUD engine. Type "ant" to build the whole thing.	
+		Build system for the RingMUD engine. Type "ant" to build the whole thing.	
 	</description>
+	
 	<!-- List of properties. -->
 	<property name="app.version" value="0.1.0" />
     <property name="src.dir"     value="./src"/>
@@ -29,14 +30,6 @@
 	
 	<fileset id="xml-resources" dir="${src.dir}/ring/nrapi/xml/">
 		<include name="**/*.xsd" />
-	</fileset>	
-	
-	<fileset id="compiler-resources" dir="${src.dir}/ring/compiler/">
-		<include name="**/*.py" />
-	</fileset>
-	
-	<fileset id="events-resources" dir="${src.dir}/ring/events/">
-		<include name="**/*.py" />
 	</fileset>	
 	
 	<!-- Where to find Java files -->
@@ -89,8 +82,6 @@
 			<zipfileset refid="resources" prefix="ring/main" />
 			<zipfileset refid="server-resources" prefix="ring/server/resources" />
 			<zipfileset refid="xml-resources" prefix="ring/nrapi/xml/" />
-			<zipfileset refid="compiler-resources" prefix="ring/compiler/" />
-			<zipfileset refid="events-resources" prefix="ring/events/" />
 		</jar>
 	</target>
 
@@ -100,6 +91,7 @@
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
 			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/python/**" />
+			<zipfileset dir="${src.dir}/ring/python/" includes="*.py" prefix="ring/python/" />
 			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/world/**"/>
@@ -141,6 +133,7 @@
 	<target name="jar-events" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/events/**" />
+			<zipfileset dir="${src.dir}/ring/events/" includes="*.xq" prefix="ring/events/" />
 		</jar>
 	</target>
 		

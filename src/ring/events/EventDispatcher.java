@@ -26,7 +26,7 @@ public class EventDispatcher {
 	public static void initialize() {
 		if (!initialized) {
 			PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
-			InputStream stream = EventDispatcher.class.getClassLoader().getResourceAsStream("ring/events/events.py");
+			InputStream stream = Interpreter.INSTANCE.getInternalScript("events.py");
 			interp.execfile(stream);
 			initialized = true;
 		}
@@ -45,7 +45,6 @@ public class EventDispatcher {
 	}
 	
 	public static void addEvent(Event event) {
-		System.out.println("Adding event: " + event);
 		EventContext ctx = event.getContext();
 		for (String document : ctx.getDocuments()) {
 			for (String id : ctx.getIDs(document)) { 

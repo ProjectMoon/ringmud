@@ -42,10 +42,6 @@ public class Compiler implements RingModule {
 	private int stripIndex;
 	private MUDFile mudFile = null;
 	
-	public static void main(String[] args) {
-		new Compiler().execute(new String[] { "/Users/projectmoon/muddy/" });
-	}
-	
 	@Override
 	public void execute(String[] args) {
 		//Read some options
@@ -126,7 +122,7 @@ public class Compiler implements RingModule {
 			PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
 			
 			//Provide the DocumentInfo class to all python-defined data.
-			InputStream documentInfoStream = this.getClass().getClassLoader().getResourceAsStream("ring/compiler/compiler.py");
+			InputStream documentInfoStream = Interpreter.INSTANCE.getInternalScript("compiler.py");
 			interp.execfile(documentInfoStream);
 			
 			List<FileEntry> entriesToRemove = new ArrayList<FileEntry>();
