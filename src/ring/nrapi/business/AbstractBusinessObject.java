@@ -3,7 +3,6 @@ package ring.nrapi.business;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,7 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.xml.JAXBAnnotationReader;
 import ring.persistence.DataStoreFactory;
 import ring.persistence.Persistable;
 import ring.persistence.RingConstants;
@@ -29,8 +27,8 @@ propOrder= {
 	"documentName"
 })
 public abstract class AbstractBusinessObject implements BusinessObject {
-	private AbstractBusinessObject parent;
-	private List<AbstractBusinessObject> children = new ArrayList<AbstractBusinessObject>();
+	private Persistable parent;
+	private List<Persistable> children = new ArrayList<Persistable>();
 	
 	private String docID;
 	
@@ -38,8 +36,6 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	private String docName;
 	
 	private boolean storeAsUpdate;
-	private boolean referential;
-	private boolean isUnique = false;
 	
 	public void save() {
 		DataStoreFactory.getDefaultStore().storePersistable(this);
@@ -57,11 +53,23 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	 * not propagate information to children added later during server operation.
 	 */
 	public final void createChildRelationships() {
-		for (AbstractBusinessObject child : children) {
-			System.out.println("Creating relationship " + this + " ==> " + child);
-			child.setParent(this);
-			child.setDocumentName(this.getDocumentName());
-			child.createChildRelationships();
+		for (Persistable child : children) {
+			createChildRelationship(this, child);
+		}
+	}
+	
+	private void createChildRelationship(Persistable parent, Persistable child) {
+		System.out.println("Creating relationship " + parent + " ==> " + child);
+		child.setParent(parent);
+		
+		//If the document name is null, then it wasn't set anywhere else
+		//so the child is probably from the same document...
+		if (child.getDocumentName() == null) {
+			child.setDocumentName(parent.getDocumentName());
+		}
+		
+		for (Persistable grandchild : child.getChildren()) {
+			createChildRelationship(child, grandchild);
 		}
 	}
 	
@@ -76,8 +84,14 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	 * is implemented.
 	 * @param child The child to add.
 	 */
-	public void addChild(AbstractBusinessObject child) {
+	@Override
+	public void addChild(Persistable child) {
 		children.add(child);
+	}
+	
+	@Override
+	public List<Persistable> getChildren() {
+		return children;
 	}
 	
 	@Override
@@ -111,18 +125,11 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return docID;
 	}
 	
-	public void setParent(AbstractBusinessObject obj) {
+	@Override
+	public void setParent(Persistable obj) {
 		parent = obj;
 	}
-
-	@XmlAttribute(name = "ref")
-	public boolean isReferential() {
-		return referential;
-	}
 	
-	public void setReferential(boolean val) {
-		referential = val;
-	}
 	
 	@XmlTransient
 	public String getCanonicalID() {
@@ -161,14 +168,6 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return storeAsUpdate;
 	}
 	
-	@Override
-	public void makeUnique() {
-		if (!isUnique) {
-			id += UUID.randomUUID().toString();
-			isUnique = true;
-		}
-	}
-	
 	/**
 	 * Returns this object represented as a full XML document containing
 	 * the standard processing instruction and a &lt;ring&gt; element as the
@@ -188,18 +187,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	 */
 	@Override
 	public String toXML() {
-		if (isReferential()) {
-			JAXBAnnotationReader reader = new JAXBAnnotationReader(this.getClass());
-			String element = reader.rootElementName();
-			String xml = "<" + element + " ref=\"true\">";
-			xml += "<id>" + getID() + "</id>";
-			xml += "</" + element + ">";
-			
-			return xml;
-		}
-		else {
-			return marshalledXMLFragment();
-		}
+		return marshalledXMLFragment();
 	}
 	
 	private String marshalledXMLFragment() {

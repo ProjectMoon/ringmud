@@ -168,7 +168,7 @@ public class XQuery {
 	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();
-		um.setListener(new ReferenceLoader());
+		um.setListener(new ParentRelationshipCreator());
 		System.out.println(res.getContent());
 		Node node = res.getContentAsDOM();
 		T conv = (T)um.unmarshal(node);
