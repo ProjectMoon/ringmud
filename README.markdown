@@ -17,10 +17,10 @@ Super quick startup instructions:
  5. `cd dist/bin/`
  6. Edit ringmud.sh's `JYTHON` variable to point to the location of your 
  installed jython.jar file.
-  * Do NOT use the one in RingMUD's lib/ directory.
-  * In fact, the build script will not copy jython.jar to the dist lib directory.
+     * Do NOT use the one in RingMUD's lib/ directory.
+     * In fact, the build script will not copy jython.jar to the dist lib directory.
  7. Start up eXist by running `startup.sh` in exist's bin directory.
-  * You may need to use `sudo` depending on where you installed eXist.
+     * You may need to use `sudo` depending on where you installed eXist.
  8. `sudo ./ringmud.sh install unix` (Windows support coming later)
  9. This will "install" ringmud's configuration file to `/etc/ringmud`,
  as well as create the database collections in eXist.
