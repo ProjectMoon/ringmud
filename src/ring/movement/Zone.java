@@ -1,14 +1,12 @@
 package ring.movement;
 
-import ring.nrapi.business.AbstractBusinessObject;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlTransient;
 
+import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.RingConstants;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)

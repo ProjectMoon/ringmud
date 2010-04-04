@@ -1,13 +1,6 @@
 package ring.nrapi.modules;
 
-import java.io.File;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import ring.main.RingModule;
-import ring.nrapi.xml.RingDocument;
 import ring.persistence.ExistDB;
 
 /**

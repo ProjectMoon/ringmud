@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import ring.commands.*;
 import ring.events.EventDispatcher;
-import ring.events.EventEnum;
 
 /**
  * Aspects that captures events and logging relating to commands.
@@ -12,16 +11,8 @@ import ring.events.EventEnum;
  *
  */
 public privileged aspect Commands {
-	/*private enum CommandEvent implements EventEnum {
-		COMMAND_ON_BEGIN("onBegin"), COMMAND_ON_END("onEnd");
-
-		private CommandEvent(String name) { this.name = name; }
-		private String name;
-		@Override
-		public String getEventName() {
-			return name;
-		}
-	}*/
+	private static final String COMMAND_ON_BEGIN = "onBegin";
+	private static final String COMMAND_ON_END = "onEnd";
 	
 	private Logger log = Logger.getLogger(this.getClass().getName());
 	
@@ -37,12 +28,12 @@ public privileged aspect Commands {
 	
 	before(Command cmd): commandExecute(cmd) {
 		System.out.println("Begin executing: " + cmd);
-		EventDispatcher.dispatchGlobal("onBegin", cmd);
+		EventDispatcher.dispatchGlobal(COMMAND_ON_BEGIN, cmd);
 	}
 	
 	after(Command cmd) returning(CommandResult result): commandExecute(cmd) {
 		System.out.println("End executing: " + cmd);
-		EventDispatcher.dispatchGlobal("onEnd", cmd, result);
+		EventDispatcher.dispatchGlobal(COMMAND_ON_END, cmd, result);
 		
 		if (result == null) {
 			log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult!");
