@@ -1,0 +1,6 @@
+RingMUD Server module: Run deployed MUDs
+usage: ringmud.sh server <mudname>
+
+The server module runs MUDs that have been deployed using the "deploy" command.
+The only parameter required is the name of the MUD as specified in its
+mud.properties file. The version of the MUD is not required.

@@ -18,7 +18,10 @@ import ring.world.WorldObject;
  *
  */
 public final class CommandParameters {
-	//TODO rework the getParameters().
+	//TODO rework logic for most of this. It has the following problems:
+	//1. Will not work for any CommandSender except Mobiles. (BIG limitation)
+	//2. Ghetto transformation logic. i.e.: since everything is transformed
+	//		individually, the results may not be what is desired.
 	
 	/**
 	 * An enum representing different types of Command parameters. The type tells
