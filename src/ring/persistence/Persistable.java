@@ -16,6 +16,16 @@ import java.util.List;
  * hierarchy. No method is exposed by this interface to propagate information to a Persistable's
  * children, so is up to the implementation to provide some concrete way of propagating information
  * to child Persistables and executing that logic internally without user interaction.
+ * <br/><br/>
+ * When a Persistable is loaded, the following information is always passed on to its child objects,
+ * resulting in these properties being propagated through the whole hierarchy:
+ * <ul>
+ * 	<li>The <code>storeAsUpdate</code> property.</li>
+ * </ul>
+ * In addition, the <code>documentName</code> property is generally passed down to the child,
+ * though this is not always the case. For example, an implementation that creates a hierarchy
+ * that pulls Persistables from many different documents would likely not pass the document name
+ * property to child objects. 
  * @author projectmoon
  *
  */
