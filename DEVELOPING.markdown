@@ -2,7 +2,7 @@ DEVELOPING RingMUD
 ==================
 This is a quick guide to setting up a development environment for working on
 the RingMUD engine itself. This is **not** a guide for building MUDs on top of the
-engine. For that, see http://ringmud.thermetics.net.
+engine. For that, see the [Thermetics.net RingMUD site](http://ringmud.thermetics.net).
 
 NOTE: The above website isn't actually complete yet, as RingMUD is basically in
 pre-alpha.
@@ -40,16 +40,16 @@ Environment
 To get a successful development environment going, you will need to install:
 
  * JDK 1.6. Duh.
- * eXist from http://exist.sourceforge.net
- * Jython form http://www.jython.org
+ * eXist from [SourceForge](http://exist.sourceforge.net)
+ * Jython from [Jython.org](http://www.jython.org)
  * Apache Ant 1.6+ (I think anyway. I build on 1.7)
  * Git. Of course, if you're reading this you probably have git already.
 
 While not required, it is recommended that you get the following:
 	
  * Eclipse.
- * The Eclipse AspectJ plugin known as AJDT: http://www.eclipse.org/ajdt/
- * The Eclipse PyDev plugin for Python development: http://pydev.org/
+ * The Eclipse AspectJ plugin known as AJDT: [Link](http://www.eclipse.org/ajdt/)
+ * The Eclipse PyDev plugin for Python development: [Link](http://pydev.org/)
 
 To set up the Eclipse project, import the root git directory as "existing source."
 Add everything in the lib/ directory as referenced libraries.
@@ -57,5 +57,5 @@ Add everything in the lib/ directory as referenced libraries.
 Engine Documentation
 --------------------
 You can generate the RingMUD Javadocs using ant by running `ant docs` from the root
-directory of your checked-out copy of the repository. Refer to http://ringmud.thermetics.net/ for
+directory of your checked-out copy of the repository. Refer to [Thermetics](http://ringmud.thermetics.net/) for
 more engine documentation. 
