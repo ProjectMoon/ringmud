@@ -9,21 +9,25 @@ It is written in Java and aims to be a complete MUD solution.
 Super quick startup instructions:
 1. Download eXist 1.4 from http://exist.sourceforge.net
 2. Install exist to where ever you want. It has an easy graphical installer.
-3. Build ringmud by running "ant" from this directory.
-4. cd dist/bin/
-5. Start up exist by running startup.sh in exist's bin directory.
-5. sudo ./ringmud.sh install unix 
+3. Download and install Jython from http://www.jython.org.
+4. Build ringmud by running "ant" from this directory.
+5. cd dist/bin/
+6. Edit ringmud.sh's JYTHON variable to point to the location of your
+	installed jython.jar file. Do NOT use the one in RingMUD's lib/
+	directory.
+7. Start up eXist by running startup.sh in exist's bin directory.
+8. sudo ./ringmud.sh install unix 
 	(Windows support coming later)
-6. This will "install" ringmud's configuration file to /etc/ringmud,
+9. This will "install" ringmud's configuration file to /etc/ringmud,
    as well as create the database collections in eXist.
 	NOTE: Don't forget to copy your database login info to the config.
-7. Compile the ever so exciting sample mud:
+10. Compile the ever so exciting sample mud:
 	./rmc ../../sample/
 	(you need to give it the directory of the sample MUD)
-8. Deploy the sample MUD:
+11. Deploy the sample MUD:
 	sudo ./ringmud.sh deploy sample-1.0.mud
-9. Start the sample MUD: ./ringmud.sh server sample
-9. telnet to localhost at port 2312
+12. Start the sample MUD: ./ringmud.sh server sample
+13. telnet to localhost at port 2312
 
 This should get RingMUD running on localhost with a really crappy sample
 world.
