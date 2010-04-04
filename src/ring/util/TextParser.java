@@ -191,7 +191,7 @@ public class TextParser {
                 
         //It is FAR simpler to remove spaces on the beginning/end of lines this way
         //instead of in the parsing loop.
-        //This funky character class is actually \s class with the \n removed.
+        //This funky character class is actually the \s class with the \n removed.
         //This ensures newlines in the suffix from communicators are left alone.
         //See: http://java.sun.com/docs/books/tutorial/essential/regex/pre_char_classes.html
         String ret = res.toString();
@@ -207,8 +207,12 @@ public class TextParser {
      */
 	public static String stripFormatting(String text) {
 		for (String color : colors.keySet()) {
+			//These two lines turn the color string
+			//into a regex.
 			color = color.replace("[", "\\[");
 			color = color.replace("]", "\\]");
+			
+			//Now we can destroy all colors via regex power!
 			text = text.replaceAll(color, "");
 		}
 		return text;

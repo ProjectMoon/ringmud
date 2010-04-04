@@ -87,8 +87,10 @@ public final class CommandParameters {
 	public Object getParameter(int index) {
 		if (objParameters == null)
 			return null;
+		
 		if (index >= objParameters.length)
 			return null;
+		
 		return objParameters[index];
 	}
 
@@ -221,14 +223,7 @@ public final class CommandParameters {
 			// the room. This is the most common
 			// Parameter.
 			WorldObject o = getWorldObjectFromRoomByName(params[x]);
-			if (o != null) {
-				parameters[x] = o;
-			}
-
-			// it must be something else. For now, pass it along.
-			else {
-				parameters[x] = params[x];
-			}
+			parameters[x] = o;
 		}
 		
 		return parameters;

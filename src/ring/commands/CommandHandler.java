@@ -201,7 +201,7 @@ public final class CommandHandler {
 	 */
 	private Command completeCommand(String fragment) {
 		//if the fragment is only 1 letter, it's not something we should bother
-		//looking up; there is TOO much ambiguity. 1 letter commands are 
+		//looking up; there is TOO much ambiguity. 1 letter commands are also
 		//registered as alternate commands.
 		if (fragment.length() <= 1) {
 			return null;

@@ -12,8 +12,8 @@ public interface Communicator {
 	
 	/**
 	 * Whether or not this communicator is considered secure.
-	 * A secure Communicator has its communications encrypted.
-	 * Most administration commands will not work when the connection
+	 * A secure Communicator has its communications encrypted or otherwise
+	 * protected. Most administration commands will not work when the connection
 	 * is not secure.
 	 * @return true or false
 	 */
@@ -47,6 +47,12 @@ public interface Communicator {
 	 * Sends a newline character to the client without the suffix.
 	 */
 	public void println() throws CommunicationException;
+	
+	/**
+	 * Prints a newline, followed by only the suffix to the client. 
+	 * @throws CommunicationException
+	 */
+	public void printSuffix() throws CommunicationException;
 
 	/**
 	 * Sends some text without appending the suffix.
@@ -74,12 +80,21 @@ public interface Communicator {
 
 	/**
 	 * Sets the suffix that is appended to outgoing data in most versions of the
-	 * send command. In general, the suffix is a command prompt of some kind.
+	 * various <code>print*</code> methods. In general, the suffix is a command prompt of some kind.
 	 * However, it can be used for other things.
 	 * 
 	 * @param s The suffix to use.
 	 */
 	public void setSuffix(String s);
+	
+	/**
+	 * Gets the suffix that is appended to outgoing data in most versions of the
+	 * various <code>print*</code> methods. In general, the suffix is a command
+	 * prompt of some kind. However, it can be used for other things.
+	 * @return
+	 */
+	public String getSuffix();
+	
 
 	/**
 	 * Waits for the user on the other end of this Communicator to send us some

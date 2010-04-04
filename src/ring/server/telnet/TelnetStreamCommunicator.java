@@ -73,7 +73,7 @@ public class TelnetStreamCommunicator implements Communicator {
 
 		if (useSuffix) {
 			StringBuilder sb = new StringBuilder(data);
-			sb.append(suffix);
+			sb.append(getSuffix());
 			data = sb.toString();
 		}
 		
@@ -111,6 +111,13 @@ public class TelnetStreamCommunicator implements Communicator {
 	 */
 	public void println() throws CommunicationException {
 		out.println();
+	}
+	
+	public void printSuffix() {
+		//This weirdness works because the low level input stream
+		//echoes newlines. So, there is a newline generated when enter
+		//is pressed, and thus one \n between two empty suffixes.
+		out.print(formatData(getSuffix(), false));
 	}
 
 	/**
@@ -162,6 +169,10 @@ public class TelnetStreamCommunicator implements Communicator {
 	 */
 	public void setSuffix(String s) {
 		suffix = s;
+	}
+	
+	public String getSuffix() {
+		return suffix;
 	}
 
 	/**

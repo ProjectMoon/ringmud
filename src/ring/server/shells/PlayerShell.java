@@ -84,7 +84,12 @@ public class PlayerShell {
 			}
 			
 			CommandResult res = player.doCommand(command);
-			sendCommandResult(res);
+			if (res != null) {
+				sendCommandResult(res);
+			}
+			else {
+				comms.printSuffix();
+			}
 
 			// Only update last command if the last command wasn't !!
 			if (!command.equals("!!"))
@@ -105,7 +110,6 @@ public class PlayerShell {
 		}
 		
 		comms.setSuffix(player.getPrompt());
-		//comms.println();
 		comms.print(result);
 	}
 	

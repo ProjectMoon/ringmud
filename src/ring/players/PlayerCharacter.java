@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
-import ring.server.Communicator;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 
@@ -79,12 +78,9 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	public CommandResult doCommand(String command) {
 		CommandResult res;
 		// Was anything even typed?
-		// If not, return a blank anonymous result.
+		// If not, return null;
 		if (command.length() <= 0) {
-			res = new CommandResult();
-			res.setText("");
-			res.setSuccessful(true);
-			return res;
+			return null;
 		}
 		
 		// Is the player locked?
