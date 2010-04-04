@@ -33,7 +33,7 @@ public final class CommandParameters {
 		FROM_ROOM
 	}
 
-	private Object[] parameters;
+	private Object[] objParameters;
 	private String[] initParameters;
 	private CommandSender sender;
 	private CommandType cmdType;
@@ -59,7 +59,7 @@ public final class CommandParameters {
 	 */
 	public void init(CommandType cmdType) {
 		this.cmdType = cmdType;
-		parameters = getParameters(initParameters, cmdType);
+		objParameters = getParameters(initParameters, cmdType);
 	}
 
 	/**
@@ -85,11 +85,11 @@ public final class CommandParameters {
 	 * @return The parameter as an object, or null if there are no parameters.
 	 */
 	public Object getParameter(int index) {
-		if (parameters == null)
+		if (objParameters == null)
 			return null;
-		if (index >= parameters.length)
+		if (index >= objParameters.length)
 			return null;
-		return parameters[index];
+		return objParameters[index];
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class CommandParameters {
 	 * @return The parameter as a String, or null if there are no parameters.
 	 */
 	public String getParameterAsText(int index) {
-		if (parameters == null)
+		if (objParameters == null)
 			return null;
 		else
 			return initParameters[index];
@@ -109,7 +109,7 @@ public final class CommandParameters {
 	 * @return
 	 */
 	public Object lastParameter() {
-		return parameters[parameters.length - 1];
+		return objParameters[objParameters.length - 1];
 	}
 
 	/**
@@ -119,12 +119,12 @@ public final class CommandParameters {
 	 */
 	public String constructSpellName() throws ClassCastException {
 		String text = "";
-		for (int c = 0; c < parameters.length - 1; c++) {
-			System.out.println("examining: " + parameters[c]);
-			if (!(parameters[c] instanceof String))
+		for (int c = 0; c < objParameters.length - 1; c++) {
+			System.out.println("examining: " + objParameters[c]);
+			if (!(objParameters[c] instanceof String))
 				throw (new ClassCastException("Object must be string!"));
 			else
-				text += (String) parameters[c] + " ";
+				text += (String) objParameters[c] + " ";
 		}
 
 		return text.trim();
@@ -136,14 +136,14 @@ public final class CommandParameters {
 	 * @return The parameter string, or null if there are no parameters.
 	 */
 	public String paramString() {
-		if (parameters == null)
+		if (objParameters == null)
 			return null;
 		String res = "";
-		for (int c = 0; c < parameters.length; c++) {
-			if (parameters[c] == null)
+		for (int c = 0; c < objParameters.length; c++) {
+			if (objParameters[c] == null)
 				res += "[null]";
 			else
-				res += parameters[c].toString();
+				res += objParameters[c].toString();
 			res += " ";
 		}
 
@@ -158,87 +158,135 @@ public final class CommandParameters {
 	 * @return
 	 */
 	private Object[] getParameters(String[] params, CommandType cmdType) {
-		WorldObject o;
-
 		// Handle a command that has no parameters.
 		if ((params == null) || (params.length == 0) || (params[0] == null))
 			return null;
 
-		// Do things according to the type of command.
-		// is is a "say"-type command?
-		if (cmdType.equals(CommandType.TEXT))
-			return params;
+		switch (cmdType) {
+			case TEXT:
+				return initializeForText(params);
+			case SPELL:
+				return initializeForSpell(params);
+			case INVENTORY:
+				return initializeForInventory(params);
+			case EQUIPMENT:
+				return initializeForEquipment(params);
+			case FROM_ROOM:
+				return initializeForFromRoom(params);
+			default:
+				throw new IllegalArgumentException("Unrecognized CommandType.");
+		}
+	}
+	
+	/**
+	 * Initializes the parameters for a text command. There are no transformations
+	 * done to the parameters.
+	 * @param params
+	 * @return An Object array with the modified parameters.
+	 */
+	private Object[] initializeForText(String[] params) {
+		return params;
+	}
+	
+	/**
+	 * Initializes the parameters for a spell command. Leaves everything up to the
+	 * last word as text, but transforms the last word into a target from the room.
+	 * @param params
+	 * @return An Object array with the modified parameters.
+	 */
+	private Object[] initializeForSpell(String[] params) {
+		Object[] parameters = new Object[params.length];
+		
+		for (int c = 0; c < params.length - 1; c++) {
+			parameters[c] = params[c];
+		}
 
-		// well it must require some sort of object, so let's declare an
-		// Object[].
+		String name = params[params.length - 1].toString();
+		parameters[params.length - 1] = getWorldObjectFromRoomByName(name);
+		
+		return parameters;
+	}
+
+	/**
+	 * Initializes the parameters for a command that pulls from the current room.
+	 * Every parameter is transformed into a world object from the room.
+	 * @param params
+	 * @return An Object array with the modified parameters.
+	 */
+	private Object[] initializeForFromRoom(String[] params) {
+		Object[] parameters = new Object[params.length];
+		
+		for (int x = 0; x < parameters.length; x++) {
+			// First, let's check to see if the parameter is something in
+			// the room. This is the most common
+			// Parameter.
+			WorldObject o = getWorldObjectFromRoomByName(params[x]);
+			if (o != null) {
+				parameters[x] = o;
+			}
+
+			// it must be something else. For now, pass it along.
+			else {
+				parameters[x] = params[x];
+			}
+		}
+		
+		return parameters;
+	}
+	
+	/**
+	 * Initializes the parameters for a command that pulls form the
+	 * sender's equipment. Parameters are transformed into world objects
+	 * from the sender's equipment.
+	 * @param params
+	 * @return An Object array with the modified parameters.
+	 */
+	private Object[] initializeForEquipment(String[] params) {
+		Object[] parameters = new Object[params.length];
+		
+		for (int x = 0; x < params.length; x++) {
+			// First, let's check to see if the parameter is something in
+			// the room. This is the most common
+			// Parameter.
+			WorldObject o = getWorldObjectFromEquipmentByName(params[x]);
+			if (o != null) {
+				parameters[x] = o;
+			}
+
+			// it must be something else. For now, pass it along.
+			else {
+				parameters[x] = params[x];
+			}
+		}
+		
+		return parameters;
+	}
+	
+	/**
+	 * Initializes the parameters for a command that targets the sender's
+	 * inventory. Parameters are transformed into world objects from the sender's
+	 * inventory.
+	 * @param params
+	 * @return An Object array with the modified parameters.
+	 */
+	private Object[] initializeForInventory(String[] params) {
 		Object[] parameters = new Object[params.length];
 
-		// Is it a command that requires the last object to be a WorldObject
-		// target? i.e. a cast command
-		if (cmdType.equals(CommandType.SPELL)) {
-			for (int c = 0; c < params.length - 1; c++) {
-				parameters[c] = params[c];
+		for (int x = 0; x < params.length; x++) {
+			// First, let's check to see if the parameter is something in
+			// the room. This is the most common
+			// Parameter.
+			WorldObject o = getWorldObjectFromInventoryByName(params[x]);
+			if (o != null) {
+				parameters[x] = o;
 			}
 
-			String name = params[params.length - 1].toString();
-			parameters[params.length - 1] = getWorldObjectFromRoomByName(name);
-		}// END OF SPELL COMMANDS
-
-		// Is it a command that looks for parameters in the inventory?
-		if (cmdType.equals(CommandType.INVENTORY)) {
-			for (int x = 0; x < params.length; x++) {
-				// First, let's check to see if the parameter is something in
-				// the room. This is the most common
-				// Parameter.
-				o = getWorldObjectFromInventoryByName(params[x]);
-				if (o != null) {
-					parameters[x] = o;
-				}
-
-				// it must be something else. For now, return null.
-				else {
-					parameters[x] = null;
-				}
+			// it must be something else. For now, return null.
+			else {
+				parameters[x] = null;
 			}
-		} // END OF INVENTORY COMMAND PARAMETERS!!!!
-
-		// Is it a command that looks for parameters in the equipment?
-		if (cmdType.equals(CommandType.EQUIPMENT)) {
-			for (int x = 0; x < params.length; x++) {
-				// First, let's check to see if the parameter is something in
-				// the room. This is the most common
-				// Parameter.
-				o = getWorldObjectFromEquipmentByName(params[x]);
-				if (o != null) {
-					parameters[x] = o;
-				}
-
-				// it must be something else. For now, pass it along.
-				else {
-					parameters[x] = params[x];
-				}
-			}
-		} // END OF EQUIPMENT COMMAND PARAMETERS!!!!!!
-
-		// It must be a command that looks for parameters in a room...
-		if (cmdType.equals(CommandType.FROM_ROOM)) {
-			for (int x = 0; x < parameters.length; x++) {
-				// First, let's check to see if the parameter is something in
-				// the room. This is the most common
-				// Parameter.
-				o = getWorldObjectFromRoomByName(params[x]);
-				if (o != null) {
-					parameters[x] = o;
-				}
-
-				// it must be something else. For now, pass it along.
-				else {
-					parameters[x] = params[x];
-				}
-			}
-		} // END OF CMD PARAMETERS
-
-		// Return the parameters....
+		}
+		
 		return parameters;
 	}
 
