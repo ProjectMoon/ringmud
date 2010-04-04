@@ -24,15 +24,13 @@ Super quick startup instructions:
  8. `sudo ./ringmud.sh install unix` (Windows support coming later)
  9. This will "install" ringmud's configuration file to `/etc/ringmud`,
  as well as create the database collections in eXist.
-  
-  * NOTE: Don't forget to copy your database login info to the mud.config.
-  
+     * NOTE: Don't forget to copy your database login info to the mud.config.
  10. Compile the ever so exciting sample mud:
-  * `./rmc ../../sample/`
-  * You need to give it the directory of the sample MUD. In this case, the
+     * `./rmc ../../sample/`
+     * You need to give it the directory of the sample MUD. In this case, the
   sample MUD is in the root git directory, which is two levels above dist/bin/
  11. Deploy the sample MUD:
-  * `sudo ./ringmud.sh deploy sample-1.0.mud`
+     * `sudo ./ringmud.sh deploy sample-1.0.mud`
  12. Start the sample MUD: `./ringmud.sh server sample`
  13. telnet to localhost at port 2312
 
