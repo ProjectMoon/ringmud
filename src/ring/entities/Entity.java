@@ -28,11 +28,6 @@ public class Entity extends WorldObject {
 	private String name;
 	private String descriptor;
 	
-	@Override
-	public void createChildRelationships() {
-		//Does nothing
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}

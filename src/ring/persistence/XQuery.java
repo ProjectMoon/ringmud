@@ -1,5 +1,12 @@
 package ring.persistence;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +21,8 @@ import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
+import ring.events.EventDispatcher;
+import ring.events.SystemEvent;
 import ring.movement.Zone;
 import ring.nrapi.business.AbstractBusinessObject;
 
@@ -31,6 +40,26 @@ public class XQuery {
 	
 	public XQuery(String query) {
 		this.query = query;
+	}
+	
+	public XQuery(File xqFile) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(xqFile));
+		String line = "";
+		query = "";
+			
+		while ((line = reader.readLine()) != null) {
+			query += line + "\n";
+		}
+	}
+	
+	public XQuery(InputStream xqStream) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(xqStream));
+		String line = "";
+		query = "";
+			
+		while ((line = reader.readLine()) != null) {
+			query += line + "\n";
+		}		
 	}
 	
 	public XQuery(Loadpoint loadpoint, String query) {
@@ -139,7 +168,7 @@ public class XQuery {
 	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();
-		um.setListener(new ReferenceLoader());
+		um.setListener(new ParentRelationshipCreator());
 		Node node = res.getContentAsDOM();
 		T conv = (T)um.unmarshal(node);
 		

@@ -1,7 +1,8 @@
 package ring.nrapi.business;
 
 import java.io.StringWriter;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,7 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.xml.JAXBAnnotationReader;
 import ring.persistence.DataStoreFactory;
 import ring.persistence.Persistable;
 import ring.persistence.RingConstants;
@@ -23,26 +23,76 @@ import ring.persistence.RingConstants;
 @XmlType(
 namespace = RingConstants.RING_NAMESPACE,
 propOrder= {
-	"ID"
+	"ID",
+	"documentName"
 })
 public abstract class AbstractBusinessObject implements BusinessObject {
-	private AbstractBusinessObject parent;
+	private Persistable parent;
+	private List<Persistable> children = new ArrayList<Persistable>();
+	
 	private String docID;
 	
 	private String id;
+	private String docName;
+	
 	private boolean storeAsUpdate;
-	private boolean referential;
-	private boolean isUnique = false;
 	
 	public void save() {
 		DataStoreFactory.getDefaultStore().storePersistable(this);
 	}
+
+	/**
+	 * Responsible for propagating information down the hierarchy
+	 * of objects found in the document or fragment that this
+	 * AbstractBusinessObject was loaded from. It propagates information
+	 * and calls each child's <code>createChildRelationships()</code> method. This
+	 * results in a recursive propagation of information down through the object
+	 * hierarchy.
+	 * <br/><br/>
+	 * This method only concerns objects that are created at object load. It does
+	 * not propagate information to children added later during server operation.
+	 */
+	public final void createChildRelationships() {
+		for (Persistable child : children) {
+			createChildRelationship(this, child);
+		}
+	}
+	
+	private void createChildRelationship(Persistable parent, Persistable child) {
+		child.setParent(parent);
+		child.setStoreAsUpdate(parent.storeAsUpdate());
+		
+		//If the document name is null, then it wasn't set anywhere else
+		//so the child is probably from the same document...
+		if (child.getDocumentName() == null) {
+			child.setDocumentName(parent.getDocumentName());
+		}
+		
+		for (Persistable grandchild : child.getChildren()) {
+			createChildRelationship(child, grandchild);
+		}
+	}
 	
 	/**
-	 * Creates the parent relationships for all child business
-	 * objects of this AbstractBusinessObject.
+	 * Adds a child to the list of children to propagate information
+	 * to when <code>createChildRelationships()</code> is called. This
+	 * list is only read when this abstract business object is first loaded.
+	 * Afterwards, it is not considered relevant. In other words, any new
+	 * child business objects added to this object (i.e. a mobile added to a
+	 * room) do not have parent information propagated to them. It is 
+	 * possible that this might change depending on how world state saving
+	 * is implemented.
+	 * @param child The child to add.
 	 */
-	public abstract void createChildRelationships();
+	@Override
+	public void addChild(Persistable child) {
+		children.add(child);
+	}
+	
+	@Override
+	public List<Persistable> getChildren() {
+		return children;
+	}
 	
 	@Override
 	public Persistable getRoot() {
@@ -75,17 +125,24 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return docID;
 	}
 	
-	public void setParent(AbstractBusinessObject obj) {
+	@Override
+	public void setParent(Persistable obj) {
 		parent = obj;
 	}
-
-	@XmlAttribute(name = "ref")
-	public boolean isReferential() {
-		return referential;
+	
+	
+	@XmlTransient
+	public String getCanonicalID() {
+		return getDocumentName() + ":" + getID();
 	}
 	
-	public void setReferential(boolean val) {
-		referential = val;
+	@XmlAttribute(name = "docname")
+	public String getDocumentName() {
+		return docName;
+	}
+	
+	public void setDocumentName(String docName) {
+		this.docName = docName;
 	}
 	
 	/**
@@ -111,14 +168,11 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return storeAsUpdate;
 	}
 	
-	@Override
-	public void makeUnique() {
-		if (!isUnique) {
-			id += UUID.randomUUID().toString();
-			isUnique = true;
-		}
-	}
-	
+	/**
+	 * Returns this object represented as a full XML document containing
+	 * the standard processing instruction and a &lt;ring&gt; element as the
+	 * root element of the document.
+	 */
 	public String toXMLDocument() {
 		String xml = marshalledXMLDocument();
 		String body = xml.substring(xml.indexOf("?>") + 2);
@@ -127,20 +181,13 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return xmlHeader + "\n" + body;
 	}
 	
+	/**
+	 * Returns this object represented as an XML fragment. The XML does not contain
+	 * the standard XML processing instruction(s), nor does it contain a root element.
+	 */
 	@Override
 	public String toXML() {
-		if (isReferential()) {
-			JAXBAnnotationReader reader = new JAXBAnnotationReader(this.getClass());
-			String element = reader.rootElementName();
-			String xml = "<" + element + " reference=\"true\">";
-			xml += "<id>" + getID() + "</id>";
-			xml += "</" + element + ">";
-			
-			return xml;
-		}
-		else {
-			return marshalledXMLFragment();
-		}
+		return marshalledXMLFragment();
 	}
 	
 	private String marshalledXMLFragment() {

@@ -1,7 +1,7 @@
 package ring.system;
 
+import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
@@ -10,7 +10,9 @@ import org.xmldb.api.base.XMLDBException;
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
+import ring.events.EventLoader;
 import ring.movement.WorldBuilder;
+import ring.python.Interpreter;
 import ring.world.Ticker;
 
 /**
@@ -24,29 +26,33 @@ import ring.world.Ticker;
  * @author jeff
  */
 public class MUDBoot {
-	private static final Logger log = Logger.getLogger(MUDBoot.class.getName());
-
 	/**
 	 * Boots the mud server.
 	 */
 	public static void boot() {
 		System.out.println("Loading RingMUD.");
+		
+		System.out.println("Loading Jython...");
+		Interpreter.INSTANCE.getInterpreter();
+		
+		//Load all event handlers
+		System.out.println("Loading event handlers...");
+		loadEventHandlers();
+		
+		//Synchronize with static
+		System.out.println("Synchronziing with STATIC...");
+		System.err.println("WARNING: Syncing not implemented yet.");
+		
+		//Restore world state from DB
+		System.out.println("Restoring world state...");
+		System.err.println("WARNING: Restoring of world state not implemented yet.");
 
-		// Restore world state from DB
-		System.err.println("ERROR: Restoring of world state not implemented yet.");
-
-		// Load commands
+		//Load commands
 		System.out.println("Loading commands...");
 		loadCommands();
 
-		// Load effects
+		//Load effects
 
-		// Load class features
-		System.out.println("Loading class features...");
-		// String[] classFeatureFiles = MUDConfig.getClassFeaturesFiles();
-		// for (String file : classFeatureFiles)
-		// ClassFeatureLoader.loadClassFeaturesFromFile(file);
-		
 		//Start the world ticker
 		System.out.println("Starting the world ticker...");
 		Ticker ticker = Ticker.getTicker();
@@ -54,7 +60,6 @@ public class MUDBoot {
 		t.setName("World Ticker");
 		t.start();
 
-		System.out.println("Done.");
 		// Load classes
 
 		// Load items
@@ -62,6 +67,7 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
+		System.out.println("Building world...");
 		try {
 			WorldBuilder.buildWorld();
 		} catch (XMLDBException e) {
@@ -70,14 +76,19 @@ public class MUDBoot {
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		System.out.println("Done loading RingMUD.");
 	}
 
 	/**
 	 * Loads both internal commands (in packages) and Jython-based commands
 	 * (from script files).
 	 */
-	public static void loadCommands() {
+	private static void loadCommands() {
 		Properties pkgProps = MUDConfig.getPluginProperties("pkgIndexer");
 		Properties jythonProps = MUDConfig.getPluginProperties("jythonIndexer");
 
@@ -88,5 +99,27 @@ public class MUDBoot {
 		CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
 				"ring.commands.JythonIndexer", jythonProps);
 		CommandHandler.addCommands(jythonIndexer.getCommands());
+	}
+
+	/**
+	 * Loads event handlers.
+	 */
+	private static void loadEventHandlers() {
+		EventLoader loader = new EventLoader();
+		try {
+			loader.loadEvents();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

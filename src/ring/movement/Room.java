@@ -73,22 +73,6 @@ public class Room extends AbstractBusinessObject {
 		setZoneID(zone.getID());
 	}
 	
-	@Override
-	public void createChildRelationships() {
-		for (Entity ent : getEntities()) {
-			ent.setParent(this);
-		}
-		
-		for (Item item : getItems()) {
-			item.setParent(this);
-		}
-		
-		for (Mobile mob : getMobiles()) {
-			mob.setParent(this);
-		}
-		
-	}
-	
 	@XmlElementWrapper(name = "entities")
 	@XmlElement(name = "entity")
 	public List<Entity> getEntities() {
@@ -97,7 +81,6 @@ public class Room extends AbstractBusinessObject {
 	
 	public void setEntities(List<Entity> entities) {
 		this.entities = entities;
-		createChildRelationships();
 	}	
 	
 	@XmlElementWrapper(name = "mobiles")

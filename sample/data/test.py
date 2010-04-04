@@ -3,6 +3,8 @@ from ring.mobiles import RaceFactory
 from ring.mobiles.npc import NPC
 from ring.movement import Room, Location, Portal
 
+__document__.codebehind = "code/events.py"
+
 mob = NPC()
 mob.ID = "someGuy"
 mob.baseModel.name = "Some guy"

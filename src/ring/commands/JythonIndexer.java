@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.python.util.PythonInterpreter;
 
 import ring.deployer.DeployedMUDFactory;
+import ring.python.Interpreter;
 
 /**
  * Package-level indexer class that indexes Jython script files and turns them 
@@ -34,7 +35,7 @@ class JythonIndexer implements CommandIndexer {
 	private boolean indexed = false;
 
 	private Properties props;
-	private static final PythonInterpreter INTERP = new PythonInterpreter();
+	private static PythonInterpreter INTERP = Interpreter.INSTANCE.getInterpreter();
 	private static final Pattern JYTHON_PATTERN = Pattern.compile("^class\\s+(\\w+)\\s*\\([\\w,_\\s]*Command[\\w,_\\s]*\\):$");
 	
 	public JythonIndexer() {}

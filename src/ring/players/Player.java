@@ -25,9 +25,6 @@ public class Player extends AbstractBusinessObject {
 	private Date lastLogon;
 	private List<String> charIDs = new ArrayList<String>();
 	
-	@Override
-	public void createChildRelationships() {}
-	
 	@XmlElement
 	public String getName() {
 		return name;

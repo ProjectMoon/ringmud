@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RingMUD" basedir="." default="main">
 	<description>
-	Build system for the RingMUD engine. Type "ant" to build the whole thing.	
+		Build system for the RingMUD engine. Type "ant" to build the whole thing.	
 	</description>
+	
 	<!-- List of properties. -->
 	<property name="app.version" value="0.1.0" />
     <property name="src.dir"     value="./src"/>
@@ -29,8 +30,9 @@
 	
 	<fileset id="xml-resources" dir="${src.dir}/ring/nrapi/xml/">
 		<include name="**/*.xsd" />
-	</fileset>	
+	</fileset>
 	
+	<!-- Where to find Java files -->
 	<fileset id="sources" dir="${src.dir}">
 		<include name="**/*.java" />
 	</fileset>
@@ -88,6 +90,8 @@
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
 			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
+			<zipfileset dir="${classes.dir}" includes="ring/python/**" />
+			<zipfileset dir="${src.dir}/ring/python/" includes="*.py" prefix="ring/python/" />
 			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/world/**"/>
@@ -110,6 +114,7 @@
 	<target name="jar-persistence" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-persistence-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
+			<zipfileset dir="${src.dir}/ring/persistence/" includes="*.xq" prefix="ring/persistence/" />
 		</jar>
 	</target>
 	
@@ -121,12 +126,20 @@
 			<zipfileset dir="${classes.dir}" includes="ring/magic/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/mobiles/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/movement/**" />
+			<zipfileset dir="${src.dir}/ring/movement/" includes="*.xq" prefix="ring/movement/" />
 			<zipfileset dir="${classes.dir}" includes="ring/players/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/skills/**" />
 		</jar>
 	</target>
+	
+	<target name="jar-events" depends="compile">
+		<jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
+			<zipfileset dir="${classes.dir}" includes="ring/events/**" />
+			<zipfileset dir="${src.dir}/ring/events/" includes="*.xq" prefix="ring/events/" />
+		</jar>
+	</target>
 		
-    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi"
+    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
     		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />

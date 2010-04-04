@@ -51,6 +51,7 @@ public class XQueryModule implements RingModule {
 			System.out.println("result size: " + results.size());
 			
 			for (Resource res : results) {
+				System.out.println(res.getId() + ":");
 				System.out.println(res.getContent());
 			}
 			

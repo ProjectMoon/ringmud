@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -22,6 +24,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import ring.main.RingModule;
 import ring.nrapi.xml.XMLConverter;
 import ring.persistence.Persistable;
+import ring.python.Interpreter;
 
 /**
  * Provides methods for packing and unpacking RingMUD .mud files. A .mud file
@@ -39,9 +42,6 @@ public class Compiler implements RingModule {
 	private int stripIndex;
 	private MUDFile mudFile = null;
 	
-	public static void main(String[] args) {
-		new Compiler().execute(new String[] { "/Users/projectmoon/muddy/" });
-	}
 	@Override
 	public void execute(String[] args) {
 		//Read some options
@@ -119,15 +119,23 @@ public class Compiler implements RingModule {
 	
 	private void convertPython() {
 		try {
-			PythonInterpreter interp = new PythonInterpreter();
+			PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
+			
+			//Provide the DocumentInfo class to all python-defined data.
+			InputStream documentInfoStream = Interpreter.INSTANCE.getInternalScript("compiler.py");
+			interp.execfile(documentInfoStream);
+			
 			List<FileEntry> entriesToRemove = new ArrayList<FileEntry>();
 			List<FileEntry> entriesToAdd = new ArrayList<FileEntry>();
 			
 			for (FileEntry entry : mudFile.getEntries("data")) {
 				if (entry.getEntryName().endsWith(".py")) {
+					//Add document info object to the interpreter.
+					interp.exec("__document__ = DocumentInfo()");
+					
 					//Execute script
 					interp.execfile(new FileInputStream(entry.getFile()));
-					interp.cleanup();
+					
 					
 					//Then convert to XML
 					List<Persistable> persistables = XMLConverter.getPersistables();
@@ -136,34 +144,49 @@ public class Compiler implements RingModule {
 					//in each iteration below. This will be the file name of the python file,
 					//minus the .py extension.
 					String fileRoot = entry.getEntryName();
-					fileRoot = fileRoot.substring(fileRoot.lastIndexOf("/"), fileRoot.length() - 3);
-					
-					//Generate a unique document in the form pythonFileName + "-" + persistable.getID() + ".xml"
-					for (Persistable persistable : persistables) {
-						String prefix = fileRoot + "-" + persistable.getID();
+					fileRoot = fileRoot.substring(fileRoot.lastIndexOf("/"), fileRoot.length());
 
-						File tmp = File.createTempFile(prefix, ".xml");
-						FileOutputStream fileOut = new FileOutputStream(tmp);
-						BufferedOutputStream buffer = new BufferedOutputStream(fileOut);
-						PrintStream out = new PrintStream(buffer);
-						
-						String xml = persistable.toXMLDocument();
-						out.println(xml);
-						
-						out.close();
-						buffer.close();
-						fileOut.close();
-						
-						//Add this entry to the list of entries to remove
-						//and create a new entry to be added to the mudfile.
-						entriesToRemove.add(entry);
-						FileEntry fe = new FileEntry();
-						fe.setFile(tmp);
-						fe.setEntryName("data" + prefix + ".xml"); //Prefix should start with a /
-						entriesToAdd.add(fe);
+					File tmp = File.createTempFile(fileRoot, ".xml");
+					FileOutputStream fileOut = new FileOutputStream(tmp);
+					BufferedOutputStream buffer = new BufferedOutputStream(fileOut);
+					PrintStream out = new PrintStream(buffer);
+					
+					//Retrieve codebehind attribute from document info, if it is present.
+					PyObject documentInfo = interp.get("__document__");
+					String codebehind = (String)documentInfo.__findattr__("codebehind").__tojava__(String.class);
+					
+					//Write beginning of XML document.
+					out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+					if (codebehind != null) {
+						out.print("<ring codebehind=\"" + codebehind + "\">");
 					}
+					else {
+						out.println("<ring>");
+					}
+									
+					//Write out each persistable to the XML document.
+					for (Persistable persistable : persistables) {						
+						String xml = persistable.toXML();
+						out.println(xml);
+					}
+					
+					//Write end of XML document.
+					out.println("</ring>");
 	
 					XMLConverter.clear();
+					
+					out.close();
+					buffer.close();
+					fileOut.close();
+
+					FileEntry fe = new FileEntry();
+					fe.setFile(tmp);
+					fe.setEntryName("data" + fileRoot + ".xml"); //Prefix should start with a /
+					entriesToAdd.add(fe);
+					entriesToRemove.add(entry);
+					
+					//Cleanup!
+					interp.cleanup();
 				}
 			}
 			
