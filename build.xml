@@ -16,6 +16,13 @@
 	<property name="dist.lib.dir"     value="${dist.dir}/lib"/>
 	<property name="dist.docs.dir" value="./docs" />
 
+	<!-- AspectJ iajc task -->
+	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+		<classpath>
+			<pathelement path="${lib.dir}/aspectjtools.jar" />
+		</classpath>
+	</taskdef>
+	
 	<!-- A bunch of resource definitions for use below. -->
 	<fileset id="resources" dir="${src.dir}/ring/main/">
 		<include name="**/*.properties" />
@@ -48,7 +55,24 @@
     	<path id="project.class.path">
     		<fileset dir="${lib.dir}" includes="**/*.jar" />	
     	</path>
-        <javac debug="true" debuglevel="lines,vars,source" classpathref="project.class.path" srcdir="${src.dir}" destdir="${classes.dir}"/>
+        <!--
+        <javac 
+        	debug="true" 
+        	debuglevel="lines,vars,source"
+        	classpathref="project.class.path" 
+        	srcdir="${src.dir}" 
+        	destdir="${classes.dir}"
+    	/>
+    	-->
+        <iajc
+        	debug="true"
+        	debuglevel="lines,vars,source"
+            srcdir="${src.dir}"
+        	destDir="${classes.dir}"
+            classpathref="project.class.path"
+        	source="1.6"
+        	target="1.6"
+       	/>    	
     </target>
 	
 	<target name="dist-stage" depends="compile">
@@ -61,6 +85,12 @@
 	<target name="jar-main" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/main/**"/>			
+		</jar>
+	</target>
+	
+	<target name="jar-aspects" depends="compile">
+		<jar destfile="${jar.dir}/ringmud-aspects-${app.version}.jar">
+			<zipfileset dir="${classes.dir}" includes="ring/aspects/**"/>
 		</jar>
 	</target>
 	
@@ -139,7 +169,7 @@
 		</jar>
 	</target>
 		
-    <target name="dist" depends="dist-stage,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
+    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
     		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
