@@ -59,8 +59,8 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	}
 	
 	private void createChildRelationship(Persistable parent, Persistable child) {
-		System.out.println("Creating relationship " + parent + " ==> " + child);
 		child.setParent(parent);
+		child.setStoreAsUpdate(parent.storeAsUpdate());
 		
 		//If the document name is null, then it wasn't set anywhere else
 		//so the child is probably from the same document...

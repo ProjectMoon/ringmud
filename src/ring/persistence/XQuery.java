@@ -169,7 +169,6 @@ public class XQuery {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();
 		um.setListener(new ParentRelationshipCreator());
-		System.out.println(res.getContent());
 		Node node = res.getContentAsDOM();
 		T conv = (T)um.unmarshal(node);
 		
