@@ -36,7 +36,6 @@ public class WorldBuilder {
 		for (Location loc : locs) {
 			Room room = loc.getRoom();
 			attemptAddToCache(room);
-			System.out.println("Found room: " + room);
 		}
 		
 		//Now construct the world.

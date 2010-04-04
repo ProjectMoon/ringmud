@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.python.util.PythonInterpreter;
 
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.persistence.Persistable;
 import ring.python.Interpreter;
 
 /**
@@ -21,6 +21,12 @@ public class EventDispatcher {
 	 * Map relationship defined as: canonical ID -> Map of (eventName, Event)
 	 */
 	private static Map<String, Map<String, Event>> events = new HashMap<String, Map<String, Event>>();
+	
+	/**
+	 * A simpler map for special global events such as command execution.
+	 */
+	private static Map<String, Event> globalEvents = new HashMap<String, Event>();
+	
 	private static boolean initialized = false;
 	
 	public static void initialize() {
@@ -63,6 +69,10 @@ public class EventDispatcher {
 		}
 	}
 	
+	public static void addGlobalEvent(Event event) {
+		throw new UnsupportedOperationException("Global events not yet supported.");
+	}
+	
 	public static List<Event> getEvents() {
 		List<Event> evts = new ArrayList<Event>();
 		
@@ -75,22 +85,32 @@ public class EventDispatcher {
 		return evts;
 	}
 	
-	public static void dispatch(String eventName, AbstractBusinessObject target) {
+	public static void dispatch(String eventName, Persistable target, Object ... args) {
 		if (target == null) {
 			throw new IllegalArgumentException("target for event must not be null!");
 		}
-				
-		System.out.println("Dispatching " + eventName + " to " + target.getCanonicalID());
+		
 		Map<String, Event> eventMap = events.get(target.getCanonicalID());
 		if (eventMap != null) {
 			Event e = eventMap.get(eventName);
 			if (e != null) {
-				e.invoke(target);
+				e.invoke(target, args);
 			}
 		}
 	}
 	
-	public static void dispatch(SystemEvent event, AbstractBusinessObject target) {
-		dispatch(event.getEventName(), target);
+	public static void dispatch(EventEnum event, Persistable target, Object ... args) {
+		dispatch(event.getEventName(), target, args);
+	}
+	
+	public static void dispatchGlobal(String eventName, Object target, Object ... args) {
+		Event e = globalEvents.get(eventName);
+		if (e != null) {
+			e.invoke(target, args);
+		}
+	}
+	
+	public static void dispatchGlobal(EventEnum event, Object target, Object ... args) {
+		dispatchGlobal(event.getEventName(), target, args);
 	}
 }

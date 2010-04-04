@@ -272,34 +272,4 @@ public class Room extends AbstractBusinessObject {
 	public boolean canEnter(Movable mov) {
 		return (mov instanceof Mobile || mov instanceof Entity);
 	}
-	
-	/**
-	 * Adds a movable to this room.
-	 * @param mov
-	 */
-	public void addMovable(Movable mov) {
-		if (mov instanceof Mobile) {
-			addMobile((Mobile)mov);
-		}
-		else if (mov instanceof Entity) {
-			addEntity((Entity)mov);
-		}
-	}
-	
-	/**
-	 * Removes a movable.
-	 * @param mov
-	 * @return true if successful, false otherwise.
-	 */
-	public boolean removeMovable(Movable mov) {
-		if (mov instanceof Mobile) {
-			return removeMobile((Mobile)mov);
-		}
-		else if (mov instanceof Entity) {
-			return removeEntity((Entity)mov);
-		}
-		else {
-			return false;
-		}
-	}
 }

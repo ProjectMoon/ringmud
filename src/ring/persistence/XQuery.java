@@ -2,7 +2,6 @@ package ring.persistence;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,9 +20,6 @@ import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
-import ring.events.EventDispatcher;
-import ring.events.SystemEvent;
-import ring.movement.Zone;
 import ring.nrapi.business.AbstractBusinessObject;
 
 /**
@@ -165,6 +161,7 @@ public class XQuery {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();

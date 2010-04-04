@@ -4,8 +4,6 @@ import org.python.core.Py;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 
-import ring.nrapi.business.AbstractBusinessObject;
-
 /**
  * Represents a bindable (or bound) event in MUD code. An event has three
  * things: A name, a context, and a Python function. The name of the event
@@ -44,8 +42,20 @@ public class Event {
 		return func;
 	}
 	
-	public void invoke(AbstractBusinessObject target) {
+	public void invoke(Object target, Object ... args) {
 		PyObject pyTarget = Py.java2py(target);
-		func.__call__(new PyObject[] { pyTarget }, new String[0]);
+		
+		PyObject[] eventArguments = new PyObject[args.length + 1];
+		
+		eventArguments[0] = pyTarget;
+		
+		int c = 1;
+		for (Object arg : args) {
+			PyObject pyArg = Py.java2py(arg);
+			eventArguments[c] = pyArg;
+			c++;
+		}
+		
+		func.__call__(eventArguments, new String[0]);
 	}
 }

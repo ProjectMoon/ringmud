@@ -6,12 +6,8 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.commands.CommandParameters.CommandType;
 import ring.items.Armor;
-import ring.items.Item;
-import ring.mobiles.Body;
-import ring.mobiles.BodyPart;
 import ring.mobiles.Mobile;
 import ring.mobiles.senses.StimulusSender;
-import ring.mobiles.senses.stimuli.AudioStimulus;
 import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Wear implements Command {

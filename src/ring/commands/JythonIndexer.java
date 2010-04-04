@@ -79,6 +79,7 @@ class JythonIndexer implements CommandIndexer {
 			}
 		}
 		
+		System.out.println(" [JythonIndexer]: Indexed " + cmds.size() + " commands.");
 		indexed = true;
 	}
 	
@@ -97,7 +98,6 @@ class JythonIndexer implements CommandIndexer {
 	 * @param name The name of the class to create.
 	 */
 	private void instantiateCommand(String filename, String name) {
-		System.out.println(this + ": Found command " + name + " (in " + filename + ")");
 		
 		//Load the python file if it hasn't already been.
 		attemptExecute(filename);

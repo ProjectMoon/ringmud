@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ring.mobiles.Mobile;
+
 /**
  * The main class that implements the movement logic of the MUD. It stores
  * the adjacency list of Rooms and Portals and exposes methods for retrieving
@@ -88,7 +90,7 @@ public class LocationManager {
 	 * @throws MovementAssertionException if the Portal being used is not at the Movable's current Location.
 	 * @throws PortalNotFoundException if the Portal passed to the method is null.
 	 */
-	public static boolean move(Movable mov, Portal port) throws MovementAssertionException, PortalNotFoundException {
+	public static boolean move(Mobile mov, Portal port) throws MovementAssertionException, PortalNotFoundException {
 		if (port == null) {
 			throw new PortalNotFoundException("can't move into a null portal!");
 		}
@@ -121,10 +123,14 @@ public class LocationManager {
 			}
 			else {
 				//Now that we know it's possible, perform the move.
-				leavingFrom.removeMovable(mov);
-				mov.setLocation(locToMoveTo);
-				locToMoveTo.addMovable(mov);
-				return true;
+				synchronized (leavingFrom) {
+					synchronized (locToMoveTo) {
+						leavingFrom.removeMobile(mov);
+						mov.setLocation(locToMoveTo);
+						locToMoveTo.addMobile(mov);
+						return true;		
+					}
+				}
 			}
 		}
 		else {

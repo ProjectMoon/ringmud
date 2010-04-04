@@ -51,7 +51,10 @@ class PackageIndexer implements CommandIndexer {
 		}
 		
 		String[] packages = pkgList.split(";");
-		for (String pkg : packages) indexedPackages.add(pkg);
+		for (String pkg : packages) {
+			indexedPackages.add(pkg);
+			System.out.println(" [PackageIndexer]: Indexing commands from " + pkg);
+		}
 		
 		//Now onward with processing the classpath.
 		Object[] classPath = getClassPathEntries();
@@ -219,7 +222,6 @@ class PackageIndexer implements CommandIndexer {
 			//If the sub-class c is assignable from the Command
 			//interface, we can add it to the map.
 			if (cmdInterface.isAssignableFrom(c) && !c.isInterface()) {
-				System.out.println(this + ": Found command " + className);
 				Command cmd = (Command)c.newInstance();
 				commandList.add(cmd);
 			}

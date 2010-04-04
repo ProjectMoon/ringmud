@@ -10,6 +10,7 @@ import net.wimpi.telnetd.TelnetD;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.Level;
 
 import ring.server.Server;
 import ring.system.MUDConfig;
@@ -29,6 +30,7 @@ public class TelnetServer implements Server {
 		Logger root = Logger.getRootLogger();
 		root.addAppender(new ConsoleAppender(
 		    new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
+		root.setLevel(Level.INFO);
 		
 		try {
 			telnet = TelnetD.createTelnetD(props);

@@ -6,6 +6,7 @@ import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.movement.LocationManager;
+import ring.movement.Portal;
 import ring.movement.PortalNotFoundException;
 
 public class North implements Command {
@@ -14,25 +15,19 @@ public class North implements Command {
 		CommandResult res = new CommandResult();
 		res.setFailText("[GREEN]You can't go that way.[WHITE]");
 		Mobile mob = (Mobile) sender;
-
-		MoveAction ma = new MoveAction(mob, LocationManager.NORTH);
-
-		boolean success = false;
-
+		Portal destination;
+		
 		try {
-			success = ma.doMove();
-		} catch (PortalNotFoundException e) {
-			// can theoretically be safely ignored.
+			destination = LocationManager.getPortal(mob.getLocation(), LocationManager.NORTH);
+			boolean success = LocationManager.move(mob, destination);
+			res.setSuccessful(success);
+			res.setReturnableData(!success);
 		}
-
-		res.setSuccessful(success);
-		// A bit odd, but the data sending is handled by the movement system in
-		// this case.
-		if (success) {
-			res.setReturnableData(false);
+		catch (PortalNotFoundException e) {
+			res.setSuccessful(false);
+			res.setReturnableData(true);
 		}
-
-		// Return the CommandResult.
+		
 		return res;
 	}
 

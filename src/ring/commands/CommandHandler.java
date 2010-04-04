@@ -6,10 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import ring.mobiles.Mobile;
-import ring.system.MUDBoot;
-import ring.system.MUDConfig;
-
 /**
  * This class provides command handling service to a CommandSender (usually a mobile).
  * The CommandHandler class maintains a global store of all indexed command objects, as
@@ -188,16 +184,13 @@ public final class CommandHandler {
 	 * @return the CommandResult containing results of the command.
 	 */
 	public CommandResult sendCommand(String command) {
-		log.info("received from [" + sender.toString() + "]: " + command);
-		
 		String[] parsedCmd = parseCommandString(command);
 		Command cmd = lookup(parsedCmd[0]);
 		CommandParameters params = new CommandParameters(isolateParameters(parsedCmd), sender);
-		log.fine("Made cmd object");
 
 		//actually do the command.
 		CommandResult cr = handleCommand(cmd, params);
-		log.info("handled command [" + command + "] from " + sender.toString());
+		
 		return cr;
 	}
 
@@ -239,7 +232,6 @@ public final class CommandHandler {
 			try {
 				CommandResult cr = cmd.execute(sender, params);
 				if (cr == null) {
-					log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult! Creating a wrapper result.");
 					cr = new CommandResult();
 					cr.setReturnableData(false);
 				}
