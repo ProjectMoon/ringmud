@@ -1,35 +1,25 @@
 package ring.commands;
 
+import java.util.Collection;
 import java.util.List;
 
 import ring.entities.Entity;
+import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.mobiles.backbone.Inventory;
 import ring.movement.Room;
 import ring.world.WorldObject;
 
 /**
- * <p>
- * Title: RingMUD Codebase
- * </p>
- * 
- * <p>
- * Description: RingMUD is a java codebase for a MUD with a working similar to
- * DikuMUD
- * </p>
- * 
- * <p>
- * Copyright: Copyright (c) 2004
- * </p>
- * 
- * <p>
- * Company: RaiSoft/Thermetics
- * </p>
- * 
- * @author Jeff Hair
- * @version 1.0
+ * This class is responsible for transforming parameters received into objects for the
+ * MUD to use. In effect, it is the bridge between what the user types in at the terminal
+ * and the internals of the object-oriented MUD system.
+ * @author projectmoon
+ *
  */
-public final class CommandParameters {	
+public final class CommandParameters {
+	//TODO rework the getParameters().
+	
 	/**
 	 * An enum representing different types of Command parameters. The type tells
 	 * the CommandParameters objects how to translate the strings it has into
@@ -48,28 +38,52 @@ public final class CommandParameters {
 	private CommandSender sender;
 	private CommandType cmdType;
 	
+	/**
+	 * Creates a new CommandParameters object for the specified parameter string
+	 * and {@link CommandSender}.
+	 * @param params
+	 * @param sender
+	 */
 	public CommandParameters(String[] params, CommandSender sender) {
 		this.sender = sender;
 		initParameters = params;
 	}
 
+	/**
+	 * Initializes the command parameters to support a particular {@link CommandType}.
+	 * Different command types are initialized in different ways. For example, a text
+	 * command applies no transformations to its parameters. However, a command that
+	 * operates on a Room (i.e. CommandType.FROM_ROOM) would transform its parameters
+	 * into {@link WorldObject}s.
+	 * @param cmdType
+	 */
 	public void init(CommandType cmdType) {
 		this.cmdType = cmdType;
 		parameters = getParameters(initParameters, cmdType);
 	}
 
+	/**
+	 * Gets the {@link CommandType} that these parameters were
+	 * initialized to support.
+	 * @return
+	 */
 	public CommandType getType() {
 		return cmdType;
 	}
 
-	// length method.
-	// Using initParameters guarantees that this will return, well.. usually.
+	/**
+	 * Returns the amount of parameters in this object.
+	 * @return The number of parameters.
+	 */
 	public int length() {
 		return initParameters.length;
 	}
 
-	// getParameter method.
-	// Returns a parameter.
+	/**
+	 * Gets the object parameter at the specified index.
+	 * @param index
+	 * @return The parameter as an object, or null if there are no parameters.
+	 */
 	public Object getParameter(int index) {
 		if (parameters == null)
 			return null;
@@ -78,6 +92,11 @@ public final class CommandParameters {
 		return parameters[index];
 	}
 
+	/**
+	 * Gets the text parameter at the specified index.
+	 * @param index
+	 * @return The parameter as a String, or null if there are no parameters.
+	 */
 	public String getParameterAsText(int index) {
 		if (parameters == null)
 			return null;
@@ -85,14 +104,19 @@ public final class CommandParameters {
 			return initParameters[index];
 	}
 
-	// lastParameter method.
-	// Returns the last parameter in the parameters array.
+	/**
+	 * Convenience method for returning the last parameter in object form.
+	 * @return
+	 */
 	public Object lastParameter() {
 		return parameters[parameters.length - 1];
 	}
 
-	// constructSpellName method.
-	// This simply returns up to parameters.length - 1 in a combined string.
+	/**
+	 * Convenience method for creating spell names.
+	 * @return
+	 * @throws ClassCastException
+	 */
 	public String constructSpellName() throws ClassCastException {
 		String text = "";
 		for (int c = 0; c < parameters.length - 1; c++) {
@@ -106,6 +130,11 @@ public final class CommandParameters {
 		return text.trim();
 	}
 
+	/**
+	 * This gets the parameter string for the command, which everything
+	 * that comes after the initial command verb.
+	 * @return The parameter string, or null if there are no parameters.
+	 */
 	public String paramString() {
 		if (parameters == null)
 			return null;
@@ -122,10 +151,12 @@ public final class CommandParameters {
 		return res;
 	}
 
-	// getParameters method.
-	// This method gets all of the parameters needed for the method to be
-	// executed properly.
-	// All nulls and such are handled properly as well.
+	/**
+	 * This method transforms parameters from string names into objects.
+	 * @param params
+	 * @param cmdType
+	 * @return
+	 */
 	private Object[] getParameters(String[] params, CommandType cmdType) {
 		WorldObject o;
 
@@ -211,98 +242,84 @@ public final class CommandParameters {
 		return parameters;
 	}
 
-	// getWorldObjectFromInventoryByName method.
-	// This method returns an Entity in the inventory of the CommandSender via a
-	// String name.
-	// Will have to be updated later to accomodate things like 1.sword, 2.berry,
-	// etc.
+	/**
+	 * This method returns the most relevant {@link WorldObject} found in the sender's
+	 * inventory.
+	 * @param name
+	 * @return The most relevant WorldObject, or null if nothing was found.
+	 */
+	@SuppressWarnings("unchecked")
 	private WorldObject getWorldObjectFromInventoryByName(String name) {
-		Mobile mob;
-		
-		try {
-			mob = (Mobile) sender;
-		} catch (NullPointerException e) {
-			System.err.println("WARNING: NULL SENDER SOURCE");
-			mob = null;
-		}
-
+		Mobile mob = (Mobile)sender;
 		Inventory inventory = mob.getDynamicModel().getInventory();
-		return inventory.getItemByName(name);
+		return search(name, inventory.getItems());
 	}
 
-	// getWorldObjectFromEquipment method.
-	// This method returns a WorldObject from the Mobile's equipment.
+	/**
+	 * This method returns the most relevant WorldObject found in the
+	 * sender's equipment.
+	 * @param name The name of the item to search for in the equipment.
+	 * @return The most relevant WorldObject, or null if nothing was found.
+	 */
+	@SuppressWarnings("unchecked")
 	private WorldObject getWorldObjectFromEquipmentByName(String name) {
-		Mobile mob;
-		
-		try {
-			mob = (Mobile) sender;
-		} catch (NullPointerException e) {
-			System.err.println("WARNING: NULL SENDER SOURCE");
-			mob = null;
-		}
-
-		return mob.getDynamicModel().getEquipment().getItemByName(name);
+		Mobile mob = (Mobile) sender;
+		Collection<Item> items = mob.getDynamicModel().getEquipment().getItems();
+		return search(name, items);
 	}
 
-	// getWorldObjectByName method.
-	// This method returns a WorldObject in the room of the CommandSender via a
-	// String name.
-	// Will have to be updated later to accomodate things like
-	// "1.monster, 2.sword" etc.
+	/**
+	 * This method returns the most relevant {@link WorldObject} found in the sender's
+	 * current Room.
+	 * @param name The name of the WorldObject to search for in the room.
+	 * @return The most relevant WorldObject, or null if nothing was found.
+	 */
+	@SuppressWarnings("unchecked")
 	private WorldObject getWorldObjectFromRoomByName(String name) {
-		if (name.equals("a"))
-			return null;
-		Mobile mob;
-		name = name.toLowerCase();
-		try {
-			mob = (Mobile) sender;
-		} catch (NullPointerException e) {
-			System.out.println(e);
-			e.printStackTrace();
-			// System.out.println("WARNING: NULL SENDER SOURCE");
+		//Too short to search on.
+		if (name.length() < 2) {
 			return null;
 		}
-
-		Room room = mob.getLocation();
-		// First loop through mobiles to see if the thing we're looking for is a
-		// mobile...
-		try {
-			List<Mobile> mobiles = room.getMobiles();
-			if (mobiles.size() > 0) {
-				for (int c = 0; c < mobiles.size(); c++) {
-					Mobile m = (Mobile) mobiles.get(c);
-					if ((m.getBaseModel().getShortDescription().toLowerCase()).indexOf(name) != -1) {
-						return mob;
-					}
-				}
-			}
-
-			// next try the entities...
-			List<Entity> entities = room.getEntities();
-			if (entities.size() > 0) {
-				for (int c = 0; c < entities.size(); c++) {
-					Entity ent = (Entity) entities.get(c);
-					if ((ent.getName().toLowerCase().indexOf(name) != -1)) {
-						return ent;
-					}
-				}
-			}
+		
+		//
+		Mobile senderMob = (Mobile)this.sender;
+		Room room = senderMob.getLocation();
+		
+		//Get all world objects in this room to search against.
+		List<Mobile> mobs = room.getMobiles();
+		List<Item> items = room.getItems();
+		List<Entity> entities = room.getEntities();
+		
+		return search(name, mobs, items, entities);
+	}
+	
+	/**
+	 * This method delegates to {@link ring.commands.WorldObjectSearch} in order
+	 * to search collections of world objects from generic data sources. It returns
+	 * the most relevant world object found amongst all presented collections. The
+	 * text searched for is case-insensitive.
+	 * @param name The name to search for.
+	 * @param worldObjectLists {@link java.util.Collection}s of {@link WorldObject}s. 
+	 * @return The most relevant world object, or null if nothing was found.
+	 */
+	private WorldObject search(String name, Collection<? extends WorldObject> ... worldObjectLists) {
+		WorldObjectSearch search = new WorldObjectSearch();
+		
+		for (Collection<? extends WorldObject> list : worldObjectLists) {
+			search.addSearchList(list);
 		}
-		// Catch a null pointer... This tells us it isn't anything... just a
-		// sort of thing to return.
-		catch (NullPointerException e) {
-			System.err.println("COULDN'T FIND!");
+		
+		List<WorldObject> results = search.search(name);
+		
+		if (results.size() > 0) {
+			return results.get(0);
+		}
+		else {
 			return null;
 		}
-
-		// No WorldObject found to return; therefore it must be a string that
-		// needs to be passed...
-		return null;
 	}
 
 	public String[] getParameterArray() {
 		return initParameters;
 	}
-
 }

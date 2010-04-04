@@ -9,9 +9,6 @@ package ring.world;
  * @version 1.0
  */
 
-import java.io.Serializable;
-
-import ring.effects.Affectable;
 import ring.nrapi.business.AbstractBusinessObject;
 
 /**
@@ -19,4 +16,6 @@ import ring.nrapi.business.AbstractBusinessObject;
  * @author projectmoon
  * 
  */
-public abstract class WorldObject extends AbstractBusinessObject {}
+public abstract class WorldObject extends AbstractBusinessObject {
+	public abstract WorldObjectMetadata getMetadata();
+}

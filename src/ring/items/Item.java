@@ -12,6 +12,7 @@ import ring.nrapi.business.AbstractBusinessObject;
 import ring.mobiles.BodyPart;
 import ring.persistence.RingConstants;
 import ring.world.WorldObject;
+import ring.world.WorldObjectMetadata;
 import ring.effects.Effect;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -91,5 +92,12 @@ public class Item extends WorldObject {
 		i.setID("item1");
 		i.setPartWornOn(Body.FACE);
 		System.out.println(i.toXMLDocument());
+	}
+
+	@Override
+	public WorldObjectMetadata getMetadata() {
+		WorldObjectMetadata metadata = new WorldObjectMetadata();
+		metadata.setName(getName());
+		return metadata;
 	}
 }

@@ -24,6 +24,7 @@ import ring.persistence.RingConstants;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 import ring.world.WorldObject;
+import ring.world.WorldObjectMetadata;
 
 /**
  * The main business object for Mobiles. Aggregates all the mobile data models and
@@ -408,5 +409,12 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	public CommandResult doCommand(String cmd) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public WorldObjectMetadata getMetadata() {
+		WorldObjectMetadata metadata = new WorldObjectMetadata();
+		metadata.setName(getBaseModel().getName());
+		return metadata;
 	} 
 }

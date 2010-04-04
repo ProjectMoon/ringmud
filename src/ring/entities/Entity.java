@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.persistence.RingConstants;
 import ring.world.WorldObject;
+import ring.world.WorldObjectMetadata;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -44,5 +45,12 @@ public class Entity extends WorldObject {
 	@XmlElement
 	public String getDescriptor() {
 		return descriptor;
+	}
+
+	@Override
+	public WorldObjectMetadata getMetadata() {
+		WorldObjectMetadata metadata = new WorldObjectMetadata();
+		metadata.setName(getName());
+		return metadata;
 	}
 }

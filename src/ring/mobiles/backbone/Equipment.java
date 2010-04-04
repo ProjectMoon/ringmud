@@ -2,6 +2,7 @@ package ring.mobiles.backbone;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -128,6 +129,10 @@ public class Equipment implements Iterable<Item>, Serializable {
 
 	public Iterator<Item> iterator() {
 		return new ItemIterator(this);
+	}
+	
+	public Collection<Item> getItems() {
+		return equipment.values();
 	}
 
 }
