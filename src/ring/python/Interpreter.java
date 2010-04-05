@@ -12,6 +12,14 @@ public enum Interpreter {
 	
 	private Interpreter() {
 		PySystemState.initialize();
+		
+		//Needed because Jython 2.5's standalone jar is
+		//actually broken when it comes to reading the classpath.
+		//Thus, we must add our jars manually...
+		String dir = System.getenv("RING_LIB_DIR");
+		
+		PySystemState.add_extdir(dir);
+		
 		interp = new PythonInterpreter();
 	}
 	
