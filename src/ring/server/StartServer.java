@@ -9,6 +9,11 @@ import ring.persistence.ExistDB;
 import ring.server.telnet.TelnetServer;
 import ring.system.MUDBoot;
 
+/**
+ * The main entry point for the server module. This is what "starts a MUD."
+ * @author projectmoon
+ *
+ */
 public class StartServer implements RingModule {
 
 	@Override
@@ -22,7 +27,7 @@ public class StartServer implements RingModule {
 			MUDBoot.boot();
 			
 			//Only start telnet for now
-			Server server = new TelnetServer();
+			TelnetServer server = new TelnetServer();
 			try {
 				server.start();
 			} catch (IOException e) {

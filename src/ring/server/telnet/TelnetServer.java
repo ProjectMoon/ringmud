@@ -12,10 +12,16 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Level;
 
-import ring.server.Server;
+import ring.daemons.Daemon;
 import ring.system.MUDConfig;
 
-public class TelnetServer implements Server {
+/**
+ * A daemon that is a basic Telnet server for players to
+ * communicate with the MUD.
+ * @author projectmoon
+ *
+ */
+public class TelnetServer implements Daemon {
 	private TelnetD telnet;
 	
 	@Override
@@ -44,7 +50,11 @@ public class TelnetServer implements Server {
 	@Override
 	public void stop() {
 		telnet.stop();
-		
+	}
+	
+	@Override
+	public void halt() {
+		telnet.stop();
 	}
 
 }
