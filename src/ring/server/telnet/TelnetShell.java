@@ -57,9 +57,11 @@ public class TelnetShell implements Shell {
 		MUDConnectionManager.deleteTimer(connection.getConnectionData().getInetAddress());
 				
 		//Initialize the communicator.
-		comms = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
+		TelnetStreamCommunicator c = new TelnetStreamCommunicator(new TelnetInputStream(connection.getTerminalIO()),
 				new TelnetOutputStream(connection.getTerminalIO()));
 		
+		c.setEchoReturn(true);
+		comms = c;
 	}
 
 	@Override

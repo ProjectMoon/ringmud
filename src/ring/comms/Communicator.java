@@ -76,6 +76,16 @@ public interface Communicator {
 	 * @param data
 	 */
 	public void printWithPreline(String data) throws CommunicationException;
+	
+	public void printNoSuffixWithPreline(String data) throws CommunicationException;
+	
+	/**
+	 * Interjects a message into the client's screen, and then re-prints the suffix along
+	 * with any text the client had already typed. This provides for a clean, non-interrupted
+	 * interface when lots of external data is coming in.
+	 * @param message
+	 */
+	public void interject(String message) throws CommunicationException;
 
 	/**
 	 * Sets the suffix that is appended to outgoing data in most versions of the
@@ -94,11 +104,9 @@ public interface Communicator {
 	 */
 	public String getSuffix();
 	
-
 	/**
 	 * Waits for the user on the other end of this Communicator to send us some
-	 * data. The wait is indefinite until the idle timeout; the thread will
-	 * sleep for 50 milliseconds every time it has to wait. After a while the
+	 * data. The wait is indefinite until the idle timeout. After a while the
 	 * server will terminate the connection and the communication error variable
 	 * will be set.
 	 * 
@@ -133,4 +141,19 @@ public interface Communicator {
 	 * @return true or false.
 	 */
 	public boolean getScreenWidthParsing();
+	
+	/**
+	 * Gets the return echo mode of this Communicator. If set
+	 * to true, the Communicator will send a newline back to the
+	 * client when the client hits the enter key to submit a
+	 * command to the server.
+	 * @return true or false
+	 */
+	public boolean getEchoReturn();
+	
+	/**
+	 * Sets the return echo mode of this Communicator.
+	 * @param val
+	 */
+	public void setEchoReturn(boolean val);
 }

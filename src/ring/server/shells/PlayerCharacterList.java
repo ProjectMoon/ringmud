@@ -22,6 +22,7 @@ public class PlayerCharacterList {
 	}
 	
 	public PlayerCharacter doPlayerList() {
+		comms.println("Select your character:");
 		PlayerCharacter pc = null;
 		
 		List<String> characterIDs = player.getCharacterIDs();
@@ -36,6 +37,8 @@ public class PlayerCharacterList {
 		while (pc == null) {
 			comms.print("Enter the number of your desired character: ");
 			String input = comms.receiveData();
+			comms.println();
+			
 			int index = 0;
 			
 			//First check: Make sure it's actually a number.

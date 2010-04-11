@@ -24,7 +24,7 @@ public class PlayerDepictionHandler implements DepictionHandler {
 	public void handle(ProcessedDepiction depiction) {
 		//Use printNoSuffix here, otherwise we get more than one
 		//prompt.
-		communicator.printNoSuffix(depiction.getDepiction());
+		communicator.printNoSuffixWithPreline(depiction.getDepiction());
 	}
 	
 	public Communicator getCommunicator() {

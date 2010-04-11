@@ -78,7 +78,7 @@ public class TelnetInputStream extends InputStream {
 				
 				//Echo it back, if it's turned on.
 				//Currently will also echo newlines.
-				if (echo) {
+				if (echo && (char)i != '\n') {
 					io.write((char)i);
 				}
 			}

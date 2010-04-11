@@ -34,7 +34,6 @@ public class PlayerShell {
 		
 		comms.println("Welcome back, [B]" + user.getName() + "[R]. You descend into the world of Orea once more as [B]" + player.getBaseModel().getName() + "[R]...");
 		comms.println();
-		comms.println();
 		
 		gameLoop();
 	}
@@ -69,6 +68,7 @@ public class PlayerShell {
 		player.setLocation(room);
 		
 		//A player should see where they are when they log in.
+		comms.setSuffix(player.getPrompt());
 		sendCommandResult(player.doCommand("look"));
 		
 		// Wait for commands.
@@ -104,13 +104,20 @@ public class PlayerShell {
 	}
 	
 	private void sendCommandResult(CommandResult res) {
+		
 		String result = "";
 		if (res.hasReturnableData()) {
 			result = res.getText();
+			comms.print(result);
+		}
+		else {
+			comms.println();
+			comms.println();
+			comms.printSuffix();		
 		}
 		
 		comms.setSuffix(player.getPrompt());
-		comms.print(result);
+		
 	}
 	
 	private void logout() {

@@ -16,6 +16,7 @@ public class TelnetStreamCommunicator implements Communicator {
 	private String suffix = "";
 	private boolean error = false;
 	private boolean screenWidthParsing = true;
+	private boolean newlineOnDataReceived = true;
 	
 	public TelnetStreamCommunicator(TelnetInputStream in, TelnetOutputStream out) {
 		lowlevelInput = in;
@@ -160,6 +161,18 @@ public class TelnetStreamCommunicator implements Communicator {
 		}
 	}
 
+	public void printNoSuffixWithPreline(String data) throws CommunicationException {
+		if (isValid(data)) {
+			data = formatData(data, false);
+			data = "\n" + data;
+			doSend(data);
+		}		
+	}
+	
+	public void interject(String message) throws CommunicationException {
+		
+	}
+	
 	/**
 	 * Sets the suffix that is appended to outgoing data in most versions of the
 	 * send command. In general, the suffix is a command prompt of some kind.
@@ -184,7 +197,13 @@ public class TelnetStreamCommunicator implements Communicator {
 	 * @return The received data.
 	 */
 	public String receiveData() throws CommunicationException {
-		return in.nextLine();
+		String s = in.nextLine();
+		
+		if (getEchoReturn()) {
+			println();
+		}
+		
+		return s;
 	}
 	
 	public boolean isConnected() {
@@ -206,4 +225,11 @@ public class TelnetStreamCommunicator implements Communicator {
 		return lowlevelOutput;
 	}
 
+	public boolean getEchoReturn() {
+		return newlineOnDataReceived;
+	}
+	
+	public void setEchoReturn(boolean val) {
+		newlineOnDataReceived = val;
+	}
 }
