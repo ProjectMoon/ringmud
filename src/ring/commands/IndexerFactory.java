@@ -19,7 +19,9 @@ public class IndexerFactory {
 		try {
 			Class<?> c = Class.forName(indexer);
 			CommandIndexer cmdIndexer = (CommandIndexer)c.newInstance();
-			cmdIndexer.setProperties(props);
+			if (props != null) {
+				cmdIndexer.setProperties(props);
+			}
 			return cmdIndexer;
 		} 
 		catch (InstantiationException e) {
@@ -35,5 +37,9 @@ public class IndexerFactory {
 		}
 		
 		return null;
+	}
+	
+	public static CommandIndexer getIndexer(String indexer) {
+		return getIndexer(indexer, null);
 	}
 }

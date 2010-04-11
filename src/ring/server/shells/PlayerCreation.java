@@ -2,8 +2,8 @@ package ring.server.shells;
 
 import java.util.Date;
 
+import ring.comms.Communicator;
 import ring.players.Player;
-import ring.server.Communicator;
 import ring.util.UserUtilities;
 
 /**

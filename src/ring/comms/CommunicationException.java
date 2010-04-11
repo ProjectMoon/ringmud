@@ -1,4 +1,4 @@
-package ring.server;
+package ring.comms;
 
 /**
  * Exception denoting a communication problem. Unchecked due to the sheer

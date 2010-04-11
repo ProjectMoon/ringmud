@@ -6,11 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import ring.comms.Communicator;
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
-import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;
@@ -116,7 +116,11 @@ public class PlayerLoginShell {
 			pc.save();
 			player.save();
 		}
-				
+		
+		//Should never have a null player now.
+		assert(player != null);
+		
+		pc.setPlayer(player);
 		MUDConnection mc = new MUDConnection();
 		mc.setPlayer(player);
 		mc.setPlayerCharacter(pc);

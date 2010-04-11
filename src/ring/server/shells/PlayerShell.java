@@ -3,13 +3,13 @@ package ring.server.shells;
 import java.net.InetAddress;
 
 import ring.commands.CommandResult;
+import ring.comms.Communicator;
 import ring.mobiles.senses.SensesGroup;
 import ring.mobiles.senses.handlers.PlayerDepictionHandler;
 import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
-import ring.server.Communicator;
 import ring.server.MUDConnection;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionState;

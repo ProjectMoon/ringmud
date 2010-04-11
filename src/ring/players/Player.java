@@ -25,6 +25,9 @@ public class Player extends AbstractBusinessObject {
 	private Date lastLogon;
 	private List<String> charIDs = new ArrayList<String>();
 	
+	//TODO refactor this out somehow
+	private SystemMessageHandler sysMessageHandler;
+	
 	@XmlElement
 	public String getName() {
 		return name;

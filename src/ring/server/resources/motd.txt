@@ -1,4 +1,4 @@
                                    [CYAN]RingMUD Alpha[CYAN]
-                              A [WHITE]Forgotten Realms[CYAN] MUD.
+                                   [CYAN]A [WHITE]Sample[CYAN] MUD.
                                       [WHITE]Forgers:
-                            	 [CYAN] Ao (Code & Areas)
+                            [CYAN] projectmoon (Code & Areas)

@@ -34,7 +34,6 @@ class JythonIndexer implements CommandIndexer {
 	private final ArrayList<Command> cmds = new ArrayList<Command>();
 	private boolean indexed = false;
 
-	private Properties props;
 	private static PythonInterpreter INTERP = Interpreter.INSTANCE.getInterpreter();
 	private static final Pattern JYTHON_PATTERN = Pattern.compile("^class\\s+(\\w+)\\s*\\([\\w,_\\s]*Command[\\w,_\\s]*\\):$");
 	
@@ -44,10 +43,6 @@ class JythonIndexer implements CommandIndexer {
 	 * Indexes commands from Jython script files.
 	 */
 	public void index() throws IllegalStateException {
-		if (props == null) {
-			throw new IllegalStateException("JythonIndexer: No properties! Can't index without them!");
-		}
-		
 		filePath = DeployedMUDFactory.currentMUD().getLocation() + File.separator + "commands/";
 		initInterpreter();
 		File dir = new File(filePath);
@@ -150,10 +145,6 @@ class JythonIndexer implements CommandIndexer {
 	 * this method calls it automatically.
 	 */
 	public List<Command> getCommands()  throws IllegalStateException {
-		if (props == null) {
-			throw new IllegalStateException("JythonIndexer: No properties! Can't get commands without them!");
-		}
-		
 		if (!indexed) {
 			index();
 		}
@@ -161,24 +152,21 @@ class JythonIndexer implements CommandIndexer {
 		return cmds;
 	}
 	
-	/**
-	 * Gets this plugin's properties.
-	 */
-	public Properties getProperties() {
-		return props;
-	}
-
-	/**
-	 * Sets this plugin's properties.
-	 */
-	public void setProperties(Properties props) {
-		this.props = props;	
-	}
 	
 	/**
 	 * Returns "[JythonIndexer]".
 	 */
 	public String toString() {
 		return "[JythonIndexer]";
+	}
+
+	@Override
+	public Properties getProperties() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setProperties(Properties props) {
+		throw new UnsupportedOperationException();
 	}
 }

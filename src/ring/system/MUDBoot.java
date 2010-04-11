@@ -10,7 +10,9 @@ import org.xmldb.api.base.XMLDBException;
 import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
+import ring.daemons.Daemon;
 import ring.events.EventLoader;
+import ring.intermud3.Intermud3Daemon;
 import ring.movement.WorldBuilder;
 import ring.python.Interpreter;
 import ring.world.Ticker;
@@ -81,6 +83,9 @@ public class MUDBoot {
 			e.printStackTrace();
 		}
 		
+		//Load i3, if it is there.
+		loadI3();
+		
 		System.out.println("Done loading RingMUD.");
 	}
 
@@ -90,14 +95,13 @@ public class MUDBoot {
 	 */
 	private static void loadCommands() {
 		Properties pkgProps = MUDConfig.getPluginProperties("pkgIndexer");
-		Properties jythonProps = MUDConfig.getPluginProperties("jythonIndexer");
 
 		CommandIndexer pkgIndexer = IndexerFactory.getIndexer(
 				"ring.commands.PackageIndexer", pkgProps);
 		CommandHandler.addCommands(pkgIndexer.getCommands());
 
 		CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
-				"ring.commands.JythonIndexer", jythonProps);
+				"ring.commands.JythonIndexer");
 		CommandHandler.addCommands(jythonIndexer.getCommands());
 	}
 
@@ -120,6 +124,21 @@ public class MUDBoot {
 		catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	private static void loadI3() {
+		Properties i3props = MUDConfig.getPluginProperties("i3");
+		
+		if (i3props != null) {
+			System.out.println("Connecting to Intermud3...");
+			Daemon i3 = new Intermud3Daemon();
+			try {
+				i3.start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

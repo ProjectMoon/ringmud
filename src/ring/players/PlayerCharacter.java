@@ -21,11 +21,21 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	private static final long serialVersionUID = 1L;
 	
 	private transient boolean quitting;
+	private transient Player controllingPlayer;
 
 	public PlayerCharacter() {}
 	
 	public PlayerCharacter(String pName) {
 		super.getBaseModel().setName(pName);
+	}
+	
+	@XmlTransient
+	public Player getPlayer() {
+		return controllingPlayer;
+	}
+	
+	public void setPlayer(Player player) {
+		controllingPlayer = player;
 	}
 
 	@Override 

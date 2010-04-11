@@ -2,10 +2,10 @@ package ring.server.shells;
 
 import java.util.List;
 
+import ring.comms.Communicator;
 import ring.persistence.DataStoreFactory;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
-import ring.server.Communicator;
 
 /**
  * Presents a list of characters for a player to choose from.

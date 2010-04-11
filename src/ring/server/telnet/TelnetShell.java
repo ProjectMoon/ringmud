@@ -5,7 +5,10 @@ import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ring.server.Communicator;
+import ring.comms.Communicator;
+import ring.comms.telnet.TelnetInputStream;
+import ring.comms.telnet.TelnetOutputStream;
+import ring.comms.telnet.TelnetStreamCommunicator;
 import ring.server.MUDConnectionManager;
 import ring.server.MUDConnectionTimeout;
 import ring.server.shells.PlayerLoginShell;

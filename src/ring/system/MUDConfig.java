@@ -138,7 +138,12 @@ public class MUDConfig {
 			}
 		}
 		
-		return pluginProps;
+		if (pluginProps.size() > 0) {
+			return pluginProps;
+		}
+		else {
+			return null;
+		}
 	}
 
 	public static String getDatabaseURI() {

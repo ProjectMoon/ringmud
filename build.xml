@@ -101,6 +101,12 @@
 		</jar>
 	</target>
 	
+	<target name="jar-comms" depends="compile">
+		<jar destfile="${jar.dir}/ringmud-comms-${app.version}.jar">
+			<zipfileset dir="${classes.dir}" includes="ring/comms/**"/>
+		</jar>
+	</target>	
+	
 	<target name="jar-deployer" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-deployer-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/deployer/**"/>
@@ -119,7 +125,9 @@
 	<target name="jar-core" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-core-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>	
+			<zipfileset dir="${classes.dir}" includes="ring/daemons/**"/>
+			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>
+			<zipfileset dir="${classes.dir}" includes="ring/intermud3/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/python/**" />
 			<zipfileset dir="${src.dir}/ring/python/" includes="*.py" prefix="ring/python/" />
@@ -170,7 +178,7 @@
 		</jar>
 	</target>
 		
-    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
+    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
     		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />

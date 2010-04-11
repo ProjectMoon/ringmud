@@ -1,10 +1,10 @@
-package ring.server.telnet;
+package ring.comms.telnet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import ring.server.CommunicationException;
-import ring.server.Communicator;
+import ring.comms.CommunicationException;
+import ring.comms.Communicator;
 import ring.util.TextParser;
 
 public class TelnetStreamCommunicator implements Communicator {

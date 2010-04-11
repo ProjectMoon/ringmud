@@ -1,4 +1,4 @@
-package ring.server.telnet;
+package ring.comms.telnet;
 
 import java.io.IOException;
 import java.io.OutputStream;

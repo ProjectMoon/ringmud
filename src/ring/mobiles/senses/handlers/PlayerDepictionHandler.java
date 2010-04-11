@@ -1,8 +1,8 @@
 package ring.mobiles.senses.handlers;
 
+import ring.comms.Communicator;
 import ring.mobiles.senses.DepictionHandler;
 import ring.mobiles.senses.ProcessedDepiction;
-import ring.server.Communicator;
 
 /**
  * Depicts a ProcessDepiction of a Stimulus to a player.

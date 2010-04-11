@@ -1,10 +1,9 @@
-package ring.server;
+package ring.comms;
 
 /**
- * This class facilitates communication between a user and the server. This is a
- * standardized method of sending data back and forth. It also alleviates issues
- * with the newline character, as there are now defined methods for newlines or
- * not newlines.
+ * This class facilitates communication between a user and the server. This is the
+ * standardized method of sending data back and forth. This interface is wrapped around
+ * a "lower level" communication protocol such as Telnet or SSH.
  * 
  * @author jeff
  */

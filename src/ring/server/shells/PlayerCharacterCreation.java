@@ -1,5 +1,6 @@
 package ring.server.shells;
 
+import ring.comms.Communicator;
 import ring.mobiles.Alignment;
 import ring.mobiles.MobileBaseModel;
 import ring.mobiles.Race;
@@ -10,7 +11,6 @@ import ring.mobiles.MobileBaseModel.Gender;
 import ring.mobiles.mobclass.MobileClass;
 import ring.persistence.DataStoreFactory;
 import ring.players.PlayerCharacter;
-import ring.server.Communicator;
 
 /**
  * Class for creating a player character.
