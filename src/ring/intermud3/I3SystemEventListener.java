@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ring.players.Player;
+import ring.players.PlayerCharacter;
 import ring.server.MUDConnectionManager;
 
 import com.aelfengard.i3.ErrorCallback;
@@ -21,14 +22,14 @@ class I3SystemEventListener implements I3EventListener {
      * Respond to who requests.
      */
     public List<LPCMixed> whoRequest() {
-    	List<Player> players = MUDConnectionManager.getCurrentPlayers();
+    	List<PlayerCharacter> players = MUDConnectionManager.getCurrentCharacters();
     	
         List<LPCMixed> myInfo = new ArrayList<LPCMixed>();
         
-        for (Player p : players) {
-	        myInfo.add(new LPCMixed(p.getName()));
+        for (PlayerCharacter p : players) {
+	        myInfo.add(new LPCMixed(p.getPlayer().getName()));
 	        myInfo.add(new LPCMixed(-1));
-	        myInfo.add(new LPCMixed("I3J User"));
+	        myInfo.add(new LPCMixed(p.getBaseModel().getName()));
         }
         
         return Arrays.asList(new LPCMixed[] { new LPCMixed(myInfo) });

@@ -1,22 +1,17 @@
 package ring.intermud3;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import ring.daemons.Daemon;
 import ring.deployer.DeployedMUDFactory;
 import ring.players.Player;
-import ring.server.MUDConnectionManager;
 import ring.system.MUDConfig;
 
-import com.aelfengard.i3.*;
-import com.aelfengard.i3.packet.*;
+import com.aelfengard.i3.I3Client;
 
 /**
  * A daemon for connecting RingMUD to Intermud3 chat networks.
@@ -43,25 +38,30 @@ public class Intermud3Daemon implements Daemon {
 	public void start() throws IOException {
 		daemon = this;
 
-		Properties i3props = MUDConfig.getPluginProperties("i3");
+		String host = "204.209.44.3";
+		String router = "*i4";
+		int port = 8080;
 		
-		String host = i3props.getProperty("i3.host");
-		String router = i3props.getProperty("i3.router");
-		int port = Integer.parseInt(i3props.getProperty("i3.port"));
+		Properties i3props = MUDConfig.getPluginProperties("i3");
+		if (i3props != null) {
+			host = i3props.getProperty("i3.host");
+			router = i3props.getProperty("i3.router");
+			port = Integer.parseInt(i3props.getProperty("i3.port"));
+		}
+		else {
+			System.out.println(" No i3 configuration. Connecting to *i4 by default.");
+		}
 		
 		client = new I3Client();
-//		client.setHost(host);
-//		client.setRouterName(router);
-//		client.setPort(port);
-        client.setRouterName("*i4");
-        client.setHost("204.209.44.3");
-        client.setPort(8080);
-        client.addEventListener(new I3SystemEventListener());
+		client.setHost(host);
+		client.setRouterName(router);
+		client.setPort(port);
+
+		client.addEventListener(new I3SystemEventListener());
         //client.addChannelListener("spam", new MyI3ChannelListener());
-		//String mudName = DeployedMUDFactory.currentMUD().getName();
-        
-		String mudName = "RingMUD";
-		client.setMudName(mudName);
+		
+        String mudName = DeployedMUDFactory.currentMUD().getName();
+        client.setMudName(mudName);
 		client.setAdminEmail("not-filled-out@nowhere.net");
 		client.setMudType("RingMUD");
 		
@@ -98,10 +98,5 @@ public class Intermud3Daemon implements Daemon {
 		}
 		
 		return cl;
-	}
-		
-	public static void main(String[] args) throws IOException {
-		MUDConfig.loadProperties();
-		new Intermud3Daemon().start();
 	}
 }

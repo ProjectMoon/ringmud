@@ -1,15 +1,10 @@
 package ring.intermud3;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import ring.players.Player;
-import ring.server.MUDConnectionManager;
-import ring.system.MUDConfig;
 
 import com.aelfengard.i3.ErrorCallback;
 import com.aelfengard.i3.I3ChannelListener;
@@ -80,9 +75,14 @@ public class Intermud3Client {
 	    public void whoReply(LPCMixed targetUsername, LPCMixed originatorMudName, List<LPCMixed> whoInfo) {
 	    	System.out.println("Testing vs " + player.getName());
 	    	if (player.getName().equalsIgnoreCase(targetUsername.asString())) {
+	    		String list = "Players on " + originatorMudName.asString() + ":\n";
+	    		
 		        for (LPCMixed info : whoInfo) {
 		            List<LPCMixed> entry = info.asList();
-		            System.out.println(entry.get(0) + " [" + entry.get(1) + "/" + entry.get(2) + "]");
+		            
+		            list += (entry.get(0) + " [" + entry.get(1) + "/" + entry.get(2) + "]") + "\n";
+		            
+		            player.getSystemMessageHandler().sendMessage(list);
 		        }	    		
 	    	}
 	    }
@@ -92,15 +92,7 @@ public class Intermud3Client {
 	    }
 
 	    public List<LPCMixed> whoRequest() {
-	        List<LPCMixed> myInfo = new ArrayList<LPCMixed>();
-	        
-	        for (Player player : MUDConnectionManager.getCurrentPlayers()) {
-	            myInfo.add(new LPCMixed(player.getName()));
-	            myInfo.add(new LPCMixed(-1));
-	            myInfo.add(new LPCMixed("I3J User"));        	
-	        }
-
-	        return Arrays.asList(new LPCMixed[] { new LPCMixed(myInfo) });
+	    	return null;
 	    }
 
 	    public void tell(TellPacket packet, ErrorCallback callback) {
@@ -131,8 +123,6 @@ public class Intermud3Client {
 	    }
 	}
 }
-
-
 
 class I3ChannelsListener implements I3ChannelListener {
 

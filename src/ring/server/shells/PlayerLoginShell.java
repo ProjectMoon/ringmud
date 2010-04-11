@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 
 import ring.comms.Communicator;
+import ring.comms.SystemMessageHandler;
 import ring.persistence.DataStore;
 import ring.persistence.DataStoreFactory;
 import ring.players.Player;
@@ -120,6 +121,7 @@ public class PlayerLoginShell {
 		//Should never have a null player now.
 		assert(player != null);
 		
+		player.setSystemMessageHandler(new SystemMessageHandler(comms));
 		pc.setPlayer(player);
 		MUDConnection mc = new MUDConnection();
 		mc.setPlayer(player);

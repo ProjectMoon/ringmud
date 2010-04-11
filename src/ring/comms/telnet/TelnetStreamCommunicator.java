@@ -156,7 +156,7 @@ public class TelnetStreamCommunicator implements Communicator {
 		if (isValid(data)) {
 			data = formatData(data, true);
 			data = "\n" + data;
-			doSendln(data);
+			doSend(data);
 		}
 	}
 

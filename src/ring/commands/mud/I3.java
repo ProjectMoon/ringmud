@@ -44,10 +44,11 @@ public class I3 implements Command {
 			res.setText(result);
 		}
 		else if (op.equalsIgnoreCase("who")) {
-			String mudName = params.getParameterAsText(1);
+			String mudName = params.getTextParameters(1);
 			
 			try {
 				client.submitWhoRequest(mudName);
+				return CommandResult.blankResult(true);
 			} catch (I3NotConnectedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -7,7 +7,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import ring.comms.SystemMessageHandler;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.DataStoreFactory;
 
@@ -84,4 +86,14 @@ public class Player extends AbstractBusinessObject {
 	public boolean removeCharacter(String name) {
 		return charIDs.remove(name);
 	}
+	
+	@XmlTransient
+	public SystemMessageHandler getSystemMessageHandler() {
+		return sysMessageHandler;
+	}
+	
+	public void setSystemMessageHandler(SystemMessageHandler handler) {
+		sysMessageHandler = handler;
+	}
+	
 }

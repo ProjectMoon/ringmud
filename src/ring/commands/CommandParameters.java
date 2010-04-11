@@ -81,6 +81,16 @@ public final class CommandParameters {
 	public int length() {
 		return initParameters.length;
 	}
+	
+	public String getTextParameters(int fromIndex) {
+		String res = "";
+		
+		for (int c = fromIndex; c < length(); c++) {
+			res += initParameters[c] + " ";
+		}
+		
+		return res.trim();
+	}
 
 	/**
 	 * Gets the object parameter at the specified index.
