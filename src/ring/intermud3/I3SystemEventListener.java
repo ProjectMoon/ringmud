@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ring.players.Player;
 import ring.players.PlayerCharacter;
 import ring.server.MUDConnectionManager;
 

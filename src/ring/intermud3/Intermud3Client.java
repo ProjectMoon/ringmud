@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ring.deployer.DeployedMUDFactory;
 import ring.players.Player;
 
 import com.aelfengard.i3.ErrorCallback;
@@ -39,8 +40,23 @@ public class Intermud3Client {
 		return client.isConnected();
 	}
 	
-	public void sendTell(String toUser, String message) {
+	public void sendTell(String toMud, String toUser, String message) {
+		TellPacket tpacket = new TellPacket();
+		tpacket.setOriginatorMudName(new LPCMixed(DeployedMUDFactory.currentMUD().getName()));
+		tpacket.setOriginatorUsername(new LPCMixed(player.getName()));
+		tpacket.setOrigVisName(new LPCMixed(player.getName()));
+		tpacket.setTargetMudName(new LPCMixed(toMud));
+		tpacket.setTargetUsername(new LPCMixed(toUser));
+		tpacket.setMessage(new LPCMixed(message));
 		
+		try {
+			client.send(tpacket);
+			//For receiving tells, see the event handler below.
+		} 
+		catch (I3NotConnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void submitWhoRequest(String mudName) throws I3NotConnectedException {
@@ -75,7 +91,7 @@ public class Intermud3Client {
 	    public void whoReply(LPCMixed targetUsername, LPCMixed originatorMudName, List<LPCMixed> whoInfo) {
 	    	System.out.println("Testing vs " + player.getName());
 	    	if (player.getName().equalsIgnoreCase(targetUsername.asString())) {
-	    		String list = "Players on " + originatorMudName.asString() + ":\n";
+	    		String list = "Players on [B]" + originatorMudName.asString() + "[R]:\n";
 	    		
 		        for (LPCMixed info : whoInfo) {
 		            List<LPCMixed> entry = info.asList();
@@ -96,8 +112,9 @@ public class Intermud3Client {
 	    }
 
 	    public void tell(TellPacket packet, ErrorCallback callback) {
-	        if ("some guy".equals(packet.getTargetUsername().asString())) {
-	            System.out.println(packet.getOriginatorUsername() + "@" + packet.getOriginatorMudName() + " tells you: " + packet.getMessage());
+	        if (player.getName().equals(packet.getTargetUsername().asString())) {
+	        	String message = "[B]" + packet.getOriginatorUsername() + "@" + packet.getOriginatorMudName() + "[R] tells you: " + packet.getMessage();
+	            player.getSystemMessageHandler().sendMessage(message);
 	        }
 	        else {
 	            callback.returnError("Unknown user");

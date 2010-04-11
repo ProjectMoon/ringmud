@@ -48,11 +48,23 @@ public class I3 implements Command {
 			
 			try {
 				client.submitWhoRequest(mudName);
-				return CommandResult.blankResult(true);
+				res.setText("Who request for [B]" + mudName + "[R] submitted.");
+				res.setSuccessful(true);
 			} catch (I3NotConnectedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
+		}
+		else if (op.equalsIgnoreCase("tell")) {
+			String[] target = params.getParameterAsText(1).split("@");
+			String message = params.getTextParameters(2);
+			
+			System.out.println("tell mud: " + target[1]);
+			System.out.println("tell user: " + target[0]);
+			
+			client.sendTell(target[1], target[0], message);
+			res.setText("You tell [B]" + target[0] + "@" + target[1] + "[R]: " + message);
+			res.setSuccessful(true);
 		}
 		
 		return res;
