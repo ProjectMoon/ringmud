@@ -15,13 +15,15 @@ Super quick startup instructions:
  3. Download and install Jython from http://www.jython.org.
  4. Build ringmud by running `ant` from this directory.
  5. `cd dist/bin/`
- 6. Start up eXist by running `startup.sh` in exist's bin directory.
+ 6. Start up eXist by running `server.sh` in exist's bin directory.
      * You may need to use `sudo` depending on where you installed eXist.
  7. `sudo ./ringmud.sh install unix` (Windows support coming later)
  8. This will "install" ringmud's configuration file to `/etc/ringmud`,
  as well as create the database collections in eXist.
-     * NOTE: Don't forget to copy your database login info to the mud.config.
+     * NOTE: Don't forget to copy your database login info to mud.config.
  9. Compile the ever so exciting sample mud:
+     * Change the name of the sample mud in mud.properties so you have a unique
+       name on Intermud 3.
      * `./rmc ../../sample/`
      * You need to give it the directory of the sample MUD. In this case, the
   sample MUD is in the root git directory, which is two levels above dist/bin/
