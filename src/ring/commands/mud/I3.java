@@ -43,6 +43,17 @@ public class I3 implements Command {
 			res.setSuccessful(true);
 			res.setText(result);
 		}
+		else if (op.equalsIgnoreCase("channels")) {
+			result = "List of Channels:\n";
+			List<String> channels = client.getChannels();
+			
+			for (String channel : channels) {
+				result += channel + "\n";
+			}
+			
+			res.setSuccessful(true);
+			res.setText(result);
+		}
 		else if (op.equalsIgnoreCase("who")) {
 			String mudName = params.getTextParameters(1);
 			

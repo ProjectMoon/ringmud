@@ -7,6 +7,7 @@ import java.util.Map;
 import ring.deployer.DeployedMUDFactory;
 import ring.players.Player;
 
+import com.aelfengard.i3.ChanInfo;
 import com.aelfengard.i3.ErrorCallback;
 import com.aelfengard.i3.I3ChannelListener;
 import com.aelfengard.i3.I3Client;
@@ -85,6 +86,17 @@ public class Intermud3Client {
         }
         
         return muds;
+	}
+	
+	public List<String> getChannels() {
+		List<String> channels = new ArrayList<String>();
+        for (Map.Entry<String,ChanInfo> entry : client.getChannelList().entrySet()) {
+            if (entry.getValue().getChannelType() == ChanInfo.CHANNEL_TYPE_SELECTIVELY_BANNED) {
+                channels.add(entry.getKey());
+            }
+        }
+        
+        return channels;
 	}
 
 	private class I3EventsListener implements I3EventListener {
