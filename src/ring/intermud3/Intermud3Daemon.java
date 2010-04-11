@@ -49,7 +49,9 @@ public class Intermud3Daemon implements Daemon {
 			port = Integer.parseInt(i3props.getProperty("i3.port"));
 		}
 		else {
-			System.out.println(" No i3 configuration. Connecting to *i4 by default.");
+			//System.out.println(" No i3 configuration. Connecting to *i4 by default.");
+			System.out.println(" No i3 configuration. Not turning on Intermud3.");
+			return;
 		}
 		
 		client = new I3Client();
