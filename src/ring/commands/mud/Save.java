@@ -8,7 +8,7 @@ import ring.mobiles.Mobile;
 
 public class Save implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		/*
 		res.setFailText("[B][RED]SAVING FAILED!! PLEASE NOTIFY AN ADMINISTRATOR!![R][WHITE]");

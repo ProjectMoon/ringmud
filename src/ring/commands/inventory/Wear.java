@@ -12,7 +12,7 @@ import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Wear implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		System.out.println("In wear");
 		params.init(CommandType.INVENTORY);
 		Object t = params.getParameter(0);
@@ -21,10 +21,12 @@ public class Wear implements Command {
 
 		if (t == null) {
 			res.setFailText("[R][WHITE]Wear what?");
-			return res;
+			res.send();
+			return;
 		}
 		if (!(t instanceof Armor)) {
-			return res;
+			res.send();
+			return;
 		}
 
 		Armor target = (Armor)t;
@@ -34,8 +36,10 @@ public class Wear implements Command {
 		Mobile mob = (Mobile) sender;
 
 		// Check if the target is wearable.
-		if (!(target.isWearableFor(mob)))
-			return res;
+		if (!(target.isWearableFor(mob))) {
+			res.send();
+			return;
+		}
 
 		// Check if the wearer meets all the requirements to wear target
 		// (alignment, class, etc.)
@@ -53,7 +57,7 @@ public class Wear implements Command {
 		
 		if (!success) {
 			res.setFailText("[R][WHITE]You lack the proper body shape to wear that!");
-			return res;
+			res.send();
 		}
 
 		// Remove the target from the wearer's inventory.
@@ -74,9 +78,8 @@ public class Wear implements Command {
 				+ target.getPartWornOn().getName().toLowerCase() + ".");
 		
 		StimulusSender.sendStimulus(mob.getLocation(), vs, mob);
-
-		return res;
-
+		
+		res.send();
 	}
 
 	public String getCommandName() {

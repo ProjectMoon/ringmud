@@ -16,7 +16,7 @@ import ring.players.PlayerCharacter;
 public class I3 implements Command {
 
 	@Override
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
 		
@@ -29,7 +29,8 @@ public class I3 implements Command {
 		Intermud3Client client = Intermud3Daemon.currentDaemon().getClientForPlayer(pc.getPlayer());
 		
 		if (!client.isConnected()) {
-			return res;
+			res.send();
+			return;
 		}
 		
 		String result = "";
@@ -77,8 +78,6 @@ public class I3 implements Command {
 			res.setText("You tell [B]" + target[0] + "@" + target[1] + "[R]: " + message);
 			res.setSuccessful(true);
 		}
-		
-		return res;
 	}
 
 	@Override

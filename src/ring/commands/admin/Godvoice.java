@@ -13,7 +13,7 @@ import ring.server.MUDConnectionManager;
 
 public class Godvoice extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		// Make the CommandResult object.
 		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
@@ -67,7 +67,7 @@ public class Godvoice extends AbstractAdminCommand implements Command {
 
 		res.setSuccessful(true);
 		// Return the CommandResult.
-		return res;
+		res.send();
 
 	}
 

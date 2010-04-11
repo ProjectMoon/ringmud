@@ -14,7 +14,7 @@ import ring.skills.Skill;
 //TODO refactor search
 public class Search implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException("Search to be implemented in python");
 		/*
 		params.init(CommandType.TEXT);

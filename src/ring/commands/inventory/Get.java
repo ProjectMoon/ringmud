@@ -14,7 +14,7 @@ import ring.world.WorldObject;
 
 public class Get implements Command {
 
-	public synchronized CommandResult execute(CommandSender sender, CommandParameters params) {
+	public synchronized void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.FROM_ROOM);
 		Object target = params.getParameter(0);
 
@@ -23,15 +23,18 @@ public class Get implements Command {
 
 		if (target == null) {
 			res.setFailText("[R][WHITE]You don't see that here.");
-			return res;
+			res.send();
+			return;
 		}
 
 		Mobile getter = (Mobile) sender;
 		WorldObject thing = (WorldObject) target;
 
 		// Check if thing is gettable.
-		if (!(thing instanceof Item))
-			return res;
+		if (!(thing instanceof Item)) {
+			res.send();
+			return;
+		}
 
 		// If yes, remove thing from room and add to getter's inventory.
 		Item i = (Item) thing;
@@ -53,7 +56,7 @@ public class Get implements Command {
 		StimulusSender.sendStimulus(getter.getLocation(), vs, getter);
 
 		res.setSuccessful(true);
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

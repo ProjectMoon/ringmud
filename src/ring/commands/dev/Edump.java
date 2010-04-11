@@ -16,7 +16,7 @@ import ring.events.EventDispatcher;
 public class Edump extends AbstractAdminCommand implements Command {
 
 	@Override
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setSuccessful(true);
 		
@@ -37,7 +37,7 @@ public class Edump extends AbstractAdminCommand implements Command {
 		}
 		
 		res.setText(text);
-		return res;
+		res.send();
 	}
 
 	@Override

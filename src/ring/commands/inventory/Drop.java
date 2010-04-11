@@ -14,7 +14,7 @@ import ring.movement.Room;
 
 public class Drop implements Command {
 
-	public synchronized CommandResult execute(CommandSender sender, CommandParameters params) {
+	public synchronized void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.INVENTORY);
 		Object target = params.getParameter(0);
 
@@ -22,12 +22,12 @@ public class Drop implements Command {
 
 		if (target == null) {
 			res.setFailText("[R][WHITE]Drop what?");
-			return res;
+			res.send();
 		}
 
 		if (!(target instanceof Affectable)) {
 			res.setFailText("[R][WHITE]You don\'t have that item.");
-			return res;
+			res.send();
 		}
 
 		Item item = (Item) target;
@@ -59,7 +59,7 @@ public class Drop implements Command {
 			res.setFailText("[R][WHITE]You can't drop that!");
 		}
 		res.setSuccessful(true);
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

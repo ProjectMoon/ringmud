@@ -9,7 +9,7 @@ import ring.mobiles.Mobile;
 
 public class LevelUp extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("Magic is powerful, but not THAT powerful.");
 		
@@ -20,7 +20,7 @@ public class LevelUp extends AbstractAdminCommand implements Command {
 			res.setText("Leveled up...");
 			res.setSuccessful(true);
 		}
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

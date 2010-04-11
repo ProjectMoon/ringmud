@@ -9,7 +9,7 @@ import ring.skills.Skill;
 
 public class MoveSilently implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException("Move silently to be implemented in python");
 		/*
 		CommandResult res = new CommandResult();

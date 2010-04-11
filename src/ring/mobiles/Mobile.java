@@ -406,9 +406,8 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 	}
 
 	@Override
-	public CommandResult doCommand(String cmd) {
-		// TODO Auto-generated method stub
-		return null;
+	public void doCommand(String cmd) {
+
 	}
 
 	@Override

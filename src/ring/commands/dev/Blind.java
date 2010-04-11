@@ -9,7 +9,7 @@ import ring.mobiles.Mobile;
 
 public class Blind extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		if (super.isAccessAllowed(sender)) {
 			Mobile mob = (Mobile) sender;
@@ -19,7 +19,7 @@ public class Blind extends AbstractAdminCommand implements Command {
 			res.setText("Your blindess: " + mob.getBaseModel().isBlind());
 			res.setSuccessful(true);
 		}
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

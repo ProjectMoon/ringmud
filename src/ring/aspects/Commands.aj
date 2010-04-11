@@ -4,6 +4,8 @@ import java.util.logging.Logger;
 
 import ring.commands.*;
 import ring.events.EventDispatcher;
+import ring.players.PlayerCharacter;
+import ring.server.shells.PlayerShell;
 
 /**
  * Aspects that captures events and logging relating to commands.
@@ -23,7 +25,7 @@ public privileged aspect Commands {
 	 * @param cmd
 	 */
 	pointcut commandExecute(Command cmd):
-		call(CommandResult Command.execute(..)) &&
+		call(void Command.execute(..)) &&
 		target(cmd);
 	
 	before(Command cmd): commandExecute(cmd) {
@@ -31,13 +33,9 @@ public privileged aspect Commands {
 		EventDispatcher.dispatchGlobal(COMMAND_ON_BEGIN, cmd);
 	}
 	
-	after(Command cmd) returning(CommandResult result): commandExecute(cmd) {
+	after(Command cmd) returning(): commandExecute(cmd) {
 		System.out.println("End executing: " + cmd);
-		EventDispatcher.dispatchGlobal(COMMAND_ON_END, cmd, result);
-		
-		if (result == null) {
-			log.warning("Execution of command [" + cmd.getCommandName() + "] did not return a CommandResult!");
-		}
+		EventDispatcher.dispatchGlobal(COMMAND_ON_END, cmd);
 	}
 	
 	/**
@@ -45,7 +43,7 @@ public privileged aspect Commands {
 	 * @param command
 	 */
 	pointcut sendCommand(String command):
-		call(CommandResult CommandHandler.sendCommand(String)) && args(command);
+		call(void CommandHandler.sendCommand(String)) && args(command);
 	
 	before(CommandHandler handler, String command): sendCommand(command) && target(handler) {
 		log.info("received from [" + handler.sender.toString() + "]: " + command);
@@ -54,5 +52,4 @@ public privileged aspect Commands {
 	after(CommandHandler handler, String command): sendCommand(command) && target(handler) {
 		log.info("handled command [" + command + "] from " + handler.sender.toString());
 	}
-	
 }

@@ -8,7 +8,7 @@ import ring.mobiles.Mobile;
 
 public class Score implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		// Make the CommandResult object.
 		CommandResult res = new CommandResult();
 		res.setFailText("[B]FATAL ERROR IN SCORE METHOD.[R]");
@@ -30,7 +30,7 @@ public class Score implements Command {
 
 		res.setText(score);
 		res.setSuccessful(true);
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

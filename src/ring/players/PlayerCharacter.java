@@ -85,12 +85,12 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	 * Overriden to deal with player-specific options for commands.
 	 * @param command
 	 */
-	public CommandResult doCommand(String command) {
+	public void doCommand(String command) {
 		CommandResult res;
 		// Was anything even typed?
 		// If not, return null;
 		if (command.length() <= 0) {
-			return null;
+			return;
 		}
 		
 		// Is the player locked?
@@ -98,13 +98,12 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 			res = new CommandResult();
 			res.setFailText(super.lockMessage + " (" + super.lockTimeRemaining * 2 + " seconds left)");
 			res.setSuccessful(false);
-			return res;
+			res.send();
+			return;
 		}
 
 		// Send the command.
-		res = super.handler.sendCommand(command);
-
-		return res;
+		super.handler.sendCommand(command);
 	}
 	
 	public String toString() {

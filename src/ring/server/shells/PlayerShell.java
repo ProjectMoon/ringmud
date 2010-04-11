@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import ring.commands.CommandResult;
 import ring.comms.Communicator;
 import ring.mobiles.senses.SensesGroup;
-import ring.mobiles.senses.handlers.PlayerDepictionHandler;
+import ring.mobiles.senses.handlers.InterjectionHandler;
 import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.players.Player;
@@ -59,7 +59,7 @@ public class PlayerShell {
 		
 		//Set up senses group so the player can perceive the world.
 		//TODO This needs to be persistable to the db.
-		PlayerDepictionHandler handler = new PlayerDepictionHandler(comms);
+		InterjectionHandler handler = new InterjectionHandler(comms);
 		player.getDynamicModel().setSensesGroup(SensesGroup.createDefaultSensesGroup(handler));
 		
 		// Set location.
@@ -69,7 +69,7 @@ public class PlayerShell {
 		
 		//A player should see where they are when they log in.
 		comms.setSuffix(player.getPrompt());
-		sendCommandResult(player.doCommand("look"));
+		player.doCommand("look");
 		
 		// Wait for commands.
 		while (!player.isQuitting()) {
@@ -83,13 +83,15 @@ public class PlayerShell {
 				command = comms.receiveData();
 			}
 			
-			CommandResult res = player.doCommand(command);
+			player.doCommand(command);
+			/*
 			if (res != null) {
 				sendCommandResult(res);
 			}
 			else {
 				comms.printSuffix();
 			}
+			*/
 
 			// Only update last command if the last command wasn't !!
 			if (!command.equals("!!"))

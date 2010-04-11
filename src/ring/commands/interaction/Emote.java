@@ -11,7 +11,7 @@ import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Emote implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("Emote error.");
 		params.init(CommandType.TEXT);
@@ -21,7 +21,7 @@ public class Emote implements Command {
 		// did they actually type something to emote?
 		if (emoteText == null) {
 			res.setFailText("[R][GREEN]What do you want to emote?[WHITE]");
-			return res;
+			res.send();
 		}
 
 		// so they did.
@@ -36,7 +36,7 @@ public class Emote implements Command {
 		
 		res.setText(emoteText);
 		res.setSuccessful(true);
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

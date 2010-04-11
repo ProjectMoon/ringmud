@@ -1,5 +1,7 @@
 package ring.commands;
 
+import ring.comms.Communicator;
+
 /**
  * Class representing the result of a command. It encapsulates data to send back
  * to the CommandSender (if any), as well as the success or failure status of
@@ -21,6 +23,9 @@ public class CommandResult {
 	//Whether or not to even return data.
 	private boolean returnData = true;
 
+	private boolean pushed = false;
+	private Communicator comms;
+	
 	public CommandResult() {
 		text = "";
 		failText = "[R][GREEN]You can't do that.[R][WHITE]";
@@ -28,18 +33,39 @@ public class CommandResult {
 		returnData = true;
 	}
 	
-	/**
-	 * Convenience method for creating a blank command result.
-	 * @param success
-	 * @return
-	 */
-	public static CommandResult blankResult(boolean success) {
-		CommandResult cr = new CommandResult();
-		cr.setSuccessful(success);
-		cr.setReturnableData(false);
-		return cr;
+	public CommandResult(Communicator comms) {
+		this.comms = comms;
+	}
+	
+	public void send() {
+		if (!pushed) {
+			String result = "";
+			if (hasReturnableData()) {
+				result = getText();
+				comms.print(result);
+			}
+			else {
+				comms.println();
+				comms.println();		
+			}
+			
+			comms.printSuffix();
+			pushed = true;
+		}
+	}
+	
+	public Communicator getCommunicator() {
+		return comms;
+	}
+	
+	public void setCommunicator(Communicator comms) {
+		this.comms = comms;
 	}
 
+	public boolean isSent() {
+		return pushed;
+	}
+	
 	public void clearText() {
 		text = "";
 	}

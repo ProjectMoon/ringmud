@@ -8,7 +8,7 @@ import ring.world.Ticker;
 
 public class TickerList extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("[B][RED]FATAL ERROR.[R][WHITE]");
 		if (super.isAccessAllowed(sender)) {
@@ -21,7 +21,8 @@ public class TickerList extends AbstractAdminCommand implements Command {
 			res.setText(resText);
 			res.setSuccessful(true);
 		}
-		return res;
+		
+		res.send();
 
 	}
 

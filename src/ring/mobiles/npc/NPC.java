@@ -24,13 +24,12 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 		ai.act();
 	}
 
-	public CommandResult doCommand(String command) {
+	public void doCommand(String command) {
 		// Was anything even "typed?"
-		if (command.length() <= 0)
-			return null;
-
-		// Send the command.
-		return super.handler.sendCommand(command);
+		if (command.length() > 0) {
+			// Send the command.
+			super.handler.sendCommand(command);
+		}
 	}
 
 	public String toString() {

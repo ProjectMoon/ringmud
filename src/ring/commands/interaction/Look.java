@@ -12,7 +12,7 @@ import ring.mobiles.senses.stimuli.VisualStimulus;
 
 public class Look implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.FROM_ROOM);
 		Object t = params.getParameter(0);
 
@@ -27,7 +27,6 @@ public class Look implements Command {
 		// just the "look" command. If so, we delegate to RoomLookAction.
 		if (t == null) {
 			new RoomLookAction(mob).doLook();
-			return CommandResult.blankResult(true);
 		}
 
 		// Now check to see if we are looking at something specific, if true,
@@ -37,7 +36,7 @@ public class Look implements Command {
 			// is our looker blind?
 			if (mob.getBaseModel().isBlind()) {
 				res.setFailText("You have nothing to look at, for you are blind!");
-				return res;
+				res.send();
 			}
 			
 			//If not, proceed with looking at stuff.
@@ -47,7 +46,6 @@ public class Look implements Command {
 				stimulus.setDepiction("You look at " + lookingAt.getBaseModel().getName() + " and see:\n" + lookingAt.getBaseModel().getDescription());
 				
 				mob.getDynamicModel().getSensesGroup().consume(stimulus);
-				return CommandResult.blankResult(true);
 			}
 			else if (t instanceof Entity) {
 				throw new UnsupportedOperationException("Looking at entities not yet implemented.");
@@ -56,9 +54,6 @@ public class Look implements Command {
 				throw new UnsupportedOperationException("Looking at items not yet implemented.");
 			}
 		}
-
-		// Return CommandResult.
-		return res;
 	}
 
 	public String getCommandName() {
