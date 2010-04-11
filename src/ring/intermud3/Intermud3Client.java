@@ -49,7 +49,7 @@ public class Intermud3Client {
 		tpacket.setTargetMudName(new LPCMixed(toMud));
 		tpacket.setTargetUsername(new LPCMixed(toUser));
 		tpacket.setMessage(new LPCMixed(message));
-		
+
 		try {
 			client.send(tpacket);
 			//For receiving tells, see the event handler below.
@@ -65,7 +65,7 @@ public class Intermud3Client {
 		//Rest is handled by the event handler.
 	}
 	
-	public void sendEmote(String toUser, String message) {
+	public void sendEmote(String toMud, String toUser, String message) {
 		
 	}
 	
@@ -142,6 +142,7 @@ public class Intermud3Client {
 	    }
 
 	    public void emoteTo(EmoteToPacket packet, ErrorCallback callback) {
+	    	/*
 	        if ("some guy".equals(packet.getTargetUsername().asString())) {
 	            String theirName = packet.getOriginatorUsername() + "@" + packet.getOriginatorMudName();
 	            System.out.println(packet.getMessage().asString().replace("$N", theirName));
@@ -149,6 +150,8 @@ public class Intermud3Client {
 	        else {
 	            callback.returnError("Unknown user");
 	        }
+	        */
+	    	//TODO implement emotes.
 	    }
 	}
 }
