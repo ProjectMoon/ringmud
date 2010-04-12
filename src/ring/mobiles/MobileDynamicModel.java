@@ -46,46 +46,6 @@ public class MobileDynamicModel {
 	public void setSensesGroup(SensesGroup group) { sensesGroup = group; }
 	@XmlTransient public SensesGroup getSensesGroup() { return sensesGroup; }
 	
-	//Skill check variables:
-	//These variables somewhat violate the extensible design philosophy of the
-	//MUD, but as far as I can see,
-	//they are currently necessary. These are for things that need to be
-	//hardcoded into the game. Namely
-	//search, hide, move silently, spot, and listen checks.
-	private int hideCheck;
-	private int moveSilentlyCheck;
-	private int spotCheck;
-	private int listenCheck;
-	//current search check for viewing hidden exits. reset every room change.	
-	private int hiddenExitSearchCheck = 0;
-	
-	public void setSearchCheck(int check) {
-		hiddenExitSearchCheck = check;
-	}
-	
-	@XmlTransient
-	public int getSearchCheck() {
-		return hiddenExitSearchCheck;
-	}
-	
-	public void setSpotCheck(int check) {
-		spotCheck = check;
-	}
-	
-	@XmlTransient
-	public int getSpotCheck() {
-		return spotCheck;
-	}
-	
-	// resetChecks method.
-	// This method resets spot, listen, and search checks. Used for when a
-	// mobile enters a new room.
-	public void resetChecks() {
-		spotCheck = 0;
-		listenCheck = 0;
-		hiddenExitSearchCheck = 0;
-	}
-	
 	public void setCurrLocation(Room room) {
 		currLocation = room;
 	}

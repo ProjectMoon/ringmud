@@ -43,7 +43,6 @@ public class PlayerShell {
 	 */
 	private void init() {
 		MUDConnection mudConnection = MUDConnectionManager.getConnection(clientIP);
-		mudConnection.setState(MUDConnectionState.PLAYING);
 		
 		//There is no way this should ever be null.
 		//Login shell take care of setting it up.
@@ -51,6 +50,16 @@ public class PlayerShell {
 		
 		user = mudConnection.getPlayer();
 		player = mudConnection.getPlayerCharacter();
+		
+		//Set location if this player is logging in normally.
+		if (mudConnection.getState() == MUDConnectionState.LOGGING_IN) {
+			Room room = LocationManager.getOrigin();
+			room.addMobile(player);
+			player.setLocation(room);
+		}
+		
+		//This user is now playing.
+		mudConnection.setState(MUDConnectionState.PLAYING);
 	}
 	
 	private void gameLoop() {
@@ -60,11 +69,6 @@ public class PlayerShell {
 		//TODO This needs to be persistable to the db.
 		InterjectionHandler handler = new InterjectionHandler(comms);
 		player.getDynamicModel().setSensesGroup(SensesGroup.createDefaultSensesGroup(handler));
-		
-		// Set location.
-		Room room = LocationManager.getOrigin();
-		room.addMobile(player);
-		player.setLocation(room);
 		
 		//A player should see where they are when they log in.
 		comms.setSuffix(player.getPrompt());

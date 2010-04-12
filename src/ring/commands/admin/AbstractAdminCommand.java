@@ -1,8 +1,6 @@
 package ring.commands.admin;
 
-import ring.commands.Command;
 import ring.commands.CommandSender;
-import ring.mobiles.Mobile;
 import ring.players.PlayerCharacter;
 
 public abstract class AbstractAdminCommand {

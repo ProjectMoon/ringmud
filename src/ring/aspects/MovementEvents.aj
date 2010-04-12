@@ -56,8 +56,15 @@ public aspect MovementEvents percflow(call(static boolean LocationManager.move(.
 	 */
 	private void sendArriveMessages(Portal from) {		
 		// default arrive and leave text to broadcast to others
+		String arrivesFrom = from.getDisplayName();
+		
+		//Reverse only the names of standard directions.
+		if (LocationManager.isStandardDirection(arrivesFrom)) {
+			arrivesFrom = LocationManager.getOppositeDirection(arrivesFrom);
+		}
+		
 		String arriveText = mobile.getBaseModel().getName() + " [R][WHITE]arrives from the "
-				+ from.getDisplayName() + ".";
+				+ arrivesFrom + ".";
 
 
 		//Reset certain skill checks.

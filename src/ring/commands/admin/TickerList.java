@@ -10,7 +10,7 @@ public class TickerList extends AbstractAdminCommand implements Command {
 
 	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
-		res.setFailText("[B][RED]FATAL ERROR.[R][WHITE]");
+		
 		if (super.isAccessAllowed(sender)) {
 			String resText = "";
 	
@@ -23,7 +23,6 @@ public class TickerList extends AbstractAdminCommand implements Command {
 		}
 		
 		res.send();
-
 	}
 
 	public String getCommandName() {

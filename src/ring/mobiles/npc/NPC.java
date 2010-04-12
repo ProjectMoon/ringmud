@@ -3,7 +3,6 @@ package ring.mobiles.npc;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.world.TickerEvent;

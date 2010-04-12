@@ -199,7 +199,7 @@ public class LocationManager {
 				try {
 					direction = getOppositeDirection(port.getInteractiveName());
 				}
-				catch (PortalNotFoundException e) {
+				catch (IllegalArgumentException e) {
 					throw new WorldConstructionException("Cannot auto-link on non-standard directions!");
 				}
 				
@@ -246,7 +246,7 @@ public class LocationManager {
 	 * @return the opposite direction (north from south, etc)
 	 * @throws IllegalArgumentException if a non-standard direction is specified.
 	 */
-	public static String getOppositeDirection(String direction) throws PortalNotFoundException {
+	public static String getOppositeDirection(String direction) {
 		if (direction.equalsIgnoreCase(NORTH)) return SOUTH;
 		else if (direction.equalsIgnoreCase(SOUTH)) return NORTH;
 		else if (direction.equalsIgnoreCase(EAST)) return WEST;
@@ -255,5 +255,12 @@ public class LocationManager {
 		else if (direction.equalsIgnoreCase(DOWN)) return UP;
 		
 		throw new IllegalArgumentException("incorrect standard direction");
+	}
+	
+	public static boolean isStandardDirection(String direction) {
+		return (direction.equals(NORTH) || direction.equals(SOUTH) ||
+				direction.equals(EAST) || direction.equals(WEST) ||
+				direction.equals(UP) || direction.equals(DOWN));
+		
 	}
 }

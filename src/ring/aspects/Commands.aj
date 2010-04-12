@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import ring.commands.Command;
 import ring.commands.CommandHandler;
-import ring.commands.CommandResult;
 import ring.events.EventDispatcher;
 
 /**

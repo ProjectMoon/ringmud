@@ -22,8 +22,8 @@ public class RoomLookAction {
 
 		String lookText = "[CYAN]" + room.getModel().getTitle() + "[R]\n"
 			+ room.getModel().getDescription() + "\n"
-			+ room.getExitsString(mob.getDynamicModel().getSearchCheck())
-			+ "\n" + room.getMobileList(mob, mob.getDynamicModel().getSpotCheck())
+			+ room.getExitsString(0)
+			+ "\n" + room.getMobileList(mob, 0)
 			+ room.getEntityList();
 			
 		VisualStimulus stimulus = new VisualStimulus();

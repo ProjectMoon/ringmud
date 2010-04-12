@@ -31,6 +31,7 @@ public class PlayerLoginShell {
 		//If so, forward directly to player shell.
 		MUDConnection mudConnection = MUDConnectionManager.getConnection(clientIP);
 		if (mudConnection != null) {
+			mudConnection.setState(MUDConnectionState.RETURNING);
 			comms.println("You are already logged in.");
 			return;
 		}
