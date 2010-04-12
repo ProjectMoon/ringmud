@@ -1,13 +1,11 @@
 package ring.aspects;
 
-import ring.commands.Command;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.comms.Communicator;
 import ring.mobiles.senses.DepictionHandler;
 import ring.mobiles.senses.SensesGroup;
 import ring.mobiles.senses.handlers.CommandResultHandler;
-import ring.mobiles.senses.handlers.InterjectionHandler;
 import ring.mobiles.senses.StimulusSender;
 import ring.server.shells.PlayerShell;
 
@@ -16,18 +14,17 @@ import ring.server.shells.PlayerShell;
  * in the system. For example, CommandResult objects need a Communicator
  * in order to send data back to the client. However, they do not normally
  * have access to an existing Communicator at their scope. This aspect
- * provides CommandResults with access to Communicators.
+ * provides CommandResults with access to Communicators. Each {@link ring.server.shells.PlayerShell} 
+ * has its own routing aspect that takes care of this cross-cutting concern.
  * <br/><br/>
- * Each {@link ring.server.shells.PlayerShell} has its own routing aspect
- * that takes care of this cross-cutting concern.
+ * This aspect enables "magic code" in the classes that it affects. Commands
+ * need not be aware of who is executing the command in order to send data back
+ * to the client, for example. This magic even extends to Python classes
+ * dynamically compiled at runtime.
  * @author projectmoon
  *
  */
 public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run())) {
-	public CommunicatorRouting() {
-		System.out.println("---CREATING NEW ROUTING ASPECT---");
-	}
-	
 	//Shell to scope command results under
 	private PlayerShell shell;
 	
@@ -40,6 +37,11 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	//Used for senses group routing.
 	private DepictionHandler oldHandler;
 	
+	/**
+	 * Identifies the game loop of the specified {@link PlayerShell}.
+	 * This allows us to pull in the communicator object of the PlayerShell.
+	 * @param shell The shell to pull the communicator from.
+	 */
 	pointcut gameLoopOf(PlayerShell shell):
 		call(void PlayerShell.gameLoop()) && 
 		this(shell);
@@ -53,7 +55,7 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	/**
 	 * Pointcut that matches whenever a CommandResult is created within the scope of the
 	 * specified PlayerShell.
-	 * @param shell The shell.
+	 * @param result The {@link CommandResult} to route the communicator to.
 	 */
 	pointcut createCommandResult(CommandResult result):
 		execution(public CommandResult.new(..)) && this(result) &&
@@ -73,11 +75,11 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	
 	/**
 	 * Pointcut that matches whenever a sense stimulus is consumed within the context of a
-	 * command. This overrides the default {@link InterjectionHandler} for the senses group and instead
-	 * uses a CommandResultHandler. It explicitly excludes calls to {@link StimulusSender} because
-	 * those mobiles need to use interjection handlers rather than command result handlers.
-	 * @param shell
-	 * @param group
+	 * command. This overrides the default {@link DepictionHandler} for the senses group and instead
+	 * uses a {@link CommandResultHandler}. It explicitly excludes calls to {@link StimulusSender} because
+	 * those mobiles need to use their default handlers rather than command result handlers. Only
+	 * the sender of the command needs to use a command result handler.
+	 * @param group The SensesGroup to override.
 	 */
 	pointcut consumeSenseInCommand(SensesGroup group):
 		(call(public void SensesGroup.consume(..)) && target(group)) &&
