@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -17,9 +18,11 @@ import ring.items.Armor;
 import ring.items.Item;
 import ring.magic.SpellCaster;
 import ring.mobiles.backbone.Equipment;
+import ring.mobiles.npc.NPC;
 import ring.movement.Movable;
 import ring.movement.Room;
 import ring.persistence.RingConstants;
+import ring.players.PlayerCharacter;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 import ring.world.WorldObject;
@@ -31,6 +34,8 @@ import ring.world.WorldObjectMetadata;
  * @author projectmoon
  *
  */
+
+@XmlSeeAlso({ NPC.class, PlayerCharacter.class })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
 @XmlType(
@@ -40,7 +45,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
+public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -414,5 +419,29 @@ public class Mobile extends WorldObject implements CommandSender, TickerListener
 		WorldObjectMetadata metadata = new WorldObjectMetadata();
 		metadata.setName(getBaseModel().getName());
 		return metadata;
-	} 
+	}
+	
+	/**
+	 * Aggregates information from the base model to return a short
+	 * description of this Mobile, used in at-a-glance descriptions,
+	 * such as when a player looks into a room.
+	 * @return A short description.
+	 */
+	@XmlTransient
+	public String getShortDescription() {
+		String res = getBaseModel().getName();
+		String lastName = getBaseModel().getLastName();
+		String title = getBaseModel().getTitle();
+		String raceName = getBaseModel().getRace().getName();
+		
+		//Append these if they exist
+		if (lastName != null && lastName.length() > 0) res += " " + lastName;
+		if (title != null && title.length() > 0) res += " " + title;
+		
+		//Finallly add race and class name.
+		res += " (" + raceName + ")";
+		//TODO add class name.
+		
+		return res; 
+	}
 }

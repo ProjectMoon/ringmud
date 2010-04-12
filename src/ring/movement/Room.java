@@ -233,7 +233,7 @@ public class Room extends AbstractBusinessObject {
 		
 		for (Mobile mob : getMobiles()) {
 			if (mob != excludedMobile) {
-				sb.append(mob.getBaseModel().getShortDescription()).append("[R][WHITE] is here.\n");
+				sb.append(mob.getShortDescription()).append("[R][WHITE] is here.\n");
 			}
 		}
 

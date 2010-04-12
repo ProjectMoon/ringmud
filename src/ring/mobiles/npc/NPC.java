@@ -43,4 +43,24 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	public void setAI(MobAI ai) {
 		this.ai = ai;
 	}
+	
+	/**
+	 * Overriden to not return race.
+	 */
+	@Override
+	@XmlTransient
+	public String getShortDescription() {
+		String res = getBaseModel().getName();
+		String lastName = getBaseModel().getLastName();
+		String title = getBaseModel().getTitle();
+		
+		//Append these if they exist
+		if (lastName != null && lastName.length() > 0) res += " " + lastName;
+		if (title != null && title.length() > 0) res += " " + title;
+		
+		//Finallly add class name.
+		//TODO add class name.
+		
+		return res; 
+	}
 }

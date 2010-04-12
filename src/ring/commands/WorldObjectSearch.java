@@ -137,20 +137,4 @@ public class WorldObjectSearch {
 		
 		return sorted;
 	}
-	
-	public static void main(String[] args) {
-		List<Mobile> mobs = new ArrayList<Mobile>();
-		Mobile m1 = new Mobile(), m2 = new Mobile(), m3 = new Mobile();
-		
-		m1.getBaseModel().setName("some guy");
-		m2.getBaseModel().setName("another guy");
-		m3.getBaseModel().setName("guy in the corner");
-		mobs.add(m1); mobs.add(m2); mobs.add(m3);
-		
-		WorldObjectSearch search = new WorldObjectSearch(mobs);
-		
-		for (WorldObject mob : search.search("guy")) {
-			System.out.println(mob.getMetadata().getName());
-		}
-	}
 }
