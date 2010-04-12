@@ -10,7 +10,7 @@ import ring.movement.*;
 
 /**
  * Aspect for dealing with movement events. The movement system itself is only concerned with
- * the logic of moving a Mobile from one place to another. This aspect deals with the crosscutting
+ * the logic of moving a {@link Mobile} from one place to another. This aspect deals with the crosscutting
  * concern firing program events and sending stimuli to other players when a given mobile moves.
  * @author projectmoon
  *

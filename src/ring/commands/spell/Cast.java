@@ -15,7 +15,7 @@ import ring.world.WorldObject;
 public class Cast implements Command {
 	private static final Logger log = Logger.getLogger(Cast.class.getName());
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException("Due to NRAPI, cast needs to be reimplemented");
 		/*
 		CommandResult res = new CommandResult();

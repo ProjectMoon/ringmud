@@ -183,15 +183,13 @@ public final class CommandHandler {
 	 * @param command
 	 * @return the CommandResult containing results of the command.
 	 */
-	public CommandResult sendCommand(String command) {
+	public void sendCommand(String command) {
 		String[] parsedCmd = parseCommandString(command);
 		Command cmd = lookup(parsedCmd[0]);
 		CommandParameters params = new CommandParameters(isolateParameters(parsedCmd), sender);
 
 		//actually do the command.
-		CommandResult cr = handleCommand(cmd, params);
-		
-		return cr;
+		handleCommand(cmd, params);
 	}
 
 	/**
@@ -227,23 +225,17 @@ public final class CommandHandler {
 	 * @param params
 	 * @return the result of the command.
 	 */
-	private CommandResult handleCommand(Command cmd, CommandParameters params) {
+	private void handleCommand(Command cmd, CommandParameters params) {
 		synchronized (sender) {
 			try {
-				CommandResult cr = cmd.execute(sender, params);
-				if (cr == null) {
-					cr = new CommandResult();
-					cr.setReturnableData(false);
-				}
-				
-				return cr;
+				cmd.execute(sender, params);
 			}
 			catch (RuntimeException e) {
 				log.severe("There was a runtime exception executing the command " + cmd + " for sender " + sender + ":");
 				e.printStackTrace();
 				CommandResult cr = new CommandResult();
 				cr.setFailText("There was an error: " + e.toString());
-				return cr;
+				cr.send();
 			}
 		}
 	}

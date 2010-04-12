@@ -10,5 +10,5 @@ package ring.commands;
  */
 
 public interface CommandSender {
-	public CommandResult doCommand(String cmd);
+	public void doCommand(String cmd);
 }

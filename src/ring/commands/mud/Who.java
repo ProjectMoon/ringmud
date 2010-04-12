@@ -14,7 +14,7 @@ import ring.server.MUDConnectionManager;
 //TODO implement who
 public class Who implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
 		res.setFailText("[R][WHITE]Please use the command 'help who' for information on how to use the who command.");
@@ -22,7 +22,8 @@ public class Who implements Command {
 		//For now, simple implementation
 		String[] whoParams = params.getParameterArray();
 		if (whoParams == null || whoParams.length == 0) {
-			return res;
+			res.send();
+			return;
 		}
 		
 		List<PlayerCharacter> players = MUDConnectionManager.getCurrentCharacters();
@@ -76,7 +77,6 @@ public class Who implements Command {
 		// Set the CommandResult's text to the string.
 
 		// Return the result.
-		return res;
 	}
 
 	public String getCommandName() {

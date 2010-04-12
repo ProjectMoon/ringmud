@@ -9,7 +9,7 @@ import ring.mobiles.Mobile;
 
 public class Deaf extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		if (super.isAccessAllowed(sender)) {
 			Mobile mob = (Mobile) sender;
@@ -19,8 +19,7 @@ public class Deaf extends AbstractAdminCommand implements Command {
 			res.setText("Your deafness: " + mob.getBaseModel().isDeaf());
 			res.setSuccessful(true);
 		}
-		return res;
-
+		res.send();
 	}
 
 	public String getCommandName() {

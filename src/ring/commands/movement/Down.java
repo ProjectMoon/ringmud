@@ -10,7 +10,7 @@ import ring.movement.Portal;
 import ring.movement.PortalNotFoundException;
 
 public class Down implements Command {
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("[GREEN]You can't go that way.[WHITE]");
 		Mobile mob = (Mobile) sender;
@@ -18,16 +18,13 @@ public class Down implements Command {
 		
 		try {
 			destination = LocationManager.getPortal(mob.getLocation(), LocationManager.DOWN);
-			boolean success = LocationManager.move(mob, destination);
-			res.setSuccessful(success);
-			res.setReturnableData(!success);
+			LocationManager.move(mob, destination);
 		}
 		catch (PortalNotFoundException e) {
 			res.setSuccessful(false);
 			res.setReturnableData(true);
+			res.send();
 		}
-		
-		return res;
 	}
 
 	public String getCommandName() {

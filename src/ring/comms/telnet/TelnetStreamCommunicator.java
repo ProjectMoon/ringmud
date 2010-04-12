@@ -169,8 +169,15 @@ public class TelnetStreamCommunicator implements Communicator {
 		}		
 	}
 	
+	/**
+	 * Interjects a message into the client's screen, and then re-prints the suffix along
+	 * with any text the client had already typed. This provides for a clean, non-interrupted
+	 * interface when lots of external data is coming in.
+	 * @param message
+	 */
 	public void interject(String message) throws CommunicationException {
-		
+		//TODO do this right.
+		printWithPreline(message);
 	}
 	
 	/**

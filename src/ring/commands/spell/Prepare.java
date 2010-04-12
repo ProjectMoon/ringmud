@@ -9,7 +9,7 @@ import ring.mobiles.Mobile;
 
 public class Prepare implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException("Due to NRAPI, prepare needs to be reimplemented");
 		/*
 		params.init(CommandType.TEXT);

@@ -3,11 +3,11 @@ package ring.commands;
 
 public class Bad implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setText("[R][GREEN]What?");
 		res.setSuccessful(true);
-		return res;		
+		res.send();		
 	}
 
 	public String getCommandName() {

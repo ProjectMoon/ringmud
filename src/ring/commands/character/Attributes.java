@@ -8,7 +8,7 @@ import ring.mobiles.Mobile;
 
 public class Attributes implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 
 		Mobile mob = (Mobile) sender;
@@ -33,7 +33,7 @@ public class Attributes implements Command {
 
 		res.setText(attributes);
 		res.setSuccessful(true);
-		return res;
+		res.send();
 
 	}
 

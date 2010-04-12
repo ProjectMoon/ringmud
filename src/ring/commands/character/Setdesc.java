@@ -9,18 +9,20 @@ import ring.mobiles.Mobile;
 
 public class Setdesc implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		params.init(CommandType.TEXT);
 		String text = params.paramString();
 		res.setFailText("[R][WHITE]You didn't enter anything!");
+		
 		if (text == null)
-			return res;
+			res.send();
+		
 		Mobile mob = (Mobile) sender;
 		mob.getBaseModel().setDescription(text);
 		res.setText("[R][WHITE]Description changed to: " + text);
 		res.setSuccessful(true);
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

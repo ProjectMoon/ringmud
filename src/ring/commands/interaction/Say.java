@@ -11,7 +11,7 @@ import ring.mobiles.senses.stimuli.AudioStimulus;
 
 public class Say implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		// Make the CommandResult object.
 		params.init(CommandType.TEXT);
 		CommandResult res = new CommandResult();
@@ -20,7 +20,7 @@ public class Say implements Command {
 		
 		// Someone silenced can't talk...
 		if (mob.getBaseModel().isSilent())
-			return res;
+			res.send();
 
 		String message = "";
 		String textBackToPlayer;
@@ -62,7 +62,7 @@ public class Say implements Command {
 
 		//The text will get sent back to this player as command result data.
 		res.setSuccessful(true);
-		return res;
+		res.send();
 
 	}
 

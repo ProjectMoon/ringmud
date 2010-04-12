@@ -8,13 +8,13 @@ import ring.players.PlayerCharacter;
 
 public class Quit implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setSuccessful(true);
 		res.setText("Shutting down your connection...");
 		PlayerCharacter player = (PlayerCharacter)sender;
 		player.quit();
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

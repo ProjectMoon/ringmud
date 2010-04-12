@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import ring.comms.SystemMessageHandler;
 import ring.nrapi.business.AbstractBusinessObject;
 import ring.persistence.DataStoreFactory;
 
@@ -26,9 +25,6 @@ public class Player extends AbstractBusinessObject {
 	private String password;
 	private Date lastLogon;
 	private List<String> charIDs = new ArrayList<String>();
-	
-	//TODO refactor this out somehow
-	private SystemMessageHandler sysMessageHandler;
 	
 	@XmlElement
 	public String getName() {
@@ -85,15 +81,5 @@ public class Player extends AbstractBusinessObject {
 	
 	public boolean removeCharacter(String name) {
 		return charIDs.remove(name);
-	}
-	
-	@XmlTransient
-	public SystemMessageHandler getSystemMessageHandler() {
-		return sysMessageHandler;
-	}
-	
-	public void setSystemMessageHandler(SystemMessageHandler handler) {
-		sysMessageHandler = handler;
-	}
-	
+	}	
 }

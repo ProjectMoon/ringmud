@@ -9,7 +9,7 @@ import ring.mobiles.Mobile;
 
 public class SearchCheck extends AbstractAdminCommand implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("Yes, you do have one of those...");
 		if (super.isAccessAllowed(sender)) {
@@ -17,7 +17,7 @@ public class SearchCheck extends AbstractAdminCommand implements Command {
 			res.setText("Your current search check: " + mob.getDynamicModel().getSearchCheck());
 			res.setSuccessful(true);
 		}
-		return res;
+		res.send();
 	}
 
 	public String getCommandName() {

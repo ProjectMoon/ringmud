@@ -8,7 +8,7 @@ import ring.commands.CommandSender;
 //TODO implement help
 public class Help implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException();
 	}
 

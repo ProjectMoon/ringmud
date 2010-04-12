@@ -12,7 +12,7 @@ import ring.mobiles.Mobile;
 
 public class Remove implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		params.init(CommandType.EQUIPMENT);
 		Object t = params.getParameter(0);
 
@@ -21,12 +21,14 @@ public class Remove implements Command {
 		// Check if the thing is an actual item...
 		if (t == null) {
 			res.setFailText("[R][WHITE]Remove what?");
-			return res;
+			res.send();
+			return;
 		}
 
 		if (!(t instanceof Affectable)) {
 			res.setFailText("[R][WHITE]You aren't wearing that!");
-			return res;
+			res.send();
+			return;
 		}
 
 		// If yes, make it an item.
@@ -44,7 +46,7 @@ public class Remove implements Command {
 				+ ".");
 
 		res.setSuccessful(true);
-		return res;
+		res.send();
 
 	}
 

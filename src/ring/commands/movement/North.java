@@ -11,7 +11,7 @@ import ring.movement.PortalNotFoundException;
 
 public class North implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		CommandResult res = new CommandResult();
 		res.setFailText("[GREEN]You can't go that way.[WHITE]");
 		Mobile mob = (Mobile) sender;
@@ -26,9 +26,8 @@ public class North implements Command {
 		catch (PortalNotFoundException e) {
 			res.setSuccessful(false);
 			res.setReturnableData(true);
+			res.send();
 		}
-		
-		return res;
 	}
 
 	public String getCommandName() {

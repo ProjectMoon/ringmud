@@ -11,12 +11,12 @@ import ring.mobiles.senses.ProcessedDepiction;
  * @author projectmoon
  *
  */
-public class PlayerDepictionHandler implements DepictionHandler {
+public class InterjectionHandler implements DepictionHandler {
 	private Communicator communicator;
 	
-	public PlayerDepictionHandler() {}
+	public InterjectionHandler() {}
 	
-	public PlayerDepictionHandler(Communicator comms) {
+	public InterjectionHandler(Communicator comms) {
 		communicator = comms;
 	}
 	
@@ -24,7 +24,8 @@ public class PlayerDepictionHandler implements DepictionHandler {
 	public void handle(ProcessedDepiction depiction) {
 		//Use printNoSuffix here, otherwise we get more than one
 		//prompt.
-		communicator.printNoSuffixWithPreline(depiction.getDepiction());
+		//communicator.printNoSuffixWithPreline(depiction.getDepiction());
+		communicator.interject(depiction.getDepiction());
 	}
 	
 	public Communicator getCommunicator() {

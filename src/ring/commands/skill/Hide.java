@@ -9,7 +9,7 @@ import ring.skills.Skill;
 
 public class Hide implements Command {
 
-	public CommandResult execute(CommandSender sender, CommandParameters params) {
+	public void execute(CommandSender sender, CommandParameters params) {
 		throw new UnsupportedOperationException("Hide to be implemented in Python");
 		/*
 		CommandResult res = new CommandResult();
