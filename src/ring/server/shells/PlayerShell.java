@@ -2,7 +2,6 @@ package ring.server.shells;
 
 import java.net.InetAddress;
 
-import ring.commands.CommandResult;
 import ring.comms.Communicator;
 import ring.mobiles.senses.SensesGroup;
 import ring.mobiles.senses.handlers.InterjectionHandler;
@@ -84,15 +83,7 @@ public class PlayerShell {
 			}
 			
 			player.doCommand(command);
-			/*
-			if (res != null) {
-				sendCommandResult(res);
-			}
-			else {
-				comms.printSuffix();
-			}
-			*/
-
+			
 			// Only update last command if the last command wasn't !!
 			if (!command.equals("!!"))
 				lastCommand = command;
@@ -103,23 +94,6 @@ public class PlayerShell {
 		
 		//Log out gracefully.
 		logout();
-	}
-	
-	private void sendCommandResult(CommandResult res) {
-		
-		String result = "";
-		if (res.hasReturnableData()) {
-			result = res.getText();
-			comms.print(result);
-		}
-		else {
-			comms.println();
-			comms.println();
-			comms.printSuffix();		
-		}
-		
-		comms.setSuffix(player.getPrompt());
-		
 	}
 	
 	private void logout() {

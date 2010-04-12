@@ -189,7 +189,6 @@
     	<copy todir="${dist.lib.dir}">
     		<fileset dir="${lib.dir}">
     			<include name="**/*.jar" />
-    			<!--<exclude name="**/jython.jar" />-->
     		</fileset>
     	</copy>
     </target>

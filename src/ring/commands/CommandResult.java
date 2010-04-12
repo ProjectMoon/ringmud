@@ -34,22 +34,25 @@ public class CommandResult {
 	}
 	
 	public CommandResult(Communicator comms) {
-		this.comms = comms;
+		setCommunicator(comms);
 	}
 	
 	public void send() {
 		if (!pushed) {
 			String result = "";
-			if (hasReturnableData()) {
+			
+			//If we have something to send,
+			//then send it. Otherwise, just
+			//send the prompt again on a new
+			//line.
+			if (getText().length() > 0) {
 				result = getText();
 				comms.print(result);
 			}
 			else {
-				comms.println();
-				comms.println();		
+				comms.printSuffix();
 			}
-			
-			comms.printSuffix();
+
 			pushed = true;
 		}
 	}
@@ -59,6 +62,7 @@ public class CommandResult {
 	}
 	
 	public void setCommunicator(Communicator comms) {
+		System.out.println("Setting comms for " + this + " to: " + comms);
 		this.comms = comms;
 	}
 

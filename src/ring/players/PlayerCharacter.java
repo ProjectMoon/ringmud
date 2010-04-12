@@ -88,8 +88,12 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	public void doCommand(String command) {
 		CommandResult res;
 		// Was anything even typed?
-		// If not, return null;
+		// If not, do nothing.
 		if (command.length() <= 0) {
+			res = new CommandResult();
+			res.setText("");
+			res.setSuccessful(true);
+			res.send();
 			return;
 		}
 		

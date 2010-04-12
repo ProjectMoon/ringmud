@@ -2,10 +2,10 @@ package ring.aspects;
 
 import java.util.logging.Logger;
 
-import ring.commands.*;
+import ring.commands.Command;
+import ring.commands.CommandHandler;
+import ring.commands.CommandResult;
 import ring.events.EventDispatcher;
-import ring.players.PlayerCharacter;
-import ring.server.shells.PlayerShell;
 
 /**
  * Aspects that captures events and logging relating to commands.

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ring.commands.CommandResult;
 import ring.deployer.DeployedMUDFactory;
 import ring.players.Player;
 
@@ -103,15 +104,18 @@ public class Intermud3Client {
 	    public void whoReply(LPCMixed targetUsername, LPCMixed originatorMudName, List<LPCMixed> whoInfo) {
 	    	System.out.println("Testing vs " + player.getName());
 	    	if (player.getName().equalsIgnoreCase(targetUsername.asString())) {
+	    		CommandResult res = new CommandResult();
+	    		
 	    		String list = "Players on [B]" + originatorMudName.asString() + "[R]:\n";
 	    		
 		        for (LPCMixed info : whoInfo) {
 		            List<LPCMixed> entry = info.asList();
-		            
 		            list += (entry.get(0) + " [" + entry.get(1) + "/" + entry.get(2) + "]") + "\n";
-		            
-		            player.getSystemMessageHandler().sendMessage(list);
-		        }	    		
+		        }
+		        
+		        res.setText(list);
+		        res.setSuccessful(true);
+		        res.send();
 	    	}
 	    }
 
@@ -126,7 +130,11 @@ public class Intermud3Client {
 	    public void tell(TellPacket packet, ErrorCallback callback) {
 	        if (player.getName().equals(packet.getTargetUsername().asString())) {
 	        	String message = "[B]" + packet.getOriginatorUsername() + "@" + packet.getOriginatorMudName() + "[R] tells you: " + packet.getMessage();
-	            player.getSystemMessageHandler().sendMessage(message);
+	        	
+	            CommandResult res = new CommandResult();
+	            res.setText(message);
+	            res.setSuccessful(true);
+	            res.send();
 	        }
 	        else {
 	            callback.returnError("Unknown user");
