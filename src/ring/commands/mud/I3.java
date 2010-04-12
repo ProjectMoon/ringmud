@@ -26,6 +26,8 @@ public class I3 implements Command {
 		String op = params.getParameterAsText(0);
 		
 		PlayerCharacter pc = (PlayerCharacter)sender;
+		System.out.println("daemon: " + Intermud3Daemon.currentDaemon());
+		System.out.println("player: " + pc.getPlayer());
 		Intermud3Client client = Intermud3Daemon.currentDaemon().getClientForPlayer(pc.getPlayer());
 		
 		if (!client.isConnected()) {
@@ -43,6 +45,7 @@ public class I3 implements Command {
 			
 			res.setSuccessful(true);
 			res.setText(result);
+			res.send();
 		}
 		else if (op.equalsIgnoreCase("channels")) {
 			result = "List of Channels:\n";
@@ -54,6 +57,7 @@ public class I3 implements Command {
 			
 			res.setSuccessful(true);
 			res.setText(result);
+			res.send();
 		}
 		else if (op.equalsIgnoreCase("who")) {
 			String mudName = params.getTextParameters(1);
