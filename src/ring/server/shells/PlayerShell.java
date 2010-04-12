@@ -4,7 +4,9 @@ import java.net.InetAddress;
 
 import ring.comms.Communicator;
 import ring.mobiles.senses.SensesGroup;
+import ring.mobiles.senses.StimulusSender;
 import ring.mobiles.senses.handlers.InterjectionHandler;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.movement.LocationManager;
 import ring.movement.Room;
 import ring.players.Player;
@@ -70,6 +72,11 @@ public class PlayerShell {
 		InterjectionHandler handler = new InterjectionHandler(comms);
 		player.getDynamicModel().setSensesGroup(SensesGroup.createDefaultSensesGroup(handler));
 		
+		//Send poof message!
+		VisualStimulus stim = new VisualStimulus();
+		stim.setDepiction("There is a loud bang and the smell of acrid smoke, and " + player.getBaseModel().getName() + " appears in the world once more!");
+		StimulusSender.sendStimulus(player.getLocation(), stim, player);
+		
 		//A player should see where they are when they log in.
 		comms.setSuffix(player.getPrompt());
 		player.doCommand("look");
@@ -102,12 +109,6 @@ public class PlayerShell {
 	
 	private void logout() {
 		System.out.println(user + "[" + player + "] logged out gracefully.");
-		
-		//Remove them from their current room.
-		player.getLocation().removeMobile(player);
-		
-		//Remove them from the world ticker.
-		Ticker.getTicker().removeTickerListener(player);
 		
 		//TODO save player's current room to restore later.
 		

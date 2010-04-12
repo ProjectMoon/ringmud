@@ -71,11 +71,17 @@ public class MUDConnectionManager {
 	}
 	
 	/**
-	 * Removes a connection.
+	 * Cleans up and removes a connection for the specified
+	 * IP address.
 	 * @param ip
 	 * @return true if successful, false otherwise.
 	 */
 	public static boolean removeConnection(InetAddress ip) {
+		MUDConnection conn = connections.get(ip);
+		
+		if (conn != null) {
+			conn.cleanup();
+		}
 		return (connections.remove(ip) != null);
 	}
 	

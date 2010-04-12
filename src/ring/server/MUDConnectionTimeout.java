@@ -3,8 +3,11 @@ package ring.server;
 import java.net.InetAddress;
 import java.util.TimerTask;
 
+import ring.mobiles.senses.StimulusSender;
+import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
+import ring.world.Ticker;
 
 /**
  * Class that handles a MUD connection timeout by removing the character
@@ -25,19 +28,11 @@ public class MUDConnectionTimeout extends TimerTask {
 	
 	@Override
 	public void run() {
-		System.out.println("Running timeout task for " + ip);
 		MUDConnection conn = MUDConnectionManager.getConnection(ip);
 		
 		//Check null because it is possible to time out at the login screen
 		//with no actual connection set up.
 		if (conn != null) {
-			Player player = conn.getPlayer();
-			PlayerCharacter pc = conn.getPlayerCharacter();
-			
-			//Save player and PC
-			player.save();
-			pc.save();
-			
 			//Clear connection state.
 			MUDConnectionManager.removeConnection(ip);
 		}
