@@ -111,7 +111,7 @@ public class Ticker implements Runnable {
 
 		for (TickerListener listener : listeners) {
 			text += (c + 1) + ". " + listener.toString()
-				+ " [B]" + listener.getClass().getName() + "[R]";
+				+ " [B]" + listener.getClass().getName() + "[R]\n";
 		}
 		
 		text += "\nCURRENT TICK: " + currentTick();

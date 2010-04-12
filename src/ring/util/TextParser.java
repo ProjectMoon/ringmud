@@ -148,8 +148,7 @@ public class TextParser {
             
             //handle \ns directly.
             else if (text.equals("\n")) {
-            	
-                res.append("\r\n");
+                res.append("\n");
                 count = 0;
                 continue;
             }
@@ -195,7 +194,8 @@ public class TextParser {
         //This ensures newlines in the suffix from communicators are left alone.
         //See: http://java.sun.com/docs/books/tutorial/essential/regex/pre_char_classes.html
         String ret = res.toString();
-        return ret.replaceAll("\n[ \\t\\x0B\\f\\r]+", "\n");
+        ret =  ret.replaceAll("\n[ \\t\\x0B\\f\\r]+", "\n");
+        return ret;
     }
     
     /**
