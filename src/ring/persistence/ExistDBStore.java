@@ -223,14 +223,14 @@ public class ExistDBStore implements DataStore {
 			assert(col != null);
 			
 			//Find the existing document, or create a new one.
-			XMLResource doc = (XMLResource)col.getResource(p.getDocumentID());
+			XMLResource doc = (XMLResource)col.getResource(p.getDocumentName());
 			if (doc == null) {
-				doc = createXMLResource(col, p.getDocumentID());
+				doc = createXMLResource(col, p.getDocumentName());
 			}
 			
 			//Now update the document's content with all of the
 			//info that the root of p has.f
-			doc.setContent(p.getRoot().toXMLDocument());
+			doc.setContent(p.toXMLDocument());
 			col.storeResource(doc);
 			return true;
 		}
