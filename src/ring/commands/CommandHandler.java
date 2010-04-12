@@ -185,11 +185,21 @@ public final class CommandHandler {
 	 */
 	public void sendCommand(String command) {
 		String[] parsedCmd = parseCommandString(command);
-		Command cmd = lookup(parsedCmd[0]);
-		CommandParameters params = new CommandParameters(isolateParameters(parsedCmd), sender);
-
-		//actually do the command.
-		handleCommand(cmd, params);
+		
+		//Make sure we have something to parse.
+		if (parsedCmd.length > 0) {
+			Command cmd = lookup(parsedCmd[0]);
+			CommandParameters params = new CommandParameters(isolateParameters(parsedCmd), sender);
+	
+			//actually do the command.
+			handleCommand(cmd, params);
+		}
+		else {
+			//Else there was a space typed... just send a blank
+			//command result.
+			CommandResult res = new CommandResult();
+			res.send();
+		}
 	}
 
 	/**
