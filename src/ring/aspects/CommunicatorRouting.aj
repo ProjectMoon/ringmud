@@ -1,11 +1,14 @@
 package ring.aspects;
 
+import ring.commands.Command;
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.comms.Communicator;
 import ring.mobiles.senses.DepictionHandler;
 import ring.mobiles.senses.SensesGroup;
 import ring.mobiles.senses.handlers.CommandResultHandler;
+import ring.mobiles.senses.handlers.InterjectionHandler;
+import ring.mobiles.senses.StimulusSender;
 import ring.server.shells.PlayerShell;
 
 /**
@@ -21,10 +24,13 @@ import ring.server.shells.PlayerShell;
  *
  */
 public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run())) {
-	
 	public CommunicatorRouting() {
 		System.out.println("---CREATING NEW ROUTING ASPECT---");
 	}
+	
+	//Shell to scope command results under
+	private PlayerShell shell;
+	
 	//Communicator to route.
 	private Communicator comms;
 
@@ -41,6 +47,7 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	before(PlayerShell shell): gameLoopOf(shell) {
 		System.out.println("Found comms: " + shell.comms);
 		this.comms = shell.comms;
+		this.shell = shell;
 	}
 	
 	/**
@@ -48,40 +55,36 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	 * specified PlayerShell.
 	 * @param shell The shell.
 	 */
-	pointcut createCommandResult():
-		call(public CommandResult.new(..)) &&
+	pointcut createCommandResult(CommandResult result):
+		execution(public CommandResult.new(..)) && this(result) &&
 		cflow(call(public void CommandSender.doCommand(String)));
 	
 	/**
 	 * Route Communicators to CommandResults for when commands are executed. This
-	 * advice operates after a CommandResult is constructed.
+	 * advice operates after a CommandResult has been constructed.
 	 */
-	CommandResult around(): createCommandResult() {
-		System.out.println("Sup guys");
-		CommandResult cr = proceed();
-		System.out.println("Command result " + cr + " was created with " + comms);
+	after(CommandResult cr): createCommandResult(cr) {
 		cr.setCommunicator(comms);
 		
 		//This allows the result to be used by other pointcuts.
 		//Not all will necessarily use it, however.
 		this.result = cr;
-		
-		return cr;
 	}
 	
 	/**
 	 * Pointcut that matches whenever a sense stimulus is consumed within the context of a
-	 * command. This overrides the default InterjectionHandler for the senses group and instead
-	 * uses a CommandResultHandler.
+	 * command. This overrides the default {@link InterjectionHandler} for the senses group and instead
+	 * uses a CommandResultHandler. It explicitly excludes calls to {@link StimulusSender} because
+	 * those mobiles need to use interjection handlers rather than command result handlers.
 	 * @param shell
 	 * @param group
 	 */
 	pointcut consumeSenseInCommand(SensesGroup group):
 		(call(public void SensesGroup.consume(..)) && target(group)) &&
+		!withincode(void StimulusSender.sendStimulus(..)) &&
 		cflow(call(public void CommandSender.doCommand(String)));
 	
 	before(SensesGroup group): consumeSenseInCommand(group) {
-		System.out.println("Setting up new handler with " + result + " and " + result.getCommunicator());
 		CommandResultHandler handler = new CommandResultHandler(result);
 		
 		oldHandler = group.getDepictionHandler();
@@ -89,7 +92,6 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	}
 	
 	after(SensesGroup group): consumeSenseInCommand(group) {
-		System.out.println("Restoring old handler...");
 		group.setDepictionHandler(oldHandler);
 	}
 }
