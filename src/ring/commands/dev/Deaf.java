@@ -13,10 +13,11 @@ public class Deaf extends AbstractAdminCommand implements Command {
 		CommandResult res = new CommandResult();
 		if (super.isAccessAllowed(sender)) {
 			Mobile mob = (Mobile) sender;
-			mob.getBaseModel().setDeaf(!mob.getBaseModel().isDeaf());
+			boolean deaf = mob.getDynamicModel().getSensesGroup().getAuditorySense().isDisabled();
+			mob.getDynamicModel().getSensesGroup().getAuditorySense().setDeafness(!deaf);
 			
 			res.setFailText("Couldn't make you deaf (or not deaf).");
-			res.setText("Your deafness: " + mob.getBaseModel().isDeaf());
+			res.setText("Your deafness: " + !deaf);
 			res.setSuccessful(true);
 		}
 		res.send();

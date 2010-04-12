@@ -26,7 +26,7 @@ public class Say implements Command {
 		String textBackToPlayer;
 
 		// check for speaker's deafness.
-		if (mob.getBaseModel().isDeaf())
+		if (mob.getDynamicModel().getSensesGroup().getAuditorySense().isDisabled())
 			textBackToPlayer = "You say something, but you're not entirely sure what since you cannot hear!";
 		else
 			textBackToPlayer = "You say, \"";
@@ -44,7 +44,7 @@ public class Say implements Command {
 		}
 
 		// check for speaker's deafness deafness again.
-		if (!mob.getBaseModel().isDeaf()) {
+		if (!mob.getDynamicModel().getSensesGroup().getAuditorySense().isDisabled()) {
 			textBackToPlayer += message;
 			textBackToPlayer += "\"";
 		}

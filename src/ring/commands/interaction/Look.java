@@ -34,7 +34,7 @@ public class Look implements Command {
 		// of the thing being looked at it.
 		else {
 			// is our looker blind?
-			if (mob.getBaseModel().isBlind()) {
+			if (mob.getDynamicModel().getSensesGroup().getVisualSense().isDisabled()) {
 				res.setFailText("You have nothing to look at, for you are blind!");
 				res.send();
 			}

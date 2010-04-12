@@ -26,7 +26,7 @@ propOrder= {
 	"level", "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma",
 	"name", "title", "lastName", "description", "height", "gender", "type", "weightLimit", "race",
 	"body",	"mobileClass", "alignment", "raceAggressiveList", "alignmentAggressiveList", 
-	"aggressive", "dead", "deaf", "blind", "silent", "flying", "floating", "mounted", "fighting",
+	"aggressive", "dead", "silent", "flying", "floating", "mounted", "fighting",
 	"leftHanded", "prone", "lyingDown", "sitting"
 })
 public class MobileBaseModel {
@@ -199,14 +199,6 @@ public class MobileBaseModel {
 	private boolean isDead;// If mob is dead.
 	@XmlElement public boolean isDead() { return isDead; }
 	public void setDead(boolean val) { isDead = val; }
-	
-	private boolean isDeaf;// If mob is deaf.
-	@XmlElement public boolean isDeaf() { return isDeaf; }
-	public void setDeaf(boolean val) { isDeaf = val; }
-	
-	private boolean isBlind;// If mob is blind.
-	@XmlElement public boolean isBlind() { return isBlind; }
-	public void setBlind(boolean val) { isBlind = val; }
 	
 	private boolean isSilent;// If mob can speak or not.
 	@XmlElement public boolean isSilent() { return isSilent; }
