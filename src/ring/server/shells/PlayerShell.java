@@ -106,6 +106,9 @@ public class PlayerShell {
 		//Remove them from their current room.
 		player.getLocation().removeMobile(player);
 		
+		//Remove them from the world ticker.
+		Ticker.getTicker().removeTickerListener(player);
+		
 		//TODO save player's current room to restore later.
 		
 		MUDConnectionManager.removeConnection(clientIP);
