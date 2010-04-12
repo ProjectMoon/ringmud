@@ -12,6 +12,7 @@ Super quick startup instructions:
 
  1. Download eXist 1.4 from http://exist.sourceforge.net
  2. Install exist to where ever you want. It has an easy graphical installer.
+     * If you need to install headlessly, follow http://exist-db.org/quickstart.html. (see step 2 note 3)
  3. Download and install Jython from http://www.jython.org.
  4. Build ringmud by running `ant` from this directory.
  5. `cd dist/bin/`

@@ -2,23 +2,15 @@ package ring.persistence;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
-import org.python.util.PythonInterpreter;
-import org.w3c.dom.Node;
 import org.xmldb.api.base.Resource;
-import org.xmldb.api.base.ResourceIterator;
-import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
-import org.xmldb.api.modules.XMLResource;
 
 import ring.deployer.DeployedMUD;
 import ring.deployer.DeployedMUDFactory;
 import ring.main.RingModule;
-import ring.movement.Room;
 
 public class XQueryModule implements RingModule {
 
