@@ -62,6 +62,7 @@ public class Intermud3Client {
 	}
 	
 	public void submitWhoRequest(String mudName) throws I3NotConnectedException {
+		
 		client.sendWho(new LPCMixed(player.getName()), new LPCMixed(mudName));
 		//Rest is handled by the event handler.
 	}

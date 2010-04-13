@@ -1,5 +1,9 @@
 package ring.aspects;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.comms.Communicator;
@@ -7,7 +11,9 @@ import ring.mobiles.senses.DepictionHandler;
 import ring.mobiles.senses.SensesGroup;
 import ring.mobiles.senses.handlers.CommandResultHandler;
 import ring.mobiles.senses.StimulusSender;
+import ring.players.Player;
 import ring.server.shells.PlayerShell;
+import ring.intermud3.Intermud3Client;
 
 /**
  * This aspect deals with routing Communicator objects to various places
@@ -27,7 +33,7 @@ import ring.server.shells.PlayerShell;
 public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run())) {
 	//Shell to scope command results under
 	private PlayerShell shell;
-	
+		
 	//Communicator to route.
 	private Communicator comms;
 
@@ -58,14 +64,17 @@ public privileged aspect CommunicatorRouting percflow(call(void PlayerShell.run(
 	 * @param result The {@link CommandResult} to route the communicator to.
 	 */
 	pointcut createCommandResult(CommandResult result):
-		execution(public CommandResult.new(..)) && this(result) &&
+		execution(public CommandResult.new(..)) && this(result);
+		
+		
+	pointcut withinCommandFlow():
 		cflow(call(public void CommandSender.doCommand(String)));
 	
 	/**
 	 * Route Communicators to CommandResults for when commands are executed. This
 	 * advice operates after a CommandResult has been constructed.
 	 */
-	after(CommandResult cr): createCommandResult(cr) {
+	after(CommandResult cr): createCommandResult(cr) && withinCommandFlow() {
 		cr.setCommunicator(comms);
 		
 		//This allows the result to be used by other pointcuts.
