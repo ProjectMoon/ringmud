@@ -18,6 +18,8 @@ import ring.persistence.DataStoreFactory;
 import ring.persistence.Persistable;
 import ring.persistence.RingConstants;
 
+import ring.events.listeners.*;
+
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
 @XmlType(
@@ -34,6 +36,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	
 	private String id;
 	private String docName;
+	private List<BusinessObjectListener> listeners = new ArrayList<BusinessObjectListener>();
 	
 	private boolean storeAsUpdate;
 	
@@ -128,6 +131,12 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	@Override
 	public void setParent(Persistable obj) {
 		parent = obj;
+		
+		//Temporary. later this will go into an aspect
+		BusinessObjectEvent e = new BusinessObjectEvent(obj);
+		for (BusinessObjectListener listener : listeners) {
+			listener.parentChanged(e);
+		}
 	}
 	
 	
@@ -166,6 +175,20 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	@Override
 	public boolean storeAsUpdate() {
 		return storeAsUpdate;
+	}
+	
+	public void addBusinessObjectListener(BusinessObjectListener listener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
+	
+	public boolean removeBusinessObjectListener(BusinessObjectListener listener) {
+		return listeners.remove(listener);
+	}
+	
+	public List<BusinessObjectListener> getListeners() {
+		return listeners;
 	}
 	
 	/**

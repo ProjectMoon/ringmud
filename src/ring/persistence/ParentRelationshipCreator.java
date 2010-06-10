@@ -3,6 +3,7 @@ package ring.persistence;
 import javax.xml.bind.Unmarshaller;
 
 import ring.nrapi.business.AbstractBusinessObject;
+import ring.events.listeners.*;
 
 /**
  * Unmarshalling listener for setting up parent relationships. 
@@ -16,7 +17,15 @@ public class ParentRelationshipCreator extends Unmarshaller.Listener {
 		if (target instanceof AbstractBusinessObject) {
 			if (parent instanceof AbstractBusinessObject) {
 				AbstractBusinessObject po = (AbstractBusinessObject)parent;
-				po.addChild((AbstractBusinessObject)target);
+				final AbstractBusinessObject to = (AbstractBusinessObject)target;
+				
+				to.addBusinessObjectListener(new BusinessObjectListener() {
+					@Override
+					public void parentChanged(BusinessObjectEvent e) {
+						System.out.println("parent for " + to + " changed to: " + e.getSource());
+					}
+				});
+				po.addChild(to);
 			}
 		}
 	}

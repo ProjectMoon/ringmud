@@ -1,6 +1,7 @@
 package ring.nrapi.business;
 
 import ring.persistence.Persistable;
+import ring.events.listeners.BusinessObjectListener;
 
 /**
  * Represents a game business object. All BusinessObjects are also
