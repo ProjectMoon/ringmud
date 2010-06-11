@@ -176,8 +176,14 @@ public class TelnetStreamCommunicator implements Communicator {
 	 * @param message
 	 */
 	public void interject(String message) throws CommunicationException {
-		//TODO do this right.
-		printWithPreline(message);
+		String currentText = lowlevelInput.getCurrentBuffer();
+		currentText = TextParser.trimNewlines(currentText);
+		message = TextParser.trimNewlines(message);
+			
+		message = message + getSuffix() + currentText;
+		message = formatData(message, false);
+		System.out.println(message.replaceAll("\n", "N"));
+		doSend(message);
 	}
 	
 	/**

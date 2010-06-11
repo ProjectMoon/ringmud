@@ -38,7 +38,7 @@ public class CommandResult {
 	}
 	
 	public void send() {
-		if (!pushed) {
+		if (!pushed && comms != null) {
 			String result = "";
 			
 			//If we have something to send,

@@ -18,6 +18,7 @@ import net.wimpi.telnetd.io.BasicTerminalIO;
 public class TelnetInputStream extends InputStream {
 	private BasicTerminalIO io;
 	private boolean echo = true;
+	private byte[] currentBuffer;
 	
 	/**
 	 * Creates an input stream from the given BasicTerminalIO object.
@@ -41,6 +42,8 @@ public class TelnetInputStream extends InputStream {
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		int bytesRead = 0;
+		currentBuffer = new byte[len];
+		
 		for (int c = off; c < len; c++) {
 			int i = io.read();
 				
@@ -58,7 +61,8 @@ public class TelnetInputStream extends InputStream {
 					io.moveLeft(1);
 					
 					//and internally.
-					b[c] = (byte)0;					
+					b[c] = (byte)0;
+					currentBuffer[c] = (byte)0;			
 					bytesRead --;
 					//needs to be decremented because we are moving backwards in the array.
 					c--; 
@@ -74,10 +78,11 @@ public class TelnetInputStream extends InputStream {
 			else {
 				//This is a regular character, so we read it into the stream.				
 				b[c] = (byte)i;
+				currentBuffer[c] = (byte)i;
 				bytesRead++;
 				
 				//Echo it back, if it's turned on.
-				//Currently will also echo newlines.
+				//Currently does not echo newlines.
 				if (echo && (char)i != '\n') {
 					io.write((char)i);
 				}
@@ -110,6 +115,10 @@ public class TelnetInputStream extends InputStream {
 	 */
 	public void setEcho(boolean echo) {
 		this.echo = echo;
+	}
+	
+	public String getCurrentBuffer() {
+		return new String(currentBuffer);
 	}
 
 }
