@@ -111,8 +111,8 @@ public interface Persistable {
 	 * Gets the root document ID associated with this Persistable's object
 	 * hierarchy. The document ID is decided internally by the DataStore.
 	 * It could be anything from a document name to a random number generated
-	 * by an internal database driver. User code should not rely on the
-	 * document ID, but rather the canonical ID, document name, and object IDs.
+	 * by a database driver. User code should not rely on the document ID, 
+	 * but rather the canonical ID, document name, and object IDs.
 	 * @return the ID
 	 */
 	public String getDocumentID();

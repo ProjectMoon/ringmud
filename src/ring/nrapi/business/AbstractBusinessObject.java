@@ -131,12 +131,6 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 	@Override
 	public void setParent(Persistable obj) {
 		parent = obj;
-		
-		//Temporary. later this will go into an aspect
-		BusinessObjectEvent e = new BusinessObjectEvent(obj);
-		for (BusinessObjectListener listener : listeners) {
-			listener.parentChanged(e);
-		}
 	}
 	
 	
@@ -187,7 +181,7 @@ public abstract class AbstractBusinessObject implements BusinessObject {
 		return listeners.remove(listener);
 	}
 	
-	public List<BusinessObjectListener> getListeners() {
+	public List<BusinessObjectListener> getBusinessObjectListeners() {
 		return listeners;
 	}
 	

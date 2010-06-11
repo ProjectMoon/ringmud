@@ -98,10 +98,4 @@ public class EventLoader {
 			e.printStackTrace();
 		}	
 	}
-	
-	public static void main(String[] args) throws IOException, XMLDBException, JAXBException {
-		MUDConfig.loadProperties();
-		ExistDB.setRootURI("sample");
-		new EventLoader().loadEvents();
-	}
 }

@@ -1,5 +1,7 @@
 package ring.nrapi.business;
 
+import java.util.List;
+
 import ring.persistence.Persistable;
 import ring.events.listeners.BusinessObjectListener;
 
@@ -11,4 +13,7 @@ import ring.events.listeners.BusinessObjectListener;
  */
 public interface BusinessObject extends Persistable {
 	public void save();
+	public void addBusinessObjectListener(BusinessObjectListener listener);
+	public boolean removeBusinessObjectListener(BusinessObjectListener listener);
+	public List<BusinessObjectListener> getBusinessObjectListeners();
 }

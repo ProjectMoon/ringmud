@@ -1,5 +1,7 @@
 package ring.mobiles;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,6 +16,7 @@ import ring.commands.CommandHandler;
 import ring.commands.CommandSender;
 import ring.effects.Affectable;
 import ring.effects.Effect;
+import ring.events.listeners.MobileListener;
 import ring.items.Armor;
 import ring.items.Item;
 import ring.magic.SpellCaster;
@@ -65,7 +68,10 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	
 	//default messages to display while the mob is locked, and when it is finished.
 	protected String lockMessage = "You are currently focused on an activity."; 
-	protected String lockFinishedMessage = "You become aware of the world again."; 
+	protected String lockFinishedMessage = "You become aware of the world again.";
+	
+	//event listeners
+	private List<MobileListener> listeners = new ArrayList<MobileListener>();
 	
 	public Mobile() {
 		baseModel = new MobileBaseModel();
@@ -107,6 +113,18 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		combatModel = model;
 	}
 	
+	public void addMobileListener(MobileListener listener) {
+		listeners.add(listener);
+	}
+	
+	public boolean removeMobileListener(MobileListener listener) {
+		return listeners.remove(listener);
+	}
+	
+	public List<MobileListener> getMobileListeners() {
+		return listeners;
+	}
+	
 	/**
 	 * Gets the modifier for a given score based on the standard
 	 * formula: (score - 10) / 2, rounded down.
@@ -115,11 +133,6 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	 */
 	public int getModifier(int score) {
 		return (score - 10) / 2;
-	}
-
-	// Meant to be overridden.
-	public void sendData(String text) {
-
 	}
 
 	/**
@@ -386,11 +399,11 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 
 	public boolean canMove() {
 		if (getBaseModel().isFighting()) {
-			sendData("[GREEN]You may not leave during combat![WHITE]");
+			//("[GREEN]You may not leave during combat![WHITE]");
 			return false;
 		}
 		else if (getDynamicModel().getCurrentMV() - 1 <= 0) {
-			sendData("[R][WHITE]You are too exhausted to move any further. Rest for awhile to regain your strength.");
+			//("[R][WHITE]You are too exhausted to move any further. Rest for awhile to regain your strength.");
 			return true;
 		}
 		else {

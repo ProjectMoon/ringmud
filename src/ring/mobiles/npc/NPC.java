@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import ring.commands.CommandSender;
+import ring.events.listeners.MobileListener;
 import ring.mobiles.Mobile;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;

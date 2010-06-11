@@ -129,7 +129,7 @@ public class Battle implements TickerListener {
 		//then do attacks.
 		for (Mobile mob : mobList) {
 			boolean hit = mob.attack(mob.getCombatModel().getTarget(), true); //later factor in the weapon they have.
-			if (hit) mob.sendData("You hit " + mob.getCombatModel().getTarget() + " for some damage."); //implement damage here!
+			//if (hit) mob.sendData("You hit " + mob.getCombatModel().getTarget() + " for some damage."); //implement damage here!
 		}
 	}
 	

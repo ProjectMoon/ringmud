@@ -72,7 +72,7 @@ public class Ticker implements Runnable {
 	/**
 	 * Fires a PULSE event to all registered listeners on the server.
 	 */
-	public void fireTickerEvent() {
+	public void fireTickesdfrEvent() {
 		synchronized (listeners) {
 			for (TickerListener listener : listeners) {
 				TickerEvent event = new TickerEvent(this, tickCount, TickerType.PULSE);
@@ -94,7 +94,7 @@ public class Ticker implements Runnable {
 					tickCount = 1;
 				}
 				
-				fireTickerEvent();
+				fireTickesdfrEvent();
 			}
 			catch (InterruptedException ie) {}
 		}
