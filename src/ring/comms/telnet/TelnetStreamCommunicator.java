@@ -182,7 +182,6 @@ public class TelnetStreamCommunicator implements Communicator {
 			
 		message = message + getSuffix() + currentText;
 		message = formatData(message, false);
-		System.out.println(message.replaceAll("\n", "N"));
 		doSend(message);
 	}
 	
