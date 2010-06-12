@@ -74,7 +74,7 @@ public interface MobileListener extends EventListener {
 	 * object for this event is the item dequipped.
 	 * @param e
 	 */
-	public void dequipItem(MobileEvent e);
+	public void dequippedItem(MobileEvent e);
 	
 	/**
 	 * Fired when the mobile successfully picks up an item. The contextual

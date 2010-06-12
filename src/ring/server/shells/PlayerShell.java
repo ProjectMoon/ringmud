@@ -9,6 +9,7 @@ import ring.mobiles.senses.handlers.InterjectionHandler;
 import ring.mobiles.senses.stimuli.VisualStimulus;
 import ring.movement.LocationManager;
 import ring.movement.Room;
+import ring.players.DefaultPlayerListener;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
 import ring.server.MUDConnection;
@@ -66,6 +67,7 @@ public class PlayerShell {
 	
 	private void gameLoop() {
 		Ticker.getTicker().addTickerListener(player);
+		player.addMobileListener(new DefaultPlayerListener());
 		
 		//Set up senses group so the player can perceive the world.
 		//TODO This needs to be persistable to the db.

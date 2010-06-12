@@ -32,4 +32,8 @@ public class RoomLookAction {
 		
 		mob.getDynamicModel().getSensesGroup().consume(stimulus);
 	}
+	
+	public Mobile getMobile() {
+		return mob;
+	}
 }
