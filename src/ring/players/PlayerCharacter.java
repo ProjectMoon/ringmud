@@ -143,4 +143,38 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 
 		return sb.toString().toLowerCase();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime
+				* result
+				+ ((controllingPlayer == null) ? 0 : controllingPlayer
+						.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PlayerCharacter other = (PlayerCharacter) obj;
+		if (controllingPlayer == null) {
+			if (other.controllingPlayer != null)
+				return false;
+		} else if (!controllingPlayer.equals(other.controllingPlayer))
+			return false;
+		return true;
+	}
 }

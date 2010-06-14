@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.mobiles.Body;
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.mobiles.BodyPart;
 import ring.persistence.RingConstants;
 import ring.world.WorldObject;
@@ -99,5 +99,64 @@ public class Item extends WorldObject {
 		WorldObjectMetadata metadata = new WorldObjectMetadata();
 		metadata.setName(getName());
 		return metadata;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result
+				+ ((idlePrefix == null) ? 0 : idlePrefix.hashCode());
+		result = prime * result
+				+ ((idleSuffix == null) ? 0 : idleSuffix.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((partWornOn == null) ? 0 : partWornOn.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Item other = (Item) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (idlePrefix == null) {
+			if (other.idlePrefix != null)
+				return false;
+		} else if (!idlePrefix.equals(other.idlePrefix))
+			return false;
+		if (idleSuffix == null) {
+			if (other.idleSuffix != null)
+				return false;
+		} else if (!idleSuffix.equals(other.idleSuffix))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (partWornOn == null) {
+			if (other.partWornOn != null)
+				return false;
+		} else if (!partWornOn.equals(other.partWornOn))
+			return false;
+		return true;
 	}
 }

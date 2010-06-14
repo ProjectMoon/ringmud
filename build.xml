@@ -160,6 +160,7 @@
 	<target name="jar-nrapi" depends="compile">
 		<jar destfile="${jar.dir}/ringmud-nrapi-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/nrapi/**" />
+			<zipfileset dir="${src.dir}/ring/nrapi/" includes="*.xq" prefix="ring/nrapi/" />
 			<zipfileset dir="${classes.dir}" includes="ring/entities/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/items/**" />
 			<zipfileset dir="${classes.dir}" includes="ring/magic/**" />

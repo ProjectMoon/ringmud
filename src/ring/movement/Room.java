@@ -15,7 +15,7 @@ import ring.movement.PortalNotFoundException;
 import ring.movement.LocationManager;
 import ring.movement.Movable;
 import ring.movement.Portal;
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
@@ -32,7 +32,7 @@ propOrder= {
 	"mobiles",
 	"entities"
 })
-public class Room extends AbstractBusinessObject {
+public class Room extends BusinessObject {
 	private static final String NO_EXITS_STRING = "[B][RED]NO EXITS![R][WHITE]";
 	
 	private List<Entity> entities = new ArrayList<Entity>();
@@ -271,5 +271,61 @@ public class Room extends AbstractBusinessObject {
 	 */
 	public boolean canEnter(Movable mov) {
 		return (mov instanceof Mobile || mov instanceof Entity);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((entities == null) ? 0 : entities.hashCode());
+		result = prime * result + ((items == null) ? 0 : items.hashCode());
+		result = prime * result + ((mobiles == null) ? 0 : mobiles.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
+		result = prime * result + ((zone == null) ? 0 : zone.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Room other = (Room) obj;
+		if (entities == null) {
+			if (other.entities != null)
+				return false;
+		} else if (!entities.equals(other.entities))
+			return false;
+		if (items == null) {
+			if (other.items != null)
+				return false;
+		} else if (!items.equals(other.items))
+			return false;
+		if (mobiles == null) {
+			if (other.mobiles != null)
+				return false;
+		} else if (!mobiles.equals(other.mobiles))
+			return false;
+		if (model == null) {
+			if (other.model != null)
+				return false;
+		} else if (!model.equals(other.model))
+			return false;
+		if (zone == null) {
+			if (other.zone != null)
+				return false;
+		} else if (!zone.equals(other.zone))
+			return false;
+		return true;
 	}
 }

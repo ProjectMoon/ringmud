@@ -218,4 +218,176 @@ public class MobileBaseModel {
 	private boolean isSitting;// If mob is sitting.
 	@XmlElement public boolean isSitting() { return isSitting; }
 	public void setSitting(boolean val) { isSitting = val; }
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((alignment == null) ? 0 : alignment.hashCode());
+		result = prime
+				* result
+				+ ((alignmentAggressiveList == null) ? 0
+						: alignmentAggressiveList.hashCode());
+		result = prime * result + ((body == null) ? 0 : body.hashCode());
+		result = prime * result + charisma;
+		result = prime * result + constitution;
+		result = prime * result + dexterity;
+		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(height);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + intelligence;
+		result = prime * result + (isAggressive ? 1231 : 1237);
+		result = prime * result + (isDead ? 1231 : 1237);
+		result = prime * result + (isFighting ? 1231 : 1237);
+		result = prime * result + (isFloating ? 1231 : 1237);
+		result = prime * result + (isFlying ? 1231 : 1237);
+		result = prime * result + (isLeftHanded ? 1231 : 1237);
+		result = prime * result + (isLyingDown ? 1231 : 1237);
+		result = prime * result + (isMounted ? 1231 : 1237);
+		result = prime * result + (isProne ? 1231 : 1237);
+		result = prime * result + (isSilent ? 1231 : 1237);
+		result = prime * result + (isSitting ? 1231 : 1237);
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + level;
+		result = prime * result
+				+ ((lookDescription == null) ? 0 : lookDescription.hashCode());
+		result = prime * result
+				+ ((mobClass == null) ? 0 : mobClass.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((race == null) ? 0 : race.hashCode());
+		result = prime
+				* result
+				+ ((raceAggressiveList == null) ? 0 : raceAggressiveList
+						.hashCode());
+		result = prime * result + strength;
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		temp = Double.doubleToLongBits(weightLimit);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + wisdom;
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MobileBaseModel other = (MobileBaseModel) obj;
+		if (alignment == null) {
+			if (other.alignment != null)
+				return false;
+		} else if (!alignment.equals(other.alignment))
+			return false;
+		if (alignmentAggressiveList == null) {
+			if (other.alignmentAggressiveList != null)
+				return false;
+		} else if (!alignmentAggressiveList
+				.equals(other.alignmentAggressiveList))
+			return false;
+		if (body == null) {
+			if (other.body != null)
+				return false;
+		} else if (!body.equals(other.body))
+			return false;
+		if (charisma != other.charisma)
+			return false;
+		if (constitution != other.constitution)
+			return false;
+		if (dexterity != other.dexterity)
+			return false;
+		if (gender == null) {
+			if (other.gender != null)
+				return false;
+		} else if (!gender.equals(other.gender))
+			return false;
+		if (Double.doubleToLongBits(height) != Double
+				.doubleToLongBits(other.height))
+			return false;
+		if (intelligence != other.intelligence)
+			return false;
+		if (isAggressive != other.isAggressive)
+			return false;
+		if (isDead != other.isDead)
+			return false;
+		if (isFighting != other.isFighting)
+			return false;
+		if (isFloating != other.isFloating)
+			return false;
+		if (isFlying != other.isFlying)
+			return false;
+		if (isLeftHanded != other.isLeftHanded)
+			return false;
+		if (isLyingDown != other.isLyingDown)
+			return false;
+		if (isMounted != other.isMounted)
+			return false;
+		if (isProne != other.isProne)
+			return false;
+		if (isSilent != other.isSilent)
+			return false;
+		if (isSitting != other.isSitting)
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (level != other.level)
+			return false;
+		if (lookDescription == null) {
+			if (other.lookDescription != null)
+				return false;
+		} else if (!lookDescription.equals(other.lookDescription))
+			return false;
+		if (mobClass == null) {
+			if (other.mobClass != null)
+				return false;
+		} else if (!mobClass.equals(other.mobClass))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (race == null) {
+			if (other.race != null)
+				return false;
+		} else if (!race.equals(other.race))
+			return false;
+		if (raceAggressiveList == null) {
+			if (other.raceAggressiveList != null)
+				return false;
+		} else if (!raceAggressiveList.equals(other.raceAggressiveList))
+			return false;
+		if (strength != other.strength)
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		if (Double.doubleToLongBits(weightLimit) != Double
+				.doubleToLongBits(other.weightLimit))
+			return false;
+		if (wisdom != other.wisdom)
+			return false;
+		return true;
+	}
 }

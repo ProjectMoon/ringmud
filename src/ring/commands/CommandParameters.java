@@ -82,6 +82,11 @@ public final class CommandParameters {
 		return initParameters.length;
 	}
 	
+	/**
+	 * Gets the original parameter string, as split at the starting index.
+	 * @param fromIndex
+	 * @return
+	 */
 	public String getTextParameters(int fromIndex) {
 		String res = "";
 		

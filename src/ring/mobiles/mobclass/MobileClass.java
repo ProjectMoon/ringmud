@@ -136,4 +136,79 @@ public class MobileClass implements Serializable {
 		//TODO rewrite after implementation of class features.
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((baseAttackBonus == null) ? 0 : baseAttackBonus.hashCode());
+		result = prime * result
+				+ ((displayName == null) ? 0 : displayName.hashCode());
+		result = prime * result
+				+ ((fortSaveType == null) ? 0 : fortSaveType.hashCode());
+		result = prime * result + ((hitDie == null) ? 0 : hitDie.hashCode());
+		result = prime * result + level;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((refSaveType == null) ? 0 : refSaveType.hashCode());
+		result = prime * result
+				+ ((willSaveType == null) ? 0 : willSaveType.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MobileClass other = (MobileClass) obj;
+		if (baseAttackBonus == null) {
+			if (other.baseAttackBonus != null)
+				return false;
+		} else if (!baseAttackBonus.equals(other.baseAttackBonus))
+			return false;
+		if (displayName == null) {
+			if (other.displayName != null)
+				return false;
+		} else if (!displayName.equals(other.displayName))
+			return false;
+		if (fortSaveType == null) {
+			if (other.fortSaveType != null)
+				return false;
+		} else if (!fortSaveType.equals(other.fortSaveType))
+			return false;
+		if (hitDie == null) {
+			if (other.hitDie != null)
+				return false;
+		} else if (!hitDie.equals(other.hitDie))
+			return false;
+		if (level != other.level)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (refSaveType == null) {
+			if (other.refSaveType != null)
+				return false;
+		} else if (!refSaveType.equals(other.refSaveType))
+			return false;
+		if (willSaveType == null) {
+			if (other.willSaveType != null)
+				return false;
+		} else if (!willSaveType.equals(other.willSaveType))
+			return false;
+		return true;
+	}
 }

@@ -8,12 +8,11 @@ import java.io.IOException;
  * etc.
  * <br/><br/>
  * When creating a daemon, it should be written with multithreading in mind. The RingMUD engine
- * is multithreaded by its nature, so when accessing mutable objects within the system, care should
+ * is multithreaded by nature, so when accessing mutable objects within the system, care should
  * be taken synchronize.
  * <br/><br/>
- * Most daemons run on a thread of their own. However, it is not the responsibility of the
- * engine itself to implement this threading. The daemon must handle its own backgrounding
- * logic.
+ * Most daemons run on a thread of their own. The engine provides a {@link ring.daemons.DaemonThread}
+ * class to facilitate launching of daemons.
  * @author projectmoon
  *
  */

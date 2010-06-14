@@ -14,6 +14,7 @@ import ring.daemons.Daemon;
 import ring.events.EventLoader;
 import ring.intermud3.Intermud3Daemon;
 import ring.movement.WorldBuilder;
+import ring.nrapi.ObjectIndexSystem;
 import ring.python.Interpreter;
 import ring.world.Ticker;
 
@@ -36,6 +37,10 @@ public class MUDBoot {
 		
 		System.out.println("Loading Jython...");
 		Interpreter.INSTANCE.getInterpreter();
+		
+		//Load Object Index System
+		System.out.println("Loading Object Index System...");
+		ObjectIndexSystem.start();
 		
 		//Load all event handlers
 		System.out.println("Loading event handlers...");

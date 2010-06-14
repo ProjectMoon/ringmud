@@ -9,12 +9,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.persistence.RingConstants;
 
 /**
  * This class is used to group Rooms and Portals together for use by the
- * LocationManager and storage in the database.
+ * LocationManager and storage in the database. It is not typically declared
+ * in game code. The only place it will generally be found in user code is in
+ * Python data files.
  * @author projectmoon
  *
  */
@@ -26,7 +28,7 @@ propOrder= {
 	"room",
 	"exits"
 })
-public class Location extends AbstractBusinessObject {
+public class Location extends BusinessObject {
 	private Room room;
 	private List<Portal> exits = new ArrayList<Portal>();
 

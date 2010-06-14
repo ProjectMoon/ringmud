@@ -108,4 +108,38 @@ public class Inventory implements Iterable<Item>, Serializable {
 		return new ItemIterator(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + capacity;
+		result = prime * result + ((inv == null) ? 0 : inv.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Inventory other = (Inventory) obj;
+		if (capacity != other.capacity)
+			return false;
+		if (inv == null) {
+			if (other.inv != null)
+				return false;
+		} else if (!inv.equals(other.inv))
+			return false;
+		return true;
+	}
+
 }

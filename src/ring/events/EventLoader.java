@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.xmldb.api.base.XMLDBException;
 
 import ring.deployer.DeployedMUDFactory;
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.persistence.ExistDB;
 import ring.persistence.RingConstants;
 import ring.persistence.XQuery;
@@ -47,7 +47,7 @@ public class EventLoader {
 		"documentName",
 		"codebehind"
 	})
-	public static class CodebehindEntry extends AbstractBusinessObject {
+	public static class CodebehindEntry extends BusinessObject {
 		private String docName;
 		private String codebehind;
 		

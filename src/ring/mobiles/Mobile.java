@@ -457,4 +457,79 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		
 		return res; 
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((baseModel == null) ? 0 : baseModel.hashCode());
+		result = prime * result
+				+ ((combatModel == null) ? 0 : combatModel.hashCode());
+		result = prime * result
+				+ ((dynamicModel == null) ? 0 : dynamicModel.hashCode());
+		result = prime * result + (isLocked ? 1231 : 1237);
+		result = prime * result
+				+ ((listeners == null) ? 0 : listeners.hashCode());
+		result = prime
+				* result
+				+ ((lockFinishedMessage == null) ? 0 : lockFinishedMessage
+						.hashCode());
+		result = prime * result
+				+ ((lockMessage == null) ? 0 : lockMessage.hashCode());
+		result = prime * result + lockTimeRemaining;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Mobile other = (Mobile) obj;
+		if (baseModel == null) {
+			if (other.baseModel != null)
+				return false;
+		} else if (!baseModel.equals(other.baseModel))
+			return false;
+		if (combatModel == null) {
+			if (other.combatModel != null)
+				return false;
+		} else if (!combatModel.equals(other.combatModel))
+			return false;
+		if (dynamicModel == null) {
+			if (other.dynamicModel != null)
+				return false;
+		} else if (!dynamicModel.equals(other.dynamicModel))
+			return false;
+		if (isLocked != other.isLocked)
+			return false;
+		if (listeners == null) {
+			if (other.listeners != null)
+				return false;
+		} else if (!listeners.equals(other.listeners))
+			return false;
+		if (lockFinishedMessage == null) {
+			if (other.lockFinishedMessage != null)
+				return false;
+		} else if (!lockFinishedMessage.equals(other.lockFinishedMessage))
+			return false;
+		if (lockMessage == null) {
+			if (other.lockMessage != null)
+				return false;
+		} else if (!lockMessage.equals(other.lockMessage))
+			return false;
+		if (lockTimeRemaining != other.lockTimeRemaining)
+			return false;
+		return true;
+	}
 }

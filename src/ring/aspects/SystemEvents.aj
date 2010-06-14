@@ -1,7 +1,7 @@
 package ring.aspects;
 import ring.events.EventDispatcher;
 import ring.events.EventEnum;
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.persistence.XQuery;
 import org.xmldb.api.modules.XMLResource;
 
@@ -34,8 +34,8 @@ public aspect SystemEvents {
 	 * onLoad event for non-root objects in an AbstractBusinessObject hierarchy.
 	 * @param obj The abstract business object.
 	 */
-	after(AbstractBusinessObject obj) returning(): 
-		call(void AbstractBusinessObject.createChildRelationship(..)) && args(.., obj) {
+	after(BusinessObject obj) returning(): 
+		call(void BusinessObject.createChildRelationship(..)) && args(.., obj) {
 			EventDispatcher.dispatch(SystemEvent.ON_LOAD, obj);
 	}
 	
@@ -44,8 +44,8 @@ public aspect SystemEvents {
 	 * Matches return type of <code>XQuery.convertToObject</code> instead.
 	 * @param obj The abstract business object.
 	 */
-	after() returning(AbstractBusinessObject obj):
-		call(AbstractBusinessObject XQuery.convertToObject(XMLResource, Class)) {
+	after() returning(BusinessObject obj):
+		call(BusinessObject XQuery.convertToObject(XMLResource, Class)) {
 			EventDispatcher.dispatch(SystemEvent.ON_LOAD, obj);
 	}
 	

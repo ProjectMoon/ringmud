@@ -127,4 +127,71 @@ public class Race implements Serializable {
 	public void setClassesAllowed(List<MobileClass> classesAllowed) {
 		this.classesAllowed = classesAllowed;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + chaMod;
+		result = prime * result
+				+ ((classesAllowed == null) ? 0 : classesAllowed.hashCode());
+		result = prime * result + conMod;
+		result = prime * result + dexMod;
+		result = prime * result + intMod;
+		result = prime * result + (isPCRace ? 1231 : 1237);
+		result = prime * result
+				+ ((raceBody == null) ? 0 : raceBody.hashCode());
+		result = prime * result
+				+ ((raceName == null) ? 0 : raceName.hashCode());
+		result = prime * result + strMod;
+		result = prime * result + wisMod;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Race other = (Race) obj;
+		if (chaMod != other.chaMod)
+			return false;
+		if (classesAllowed == null) {
+			if (other.classesAllowed != null)
+				return false;
+		} else if (!classesAllowed.equals(other.classesAllowed))
+			return false;
+		if (conMod != other.conMod)
+			return false;
+		if (dexMod != other.dexMod)
+			return false;
+		if (intMod != other.intMod)
+			return false;
+		if (isPCRace != other.isPCRace)
+			return false;
+		if (raceBody == null) {
+			if (other.raceBody != null)
+				return false;
+		} else if (!raceBody.equals(other.raceBody))
+			return false;
+		if (raceName == null) {
+			if (other.raceName != null)
+				return false;
+		} else if (!raceName.equals(other.raceName))
+			return false;
+		if (strMod != other.strMod)
+			return false;
+		if (wisMod != other.wisMod)
+			return false;
+		return true;
+	}
 }

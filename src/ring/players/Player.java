@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.persistence.DataStoreFactory;
 
 @XmlRootElement
@@ -20,7 +20,7 @@ import ring.persistence.DataStoreFactory;
  * @author projectmoon
  *
  */
-public class Player extends AbstractBusinessObject {
+public class Player extends BusinessObject {
 	private String name;
 	private String password;
 	private Date lastLogon;
@@ -81,5 +81,49 @@ public class Player extends AbstractBusinessObject {
 	
 	public boolean removeCharacter(String name) {
 		return charIDs.remove(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((charIDs == null) ? 0 : charIDs.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((password == null) ? 0 : password.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Player other = (Player) obj;
+		if (charIDs == null) {
+			if (other.charIDs != null)
+				return false;
+		} else if (!charIDs.equals(other.charIDs))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		return true;
 	}	
 }

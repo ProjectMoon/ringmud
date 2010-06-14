@@ -197,5 +197,66 @@ public class SensesGroup {
 		group.consume(telepathy);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((auditorySense == null) ? 0 : auditorySense.hashCode());
+		result = prime * result + ((handler == null) ? 0 : handler.hashCode());
+		result = prime * result
+				+ ((olfactorySense == null) ? 0 : olfactorySense.hashCode());
+		result = prime * result
+				+ ((tactileSense == null) ? 0 : tactileSense.hashCode());
+		result = prime * result
+				+ ((tasteSense == null) ? 0 : tasteSense.hashCode());
+		result = prime * result
+				+ ((visualSense == null) ? 0 : visualSense.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SensesGroup other = (SensesGroup) obj;
+		if (auditorySense == null) {
+			if (other.auditorySense != null)
+				return false;
+		} else if (!auditorySense.equals(other.auditorySense))
+			return false;
+		if (olfactorySense == null) {
+			if (other.olfactorySense != null)
+				return false;
+		} else if (!olfactorySense.equals(other.olfactorySense))
+			return false;
+		if (tactileSense == null) {
+			if (other.tactileSense != null)
+				return false;
+		} else if (!tactileSense.equals(other.tactileSense))
+			return false;
+		if (tasteSense == null) {
+			if (other.tasteSense != null)
+				return false;
+		} else if (!tasteSense.equals(other.tasteSense))
+			return false;
+		if (visualSense == null) {
+			if (other.visualSense != null)
+				return false;
+		} else if (!visualSense.equals(other.visualSense))
+			return false;
+		return true;
+	}
+
 
 }

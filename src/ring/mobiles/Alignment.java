@@ -124,4 +124,41 @@ public class Alignment implements Serializable {
 	public void setMoral(Moral moral) {
 		this.moral = moral;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ethical == null) ? 0 : ethical.hashCode());
+		result = prime * result + ((moral == null) ? 0 : moral.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Alignment other = (Alignment) obj;
+		if (ethical == null) {
+			if (other.ethical != null)
+				return false;
+		} else if (!ethical.equals(other.ethical))
+			return false;
+		if (moral == null) {
+			if (other.moral != null)
+				return false;
+		} else if (!moral.equals(other.moral))
+			return false;
+		return true;
+	}
 }

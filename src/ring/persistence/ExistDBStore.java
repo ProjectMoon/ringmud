@@ -18,7 +18,7 @@ import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.movement.Zone;
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 import ring.players.Player;
 import ring.players.PlayerCharacter;
 
@@ -208,8 +208,8 @@ public class ExistDBStore implements DataStore {
 		Collection col = null;
 		
 		try {
-			if (p.getDocumentID() == null) {
-				p.setDocumentID(p.getID() + ".xml");
+			if (p.getRoot().getDocumentName() == null) {
+				p.getRoot().setDocumentName(p.getID() + ".xml");
 			}
 			
 			//TODO implement update lock checking: all parts of a document must be ready for update. Could be good use of AspectJ?
@@ -251,7 +251,7 @@ public class ExistDBStore implements DataStore {
 		}
 	}
 		
-	protected <T extends AbstractBusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) 
+	protected <T extends BusinessObject> T retrieveResource(String id, Class<T> type, Loadpoint point) 
 														throws XMLDBException, JAXBException {
 		
 		//Ghetto prepared statements!

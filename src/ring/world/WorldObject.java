@@ -9,13 +9,23 @@ package ring.world;
  * @version 1.0
  */
 
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 
 /**
  * This is a class that represents an object that is in "the world." 
  * @author projectmoon
  * 
  */
-public abstract class WorldObject extends AbstractBusinessObject {
+public abstract class WorldObject extends BusinessObject {
 	public abstract WorldObjectMetadata getMetadata();
+	
+	@Override
+	public boolean equals(Object other) {
+		return super.equals(other);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

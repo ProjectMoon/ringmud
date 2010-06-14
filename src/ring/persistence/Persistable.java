@@ -1,6 +1,7 @@
 package ring.persistence;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Interface representing persistable to a DataStore. Persistables are modeled
@@ -72,6 +73,13 @@ public interface Persistable {
 	public void setParent(Persistable parent);
 	
 	/**
+	 * Tells whether or not this Persistable is the root of its hierarchy.
+	 * That is, this method returns true if getParnet() == null for this
+	 * Persistable.
+	 * @return True or false
+	 */
+	public boolean isRoot();
+	/**
 	 * Returns the root Persistable in the object hierarchy, regardless of
 	 * where this object is located in the hierarchy. If this Persistable is
 	 * the root of the hierarchy, this method simply returns the same object.
@@ -107,23 +115,7 @@ public interface Persistable {
 	 */
 	public void setID(String id);
 	
-	/**
-	 * Gets the root document ID associated with this Persistable's object
-	 * hierarchy. The document ID is decided internally by the DataStore.
-	 * It could be anything from a document name to a random number generated
-	 * by a database driver. User code should not rely on the document ID, 
-	 * but rather the canonical ID, document name, and object IDs.
-	 * @return the ID
-	 */
-	public String getDocumentID();
-	
-	/**
-	 * Sets the root document ID associated with this Persistable's object
-	 * hierarchy.
-	 * @param docID
-	 */
-	public void setDocumentID(String docID);
-	
+
 	/**
 	 * Gets the name of the XML document that this Persistable comes from.
 	 * This may differ from Persistable to Persistable within the hierarchy.
@@ -141,11 +133,29 @@ public interface Persistable {
 
 	/**
 	 * Gets the canonical ID for this Persistable. The canonical ID is a read-only, absolute,
-	 * unchanging attribute used to uniquely identify this Persistable in the system.
+	 * unchanging attribute used to uniquely identifiy this Persistable in the system.
 	 * The canonical ID is of the format "documentName:objectID". Implementations typically
 	 * just concatenate <code>getDocumentName()</code>, a colon, and <code>getID()</code> together
 	 * to produce this value.
+	 * <br/><br/>
+	 * This property is subject to disappear.
 	 * @return
 	 */
 	public String getCanonicalID();
+	
+	/**
+	 * Returns the UUID that this Persistable has. The UUID, or universally unique identifier,
+	 * identifies this Persistable instance to the MUD engine. 
+	 * @return
+	 */
+	public UUID getUuid();
+	
+	/**
+	 * Sets the UUID for this Persistable. User code should generally not call this method,
+	 * because anomalous behavior will result when searching for this Persistable using the
+	 * engine's object searching capability.
+	 */
+	public void setUuid(UUID uuid);
+	
+	
 }

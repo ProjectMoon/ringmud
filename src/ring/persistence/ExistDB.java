@@ -1,6 +1,8 @@
 package ring.persistence;
 
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -174,7 +176,7 @@ public class ExistDB {
 	}
 	
 	public Collection getRootCollection() throws XMLDBException {
-		Collection root = (Collection)DatabaseManager.getCollection(craftCollectionURI(ROOT_COLLECTION), dbUser, dbPassword);
+		Collection root = (Collection)DatabaseManager.getCollection(craftCollectionURI(null), dbUser, dbPassword);
 		return root;
 	}
 	
@@ -205,7 +207,13 @@ public class ExistDB {
 	}
 	
 	private String craftCollectionURI(String name) {
-		name = ROOT_COLLECTION + name;
+		if (name != null) {
+			name = ROOT_COLLECTION + name;
+		}
+		else {
+			name = ROOT_COLLECTION;
+		}
+		
 		String ret = dbURI;
 	
 		if (!dbURI.endsWith("/")) {
@@ -221,10 +229,16 @@ public class ExistDB {
 			CollectionManagementService service = (CollectionManagementService)root.getService(
 					COLLECTION_MGMT_SERVICE[SVCNAME], COLLECTION_MGMT_SERVICE[SVCVER]);
 			
-			//Drop all collections.
-			service.removeCollection(ExistDBStore.STATIC_COLLECTION);
-			service.removeCollection(ExistDBStore.GAME_COLLECTION);
-			service.removeCollection(ExistDBStore.PLAYERS_COLLECTION);
+			
+			for (String collectionName : root.listChildCollections()) {
+				Collection col = root.getChildCollection(collectionName);
+				removeCollection(service, col);
+			}
+			
+			for (String resName : root.listResources()) {
+				Resource resource = root.getResource(resName);
+				root.removeResource(resource);
+			}
 			
 			root.close();
 		}
@@ -232,6 +246,15 @@ public class ExistDB {
 			System.err.println("DB Warning: was unable to remove all collections");
 			e.printStackTrace();
 		}
+	}
+	
+	private void removeCollection(CollectionManagementService svc, Collection col) throws XMLDBException {
+		for (String collectionName : col.listChildCollections()) {
+			Collection childCol = col.getChildCollection(collectionName);
+			removeCollection(svc, childCol);
+		}
+		
+		svc.removeCollection(col.getName());
 	}
 	
 	public XMLResource querySingleResource(String xquery) throws XMLDBException {
@@ -254,9 +277,19 @@ public class ExistDB {
 		//Nothing found, return null.
 		return null;
 	}
-	
+
 	public ResourceSet query(Collection col, String xquery) throws XMLDBException {
+		return query(col, xquery, null);
+	}
+	
+	public ResourceSet query(Collection col, String xquery, Map<String, Object> declaredVariables) throws XMLDBException {
 		XQueryService service = getXQueryService(col);
+		
+		if (declaredVariables != null) {
+			for (Entry<String, Object> entry : declaredVariables.entrySet()) {
+				service.declareVariable(entry.getKey(), entry.getValue());
+			}
+		}
 		
 		if (service != null) {
 			ResourceSet res = service.query(xquery);
@@ -285,6 +318,14 @@ public class ExistDB {
 		col.storeResource(res);
 	}
 	
+	private void createDatabaseIndexDocument(Collection col) throws XMLDBException {
+		XMLResource res = (XMLResource)col.createResource("did.xml", "XMLResource");
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		xml += "<index></index>";
+		res.setContent(xml);
+		col.storeResource(res);		
+	}
+	
 	/**
 	 * Creates a new database by setting up collections. Doesn't check
 	 * if one already exists... yet.
@@ -304,9 +345,10 @@ public class ExistDB {
 		Collection staticCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.STATIC_COLLECTION));
 		addRootNode(staticCol, "ring");
 		
-		//Game collection: Stores world state
+		//Game collection: Stores world state and DiD
 		Collection gameCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.GAME_COLLECTION));
 		addRootNode(gameCol, "ring");
+		createDatabaseIndexDocument(gameCol);
 		
 		//Players collection: Stores player information. 
 		Collection playersCol = mudsvc.createCollection(craftCollectionURI(ExistDBStore.PLAYERS_COLLECTION));

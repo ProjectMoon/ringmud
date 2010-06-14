@@ -3,12 +3,6 @@ package ring.nrapi.modules;
 import ring.main.RingModule;
 import ring.persistence.ExistDB;
 
-/**
- * Imports XML documents into the database.
- * @author projectmoon
- *
- */
-@Deprecated
 public class CreateModule implements RingModule {
 	@Override
 	public void execute(String[] args) {
@@ -16,7 +10,7 @@ public class CreateModule implements RingModule {
 		try {
 			ExistDB db = new ExistDB();
 			db.removeAllResources();
-			db.createRingDatabase();
+			//db.createRingDatabase();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -28,6 +22,5 @@ public class CreateModule implements RingModule {
 	public boolean usesDatabase() {
 		return true;
 	}
-	
-}
 
+}

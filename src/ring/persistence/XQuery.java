@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,7 +22,7 @@ import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
-import ring.nrapi.business.AbstractBusinessObject;
+import ring.nrapi.business.BusinessObject;
 
 /**
  * Class for running XQuery against the XML database and
@@ -31,6 +33,7 @@ import ring.nrapi.business.AbstractBusinessObject;
 public class XQuery {
 	private String query;
 	private Loadpoint loadpoint = Loadpoint.STATIC;
+	private Map<String, Object> declaredVariables = new HashMap<String, Object>();
 	
 	public XQuery() {}
 	
@@ -63,6 +66,20 @@ public class XQuery {
 		this.query = query;
 	}
 	
+	public void declareVariable(String variable, Object value) {
+		/*
+		if (!variable.startsWith("$")) {
+			throw new IllegalArgumentException("declareVariable: Variable ID must begin with $");
+		}
+		else {
+			variable = variable.replace("$", "\\$");
+			System.out.println("Variable: " + variable);
+			query = query.replaceAll(variable, value.toString());
+		}
+		*/
+		declaredVariables.put(variable, value);
+	}
+	
 	public void setLoadpoint(Loadpoint point) {
 		loadpoint = point;
 	}
@@ -83,7 +100,7 @@ public class XQuery {
 	public void executeUpdate() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = getCollection(db);
-		db.query(col, getQuery());
+		db.query(col, getQuery(), declaredVariables);
 		col.close();
 	}
 	
@@ -98,11 +115,11 @@ public class XQuery {
 	public ResourceList execute() throws XMLDBException {
 		ExistDB db = new ExistDB();
 		Collection col = getCollection(db);
-		ResourceSet xmlDocs = db.query(col, getQuery());
+		ResourceSet xmlDocs = db.query(col, getQuery(), declaredVariables);
 		return new ResourceList(col, xmlDocs);
 	}
 	
-	public <T extends AbstractBusinessObject> List<T> execute(Class<T> cl) throws XMLDBException, JAXBException {
+	public <T extends BusinessObject> List<T> execute(Class<T> cl) throws XMLDBException, JAXBException {
 		if (getLoadpoint() == Loadpoint.DEFAULT) {
 			return loadFromDefault(cl);
 		}
@@ -113,7 +130,7 @@ public class XQuery {
 		}
 	}
 	
-	private <T extends AbstractBusinessObject> List<T> loadFromDefault(Class<T> cl) throws XMLDBException, JAXBException {
+	private <T extends BusinessObject> List<T> loadFromDefault(Class<T> cl) throws XMLDBException, JAXBException {
 		ExistDB db = new ExistDB();
 		
 		Collection col = db.getCollection(ExistDBStore.GAME_COLLECTION);
@@ -130,8 +147,8 @@ public class XQuery {
 		}
 	}
 	
-	private <T extends AbstractBusinessObject> List<T> loadFromCollection(Class<T> cl, ExistDB db, Collection col) throws XMLDBException, JAXBException {
-		ResourceSet xmlDocs = db.query(col, getQuery());
+	private <T extends BusinessObject> List<T> loadFromCollection(Class<T> cl, ExistDB db, Collection col) throws XMLDBException, JAXBException {
+		ResourceSet xmlDocs = db.query(col, getQuery(), declaredVariables);
 		List<T> results = new ArrayList<T>((int)xmlDocs.getSize());
 		
 		ResourceIterator iter = xmlDocs.getIterator();
@@ -162,7 +179,7 @@ public class XQuery {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T extends AbstractBusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
+	private <T extends BusinessObject> T convertToObject(XMLResource res, Class<T> cl) throws JAXBException, XMLDBException {
 		JAXBContext ctx = JAXBContext.newInstance(cl);
 		Unmarshaller um = ctx.createUnmarshaller();
 		um.setListener(new ParentRelationshipCreator());
@@ -170,7 +187,6 @@ public class XQuery {
 		T conv = (T)um.unmarshal(node);
 		
 		conv.setStoreAsUpdate(true);
-		conv.setDocumentID(res.getDocumentId());
 		conv.createChildRelationships();
 		
 		return conv;
