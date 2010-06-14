@@ -48,10 +48,16 @@ public class IndexCleanupDaemon implements Daemon {
 			@Override
 			public void run() {
 				try {
+					/*
 					InputStream query = this.getClass().getResourceAsStream("/ring/nrapi/index_purge.xq");
 					XQuery xq = new XQuery(query);
 					xq.executeUpdate();
 					System.out.println("Object Index purged.");
+					*/
+					Collection<BusinessObject> bos = index.getAll();
+					for (BusinessObject bo : bos) {
+						remove(bo);
+					}
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block
