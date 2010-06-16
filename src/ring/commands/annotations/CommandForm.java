@@ -120,22 +120,24 @@ public class CommandForm {
 		int c = 0;
 		
 		for (String tokenString : split) {
-			CommandToken token = new CommandToken();
-			
-			token.setToken(tokenString);
-			if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
-				token.setVariable(true);
-				Class<?>[] types = form.bind()[c].value();
+			if (!tokenString.equals("")) {
+				CommandToken token = new CommandToken();
 				
-				List<Class<?>> bindTypes = Arrays.asList(types);
-				token.setBindTypes(bindTypes);
-				c++;
+				token.setToken(tokenString);
+				if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
+					token.setVariable(true);
+					Class<?>[] types = form.bind()[c].value();
+					
+					List<Class<?>> bindTypes = Arrays.asList(types);
+					token.setBindTypes(bindTypes);
+					c++;
+				}
+				else {
+					token.setDelimiter(true);
+				}
+				
+				tokens.add(token);
 			}
-			else {
-				token.setDelimiter(true);
-			}
-			
-			tokens.add(token);
 		}
 	}
 	

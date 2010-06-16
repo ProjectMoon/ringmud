@@ -9,6 +9,7 @@ import java.util.Collections;
 	@Form(bind = { @BindType({String.class}) }),
 	@Form(id = "lookThing", clause = ":thing", bind = { @BindType({String.class, Class.class}) }),
 	@Form(id = "lookAway", clause = "away :thing", bind = { @BindType({String.class, Class.class}) }),
+	@Form(id = "lookAt", clause = "at :thing in $box", bind = { @BindType({String.class}), @BindType({Class.class}) }),
 })
 public class CommandParser {
 	private String commandName;
@@ -45,80 +46,157 @@ public class CommandParser {
 	
 	private CommandForm findForm(String clause) {
 		for (CommandForm form : forms) {
-			System.out.print("testing: " + form + "...");
-			System.out.println(testForm(form, clause));
+			System.out.println("testing: " + form + ":");
+			List<ParsedCommandToken> tokens = testForm(form, clause);
+			
+			String[] split = clause.split(" ");
+			if (tokens != null) {
+				for (ParsedCommandToken token : tokens) {
+					System.out.print("    ");
+					System.out.println(token.getToken());
+				}
+			}
+			else {
+				System.out.println("    no match");
+			}
 		}
 		
 		return null;
 	}
 	
-	private boolean testForm(CommandForm form, String clause) {
-		String[] split = clause.split(" ");
-		/*
-		int index = 0;
-		int matches = 0;
+	private List<ParsedCommandToken> testForm(CommandForm form, String clause) {
+		List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>();
+		String prevDelim = null;
+		ParsedCommandToken currToken;
+		ParsedCommandToken prevToken = null;
 		
-		int delimIndex = 0;
-		for (CommandToken token : form.getTokens()) {			
-			if (token.isDelimiter()) {
-				boolean found = false;
-				for (int c = index; c < split.length; c++) {
-					if (token.getToken().equalsIgnoreCase(split[c]) && c >= delimIndex) {
-						found = true;
-						matches++;
-						index = c;
-						break;
-					}
+		List<CommandToken> delims = form.getDelimiters();
+		String[] split = clause.split(" ");
+		int c = 0;
+		boolean errors = false;
+		
+		if (delims.size() == 0) errors = true;
+		
+		for (CommandToken delim : delims) {
+			String currDelim = delim.getToken();
+				
+			currToken = new ParsedCommandToken();
+			currToken.setStartIndex(c);
+			parsed.add(currToken);
+			
+			boolean found = false;
+ 			for (; c < split.length; c++) {
+				if (!split[c].equals(currDelim)) {
+					if (prevDelim != null && split[c].equals(prevDelim)) {
+						prevToken.setEndIndex(c);
+						currToken.setStartIndex(c + 1);
+					}					
 				}
-							
-				if (!found) {
+				else {
+					currToken.setEndIndex(c);
+					found = true;
 					break;
 				}
 			}
-			
-			delimIndex++;
-		}
-		return matches;
-		*/
+ 			
+ 			if (!found) {
+				errors = true;
+				break;
+ 			}
 		
-		List<String> clauseDelims = new ArrayList<String>();
-		int last = -1;
-		for (String token : split) {
-			if (form.isDelimiter(token)) {
-				clauseDelims.add(token);
-				last++;
+			prevDelim = currDelim;
+			prevToken = currToken;
+		}
+		
+		if (!errors) {
+			//convert remainder of tokens to ParsedCommandToken
+			ParsedCommandToken lastToken = new ParsedCommandToken(c, split.length);
+			parsed.add(lastToken);
+			
+			for (ParsedCommandToken token : parsed) {
+				craftParsedToken(token, split);
+			}
+			
+			if (parsed.size() > 0) {
+				return parsed;
 			}
 			else {
-				if (clauseDelims.size() > 0) {
-					if (clauseDelims.get(last) != null) {
-						clauseDelims.add(null);
-						last++;
-					}
-				}
-				else {
-					clauseDelims.add(null);
-					last++;
-				}
+				return null;
 			}
 		}
-		
-		List<CommandToken> formDelims = form.getJaggedDelimiters();
-		
-		System.out.println(formDelims);
-		System.out.println(clauseDelims);
+		else {
+			return null;
+		}
+		 
+	}
 	
-		return formDelims.toString().equals(clauseDelims.toString());
+	private void craftParsedToken(ParsedCommandToken token, String[] clause) {
+		String text = "";
+		for (int c = token.getStartIndex(); c < token.getEndIndex(); c++) {
+			text += clause[c] + " ";
+		}
+		
+		token.setToken(text.trim());
 	}
 	
 	public static void main(String[] args) {
-		String command = "";
-		for (String arg : args) {
+		String command = "look thing away";
+		/*for (String arg : args) {
 			command += arg + " ";
-		}
+		}*/
 		command = command.trim();
 		Template t = CommandParser.class.getAnnotation(Template.class);
 		
 		CommandParser parser = new CommandParser(t);
 		parser.parse(command);
+	}
+}
+
+class ParsedCommandToken {
+	private int startIndex;
+	private int endIndex;
+	private String token;
+	private String matched;
+	
+	public ParsedCommandToken() {}
+	public ParsedCommandToken(int start, int end) {
+		startIndex = start;
+		endIndex = end;
+	}
+	
+	public int getStartIndex() {
+		return startIndex;
+	}
+	
+	public void setStartIndex(int index) {
+		startIndex = index;
+	}
+	
+	public int getEndIndex() {
+		return endIndex;
+	}
+	
+	public void setEndIndex(int index) {
+		endIndex = index;
+	}
+	
+	public String toString() {
+		return "[" + startIndex + ", " + endIndex + "]";
+	}
+	
+	public String getToken() {
+		return token;
+	}
+	
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	public String getMatched() {
+		return matched;
+	}
+	
+	public void setMatched(String matched) {
+		this.matched = matched;
 	}
 }
