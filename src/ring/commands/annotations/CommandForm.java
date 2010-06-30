@@ -4,8 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
-import ring.commands.annotations.Form.Scope;
-
+/**
+ * The object representation of a command form. This class transforms
+ * the information in the Form annotation into something useful.
+ * @author projectmoon
+ *
+ */
 public class CommandForm {
 	private String id;
 	private String clause;
@@ -134,7 +138,6 @@ public class CommandForm {
 				if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
 					token.setVariable(true);
 					Class<?>[] types = form.bind()[c].value();
-					
 					List<Class<?>> bindTypes = Arrays.asList(types);
 					token.setBindTypes(bindTypes);
 					c++;

@@ -1,17 +1,37 @@
 package ring.commands.annotations;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
+import ring.commands.WorldObjectSearch;
+import ring.movement.Room;
+
+/**
+ * The command parser receives a command template and parses commands given to it.
+ * It will match command input to a form of the command template. If no form matches,
+ * the parser will return null form its parse method. If more than one form matches,
+ * it will return the first form found.
+ * @author projectmoon
+ *
+ */
+/*
 @Template({
 	@Form(bind = { @BindType({String.class}) }),
 	@Form(id = "lookThing", clause = ":thing", bind = { @BindType({String.class, Class.class}) }),
 	@Form(id = "lookAway", clause = ":thing away", bind = { @BindType({String.class, Class.class}) }),
 	@Form(id = "lookAt", clause = "at :thing in $box", bind = { @BindType({String.class}), @BindType({Class.class}) }),
 })
+*/
 public class CommandParser {
+	/**
+	 * Helper class to return from the findForm method.
+	 *
+	 */
+	private class CPTuple {
+		public CommandForm form;
+		public List<ParsedCommandToken> tokenList;
+	}
+	
 	private String commandName;
 	private Template template;
 	private List<CommandForm> forms;
@@ -24,46 +44,47 @@ public class CommandParser {
 	}
 	
 	//The magic method...
-	public ParsedCommand parse(String command) {
-		//Split on " "
-		//Check first word to see if it's the right command
-		//Go backwards through the command string and look for the first ocurrance of a delimiter.
-		//Once we find it, take everything between it and the previous delimiter and bind it to a variable (if necessary)
-		//Repeat for until out of delimiters.
-		//If we can't find a delimiter, then the command doesn't match so we return false or null or something.		
-		
+	public ParsedCommand parse(CommandSender sender, String command) {
 		String[] split = command.split(" ");
 		String clause = command.substring(command.indexOf(" ") + 1);
+		
+		//First figure out if the root command is actually correct.
 		if (!split[0].equalsIgnoreCase(commandName)) {
 			return null;
 		}
 		
-		CommandForm form = findForm(clause);
-		//System.out.println("command matches: " + form.getId());
+		//Next find the correct command form.
+		CPTuple tuple = findForm(clause);
+
+		if (tuple.form != null) {
+			//Now, deal with the scopes and find some world objects.
+		}
 		
 		return null;
 	}
 	
-	private CommandForm findForm(String clause) {
+	private CPTuple findForm(String clause) {
 		for (CommandForm form : forms) {
-			System.out.println("testing: " + form + ":");
 			List<ParsedCommandToken> tokens = testForm(form, clause);
 			
-			String[] split = clause.split(" ");
 			if (tokens != null) {
-				for (ParsedCommandToken token : tokens) {
-					System.out.print("    ");
-					System.out.println(token.getToken());
-				}
-			}
-			else {
-				System.out.println("    no match");
+				CPTuple tuple = new CPTuple();
+				tuple.form = form;
+				tuple.tokenList = tokens;
+				return tuple;
 			}
 		}
 		
 		return null;
 	}
 	
+	/**
+	 * Important method. This determines if a command form matches the command
+	 * sent to the parser. Could probably use some refactoring.
+	 * @param form
+	 * @param clause
+	 * @return A list of parsed command tokens if the command matches, null otherwise.
+	 */
 	private List<ParsedCommandToken> testForm(CommandForm form, String clause) {
 		List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>();
 		String prevDelim = null;
@@ -150,6 +171,27 @@ public class CommandParser {
 		token.setToken(text.trim());
 	}
 	
+	private void finishUp(CommandSender sender, CommandForm form, List<ParsedCommandToken> tokens) {
+		Room room = sender.getContext().getLocation();
+		WorldObjectSearch search = new WorldObjectSearch();
+		
+		if (form.getScope() == Scope.ROOM) {
+			search.addSearchList(room.getMobiles());
+			search.addSearchList(room.getItems());
+		}
+		else if (form.getScope() == Scope.MOBILE) {
+			search.addSearchList(room.getMobiles());
+		}
+		
+		//Loop through each token, and translate it to world objects by getting its scope.
+		//The scope is to be attached to the command token. However, if the token scope is null,
+		//we default to the form-level scope.
+		
+		//$ first = scope cascade to the right?
+		//$ last = scope cascade to the left?
+		//: = cascaded scope, $ = full scope?
+	}
+	
 	public static void main(String[] args) {
 		String command = "look thing away";
 		/*for (String arg : args) {
@@ -159,55 +201,6 @@ public class CommandParser {
 		Template t = CommandParser.class.getAnnotation(Template.class);
 		
 		CommandParser parser = new CommandParser(t);
-		parser.parse(command);
-	}
-}
-
-class ParsedCommandToken {
-	private int startIndex;
-	private int endIndex;
-	private String token;
-	private String matched;
-	
-	public ParsedCommandToken() {}
-	public ParsedCommandToken(int start, int end) {
-		startIndex = start;
-		endIndex = end;
-	}
-	
-	public int getStartIndex() {
-		return startIndex;
-	}
-	
-	public void setStartIndex(int index) {
-		startIndex = index;
-	}
-	
-	public int getEndIndex() {
-		return endIndex;
-	}
-	
-	public void setEndIndex(int index) {
-		endIndex = index;
-	}
-	
-	public String toString() {
-		return "[" + startIndex + ", " + endIndex + "]";
-	}
-	
-	public String getToken() {
-		return token;
-	}
-	
-	public void setToken(String token) {
-		this.token = token;
-	}
-	
-	public String getMatched() {
-		return matched;
-	}
-	
-	public void setMatched(String matched) {
-		this.matched = matched;
+		parser.parse(null, command);
 	}
 }

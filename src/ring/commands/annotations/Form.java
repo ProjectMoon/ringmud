@@ -4,10 +4,8 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Form {
-	public enum Scope { SELF, ROOM, MOBILE };
-	
 	public String id() default "default";
 	public String clause() default "";
-	public BindType[] bind();
+	public BindType[] bind() default {};
 	public Scope scope() default Scope.ROOM;
 }
