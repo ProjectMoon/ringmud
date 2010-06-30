@@ -118,12 +118,19 @@ public class CommandForm {
 		
 		String[] split = form.clause().split(" ");
 		int c = 0;
+		int count = 0;
 		
 		for (String tokenString : split) {
 			if (!tokenString.equals("")) {
 				CommandToken token = new CommandToken();
-				
 				token.setToken(tokenString);
+				
+				//The parser needs to keep track of if this is at the start.
+				if (count == 0) {
+					token.setAtStart(true);
+				}
+				
+				//Determine if is variable or delimiter and handle accordingly.
 				if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
 					token.setVariable(true);
 					Class<?>[] types = form.bind()[c].value();
@@ -137,7 +144,13 @@ public class CommandForm {
 				}
 				
 				tokens.add(token);
+				count++;
 			}
+		}
+		
+		//Set atEnd property for the last command token.
+		if (tokens.size() > 0) {
+			tokens.get(tokens.size() - 1).setAtEnd(true);
 		}
 	}
 	

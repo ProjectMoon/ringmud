@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class CommandToken {
 	private boolean isDelimiter;
 	private boolean isVariable;
+	private boolean isAtStart;
+	private boolean isAtEnd;
 	
 	private String token;
 	
@@ -54,6 +56,24 @@ public class CommandToken {
 		else { 
 			this.bindTypes = bindTypes;
 		}		
+	}
+	
+	public boolean isAtStart() {
+		return isAtStart;
+	}
+	
+	public void setAtStart(boolean beginning) {
+		isAtStart = beginning;
+		isAtEnd = !isAtStart;
+	}
+	
+	public boolean isAtEnd() {
+		return isAtEnd;
+	}
+	
+	public void setAtEnd(boolean end) {
+		isAtEnd = end;
+		isAtStart = !isAtEnd;
 	}
 	
 	public String toString() {

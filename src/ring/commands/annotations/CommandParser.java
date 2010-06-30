@@ -8,7 +8,7 @@ import java.util.Collections;
 @Template({
 	@Form(bind = { @BindType({String.class}) }),
 	@Form(id = "lookThing", clause = ":thing", bind = { @BindType({String.class, Class.class}) }),
-	@Form(id = "lookAway", clause = "away :thing", bind = { @BindType({String.class, Class.class}) }),
+	@Form(id = "lookAway", clause = ":thing away", bind = { @BindType({String.class, Class.class}) }),
 	@Form(id = "lookAt", clause = "at :thing in $box", bind = { @BindType({String.class}), @BindType({Class.class}) }),
 })
 public class CommandParser {
@@ -86,7 +86,15 @@ public class CommandParser {
 			
 			boolean found = false;
  			for (; c < split.length; c++) {
+ 				if (delim.isAtStart() && delim.isDelimiter() && c == 0) {
+ 					if (!delim.getToken().equals(split[c])) {
+ 						errors = true;
+ 						break;
+ 					}
+ 				}
+ 				
 				if (!split[c].equals(currDelim)) {
+					//Make sure we don't slip up on delims and arguments that get mixed.
 					if (prevDelim != null && split[c].equals(prevDelim)) {
 						prevToken.setEndIndex(c);
 						currToken.setStartIndex(c + 1);
@@ -101,7 +109,10 @@ public class CommandParser {
  			
  			if (!found) {
 				errors = true;
-				break;
+ 			}
+ 			
+ 			if (errors) {
+ 				break;
  			}
 		
 			prevDelim = currDelim;
