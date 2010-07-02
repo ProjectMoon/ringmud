@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.commands.CommandHandler;
 import ring.commands.CommandSender;
+import ring.commands.WorldObjectSearch;
 import ring.effects.Affectable;
 import ring.effects.Effect;
 import ring.events.listeners.MobileListener;
@@ -22,7 +23,6 @@ import ring.items.Item;
 import ring.magic.SpellCaster;
 import ring.mobiles.backbone.Equipment;
 import ring.mobiles.npc.NPC;
-import ring.movement.Movable;
 import ring.movement.Room;
 import ring.persistence.RingConstants;
 import ring.players.PlayerCharacter;
@@ -48,7 +48,7 @@ propOrder= {
 	"dynamicModel",
 	"combatModel"
 })
-public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, Movable, SpellCaster {
+public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, SpellCaster {
 	public static final long serialVersionUID = 1;
 
 	//Model variables: store various aspects of this Mobile's information.
@@ -411,13 +411,11 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		}
 	}
 
-	@Override
 	@XmlTransient
 	public Room getLocation() {
 		return getDynamicModel().getCurrLocation();
 	}
 
-	@Override
 	public void setLocation(Room loc) {
 		getDynamicModel().setCurrLocation(loc);
 	}
@@ -432,6 +430,21 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		WorldObjectMetadata metadata = new WorldObjectMetadata();
 		metadata.setName(getBaseModel().getName());
 		return metadata;
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(Class<?> ... dataTypes) {
+		List<WorldObject> objs = new ArrayList<WorldObject>();
+		
+		objs.addAll(getDynamicModel().getEquipment().getItems());
+		objs.addAll(getDynamicModel().getInventory().getItems());
+		
+		return WorldObjectSearch.filterByDataType(objs, dataTypes);
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(List<Class<?>> dataTypes) {
+		return produceSearchList(dataTypes.toArray(new Class<?>[0]));
 	}
 	
 	/**

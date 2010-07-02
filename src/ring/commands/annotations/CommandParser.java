@@ -15,11 +15,6 @@ import ring.movement.Room;
  *
  */
 
-@Template({
-	@Form(bind = { @BindType({String.class}) }),
-	@Form(id = "lookThing1", clause = ":thing in $box", bind = { @BindType({String.class, Class.class}), @BindType() }),
-	@Form(id = "lookThing2", clause = "at :thing in :place with the $box sdf", bind = { @BindType({String.class, Class.class}), @BindType(), @BindType() }),
-})
 public class CommandParser {
 	/**
 	 * Helper class to return from the findForm method.
@@ -55,17 +50,18 @@ public class CommandParser {
 		CPTuple tuple = findForm(clause);
 
 		if (tuple.form != null) {
-			//Now, deal with the scopes and find some world objects.
-			System.out.println("Using form: " + tuple.form);
-			for (ParsedCommandToken token : tuple.tokenList) {
-				System.out.println(token.getMatched() + " = " + token.getToken());
-			}
+			ParsedCommand cmd = new ParsedCommand();
+			cmd.setFormID(tuple.form.getId());
+			cmd.setCommand(commandName);
+			cmd.setScope(tuple.form.getScope());
+			cmd.setCascadeType(tuple.form.getCascadeType());
+			
+			cmd.initialize(sender, tuple.tokenList);
+			return cmd;
 		}
 		else {
-			System.out.println("Found no form");
+			return null;
 		}
-		
-		return null;
 	}
 	
 	private CPTuple findForm(String clause) {
@@ -91,13 +87,34 @@ public class CommandParser {
 	 * @return A list of parsed command tokens if the command matches, null otherwise.
 	 */
 	private List<ParsedCommandToken> testForm(CommandForm form, String clause) {
+		String[] split = clause.split(" ");
+		
+		//Special case for 1 token forms.
+		if (form.getTokenLength() == 1) {
+			CommandToken token = form.getToken(0);
+			if (token.isDelimiter() && split[0].equals(token.getToken()) && split.length == 1) {
+				return new ArrayList<ParsedCommandToken>(0);
+			}
+			else if (token.isVariable()) {
+				List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>(1);
+				ParsedCommandToken parsedToken = new ParsedCommandToken();
+				parsedToken.setStartIndex(0);
+				parsedToken.setEndIndex(split.length);
+				parsedToken.setToken(clause);
+				parsedToken.setMatched(token);
+				parsed.add(parsedToken);
+				return parsed;
+			}
+		}
+		
+		//The real monster.
 		List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>();
 		String prevDelim = null;
 		ParsedCommandToken currToken;
 		ParsedCommandToken prevToken = null;
-		
+				
 		List<CommandToken> delims = form.getDelimiters();
-		String[] split = clause.split(" ");
+		
 		int c = 0;
 		boolean errors = false;
 		
@@ -198,7 +215,7 @@ public class CommandParser {
 			List<CommandToken> variables = form.getVariables();
 			
 			for (int c = 0; c < variables.size(); c++) {
-				parsed.get(c).setMatched(variables.get(c).getToken());
+				parsed.get(c).setMatched(variables.get(c));
 			}
 
 			return parsed;	
@@ -212,38 +229,5 @@ public class CommandParser {
 		}
 		
 		token.setToken(text.trim());
-	}
-	
-	private void finishUp(CommandSender sender, CommandForm form, List<ParsedCommandToken> tokens) {
-		Room room = sender.getContext().getLocation();
-		WorldObjectSearch search = new WorldObjectSearch();
-		
-		if (form.getScope() == Scope.ROOM) {
-			search.addSearchList(room.getMobiles());
-			search.addSearchList(room.getItems());
-		}
-		else if (form.getScope() == Scope.MOBILE) {
-			search.addSearchList(room.getMobiles());
-		}
-		
-		//Loop through each token, and translate it to world objects by getting its scope.
-		//The scope is to be attached to the command token. However, if the token scope is null,
-		//we default to the form-level scope.
-		
-		//$ first = scope cascade to the right?
-		//$ last = scope cascade to the left?
-		//: = cascaded scope, $ = full scope?
-	}
-	
-	public static void main(String[] args) {
-		String command = "look something in the box";
-		/*for (String arg : args) {
-			command += arg + " ";
-		}*/
-		command = command.trim();
-		Template t = CommandParser.class.getAnnotation(Template.class);
-		
-		CommandParser parser = new CommandParser(t);
-		parser.parse(null, command);
 	}
 }

@@ -1,5 +1,8 @@
 package ring.items;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -8,7 +11,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import ring.mobiles.Body;
-import ring.nrapi.business.BusinessObject;
 import ring.mobiles.BodyPart;
 import ring.persistence.RingConstants;
 import ring.world.WorldObject;
@@ -46,6 +48,10 @@ public class Item extends WorldObject {
 	@XmlElement
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	@XmlElement
@@ -99,6 +105,16 @@ public class Item extends WorldObject {
 		WorldObjectMetadata metadata = new WorldObjectMetadata();
 		metadata.setName(getName());
 		return metadata;
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(Class<?>... dataTypes) {
+		return new ArrayList<WorldObject>(0);
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(List<Class<?>> dataTypes) {
+		return new ArrayList<WorldObject>(0);
 	}
 
 	/* (non-Javadoc)

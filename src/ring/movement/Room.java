@@ -13,13 +13,14 @@ import javax.xml.bind.annotation.XmlType;
 
 import ring.movement.PortalNotFoundException;
 import ring.movement.LocationManager;
-import ring.movement.Movable;
 import ring.movement.Portal;
 import ring.nrapi.business.BusinessObject;
+import ring.commands.WorldObjectSearch;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.persistence.RingConstants;
+import ring.world.WorldObject;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement
@@ -269,8 +270,32 @@ public class Room extends BusinessObject {
 	 * @param mov
 	 * @return
 	 */
-	public boolean canEnter(Movable mov) {
-		return (mov instanceof Mobile || mov instanceof Entity);
+	public boolean canEnter(Mobile mov) {
+		return mov.canMove();
+	}
+	
+	/**
+	 * Not specified by this class, because it does not extend WorldObject.
+	 * However, it is still useful to have.
+	 * @see ring.world.WorldObject#produceSearchList(Class...)
+	 * @param dataTypes
+	 * @return A list of world objects, filtered by data types.
+	 */
+	public List<WorldObject> produceSearchList(Class<?> ... dataTypes) {
+		List<WorldObject> objs = new ArrayList<WorldObject>();
+		objs.addAll(this.getMobiles());
+		objs.addAll(this.getEntities());
+		
+		return WorldObjectSearch.filterByDataType(objs, dataTypes);
+	}
+	
+	/**
+	 * @see ring.world.WorldObject#produceSearchList(List)
+	 * @param dataTypes
+	 * @return A list of filtered world objects.
+	 */
+	public List<WorldObject> produceSearchList(List<Class<?>> dataTypes) {
+		return produceSearchList(dataTypes.toArray(new Class<?>[0]));
 	}
 
 	/* (non-Javadoc)

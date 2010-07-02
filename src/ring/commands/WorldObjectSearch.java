@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ring.mobiles.Mobile;
 import ring.world.WorldObject;
 import ring.world.WorldObjectMetadata;
 
@@ -23,6 +22,30 @@ public class WorldObjectSearch {
 	 * Create a WorldObjectSearch with no world objects to search against.
 	 */
 	public WorldObjectSearch() {}
+	
+	/**
+	 * Static utility method to filter a list of WorldObjects by a list of data types
+	 * represented as Class objects. This method is useful for WorldObjects that need
+	 * to implement the produceSearchList method. This method never returns null.
+	 * @param objs
+	 * @param dataTypes
+	 * @return A filtered list with WorldObjects that are of the type(s) contained within the dataTypes parameter.
+	 */
+	public static List<WorldObject> filterByDataType(List<WorldObject> objs, Class<?> ... dataTypes) {
+		ArrayList<WorldObject> results = new ArrayList<WorldObject>(objs.size());
+		
+		for (WorldObject obj : objs) {
+			for (Class<?> cls : dataTypes) {
+				if (cls.isAssignableFrom(obj.getClass())) {
+					results.add(obj);
+					break;
+				}
+			}
+		}
+		
+		results.trimToSize();
+		return results;
+	}
 	
 	/**
 	 * Create a WorldObjectSearch with an initial list of objects to be searched.

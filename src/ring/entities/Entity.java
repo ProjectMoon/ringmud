@@ -1,5 +1,8 @@
 package ring.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,6 +56,16 @@ public class Entity extends WorldObject {
 		WorldObjectMetadata metadata = new WorldObjectMetadata();
 		metadata.setName(getName());
 		return metadata;
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(Class<?>... dataTypes) {
+		return new ArrayList<WorldObject>(0);
+	}
+	
+	@Override
+	public List<WorldObject> produceSearchList(List<Class<?>> dataTypes) {
+		return new ArrayList<WorldObject>(0);
 	}
 
 	/* (non-Javadoc)

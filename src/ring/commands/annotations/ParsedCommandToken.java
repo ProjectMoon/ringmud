@@ -10,7 +10,7 @@ package ring.commands.annotations;
 public class ParsedCommandToken extends CommandToken {
 	private int startIndex;
 	private int endIndex;
-	private String matched;
+	private CommandToken matched;
 	
 	public ParsedCommandToken() {}
 	public ParsedCommandToken(int start, int end) {
@@ -38,11 +38,11 @@ public class ParsedCommandToken extends CommandToken {
 		return "[" + startIndex + ", " + endIndex + "]";
 	}
 	
-	public String getMatched() {
+	public CommandToken getMatched() {
 		return matched;
 	}
 	
-	public void setMatched(String matched) {
+	public void setMatched(CommandToken matched) {
 		this.matched = matched;
 	}
 }

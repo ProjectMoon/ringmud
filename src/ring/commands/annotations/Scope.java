@@ -15,6 +15,6 @@ package ring.commands.annotations;
 public enum Scope {
 	ROOM,
 	MOBILE,
-	LEFT_CASCADING,
-	RIGHT_CASCADING
+	LEFT_CASCADING, //RTL
+	RIGHT_CASCADING //LTR
 }
