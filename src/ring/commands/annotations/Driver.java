@@ -6,37 +6,58 @@ import ring.mobiles.npc.NPC;
 import ring.movement.Room;
 
 @Template({
-	@Form(bind = { @BindType({String.class}) }),
-	@Form(id = "steal", clause = "$mobile", bind = { @BindType({Mobile.class}), @BindType({Mobile.class}) }),
+	//@Form(id = "steal", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
+	@Form(id = "quicksteal", clause = ":item from $mobile all quicklike", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
 })
-public class Driver {
+public class Driver implements Command {
+	@Override
+	public void execute(CommandSender sender, ParsedCommand params) {
+		System.out.println("Steal command form: " + params.getFormID());
+		System.out.println("Args are:");
+		for (Object arg : params.getArguments()) {
+			System.out.println("    " + arg);
+		}
+	}
+
+	@Override
+	public String getCommandName() {
+		return "steal";
+	}
+
+	@Override
+	public void rollback() {
+		
+	}
+	
 	public static void main(String[] args) {
+		//Generate test world.
 		Room r1 = new Room();
 		r1.getModel().setTitle("A room");
+		
 		Mobile mob = new NPC();
 		mob.getBaseModel().setName("mobile");
 		
+		Item i = new Item();
+		i.setName("shiny sword");
+		
+		mob.getDynamicModel().getInventory().addItem(i);
 		r1.addMobile(mob);
 		mob.setLocation(r1);
 		
-		Item i = new Item();
-		i.setName("sword");
-		
-		mob.getDynamicModel().getInventory().addItem(i);
-		
-		String command = "look mob";
-		/*for (String arg : args) {
-			command += arg + " ";
-		}*/
-		command = command.trim();
-		Template t = Driver.class.getAnnotation(Template.class);
-		
-		CommandParser parser = new CommandParser(t);
+		//Set up command and parser.
+		Driver stealCommand = new Driver();
+		CommandParser parser = new CommandParser(stealCommand);
+	
+		/*
+		String command = "steal sword from mob";
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
-		System.out.println("cmd: " + cmd);
-		for (Object arg : cmd.getArguments()) {
-			System.out.println("arg: " + arg);
-		}
+		stealCommand.execute(generateSender(mob), cmd);
+		*/
+		String command = "steal sword from mob all quicklike";
+		ParsedCommand cmd = parser.parse(generateSender(mob), command);
+		stealCommand.execute(generateSender(mob), cmd);
+		
+		//COMMANDS WITH DELIMITERS ON THE END DO NOT WORK ! At leastm not in RTL cascade. Probably happens in LTR as well.
 	}
 	
 	public static CommandSender generateSender(final Mobile mob) {

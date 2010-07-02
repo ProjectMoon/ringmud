@@ -3,9 +3,11 @@ package ring.commands.annotations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import ring.commands.WorldObjectSearch;
+import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.world.WorldObject;
 
@@ -70,22 +72,24 @@ public class ParsedCommand {
 			return;
 		}
 		else {
-			System.out.println("Cascade type: " + this.getCascadeType());
-			if (this.getCascadeType() == Scope.RIGHT_CASCADING) {
-				initializeRightCascade(sender, tokens);
+			if (this.getCascadeType() == Scope.LTR_CASCADING) {
+				initializeLTRCascade(sender, tokens);
 			}
-			else if (this.getCascadeType() == Scope.LEFT_CASCADING) {
-				initializeLeftCascade(sender, tokens);
+			else if (this.getCascadeType() == Scope.RTL_CASCADING) {
+				initializeRTLCascade(sender, tokens);
 			}
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void initializeRightCascade(CommandSender sender, List<ParsedCommandToken> tokens) {
+	/**
+	 * Performs object translation for a command that cascades its data left-to-right. 
+	 * @param sender
+	 * @param tokens
+	 */
+	private void initializeLTRCascade(CommandSender sender, List<ParsedCommandToken> tokens) {
 		List<Object> arguments = new ArrayList<Object>(tokens.size());
 		
 		ParsedCommandToken first = tokens.get(0);
-		System.out.println("first: " + first + ". scope = " + first.getMatched().getScope());
 		Scope scope = first.getMatched().getScope();
 		
 		//Retrieve initial WO dataset from first token based on its scope and bind types.
@@ -94,35 +98,131 @@ public class ParsedCommand {
 		//	Use previous WO's produceSearchList(Class ... cs) method based on bind types for the current PT
 		//	Filter WO list based on parsed token and set the argument.
 		
-		List<WorldObject> rootObjs = null;
+		WorldObject rootArg = null;
 		if (scope == Scope.ROOM) {
 			Room location = sender.getContext().getLocation();
-			rootObjs = location.produceSearchList(first.getMatched().getBindTypes());
-			System.out.println("bind types: " + first.getMatched().getBindTypes());
-			System.out.println("root list: " + rootObjs);
-			WorldObject rootArg = search(first.getToken(), rootObjs);
-			arguments.add(rootArg);
-			
-			WorldObject previousArg = rootArg;
-			
-			for (int c = 1; c < tokens.size(); c++) {
-				ParsedCommandToken token = tokens.get(c);
-				List<Class<?>> bindTypes = token.getMatched().getBindTypes();
-				List<WorldObject> objs = previousArg.produceSearchList(bindTypes);
-				WorldObject arg = search(token.getToken(), objs);
-				arguments.add(arg);
-				previousArg = arg;
-			}
-			
-			setArguments(arguments);
+			rootArg = worldObjectFromToken(first, location);
 		}
-		else if (scope == Scope.MOBILE){
-			//search for mobs in current room.
+		else if (scope == Scope.MOBILE) {
+			//Room location = sender.getContext().getLocation();
+			//rootArg = worldObjectForMobScope(first, location);
+			throw new IllegalArgumentException("Mobile scope is unsupported at this time.");
 		}
+		else if (scope == Scope.SELF) {
+			throw new IllegalArgumentException("Self scope is unsupported at this time.");
+		}
+		
+		if (rootArg == null) {
+			//not here.
+		}
+		
+		arguments.add(rootArg);
+		
+		WorldObject previousArg = rootArg;
+		
+		for (int c = 1; c < tokens.size(); c++) {
+			ParsedCommandToken token = tokens.get(c);
+			WorldObject arg = worldObjectFromToken(token, previousArg);
+			arguments.add(arg);
+			previousArg = arg;
+		}
+		
+		setArguments(arguments);
 	}
 	
-	private void initializeLeftCascade(CommandSender sender, List<ParsedCommandToken> tokens) {
+	/**
+	 * Performs object translation for a command that cascades its data right-to-left.
+	 * @param sender
+	 * @param tokens
+	 */
+	private void initializeRTLCascade(CommandSender sender, List<ParsedCommandToken> tokens) {
+		List<Object> arguments = new ArrayList<Object>(tokens.size());
 		
+		ParsedCommandToken last = tokens.get(tokens.size() - 1);
+		Scope scope = last.getMatched().getScope();
+		
+		//Retrieve initial WO dataset from first token based on its scope and bind types.
+		//Filter that list via WorldObjectSearch and bind the first result to the argument
+		//Begin looping over rest of variables:
+		//	Use previous WO's produceSearchList(Class ... cs) method based on bind types for the current PT
+		//	Filter WO list based on parsed token and set the argument.
+		
+		WorldObject rootArg = null;
+		if (scope == Scope.ROOM) {
+			Room location = sender.getContext().getLocation();
+			rootArg = worldObjectFromToken(last, location);
+		}
+		else if (scope == Scope.MOBILE) {
+			//Room location = sender.getContext().getLocation();
+			//rootArg = worldObjectForMobScope(first, location);
+			throw new IllegalArgumentException("Mobile scope is unsupported at this time.");
+		}
+		else if (scope == Scope.SELF) {
+			throw new IllegalArgumentException("Self scope is unsupported at this time.");
+		}
+		
+		if (rootArg == null) {
+			//not here.
+		}
+		
+		arguments.add(rootArg);
+		
+		WorldObject previousArg = rootArg;
+		
+		for (int c = tokens.size() - 2; c >= 0; c--) {
+			ParsedCommandToken token = tokens.get(c);
+			WorldObject arg = worldObjectFromToken(token, previousArg);
+			arguments.add(arg);
+			previousArg = arg;
+		}
+		
+		//Must be reversed since arguments are added to the list while going backwards
+		//through parsed command tokens
+		Collections.reverse(arguments);
+		
+		setArguments(arguments);
+	}
+	
+	/**
+	 * Finds a world object based on the given command token. Uses the specified WorldObject as a
+	 * data source to find WorldObjects to search for.
+	 * @param token
+	 * @param datasource
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private WorldObject worldObjectFromToken(ParsedCommandToken token, WorldObject datasource) {
+		List<Class<?>> bindTypes = token.getMatched().getBindTypes();
+		List<WorldObject> objs = datasource.produceSearchList(bindTypes);
+		return search(token.getToken(), objs);		
+	}
+	
+	/**
+	 * Finds a world object based on the given command token. Uses the specified Room as a 
+	 * data source to find the WorldObjects to search for.
+	 * @param token
+	 * @param datasource
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private WorldObject worldObjectFromToken(ParsedCommandToken token, Room datasource) {
+		List<Class<?>> bindTypes = token.getMatched().getBindTypes();
+		List<WorldObject> objs = datasource.produceSearchList(bindTypes);
+		return search(token.getToken(), objs);		
+	}
+	
+	/**
+	 * Unused currently. Will theoretically be for commands that operate within a "shell"
+	 * that knows about a target Mobile.
+	 * @param token
+	 * @param datasource
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private WorldObject worldObjectForMobScope(ParsedCommandToken token, Room datasource) {
+		Class<?>[] bindTypes = new Class<?>[] { Mobile.class };
+		List<WorldObject> objs = datasource.produceSearchList(bindTypes);
+		return search(token.getToken(), objs);		
 	}
 	
 	/**

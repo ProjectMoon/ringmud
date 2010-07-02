@@ -3,9 +3,6 @@ package ring.commands.annotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import ring.commands.WorldObjectSearch;
-import ring.movement.Room;
-
 /**
  * The command parser receives a command template and parses commands given to it.
  * It will match command input to a form of the command template. If no form matches,
@@ -17,7 +14,7 @@ import ring.movement.Room;
 
 public class CommandParser {
 	/**
-	 * Helper class to return from the findForm method.
+	 * Lame helper class to return from the findForm method.
 	 *
 	 */
 	private class CPTuple {
@@ -26,17 +23,46 @@ public class CommandParser {
 	}
 	
 	private String commandName;
-	private Template template;
+	private Command command;
 	private List<CommandForm> forms;
 	
 	//Later a command.
-	public CommandParser(Template template) {
-		commandName = "look";
-		this.template = template;
-		forms = CommandForm.processForms(template.value());
+	public CommandParser(Command command) {
+		commandName = command.getCommandName();
+		this.command = command;
+		Template cmdTemplate = command.getClass().getAnnotation(Template.class);
+		
+		if (cmdTemplate == null) {
+			throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+		}
+		else {
+			forms = CommandForm.processForms(cmdTemplate.value());
+		}
 	}
 	
-	//The magic method...
+	public Command getCommand() {
+		return command;
+	}
+	
+	public List<CommandForm> getForms() {
+		return forms;
+	}
+	
+	public String getCommandName() {
+		return commandName;
+	}
+	
+	/**
+	 * Parse the supplied command using the supplied CommandSender
+	 * as the "origin point" for the command. This method will return
+	 * a ParsedCommand object if the command parsing is successful.
+	 * Otherwise, it will return null. Null is only returned if the
+	 * command to be sent does not conform to the any of the forms
+	 * of the Command object stored in this parser. 
+	 * @param sender
+	 * @param command
+	 * @return A ParsedCommand if parsing was successful, or null if it was unsuccessful.
+	 */
 	public ParsedCommand parse(CommandSender sender, String command) {
 		String[] split = command.split(" ");
 		String clause = command.substring(command.indexOf(" ") + 1);
@@ -47,7 +73,7 @@ public class CommandParser {
 		}
 		
 		//Next find the correct command form.
-		CPTuple tuple = findForm(clause);
+		CPTuple tuple = parseClause(clause);
 
 		if (tuple.form != null) {
 			ParsedCommand cmd = new ParsedCommand();
@@ -56,6 +82,7 @@ public class CommandParser {
 			cmd.setScope(tuple.form.getScope());
 			cmd.setCascadeType(tuple.form.getCascadeType());
 			
+			//Delegate to ParsedCommand#initialize for object translation.
 			cmd.initialize(sender, tuple.tokenList);
 			return cmd;
 		}
@@ -64,9 +91,18 @@ public class CommandParser {
 		}
 	}
 	
-	private CPTuple findForm(String clause) {
+	/**
+	 * Parses the supplied command clause by searching for a suitable
+	 * CommandForm and parsing it according to the grammar defined in said
+	 * suitable CommandForm. The method returns a "tuple" object consisting 
+	 * of both the CommandForm and the list of parsed command tokens. If no
+	 * suitable command form could be found, the method returns null.
+	 * @param clause
+	 * @return A tuple containing the CommandForm and parsed tokens, or null.
+	 */
+	private CPTuple parseClause(String clause) {
 		for (CommandForm form : forms) {
-			List<ParsedCommandToken> tokens = testForm(form, clause);
+			List<ParsedCommandToken> tokens = parseAndTestForm(form, clause);
 			
 			if (tokens != null) {
 				CPTuple tuple = new CPTuple();
@@ -80,34 +116,63 @@ public class CommandParser {
 	}
 	
 	/**
-	 * Important method. This determines if a command form matches the command
-	 * sent to the parser. Could probably use some refactoring.
+	 * This method parses and tests a CommandForm object to see if it lexically
+	 * agrees with the supplied clause. The method actually delegates to two
+	 * separate methods: one for handling a single token CommandForm, and another
+	 * for handling a multiple token CommandFomr.
 	 * @param form
 	 * @param clause
 	 * @return A list of parsed command tokens if the command matches, null otherwise.
 	 */
-	private List<ParsedCommandToken> testForm(CommandForm form, String clause) {
-		String[] split = clause.split(" ");
-		
+	private List<ParsedCommandToken> parseAndTestForm(CommandForm form, String clause) {	
 		//Special case for 1 token forms.
 		if (form.getTokenLength() == 1) {
-			CommandToken token = form.getToken(0);
-			if (token.isDelimiter() && split[0].equals(token.getToken()) && split.length == 1) {
-				return new ArrayList<ParsedCommandToken>(0);
-			}
-			else if (token.isVariable()) {
-				List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>(1);
-				ParsedCommandToken parsedToken = new ParsedCommandToken();
-				parsedToken.setStartIndex(0);
-				parsedToken.setEndIndex(split.length);
-				parsedToken.setToken(clause);
-				parsedToken.setMatched(token);
-				parsed.add(parsedToken);
-				return parsed;
-			}
+			return parseSingleTokenForm(form, clause);
 		}
-		
-		//The real monster.
+		else {
+			return parseMultiTokenForm(form, clause);
+		}
+
+	}
+	
+	/**
+	 * Method that tests to see if the supplied clause agrees with the supplied single-token
+	 * CommandForm.
+	 * @param form
+	 * @param clause
+	 * @return A list of parsed command tokens if the command matches, null otherwise.
+	 */
+	private List<ParsedCommandToken> parseSingleTokenForm(CommandForm form, String clause) {
+		String[] split = clause.split(" ");
+		CommandToken token = form.getToken(0);
+		if (token.isDelimiter() && split[0].equals(token.getToken()) && split.length == 1) {
+			return new ArrayList<ParsedCommandToken>(0);
+		}
+		else if (token.isVariable()) {
+			List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>(1);
+			ParsedCommandToken parsedToken = new ParsedCommandToken();
+			parsedToken.setStartIndex(0);
+			parsedToken.setEndIndex(split.length);
+			parsedToken.setToken(clause);
+			parsedToken.setMatched(token);
+			parsed.add(parsedToken);
+			return parsed;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Method that parses the supplied multiple token CommandForm to see if the
+	 * supplied clause agrees with it. This method is rather complex, and also
+	 * delegates to a finishing method in a vain attempt to be readable.
+	 * @param form
+	 * @param clause
+	 * @return A list of parsed command tokens if the clause matches, null otherwise.
+	 */
+	private List<ParsedCommandToken> parseMultiTokenForm(CommandForm form, String clause) {
+		String[] split = clause.split(" ");
 		List<ParsedCommandToken> parsed = new ArrayList<ParsedCommandToken>();
 		String prevDelim = null;
 		ParsedCommandToken currToken;
@@ -170,28 +235,31 @@ public class CommandParser {
 				c++;
 			}
 			
+			//TODO This is greedy and doesn't take delims on the end into account
+			//Thus producing a bug where the shorter verison of a command will work
+			//and not the correct one.
 			ParsedCommandToken lastToken = new ParsedCommandToken(c, split.length);
 			parsed.add(lastToken);
 			
-			parsed = finishParsing(form, parsed, split);
+			parsed = finishMultiTokenParsing(form, parsed, split);
 			
 			return parsed;
 		}
 		else {
 			return null;
 		}
-		 
 	}
 	
 	/**
 	 * Final parsing step to craft the variable names, remove blank tokens, and
-	 * match the parsed token to the variable names they map to.
+	 * match the parsed token to the variable names they map to during multitoken
+	 * command form parsing.
 	 * @param form
 	 * @param parsed
 	 * @param split
-	 * @return
+	 * @return The polished list of parsed command tokens, should the list have anything in it. Null otherwise.
 	 */
-	private List<ParsedCommandToken> finishParsing(CommandForm form, List<ParsedCommandToken> parsed, String[] split) {		
+	private List<ParsedCommandToken> finishMultiTokenParsing(CommandForm form, List<ParsedCommandToken> parsed, String[] split) {		
 		//Craft the tokens.
 		for (ParsedCommandToken token : parsed) {
 			craftParsedToken(token, split);
@@ -222,6 +290,12 @@ public class CommandParser {
 		}
 	}
 	
+	/**
+	 * Helper method that sticks the extracted text of the parsed command token into
+	 * its token property.
+	 * @param token
+	 * @param clause
+	 */
 	private void craftParsedToken(ParsedCommandToken token, String[] clause) {
 		String text = "";
 		for (int c = token.getStartIndex(); c < token.getEndIndex(); c++) {

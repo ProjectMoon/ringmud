@@ -91,10 +91,20 @@ public class CommandToken {
 	}
 
 	public void setScope(Scope scope) {
+		if (!isScoped()) {
+			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING) {
+				throw new IllegalArgumentException("Non-scoped variables can only use cascading scopes.");
+			}
+		}
 		this.scope = scope;
 	}
 
 	public Scope getScope() {
+		if (!isScoped()) {
+			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING) {
+				throw new IllegalArgumentException("Non-scoped variables can only use cascading scopes.");
+			}
+		}
 		return scope;
 	}
 }

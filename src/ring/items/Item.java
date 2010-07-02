@@ -116,6 +116,10 @@ public class Item extends WorldObject {
 	public List<WorldObject> produceSearchList(List<Class<?>> dataTypes) {
 		return new ArrayList<WorldObject>(0);
 	}
+	
+	public String toString() {
+		return getName();
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

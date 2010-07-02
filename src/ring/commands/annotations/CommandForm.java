@@ -217,10 +217,10 @@ public class CommandForm {
 			
 			//Now we can cascade.
 			if (firstVariable.isScoped()) {
-				rightCascade();
+				ltrCascade();
 			}
 			else if (lastVariable.isScoped()) {
-				leftCascade();
+				rtlCascade();
 			}
 		}
 	}
@@ -228,32 +228,36 @@ public class CommandForm {
 	/**
 	 * Create a left-to-right cascade.
 	 */
-	private void rightCascade() {
+	private void ltrCascade() {
 		CommandToken first = this.getFirstVariable();
 		for (CommandToken variable : this.getVariables()) {
 			if (variable != first) {
-				variable.setScope(Scope.RIGHT_CASCADING);
+				variable.setScope(Scope.LTR_CASCADING);
 			}
 		}
 		
-		setCascadeType(Scope.RIGHT_CASCADING);
+		setCascadeType(Scope.LTR_CASCADING);
 	}
 	
 	/**
 	 * Create a right-to-left cascade.
 	 */
-	private void leftCascade() {
+	private void rtlCascade() {
 		CommandToken last = this.getLastVariable();
 		for (CommandToken variable : this.getVariables()) {
 			if (variable != last) {
-				variable.setScope(Scope.LEFT_CASCADING);
+				variable.setScope(Scope.RTL_CASCADING);
 			}
 		}
 		
-		setCascadeType(Scope.LEFT_CASCADING);
+		setCascadeType(Scope.RTL_CASCADING);
 	}
 
 	public void setCascadeType(Scope cascadeType) {
+		if (cascadeType != Scope.LTR_CASCADING && cascadeType != Scope.RTL_CASCADING) {
+			throw new IllegalArgumentException("Invalid scope for cascade type. Must use RTL or LTR.");
+		}
+		
 		this.cascadeType = cascadeType;
 	}
 
