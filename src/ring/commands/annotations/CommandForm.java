@@ -54,6 +54,10 @@ public class CommandForm {
 		this.scope = scope;
 	}
 	
+	public int getTokenLength() {
+		return tokens.size();
+	}
+	
 	public List<CommandToken> getTokens() {
 		return tokens;
 	}
@@ -84,45 +88,55 @@ public class CommandForm {
 		return ret;
 	}
 	
-	protected List<CommandToken> getJaggedDelimiters() {
-		List<CommandToken> ret = new ArrayList<CommandToken>();
-		int last = -1;
-		for (CommandToken token : getTokens()) {
-			if (token.isDelimiter()) {
-				ret.add(token);
-				last++;
+	public CommandToken getFirstVariable() {
+		for (CommandToken token : tokens) {
+			if (token.isVariable()) {
+				return token;
 			}
-			else {
-				if (ret.size() > 0 && ret.get(last) != null) {
-					ret.add(null);
-					last++;
-				}				
+		}
+		return null;
+	}
+	
+	public CommandToken getLastVariable() {
+		for (int c = tokens.size() - 1; c >= 0; c--) {
+			CommandToken token = tokens.get(c);
+			if (token.isVariable()) {
+				return token;
 			}
 		}
 		
-		return ret;
-	}	
+		return null;
+	}
 	
-	public boolean isDelimiter(String text) {
-		for (CommandToken token : getTokens()) {
-			if (token.isDelimiter()) {
-				if (token.getToken().equalsIgnoreCase(text)) {
-					return true;
-				}
+	public boolean hasVariables() {
+		for (CommandToken token : tokens) {
+			if (token.isVariable()) {
+				return true;			
 			}
 		}
 		
 		return false;
 	}
 	
+	public String toString() {
+		return getId();
+	}
+	
+	/**
+	 * Transform the given Form into a useful CommandForm object with
+	 * friendly properties and methods.
+	 * @param form
+	 */
 	private void parse(Form form) {
 		setId(form.id());
 		setClause(form.clause());
 		setScope(form.scope());
 		
+		
 		String[] split = form.clause().split(" ");
 		int c = 0;
 		int count = 0;
+		boolean foundScoped = false;
 		
 		for (String tokenString : split) {
 			if (!tokenString.equals("")) {
@@ -140,6 +154,22 @@ public class CommandForm {
 					Class<?>[] types = form.bind()[c].value();
 					List<Class<?>> bindTypes = Arrays.asList(types);
 					token.setBindTypes(bindTypes);
+					
+					//Handle scoped variable specifically. Cascade detection is at the end of the list.
+					if (tokenString.startsWith("$")) {
+						if (foundScoped) {
+							throw new IllegalArgumentException("There can only be one scoped variable in a command form.");
+						}
+						else {
+							token.setScoped(true);
+							token.setScope(form.scope());
+							foundScoped = true;
+						}
+					}
+					else {
+						token.setScoped(false);
+					}
+					
 					c++;
 				}
 				else {
@@ -155,20 +185,61 @@ public class CommandForm {
 		if (tokens.size() > 0) {
 			tokens.get(tokens.size() - 1).setAtEnd(true);
 		}
+		
+		//Figure out right vs left cascade.
+		detectCascade();
 	}
 	
-	public String toString() {
-		String ret = "";
-		for (CommandToken token : getTokens()) {
-			if (token.isDelimiter()) {
-				ret += "D" + token + " ";
+	/**
+	 * Detect and set which cascading mode to use for forms with variables in them.
+	 * The cascading mode determines how translation results are filtered through 
+	 * the command chain.
+	 */
+	private void detectCascade() {
+		if (this.hasVariables()) {
+			CommandToken firstVariable = this.getFirstVariable();
+			CommandToken lastVariable = this.getLastVariable();
+			
+			//Verification.
+			if (firstVariable.isScoped() && lastVariable.isScoped()) {
+				throw new IllegalArgumentException("Cascade conflict. Only the first or last variable may be scoped, not both.");
 			}
-			else if (token.isVariable()) {
-				ret += "V" + token + " ";
+			
+			if (!firstVariable.isScoped() && !lastVariable.isScoped()) {
+				throw new IllegalArgumentException("Variable form \"" + this + "\" does not have a scope variable in the start or end position.");
+			}
+			
+			//Now we can cascade.
+			if (firstVariable.isScoped()) {
+				rightCascade();
+			}
+			else if (lastVariable.isScoped()) {
+				leftCascade();
 			}
 		}
-		
-		return ret.trim();
-		
+	}
+	
+	/**
+	 * Create a left-to-right cascade.
+	 */
+	private void rightCascade() {
+		CommandToken first = this.getFirstVariable();
+		for (CommandToken variable : this.getVariables()) {
+			if (variable != first) {
+				variable.setScope(Scope.RIGHT_CASCADING);
+			}
+		}
+	}
+	
+	/**
+	 * Create a right-to-left cascade.
+	 */
+	private void leftCascade() {
+		CommandToken last = this.getLastVariable();
+		for (CommandToken variable : this.getVariables()) {
+			if (variable != last) {
+				variable.setScope(Scope.LEFT_CASCADING);
+			}
+		}
 	}
 }

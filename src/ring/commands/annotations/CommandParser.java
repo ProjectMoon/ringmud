@@ -14,14 +14,12 @@ import ring.movement.Room;
  * @author projectmoon
  *
  */
-/*
+
 @Template({
 	@Form(bind = { @BindType({String.class}) }),
-	@Form(id = "lookThing", clause = ":thing", bind = { @BindType({String.class, Class.class}) }),
-	@Form(id = "lookAway", clause = ":thing away", bind = { @BindType({String.class, Class.class}) }),
-	@Form(id = "lookAt", clause = "at :thing in $box", bind = { @BindType({String.class}), @BindType({Class.class}) }),
+	@Form(id = "lookThing1", clause = ":thing in $box", bind = { @BindType({String.class, Class.class}), @BindType() }),
+	@Form(id = "lookThing2", clause = "at :thing in :place with the $box sdf", bind = { @BindType({String.class, Class.class}), @BindType(), @BindType() }),
 })
-*/
 public class CommandParser {
 	/**
 	 * Helper class to return from the findForm method.
@@ -58,6 +56,13 @@ public class CommandParser {
 
 		if (tuple.form != null) {
 			//Now, deal with the scopes and find some world objects.
+			System.out.println("Using form: " + tuple.form);
+			for (ParsedCommandToken token : tuple.tokenList) {
+				System.out.println(token.getMatched() + " = " + token.getToken());
+			}
+		}
+		else {
+			System.out.println("Found no form");
 		}
 		
 		return null;
@@ -142,24 +147,62 @@ public class CommandParser {
 		
 		if (!errors) {
 			//convert remainder of tokens to ParsedCommandToken
+			//Forms that end in a variable need c advanced one more space or they will
+			//get the last delimiter too.
+			if (form.getToken(form.getTokenLength() - 1).isVariable()) {
+				c++;
+			}
+			
 			ParsedCommandToken lastToken = new ParsedCommandToken(c, split.length);
 			parsed.add(lastToken);
 			
-			for (ParsedCommandToken token : parsed) {
-				craftParsedToken(token, split);
-			}
+			parsed = finishParsing(form, parsed, split);
 			
-			if (parsed.size() > 0) {
-				return parsed;
-			}
-			else {
-				return null;
-			}
+			return parsed;
 		}
 		else {
 			return null;
 		}
 		 
+	}
+	
+	/**
+	 * Final parsing step to craft the variable names, remove blank tokens, and
+	 * match the parsed token to the variable names they map to.
+	 * @param form
+	 * @param parsed
+	 * @param split
+	 * @return
+	 */
+	private List<ParsedCommandToken> finishParsing(CommandForm form, List<ParsedCommandToken> parsed, String[] split) {		
+		//Craft the tokens.
+		for (ParsedCommandToken token : parsed) {
+			craftParsedToken(token, split);
+		}
+		
+		//Remove all blanks.
+		List<ParsedCommandToken> blanks = new ArrayList<ParsedCommandToken>();
+		for (ParsedCommandToken token : parsed) {
+			if (token.getToken().trim().equals("")) {
+				blanks.add(token);
+			}
+		}
+		parsed.removeAll(blanks);
+		
+		if (parsed.size() <= 0) {
+			return null;
+		}
+		else {
+			//Set the matched tokens.
+			//Length and order of variable list should that of parsed list.
+			List<CommandToken> variables = form.getVariables();
+			
+			for (int c = 0; c < variables.size(); c++) {
+				parsed.get(c).setMatched(variables.get(c).getToken());
+			}
+
+			return parsed;	
+		}
 	}
 	
 	private void craftParsedToken(ParsedCommandToken token, String[] clause) {
@@ -193,7 +236,7 @@ public class CommandParser {
 	}
 	
 	public static void main(String[] args) {
-		String command = "look thing away";
+		String command = "look something in the box";
 		/*for (String arg : args) {
 			command += arg + " ";
 		}*/

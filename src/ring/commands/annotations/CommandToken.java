@@ -13,6 +13,8 @@ public class CommandToken {
 	
 	//Variable specific
 	private List<Class<?>> bindTypes = new ArrayList<Class<?>>();
+	private boolean isScoped;
+	private Scope scope;
 	
 	public String getToken() {
 		return token;
@@ -78,5 +80,21 @@ public class CommandToken {
 	
 	public String toString() {
 		return getToken();
+	}
+
+	public void setScoped(boolean isScoped) {
+		this.isScoped = isScoped;
+	}
+
+	public boolean isScoped() {
+		return isScoped;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
+	public Scope getScope() {
+		return scope;
 	}
 }
