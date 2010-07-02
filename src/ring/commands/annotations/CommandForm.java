@@ -18,7 +18,12 @@ public class CommandForm {
 	private Scope cascadeType;
 	
 	public CommandForm(Form form) {
-		parse(form);	
+		try {
+			parse(form);
+		}
+		catch (FormParsingException e) {
+			throw new CommandException("There was a problem parsing a CommandForm.", e);
+		}
 	}
 	
 	public static List<CommandForm> processForms(Form ... forms) {
@@ -128,7 +133,7 @@ public class CommandForm {
 	 * friendly properties and methods.
 	 * @param form
 	 */
-	private void parse(Form form) {
+	private void parse(Form form) throws FormParsingException {
 		setId(form.id());
 		setClause(form.clause());
 		setScope(form.scope());
@@ -152,14 +157,19 @@ public class CommandForm {
 				//Determine if is variable or delimiter and handle accordingly.
 				if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
 					token.setVariable(true);
-					Class<?>[] types = form.bind()[c].value();
-					List<Class<?>> bindTypes = Arrays.asList(types);
-					token.setBindTypes(bindTypes);
+					try {
+						Class<?>[] types = form.bind()[c].value();
+						List<Class<?>> bindTypes = Arrays.asList(types);
+						token.setBindTypes(bindTypes);
+					}
+					catch (ArrayIndexOutOfBoundsException e) {
+						throw new FormParsingException("Not all variables have bind types declared on form \"" + this + "\".");
+					}
 					
 					//Handle scoped variable specifically. Cascade detection is at the end of parsing.
 					if (tokenString.startsWith("$")) {
 						if (foundScoped) {
-							throw new IllegalArgumentException("There can only be one scoped variable in a command form.");
+							throw new FormParsingException("There can only be one scoped variable in a command form.");
 						}
 						else {
 							token.setScoped(true);
@@ -185,13 +195,17 @@ public class CommandForm {
 		//Set atEnd property for the last command token.
 		if (tokens.size() > 0) {
 			tokens.get(tokens.size() - 1).setAtEnd(true);
+			
+			if (tokens.get(tokens.size() - 1).isDelimiter()) {
+				throw new FormParsingException("Command form \"" + this + "\" cannot end with a delimiter.");
+			}
 		}
 		
 		//A bit more error checking
 		if (this.hasVariables() && !foundScoped) {
-			throw new IllegalArgumentException("Variable form \"" + this + "\" must have a scoped variable in the start or end position.");
+			throw new FormParsingException("Variable form \"" + this + "\" must have a scoped variable in the start or end position.");
 		}
-		
+				
 		//Figure out right vs left cascade.
 		detectCascade();
 	}
@@ -201,18 +215,18 @@ public class CommandForm {
 	 * The cascading mode determines how translation results are filtered through 
 	 * the command chain.
 	 */
-	private void detectCascade() {
+	private void detectCascade() throws FormParsingException {
 		if (this.hasVariables()) {
 			CommandToken firstVariable = this.getFirstVariable();
 			CommandToken lastVariable = this.getLastVariable();
 			
 			//Verification.
 			if (firstVariable.isScoped() && lastVariable.isScoped() && (firstVariable != lastVariable)) {
-				throw new IllegalArgumentException("Cascade conflict. Only the first or last variable may be scoped, not both.");
+				throw new FormParsingException("Cascade conflict. Only the first or last variable may be scoped, not both.");
 			}
 			
 			if (!firstVariable.isScoped() && !lastVariable.isScoped()) {
-				throw new IllegalArgumentException("Variable form \"" + this + "\" does not have a scope variable in the start or end position.");
+				throw new FormParsingException("Variable form \"" + this + "\" does not have a scope variable in the start or end position.");
 			}
 			
 			//Now we can cascade.

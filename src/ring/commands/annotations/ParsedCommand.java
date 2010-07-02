@@ -113,7 +113,9 @@ public class ParsedCommand {
 		}
 		
 		if (rootArg == null) {
-			//not here.
+			nullArgs(arguments, tokens.size());
+			setArguments(arguments);
+			return;
 		}
 		
 		arguments.add(rootArg);
@@ -121,6 +123,12 @@ public class ParsedCommand {
 		WorldObject previousArg = rootArg;
 		
 		for (int c = 1; c < tokens.size(); c++) {
+			if (previousArg == null) {
+				nullArgs(arguments, tokens.size() - c);
+				setArguments(arguments);
+				return;	
+			}
+			
 			ParsedCommandToken token = tokens.get(c);
 			WorldObject arg = worldObjectFromToken(token, previousArg);
 			arguments.add(arg);
@@ -162,7 +170,10 @@ public class ParsedCommand {
 		}
 		
 		if (rootArg == null) {
-			//not here.
+			nullArgs(arguments, tokens.size());
+			Collections.reverse(arguments);
+			setArguments(arguments);
+			return;
 		}
 		
 		arguments.add(rootArg);
@@ -170,6 +181,13 @@ public class ParsedCommand {
 		WorldObject previousArg = rootArg;
 		
 		for (int c = tokens.size() - 2; c >= 0; c--) {
+			if (previousArg == null) {
+				nullArgs(arguments, tokens.size() - (tokens.size() - c) + 1);
+				Collections.reverse(arguments);
+				setArguments(arguments);
+				return;	
+			}
+			
 			ParsedCommandToken token = tokens.get(c);
 			WorldObject arg = worldObjectFromToken(token, previousArg);
 			arguments.add(arg);
@@ -179,8 +197,13 @@ public class ParsedCommand {
 		//Must be reversed since arguments are added to the list while going backwards
 		//through parsed command tokens
 		Collections.reverse(arguments);
-		
 		setArguments(arguments);
+	}
+	
+	private void nullArgs(List<Object> arguments, int length) {
+		for (int c = 0; c < length; c++) {
+			arguments.add(null);
+		}
 	}
 	
 	/**

@@ -235,9 +235,6 @@ public class CommandParser {
 				c++;
 			}
 			
-			//TODO This is greedy and doesn't take delims on the end into account
-			//Thus producing a bug where the shorter verison of a command will work
-			//and not the correct one.
 			ParsedCommandToken lastToken = new ParsedCommandToken(c, split.length);
 			parsed.add(lastToken);
 			
@@ -282,11 +279,16 @@ public class CommandParser {
 			//Length and order of variable list should that of parsed list.
 			List<CommandToken> variables = form.getVariables();
 			
-			for (int c = 0; c < variables.size(); c++) {
-				parsed.get(c).setMatched(variables.get(c));
-			}
+			try {
+				for (int c = 0; c < variables.size(); c++) {
+					parsed.get(c).setMatched(variables.get(c));
+				}
 
-			return parsed;	
+				return parsed;
+			}
+			catch (IndexOutOfBoundsException e) {
+				return null;
+			}
 		}
 	}
 	

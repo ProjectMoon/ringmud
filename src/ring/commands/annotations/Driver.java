@@ -7,7 +7,8 @@ import ring.movement.Room;
 
 @Template({
 	//@Form(id = "steal", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
-	@Form(id = "quicksteal", clause = ":item from $mobile all quicklike", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
+	@Form(id = "steal1", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
+	@Form(id = "steal2", clause = "from $mobile the :item", bind = { @BindType({Mobile.class}), @BindType({Item.class}) })
 })
 public class Driver implements Command {
 	@Override
@@ -53,11 +54,9 @@ public class Driver implements Command {
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
 		stealCommand.execute(generateSender(mob), cmd);
 		*/
-		String command = "steal sword from mob all quicklike";
+		String command = "steal from mob the sword";
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
 		stealCommand.execute(generateSender(mob), cmd);
-		
-		//COMMANDS WITH DELIMITERS ON THE END DO NOT WORK ! At leastm not in RTL cascade. Probably happens in LTR as well.
 	}
 	
 	public static CommandSender generateSender(final Mobile mob) {
