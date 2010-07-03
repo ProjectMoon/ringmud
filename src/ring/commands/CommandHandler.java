@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import ring.commands.parser.CommandParser;
+import ring.commands.parser.CommandArguments;
+import ring.commands.parser.CommandParsingException;
+
 /**
  * This class provides command handling service to a CommandSender (usually a mobile).
  * The CommandHandler class maintains a global store of all indexed command objects, as
@@ -25,6 +29,8 @@ public final class CommandHandler {
 	//TreeMap for guaranteed entry order so that command completion
 	//behavior is always the same.
 	private static Map<String, Command> commands = new TreeMap<String, Command>();
+	//each command has a parser.
+	private static Map<Command, CommandParser> parserMap = new HashMap<Command, CommandParser>();
 												
 	//Map of alternate (aliased) commands. Stored per class instance
 	//So each user can have their own set of aliases.
@@ -79,7 +85,16 @@ public final class CommandHandler {
 			}
 			
 			if (containsCommand(cmd.getCommandName()) == false) {
-				commands.put(cmd.getCommandName(), cmd);
+				
+				try {
+					CommandParser parser = new CommandParser(cmd);
+					commands.put(cmd.getCommandName(), cmd);
+					parserMap.put(cmd, parser);
+				}
+				catch (CommandParsingException e) {
+					log.severe("Error parsing command forms: " + e.getMessage());
+				}
+				
 			}
 			else {
 				String collision = "Command [" + cmd.getCommandName() +"] is already in the command map!\n" +
@@ -97,7 +112,14 @@ public final class CommandHandler {
 	 * @param cmd
 	 */
 	public static void addCommand(String cmdKey, Command cmd) {
-		commands.put(cmdKey, cmd);
+		try {
+			CommandParser parser = new CommandParser(cmd);
+			commands.put(cmd.getCommandName(), cmd);
+			parserMap.put(cmd, parser);
+		}
+		catch (CommandParsingException e) {
+			log.severe("Error parsing command forms: " + e.getMessage());
+		}
 	}
 	
 	/**
@@ -153,25 +175,6 @@ public final class CommandHandler {
 		return command.split(" ");
 	}
 	
-	/**
-	 * Isolates the parameters of the given parsed command string by
-	 * returning a String array that removes the actual command (i.e. parsedCmdString[0])
-	 * from the String array.
-	 * @param parsedCmdString
-	 * @return A String array containing only the command parameters.
-	 */
-	private String[] isolateParameters(String[] parsedCmdString) {
-		if (parsedCmdString.length == 1) return null;
-		
-		String[] params = new String[parsedCmdString.length - 1];
-		
-		for (int c = 1; c < parsedCmdString.length; c++) {
-			params[c - 1] = parsedCmdString[c];
-		}
-		
-		return params;
-	}
-
 
 	/**
 	 * Sends a command to this CommandHandler. This method assumes that
@@ -189,16 +192,47 @@ public final class CommandHandler {
 		//Make sure we have something to parse.
 		if (parsedCmd.length > 0) {
 			Command cmd = lookup(parsedCmd[0]);
-			CommandParameters params = new CommandParameters(isolateParameters(parsedCmd), sender);
-	
-			//actually do the command.
-			handleCommand(cmd, params);
+			CommandParser parser = parserMap.get(cmd);
+			
+			CommandArguments params;
+			try {
+				params = parser.parse(sender, command);
+				handleCommand(cmd, params);
+			}
+			catch (CommandParsingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		else {
 			//Else there was a space typed... just send a blank
 			//command result.
 			CommandResult res = new CommandResult();
 			res.send();
+		}
+	}
+	
+	/**
+	 * Invokes a Command with the specified parameters. Synchronizes on
+	 * command sender. Individual commands may be further synchronized
+	 * if necessary.
+	 * @param cmd
+	 * @param params
+	 * @return the result of the command.
+	 */
+	private void handleCommand(Command cmd, CommandArguments params) {
+		synchronized (sender) {
+			try {
+				cmd.execute(sender, params);
+			}
+			catch (RuntimeException e) {
+				log.severe("There was a runtime exception executing the command " + cmd + " for sender " + sender + ":");
+				e.printStackTrace();
+				CommandResult cr = new CommandResult();
+				cr.setFailText("There was an error: " + e.toString());
+				cr.send();
+			}
 		}
 	}
 
@@ -226,30 +260,6 @@ public final class CommandHandler {
 
 		return null;
 	}
-
-	/**
-	 * Invokes a Command with the specified parameters. Synchronizes on
-	 * command sender. Individual commands may be further synchronized
-	 * if necessary.
-	 * @param cmd
-	 * @param params
-	 * @return the result of the command.
-	 */
-	private void handleCommand(Command cmd, CommandParameters params) {
-		synchronized (sender) {
-			try {
-				cmd.execute(sender, params);
-			}
-			catch (RuntimeException e) {
-				log.severe("There was a runtime exception executing the command " + cmd + " for sender " + sender + ":");
-				e.printStackTrace();
-				CommandResult cr = new CommandResult();
-				cr.setFailText("There was an error: " + e.toString());
-				cr.send();
-			}
-		}
-	}
-
 	
 	/**
 	 * Registers an alternate command with this CommandHandler. This is used to

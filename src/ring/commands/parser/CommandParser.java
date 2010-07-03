@@ -9,6 +9,8 @@ import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 
+import ring.commands.Command;
+import ring.commands.CommandSender;
 import ring.commands.annotations.Form;
 import ring.commands.annotations.Template;
 
@@ -122,7 +124,7 @@ public class CommandParser {
 	 * @param command
 	 * @return A ParsedCommand if parsing was successful, or null if it was unsuccessful.
 	 */
-	public ParsedCommand parse(CommandSender sender, String command) throws CommandParsingException {
+	public CommandArguments parse(CommandSender sender, String command) throws CommandParsingException {
 		String[] split = command.split(" ");
 		String clause = "";
 		
@@ -143,7 +145,7 @@ public class CommandParser {
 		CPTuple tuple = parseClause(clause);
 
 		if (tuple != null && tuple.form != null) {
-			ParsedCommand cmd = new ParsedCommand();
+			CommandArguments cmd = new CommandArguments();
 			cmd.setFormID(tuple.form.getId());
 			cmd.setCommand(commandName);
 			cmd.setScope(tuple.form.getScope());

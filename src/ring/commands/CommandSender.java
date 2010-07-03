@@ -1,5 +1,7 @@
 package ring.commands;
 
+import ring.movement.Room;
+
 /**
  * <p>Title: RingMUD Codebase</p>
  * <p>Description: RingMUD is a java codebase for a MUD with a working similar to DikuMUD</p>
@@ -10,5 +12,18 @@ package ring.commands;
  */
 
 public interface CommandSender {
+	public static class CommandSenderContext {
+		private Room location;
+		
+		public Room getLocation() {
+			return location;
+		}
+		
+		public void setLocation(Room location) {
+			this.location = location;
+		}
+	};
+	
 	public void doCommand(String cmd);
+	public CommandSenderContext getContext();
 }

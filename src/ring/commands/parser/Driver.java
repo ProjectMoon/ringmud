@@ -1,5 +1,7 @@
 package ring.commands.parser;
 
+import ring.commands.Command;
+import ring.commands.CommandSender;
 import ring.commands.annotations.BindType;
 import ring.commands.annotations.Form;
 import ring.commands.annotations.Template;
@@ -16,7 +18,7 @@ import ring.movement.Room;
 })
 public class Driver implements Command {
 	@Override
-	public void execute(CommandSender sender, ParsedCommand params) {
+	public void execute(CommandSender sender, CommandArguments params) {
 		System.out.println("Steal command form: " + params.getFormID());
 		System.out.println("Args are:");
 		for (Object arg : params.getArguments()) {
@@ -54,7 +56,7 @@ public class Driver implements Command {
 			Driver stealCommand = new Driver();
 			CommandParser parser = new CommandParser(stealCommand);
 			String command = "steal";
-			ParsedCommand cmd = parser.parse(generateSender(mob), command);
+			CommandArguments cmd = parser.parse(generateSender(mob), command);
 			stealCommand.execute(generateSender(mob), cmd);
 		}
 		catch (CommandParsingException e) {

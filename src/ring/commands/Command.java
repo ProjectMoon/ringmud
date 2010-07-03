@@ -1,5 +1,7 @@
 package ring.commands;
 
+import ring.commands.parser.CommandArguments;
+
 
 /**
  * The interface representing a command in the game. The built-in
@@ -17,7 +19,7 @@ public interface Command {
 	 * @return A CommandResult describing whether or not the command succeeded, and the result
 	 * text, if any.
 	 */
-	public void execute(CommandSender sender, CommandParameters params);
+	public void execute(CommandSender sender, CommandArguments params);
 	
 	/**
 	 * Attempt to roll back the doings of this command in case of strange behavior or failures.
