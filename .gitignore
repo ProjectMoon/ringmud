@@ -7,3 +7,4 @@ lib/cachedir/*
 .pydevproject
 .settings/*
 *.mud
+*.class

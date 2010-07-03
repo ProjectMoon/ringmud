@@ -6,7 +6,7 @@
 	
 	<!-- List of properties. -->
 	<property name="app.version" value="0.1.0" />
-    <property name="src.dir"     value="./src"/>
+    <property name="src.dir"     value="./src/java"/>
 	<property name="lib.dir"	value="./lib"/>
     <property name="build.dir"   value="./build"/>
 	<property name="res.dir" value="./resources" />
