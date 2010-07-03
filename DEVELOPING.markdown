@@ -13,7 +13,7 @@ In order to develop the RingMUD engine, you will need the following knowledge
 in the following quantities:
 
  * Java (heavy)
- * Python (light)
+ * Python (medium)
  * XML (heavy)
  * XQuery (medium)
  * AspectJ (medium)
@@ -51,8 +51,11 @@ While not required, it is recommended that you get the following:
  * The Eclipse AspectJ plugin known as AJDT: [Link](http://www.eclipse.org/ajdt/)
  * The Eclipse PyDev plugin for Python development: [Link](http://pydev.org/)
 
-To set up the Eclipse project, import the root git directory as "existing source."
-Add everything in the lib/ directory as referenced libraries.
+To set up the Eclipse Java project, import the root git directory as "existing source."
+Make sure the project's source folder is src/java.
+
+To set up a Python project, create a new Pydev project using Jython and set its source folder
+to src/python.
 
 Engine Documentation
 --------------------
