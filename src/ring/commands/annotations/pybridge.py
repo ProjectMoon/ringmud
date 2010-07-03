@@ -15,9 +15,8 @@ from ring.commands.annotations import Scope
 
 class BindType(BindTypeAnnotation):
     """
-    Bridge class to the BindType annotation interface.
+    Bridge class that implements the BindType annotation interface.
     """
-    
     def __init__(self, bindTypes):
         if hasattr(bindTypes, "__iter__"):
             self.bindTypes = bindTypes
@@ -32,9 +31,8 @@ class BindType(BindTypeAnnotation):
     
 class Form(FormAnnotation):
     """
-    Bridge class to the Form annotation interface
-    """
-    
+    Bridge class that implements the Form annotation interface
+    """ 
     def __init__(self, id = "default", clause = "", bind = [], scope = Scope.ROOM):
         self._id = id
         self._clause = clause
@@ -54,6 +52,9 @@ class Form(FormAnnotation):
         return self._scope
 
 class TemplateBridge(TemplateAnnotation):
+    """
+    Bridge class that implements the Template annotation interface.
+    """
     def __init__(self, forms):
         self.forms = forms
     
