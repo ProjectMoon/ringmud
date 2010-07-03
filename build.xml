@@ -116,6 +116,7 @@
 
 	<target name="jar-core" depends="compile">
 		<jar destfile="${dist.jar.dir}/ringmud-core-${app.version}.jar">
+			<zipfileset dir="${res.dir}" includes="aop.xml" prefix="META-INF/" />
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/daemons/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>
@@ -178,6 +179,7 @@
 				<include name="**/*.py" />
 			</fileset>
 		</copy>
+		<unzip src="${lib.dir}/pystdlib.zip" dest="${dist.python.dir}" />
 	</target>
 		
     <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events,python"

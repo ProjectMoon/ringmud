@@ -1,8 +1,8 @@
 #!/bin/bash
 JARDIR=`dirname $0`/jar
-PYDIR=`dirname $0`/python/
+PYDIR=`dirname $0`/python/Lib:`dirname $0`/python/
 LIBDIR=`dirname $0`/../lib
 
-export RING_LIB_DIR=$JARDIR
+AGENT=$LIBDIR/aspectjweaver.jar
 
-java -cp "${LIBDIR}/*:${JARDIR}/*:${PYDIR}" ring.main.RingMain $*
+java -cp "${LIBDIR}/*:${JARDIR}/*:${PYDIR}" "-javaagent:$AGENT" ring.main.RingMain $*

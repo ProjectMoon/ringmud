@@ -18,7 +18,9 @@ public enum Interpreter {
 		//Thus, we must add our jars manually...
 		String dir = System.getenv("RING_LIB_DIR");
 		
-		PySystemState.add_extdir(dir);
+		if (dir != null) {
+			PySystemState.add_extdir(dir);
+		}
 		
 		interp = new PythonInterpreter();
 	}

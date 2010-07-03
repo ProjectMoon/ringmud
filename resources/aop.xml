@@ -1,0 +1,8 @@
+<aspectj>
+	<aspects>
+		<aspect name="ring.aspects.JythonCatcher" />
+	</aspects>
+
+	<!--<weaver options="-verbose" />-->
+</aspectj>
+

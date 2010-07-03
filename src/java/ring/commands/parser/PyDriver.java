@@ -10,7 +10,7 @@ public class PyDriver {
 	public static void main(String[] args) {
 		PythonInterpreter interp = new PythonInterpreter();
 		
-		interp.execfile("/Users/projectmoon/Programs/git/ringmud/src/ring/commands/annotations/pybridge.py");
+		interp.execfile("/Users/projectmoon/Programs/git/ringmud/src/python/ring/commands/annotations/pybridge.py");
 
 		PyObject blah = interp.get("Blah");
 
