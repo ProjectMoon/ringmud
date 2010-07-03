@@ -1,16 +1,20 @@
 package ring.commands.parser;
 
 /**
- * Helper class for parsed command tokens. The CommandParser creates
- * a ParsedCommandToken to keep track of positions in the command
- * clause.
+ * Class that represents a parsed command token. It stores the start and end
+ * index of the string that was parsed, the string being parsed, the text found
+ * in the string, and the {@link ring.commands.parser.CommandToken} object that
+ * this parsed token matched.
  * @author projectmoon
  *
  */
-public class ParsedCommandToken extends CommandToken {
+public class ParsedCommandToken {
 	private int startIndex;
 	private int endIndex;
 	private CommandToken matched;
+	private String token;
+	private String[] parentClause;
+	
 	
 	public ParsedCommandToken() {}
 	public ParsedCommandToken(int start, int end) {
@@ -35,7 +39,7 @@ public class ParsedCommandToken extends CommandToken {
 	}
 	
 	public String toString() {
-		return "[" + startIndex + ", " + endIndex + "]";
+		return getToken() + "(" + getStartIndex() + ", " + getEndIndex() + ")";
 	}
 	
 	public CommandToken getMatched() {
@@ -44,5 +48,21 @@ public class ParsedCommandToken extends CommandToken {
 	
 	public void setMatched(CommandToken matched) {
 		this.matched = matched;
+	}
+	
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	public String getToken() {
+		return token;
+	}
+	
+	public void setParentClause(String[] parentClause) {
+		this.parentClause = parentClause;
+	}
+	
+	public String[] getParentClause() {
+		return parentClause;
 	}
 }

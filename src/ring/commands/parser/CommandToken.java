@@ -16,6 +16,7 @@ public class CommandToken {
 	//Variable specific
 	private List<Class<?>> bindTypes = new ArrayList<Class<?>>();
 	private boolean isScoped;
+	private boolean isText;
 	private Scope scope;
 	
 	public String getToken() {
@@ -94,7 +95,7 @@ public class CommandToken {
 
 	public void setScope(Scope scope) {
 		if (!isScoped()) {
-			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING) {
+			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING && scope != Scope.NO_CASCADING) {
 				throw new IllegalArgumentException("Non-scoped variables can only use cascading scopes.");
 			}
 		}
@@ -103,10 +104,18 @@ public class CommandToken {
 
 	public Scope getScope() {
 		if (!isScoped()) {
-			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING) {
+			if (scope != Scope.RTL_CASCADING && scope != Scope.LTR_CASCADING && scope != Scope.NO_CASCADING) {
 				throw new IllegalArgumentException("Non-scoped variables can only use cascading scopes.");
 			}
 		}
 		return scope;
+	}
+
+	public void setText(boolean isText) {
+		this.isText = isText;
+	}
+
+	public boolean isText() {
+		return isText;
 	}
 }

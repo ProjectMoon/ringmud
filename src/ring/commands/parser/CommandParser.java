@@ -3,12 +3,8 @@ package ring.commands.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.python.core.Py;
-import org.python.core.PyClass;
 import org.python.core.PyException;
-import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 
@@ -234,11 +230,13 @@ public class CommandParser {
 			String currDelim = delim.getToken();
 				
 			currToken = new ParsedCommandToken();
+			currToken.setParentClause(split);
 			currToken.setStartIndex(c);
 			parsed.add(currToken);
 			
 			boolean found = false;
  			for (; c < split.length; c++) {
+ 				//Error check if we start with a delimiter.
  				if (delim.isAtStart() && delim.isDelimiter() && c == 0) {
  					if (!delim.getToken().equals(split[c])) {
  						errors = true;
@@ -246,8 +244,10 @@ public class CommandParser {
  					}
  				}
  				
+ 				//Find the start and end indices of the matched token.
 				if (!split[c].equals(currDelim)) {
 					//Make sure we don't slip up on delims and arguments that get mixed.
+					//We must rewind and fix the previous token if we find this case.
 					if (prevDelim != null && split[c].equals(prevDelim)) {
 						prevToken.setEndIndex(c);
 						currToken.setStartIndex(c + 1);

@@ -63,6 +63,18 @@ public class CommandForm {
 		this.scope = scope;
 	}
 	
+	public void setCascadeType(Scope cascadeType) {
+		if (cascadeType != Scope.LTR_CASCADING && cascadeType != Scope.RTL_CASCADING && cascadeType != Scope.NO_CASCADING) {
+			throw new IllegalArgumentException("Invalid scope for cascade type. Must use RTL or LTR or NO.");
+		}
+		
+		this.cascadeType = cascadeType;
+	}
+
+	public Scope getCascadeType() {
+		return cascadeType;
+	}
+	
 	public int getTokenLength() {
 		return tokens.size();
 	}
@@ -127,6 +139,26 @@ public class CommandForm {
 		return false;
 	}
 	
+	public boolean hasBindableVariables() {
+		for (CommandToken token : tokens) {
+			if (token.isVariable() && !token.isText()) {
+				return true;			
+			}
+		}
+		
+		return false;		
+	}
+	
+	public boolean hasOnlyTextVariables(){
+		for (CommandToken token : tokens) {
+			if (token.isVariable() && token.isText()) {
+				return true;			
+			}
+		}
+		
+		return false;		
+	}
+	
 	public String toString() {
 		return getId();
 	}
@@ -158,7 +190,7 @@ public class CommandForm {
 				}
 				
 				//Determine if is variable or delimiter and handle accordingly.
-				if (tokenString.startsWith(":") || tokenString.startsWith("$")) {
+				if (tokenString.startsWith(":") || tokenString.startsWith("$") || tokenString.startsWith("#")) {
 					token.setVariable(true);
 					try {
 						Class<?>[] types = form.bind()[c].value();
@@ -182,6 +214,10 @@ public class CommandForm {
 					}
 					else {
 						token.setScoped(false);
+						
+						if (tokenString.startsWith("#")) {
+							token.setText(true);
+						}
 					}
 					
 					c++;
@@ -205,13 +241,18 @@ public class CommandForm {
 		}
 		
 		//A bit more error checking
-		if (this.hasVariables() && !foundScoped) {
+		if (this.hasBindableVariables() && !foundScoped) {
 			throw new FormParsingException("Variable form \"" + this + "\" must have a scoped variable in the start or end position.");
 		}
 				
 		//Figure out right vs left cascade.
-		detectCascade();
-	}
+		if (this.hasBindableVariables()) {
+			detectCascade();
+		}
+		else {
+			noCascade();
+		}
+ 	}
 	
 	/**
 	 * Detect and set which cascading mode to use for forms with variables in them.
@@ -269,16 +310,12 @@ public class CommandForm {
 		
 		setCascadeType(Scope.RTL_CASCADING);
 	}
-
-	public void setCascadeType(Scope cascadeType) {
-		if (cascadeType != Scope.LTR_CASCADING && cascadeType != Scope.RTL_CASCADING) {
-			throw new IllegalArgumentException("Invalid scope for cascade type. Must use RTL or LTR.");
+	
+	private void noCascade() {
+		for (CommandToken variable : this.getVariables()) {
+			variable.setScope(Scope.NO_CASCADING);
 		}
 		
-		this.cascadeType = cascadeType;
-	}
-
-	public Scope getCascadeType() {
-		return cascadeType;
+		setCascadeType(Scope.NO_CASCADING);
 	}
 }

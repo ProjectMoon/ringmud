@@ -15,7 +15,7 @@ import ring.world.WorldObject;
 public class ParsedCommand {
 	private String formID;
 	private String command;
-	private List<Object> arguments;
+	private List<Object> arguments = new ArrayList<Object>();
 	private Scope cascadeType;
 	private Scope scope;
 	
@@ -45,6 +45,10 @@ public class ParsedCommand {
 	
 	public void setArguments(Object ... args) {
 		arguments.addAll(Arrays.asList(args));
+	}
+	
+	public void addArgument(Object arg) {
+		arguments.add(arg);
 	}
 	
 	public Object getArgument(int index) {
@@ -79,9 +83,18 @@ public class ParsedCommand {
 			else if (this.getCascadeType() == Scope.RTL_CASCADING) {
 				initializeRTLCascade(sender, tokens);
 			}
+			else if (this.getCascadeType() == Scope.NO_CASCADING) {
+				initializeNoCascade(sender, tokens);
+			}
 		}
 	}
 	
+	private void initializeNoCascade(CommandSender sender, List<ParsedCommandToken> tokens) {
+		for (ParsedCommandToken token : tokens) {
+			addArgument(token.getToken());
+		}
+	}
+
 	/**
 	 * Performs object translation for a command that cascades its data left-to-right. 
 	 * @param sender
@@ -124,16 +137,23 @@ public class ParsedCommand {
 		WorldObject previousArg = rootArg;
 		
 		for (int c = 1; c < tokens.size(); c++) {
+			//Error detection: object not found.
 			if (previousArg == null) {
 				nullArgs(arguments, tokens.size() - c);
 				setArguments(arguments);
 				return;	
 			}
 			
+			//Only search for world objects if the type is not preserved text.
 			ParsedCommandToken token = tokens.get(c);
-			WorldObject arg = worldObjectFromToken(token, previousArg);
-			arguments.add(arg);
-			previousArg = arg;
+			if (!token.getMatched().isText()) {
+				WorldObject arg = worldObjectFromToken(token, previousArg);
+				arguments.add(arg);
+				previousArg = arg;
+			}
+			else {
+				arguments.add(token.getToken());
+			}
 		}
 		
 		setArguments(arguments);
@@ -182,6 +202,7 @@ public class ParsedCommand {
 		WorldObject previousArg = rootArg;
 		
 		for (int c = tokens.size() - 2; c >= 0; c--) {
+			//Error detection: object not found.
 			if (previousArg == null) {
 				nullArgs(arguments, tokens.size() - (tokens.size() - c) + 1);
 				Collections.reverse(arguments);
@@ -189,10 +210,16 @@ public class ParsedCommand {
 				return;	
 			}
 			
+			//Only search for world object if the matched token is not preserved text.
 			ParsedCommandToken token = tokens.get(c);
-			WorldObject arg = worldObjectFromToken(token, previousArg);
-			arguments.add(arg);
-			previousArg = arg;
+			if (!token.getMatched().isText()) {
+				WorldObject arg = worldObjectFromToken(token, previousArg);
+				arguments.add(arg);
+				previousArg = arg;
+			}
+			else {
+				arguments.add(token.getToken());
+			}
 		}
 		
 		//Must be reversed since arguments are added to the list while going backwards

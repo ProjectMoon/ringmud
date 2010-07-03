@@ -23,5 +23,6 @@ public enum Scope {
 	MOBILE,
 	SELF,
 	RTL_CASCADING, //right to left
-	LTR_CASCADING //left to right
+	LTR_CASCADING, //left to right
+	NO_CASCADING, //no cascade variable found.
 }

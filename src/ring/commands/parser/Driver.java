@@ -11,7 +11,8 @@ import ring.movement.Room;
 @Template({
 	//@Form(id = "steal", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
 	@Form(id = "steal1", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
-	@Form(id = "steal2", clause = "from $mobile the :item", bind = { @BindType({Mobile.class}), @BindType({Item.class}) })
+	@Form(id = "steal2", clause = "from $mobile the :item", bind = { @BindType({Mobile.class}), @BindType({Item.class}) }),
+	@Form(id = "steal3", clause="the $mobile its #stuff and :item", bind = { @BindType({ Mobile.class }), @BindType(), @BindType({ Item.class }) })
 })
 public class Driver implements Command {
 	@Override
@@ -57,7 +58,7 @@ public class Driver implements Command {
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
 		stealCommand.execute(generateSender(mob), cmd);
 		*/
-		String command = "steal from mob the sword";
+		String command = "steal the mob its luxurious silk and sword";
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
 		stealCommand.execute(generateSender(mob), cmd);
 	}
