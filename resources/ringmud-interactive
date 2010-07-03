@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ROOT=`dirname $0`
+CP="${ROOT}/../python/*:${ROOT}/../lib/*:${ROOT}/jar/*"
+
+java -cp "${CP}" -javaagent:lib/aspectjweaver.jar org.python.util.jython

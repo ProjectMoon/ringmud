@@ -173,28 +173,36 @@
 		</jar>
 	</target>
 	
-	<target name="python" depends="compile">
-		<copy todir="${dist.python.dir}">
-			<fileset dir="${python.src.dir}">
-				<include name="**/*.py" />
-			</fileset>
-		</copy>
-		<unzip src="${lib.dir}/pystdlib.zip" dest="${dist.python.dir}" />
-	</target>
-		
-    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events,python"
-    		description="Performs full compilation and distribution.">
-    	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
-    	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
-    	
-    	<chmod file="${dist.dir}/bin/ringmud.sh" perm="755" />
-    	<chmod file="${dist.dir}/bin/rmc" perm="755" />
-    		
+	<target name="libs" depends="compile">
     	<copy todir="${dist.lib.dir}">
     		<fileset dir="${lib.dir}">
     			<include name="**/*.jar" />
     		</fileset>
     	</copy>
+	</target>
+	
+	<target name="python" depends="libs">
+		<move file="${dist.lib.dir}/jython.jar" todir="${dist.python.dir}" />
+		<unzip src="${lib.dir}/pystdlib.zip" dest="${dist.python.dir}" />
+		<copy todir="${dist.python.dir}/Lib">
+			<fileset dir="${python.src.dir}">
+				<include name="**/*.py" />
+			</fileset>
+		</copy>
+		
+	</target>
+		
+    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events,python"
+    		description="Performs full compilation and distribution.">
+    	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
+    	<copy file="${res.dir}/ringmud-interactive" todir="${dist.dir}/bin" />
+    	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
+    	
+    	<chmod file="${dist.dir}/bin/ringmud.sh" perm="755" />
+    	<chmod file="${dist.dir}/bin/ringmud-interactive" perm="755" />
+    	<chmod file="${dist.dir}/bin/rmc" perm="755" />
+    		
+
     </target>
 	 
  	<target name="main" depends="clean,dist" description="Build the RingMUD engine." />

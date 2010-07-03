@@ -2,7 +2,7 @@ from ring.commands.annotations.pybridge import *
 from ring.commands import Command
 from ring.commands import CommandResult
 from ring.mobiles.senses.stimuli import AudioStimulus
-from ring.server import MUDConnectionManager
+from ring.server import MUDConnectionManager as MCM
 
 @Template(Form(clause = "#text"))
 class Godvoice(Command):
@@ -14,14 +14,12 @@ class Godvoice(Command):
         message = args.getArgument(0)
         textBackToPlayer = "You project your voice across the cosmos, saying, \"" + message + "\""
         textToOtherPlayers = "The voice of the gods rumbles in the sky: \"" + message + "\""
-        
-        players = MUDConnectionManager.currentCharacters
-        
+               
         #Being deaf doesn't stop the power of the gods.
         stim = AudioStimulus()
         stim.depiction, stim.deafDepiction = textToOtherPlayers
         
-        for player in players:
+        for player in MCM.currentCharacters:
             if player is not sender:
                 player.dynamicModel.sensesGroup.consume(stim)
         
