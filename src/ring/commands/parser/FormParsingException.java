@@ -1,5 +1,6 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
+@SuppressWarnings("serial")
 public class FormParsingException extends Exception {
 	public FormParsingException(String msg) {
 		super(msg);

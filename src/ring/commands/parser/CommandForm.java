@@ -1,8 +1,11 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+
+import ring.commands.annotations.Form;
+import ring.commands.annotations.Scope;
 
 /**
  * The object representation of a command form. This class transforms

@@ -1,4 +1,4 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ring.commands.WorldObjectSearch;
+import ring.commands.annotations.Scope;
 import ring.mobiles.Mobile;
 import ring.movement.Room;
 import ring.world.WorldObject;
@@ -241,7 +242,7 @@ public class ParsedCommand {
 	 * @param datasource
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	private WorldObject worldObjectForMobScope(ParsedCommandToken token, Room datasource) {
 		Class<?>[] bindTypes = new Class<?>[] { Mobile.class };
 		List<WorldObject> objs = datasource.produceSearchList(bindTypes);

@@ -1,7 +1,9 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import ring.commands.annotations.Scope;
 
 public class CommandToken {
 	private boolean isDelimiter;

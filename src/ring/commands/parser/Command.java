@@ -1,4 +1,4 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
 
 /**

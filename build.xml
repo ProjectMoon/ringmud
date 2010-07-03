@@ -147,6 +147,7 @@
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/ringmud-commands-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/commands/**" />
+			<zipfileset dir="${src.dir}/ring/commands/annotations/" includes="*.py" prefix="ring/commands/annotations" />
 		</jar>
 	</target>
 	

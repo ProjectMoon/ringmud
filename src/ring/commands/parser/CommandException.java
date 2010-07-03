@@ -1,5 +1,6 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
+@SuppressWarnings("serial")
 public class CommandException extends RuntimeException {
 	public CommandException(String msg) {
 		super(msg);	

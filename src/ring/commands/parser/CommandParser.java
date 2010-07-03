@@ -1,7 +1,18 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.python.core.Py;
+import org.python.core.PyClass;
+import org.python.core.PyException;
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyTuple;
+import org.python.core.PyType;
+
+import ring.commands.annotations.Template;
 
 /**
  * The command parser receives a command template and parses commands given to it.
@@ -26,18 +37,52 @@ public class CommandParser {
 	private Command command;
 	private List<CommandForm> forms;
 	
-	//Later a command.
 	public CommandParser(Command command) {
 		commandName = command.getCommandName();
 		this.command = command;
 		Template cmdTemplate = command.getClass().getAnnotation(Template.class);
 		
-		if (cmdTemplate == null) {
-			throw new IllegalArgumentException("The Command object does not have a defined command Template!");
-		}
-		else {
+		if (cmdTemplate != null) {
 			forms = CommandForm.processForms(cmdTemplate.value());
 		}
+		else {
+			throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+		}
+	}
+	
+	public CommandParser(PyObject pyCommand) {
+		if (isInstanceOfCommand(pyCommand)) {
+			try {
+				Template cmdTemplate = (Template)pyCommand.__getattr__("__template__").__tojava__(Template.class);
+				
+				if (cmdTemplate != null) {
+					forms = CommandForm.processForms(cmdTemplate.value());
+				}
+				else {
+					throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+				}				
+			}
+			catch (PyException e) {
+				throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+			}
+		}
+		else {
+			throw new IllegalArgumentException("The passed Python must be a class object derived from ring.commands.parser.Command");
+		}
+	}
+	
+	private boolean isInstanceOfCommand(PyObject pyObj) {
+		if (pyObj instanceof PyType) {
+			PyTuple mro = (PyTuple)pyObj.__getattr__("__mro__");
+		
+			for (Object pyType : mro) {
+				if (pyType == Command.class) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public Command getCommand() {

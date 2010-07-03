@@ -1,5 +1,8 @@
-package ring.commands.annotations;
+package ring.commands.parser;
 
+import ring.commands.annotations.BindType;
+import ring.commands.annotations.Form;
+import ring.commands.annotations.Template;
 import ring.items.Item;
 import ring.mobiles.Mobile;
 import ring.mobiles.npc.NPC;
