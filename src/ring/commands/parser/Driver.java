@@ -9,10 +9,10 @@ import ring.mobiles.npc.NPC;
 import ring.movement.Room;
 
 @Template({
-	//@Form(id = "steal1", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
-	//@Form(id = "steal2", clause = "from $mobile the :item", bind = { @BindType({Mobile.class}), @BindType({Item.class}) }),
-	//@Form(id = "steal3", clause="the $mobile its #stuff and :item", bind = { @BindType({ Mobile.class }), @BindType(), @BindType({ Item.class }) })
-	@Form(id = "steal", clause = "")
+	@Form(id = "steal1", clause = ":item from $mobile", bind = { @BindType({Item.class}), @BindType({Mobile.class}) }),
+	@Form(id = "steal2", clause = "from $mobile the :item", bind = { @BindType({Mobile.class}), @BindType({Item.class}) }),
+	@Form(id = "steal2", clause="the $mobile its #stuff and :item", bind = { @BindType({ Mobile.class }), @BindType(), @BindType({ Item.class }) }),
+	@Form(id = "stealhelp", clause = "")
 })
 public class Driver implements Command {
 	@Override
@@ -50,17 +50,22 @@ public class Driver implements Command {
 		mob.setLocation(r1);
 		
 		//Set up command and parser.
-		Driver stealCommand = new Driver();
-		CommandParser parser = new CommandParser(stealCommand);
-	
+		try {
+			Driver stealCommand = new Driver();
+			CommandParser parser = new CommandParser(stealCommand);
+			String command = "steal";
+			ParsedCommand cmd = parser.parse(generateSender(mob), command);
+			stealCommand.execute(generateSender(mob), cmd);
+		}
+		catch (CommandParsingException e) {
+			e.printStackTrace();
+		}
 		/*
 		String command = "steal sword from mob";
 		ParsedCommand cmd = parser.parse(generateSender(mob), command);
 		stealCommand.execute(generateSender(mob), cmd);
 		*/
-		String command = "steal";
-		ParsedCommand cmd = parser.parse(generateSender(mob), command);
-		stealCommand.execute(generateSender(mob), cmd);
+
 	}
 	
 	public static CommandSender generateSender(final Mobile mob) {

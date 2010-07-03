@@ -1,6 +1,7 @@
 package ring.commands.parser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.python.core.PyException;
@@ -8,6 +9,7 @@ import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 
+import ring.commands.annotations.Form;
 import ring.commands.annotations.Template;
 
 /**
@@ -33,26 +35,26 @@ public class CommandParser {
 	private Command command;
 	private List<CommandForm> forms;
 	
-	public CommandParser(Command command) {
+	public CommandParser(Command command) throws CommandParsingException {
 		commandName = command.getCommandName();
 		this.command = command;
 		Template cmdTemplate = command.getClass().getAnnotation(Template.class);
 		
 		if (cmdTemplate != null) {
-			forms = CommandForm.processForms(cmdTemplate.value());
+			initialize(cmdTemplate);
 		}
 		else {
 			throw new IllegalArgumentException("The Command object does not have a defined command Template!");
 		}
 	}
 	
-	public CommandParser(PyObject pyCommand) {
+	public CommandParser(PyObject pyCommand) throws CommandParsingException {
 		if (isInstanceOfCommand(pyCommand)) {
 			try {
 				Template cmdTemplate = (Template)pyCommand.__getattr__("__template__").__tojava__(Template.class);
 				
 				if (cmdTemplate != null) {
-					forms = CommandForm.processForms(cmdTemplate.value());
+					initialize(cmdTemplate);
 				}
 				else {
 					throw new IllegalArgumentException("The Command object does not have a defined command Template!");
@@ -65,6 +67,22 @@ public class CommandParser {
 		else {
 			throw new IllegalArgumentException("The passed Python must be a class object derived from ring.commands.parser.Command");
 		}
+	}
+	
+	/**
+	 * Delegate to this method for actual object initialization.
+	 * @param template
+	 * @throws CommandParsingException
+	 */
+	private void initialize(Template template) throws CommandParsingException {
+		//Initial error checking.
+		HashSet<String> idCheck = new HashSet<String>();
+		for (Form form : template.value()) {
+			if (!idCheck.add(form.id())) {
+				throw new CommandParsingException("Supplied command template has one or more duplicate command form IDs.");
+			}
+		}
+		forms = CommandForm.processForms(template.value());	
 	}
 	
 	private boolean isInstanceOfCommand(PyObject pyObj) {
@@ -104,7 +122,7 @@ public class CommandParser {
 	 * @param command
 	 * @return A ParsedCommand if parsing was successful, or null if it was unsuccessful.
 	 */
-	public ParsedCommand parse(CommandSender sender, String command) {
+	public ParsedCommand parse(CommandSender sender, String command) throws CommandParsingException {
 		String[] split = command.split(" ");
 		String clause = "";
 		
