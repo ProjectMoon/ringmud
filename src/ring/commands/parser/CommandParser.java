@@ -106,9 +106,17 @@ public class CommandParser {
 	 */
 	public ParsedCommand parse(CommandSender sender, String command) {
 		String[] split = command.split(" ");
-		String clause = command.substring(command.indexOf(" ") + 1);
+		String clause = "";
 		
-		//First figure out if the root command is actually correct.
+		//Do we even have a clause?
+		if (split.length > 1) {
+			clause = command.substring(command.indexOf(" ") + 1);
+		}
+		else {
+			clause = "";
+		}
+		
+		//Figure out if the root command is actually correct.
 		if (!split[0].equalsIgnoreCase(commandName)) {
 			return null;
 		}
@@ -116,7 +124,7 @@ public class CommandParser {
 		//Next find the correct command form.
 		CPTuple tuple = parseClause(clause);
 
-		if (tuple.form != null) {
+		if (tuple != null && tuple.form != null) {
 			ParsedCommand cmd = new ParsedCommand();
 			cmd.setFormID(tuple.form.getId());
 			cmd.setCommand(commandName);
@@ -158,22 +166,40 @@ public class CommandParser {
 	
 	/**
 	 * This method parses and tests a CommandForm object to see if it lexically
-	 * agrees with the supplied clause. The method actually delegates to two
-	 * separate methods: one for handling a single token CommandForm, and another
-	 * for handling a multiple token CommandFomr.
+	 * agrees with the supplied clause. The method actually delegates to three
+	 * separate methods: one for handling no-token CommandForms, one for handling
+	 * a single token CommandForm, and another for handling a multiple token CommandForm.
 	 * @param form
 	 * @param clause
 	 * @return A list of parsed command tokens if the command matches, null otherwise.
 	 */
-	private List<ParsedCommandToken> parseAndTestForm(CommandForm form, String clause) {	
+	private List<ParsedCommandToken> parseAndTestForm(CommandForm form, String clause) {
 		//Special case for 1 token forms.
 		if (form.getTokenLength() == 1) {
 			return parseSingleTokenForm(form, clause);
 		}
-		else {
+		else if (form.getTokenLength() > 1) {
 			return parseMultiTokenForm(form, clause);
 		}
-
+		else {
+			return parseNoTokenForm(form, clause);
+		}
+	}
+	
+	/**
+	 * Parse a no-token command form. This is the simplest CommandForm to deal with.
+	 * @param form
+	 * @param clause
+	 * @return A list of parsed command tokens if the command matches, null otherwise.
+	 */
+	private List<ParsedCommandToken> parseNoTokenForm(CommandForm form, String clause) {
+		String[] split = clause.split(" ");
+		if (split.length == 1 && split[0].equals("")) {
+			return new ArrayList<ParsedCommandToken>(0);
+		}
+		else {
+			return null;
+		}
 	}
 	
 	/**
