@@ -1,10 +1,8 @@
 #!/bin/bash
 JARDIR=`dirname $0`/jar
+PYDIR=`dirname $0`/python/
 LIBDIR=`dirname $0`/../lib
-
-#Commented out for now -- was used to support embedded DB instance
-#ENDORSEDDIR=$JARDIR/lib/endorsed
 
 export RING_LIB_DIR=$JARDIR
 
-java -cp "${LIBDIR}/*:${JARDIR}/*" ring.main.RingMain $*
+java -cp "${LIBDIR}/*:${JARDIR}/*:${PYDIR}" ring.main.RingMain $*

@@ -7,13 +7,15 @@
 	<!-- List of properties. -->
 	<property name="app.version" value="0.1.0" />
     <property name="src.dir"     value="./src/java"/>
+	<property name="python.src.dir"     value="./src/python"/>
 	<property name="lib.dir"	value="./lib"/>
     <property name="build.dir"   value="./build"/>
 	<property name="res.dir" value="./resources" />
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="dist.dir" value	="./dist" />
-    <property name="jar.dir"     value="${dist.dir}/bin/jar"/>
+    <property name="dist.jar.dir"     value="${dist.dir}/bin/jar"/>
 	<property name="dist.lib.dir"     value="${dist.dir}/lib"/>
+	<property name="dist.python.dir"     value="${dist.dir}/python"/>
 	<property name="dist.docs.dir" value="./docs" />
 
 	<!-- AspectJ iajc task -->
@@ -55,16 +57,6 @@
     	<path id="project.class.path">
     		<fileset dir="${lib.dir}" includes="**/*.jar" />	
     	</path>
-        <!--
-        <property name="build.compiler" value="org.aspectj.tools.ant.taskdefs.Ajc11CompilerAdapter" />
-        <javac 
-        	debug="true" 
-        	debuglevel="lines,vars,source"
-        	classpathref="project.class.path" 
-        	srcdir="${src.dir}" 
-        	destdir="${classes.dir}"
-    	/>
-    	-->
         <iajc
         	debug="true"
         	debuglevel="lines,vars,source"
@@ -84,38 +76,38 @@
 	</target>
 	
 	<target name="jar-main" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/main/**"/>			
 		</jar>
 	</target>
 	
 	<target name="jar-aspects" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-aspects-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-aspects-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/aspects/**"/>
 		</jar>
 	</target>
 	
 	<target name="jar-compiler" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-compiler-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-compiler-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/compiler/**"/>			
 		</jar>
 	</target>
 	
 	<target name="jar-comms" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-comms-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-comms-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/comms/**"/>
 		</jar>
 	</target>	
 	
 	<target name="jar-deployer" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-deployer-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-deployer-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/deployer/**"/>
 			<zipfileset dir="${src.dir}/ring/deployer/" includes="*.xsl" prefix="ring/deployer" />
 		</jar>
 	</target>
 	
 	<target name="jar-resources" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-resources-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-resources-${app.version}.jar">
 			<zipfileset refid="resources" prefix="ring/main" />
 			<zipfileset refid="server-resources" prefix="ring/server/resources" />
 			<zipfileset refid="xml-resources" prefix="ring/nrapi/xml/" />
@@ -123,7 +115,7 @@
 	</target>
 
 	<target name="jar-core" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-core-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-core-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/daemons/**"/>
 			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>
@@ -138,28 +130,28 @@
 	</target>
 
 	<target name="jar-server" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-server-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-server-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/server/**"/>
 		</jar>			
 	</target>
 	
 	<target name="jar-commands" depends="compile">
-		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/ringmud-commands-${app.version}.jar">
+		<mkdir dir="${dist.jar.dir}" />
+		<jar destfile="${dist.jar.dir}/ringmud-commands-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/commands/**" />
 			<zipfileset dir="${src.dir}/ring/commands/annotations/" includes="*.py" prefix="ring/commands/annotations" />
 		</jar>
 	</target>
 	
 	<target name="jar-persistence" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-persistence-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-persistence-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
 			<zipfileset dir="${src.dir}/ring/persistence/" includes="*.xq" prefix="ring/persistence/" />
 		</jar>
 	</target>
 	
 	<target name="jar-nrapi" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-nrapi-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-nrapi-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/nrapi/**" />
 			<zipfileset dir="${src.dir}/ring/nrapi/" includes="*.xq" prefix="ring/nrapi/" />
 			<zipfileset dir="${classes.dir}" includes="ring/entities/**" />
@@ -174,13 +166,21 @@
 	</target>
 	
 	<target name="jar-events" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
+		<jar destfile="${dist.jar.dir}/ringmud-events-${app.version}.jar">
 			<zipfileset dir="${classes.dir}" includes="ring/events/**" />
 			<zipfileset dir="${src.dir}/ring/events/" includes="*.xq" prefix="ring/events/" />
 		</jar>
 	</target>
+	
+	<target name="python" depends="compile">
+		<copy todir="${dist.python.dir}">
+			<fileset dir="${python.src.dir}">
+				<include name="**/*.py" />
+			</fileset>
+		</copy>
+	</target>
 		
-    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
+    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events,python"
     		description="Performs full compilation and distribution.">
     	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
     	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
