@@ -1,6 +1,6 @@
 #!/bin/bash
 JARDIR=`dirname $0`/jar
-PYDIR=`dirname $0`/python/*
+PYDIR=`dirname $0`/../python/*
 LIBDIR=`dirname $0`/../lib
 
 AGENT=$LIBDIR/aspectjweaver.jar

@@ -12,12 +12,15 @@ from ring.commands.annotations import BindType as BindTypeAnnotation
 from ring.commands.annotations import Form as FormAnnotation
 from ring.commands.annotations import Template as TemplateAnnotation
 from ring.commands.annotations import Scope
+from ring.commands import CommandHandler
+
+from java.lang import String
 
 class BindType(BindTypeAnnotation):
     """
     Bridge class that implements the BindType annotation interface.
     """
-    def __init__(self, bindTypes):
+    def __init__(self, bindTypes = [ String ]):
         if hasattr(bindTypes, "__iter__"):
             self.bindTypes = bindTypes
         else:
@@ -33,7 +36,7 @@ class Form(FormAnnotation):
     """
     Bridge class that implements the Form annotation interface
     """ 
-    def __init__(self, id = "default", clause = "", bind = [], scope = Scope.ROOM):
+    def __init__(self, id = "default", clause = "", bind = [ BindType() ], scope = Scope.ROOM):
         self._id = id
         self._clause = clause
         self._bind = bind
@@ -74,6 +77,7 @@ def Template(*forms):
             formList.append(form)
         
         target.__template__ = TemplateBridge(formList)
-            
+        
+        CommandHandler.addCommand(target())
         return target
     return decorator

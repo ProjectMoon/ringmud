@@ -93,4 +93,10 @@ public class I3 implements Command {
 		
 	}
 
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

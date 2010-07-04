@@ -1,11 +1,11 @@
 from ring.commands.annotations.pybridge import *
-from ring.commands import Command
+from ring.commands import AbstractCommand
 from ring.commands import CommandResult
 from ring.mobiles.senses.stimuli import AudioStimulus
 from ring.server import MUDConnectionManager as MCM
 
-@Template(Form(clause = "#text"))
-class Godvoice(Command):
+@Template(Form(clause = "#text", bind = [ BindType() ]))
+class Godvoice(AbstractCommand):
     def __init__(self):
         self.commandName = "godvoice"
         
@@ -29,6 +29,5 @@ class Godvoice(Command):
     
     def rollback(self):
         pass
-    
 
-        
+x = Godvoice()

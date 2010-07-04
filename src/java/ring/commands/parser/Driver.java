@@ -89,4 +89,10 @@ public class Driver implements Command {
 		
 		return sender;
 	}
+
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -99,6 +99,7 @@ public class MUDBoot {
 	 * (from script files).
 	 */
 	private static void loadCommands() {
+		Interpreter.INSTANCE.getInterpreter().execfile("/Users/projectmoon/Programs/git/ringmud/test.py");
 		Properties pkgProps = MUDConfig.getPluginProperties("pkgIndexer");
 
 		CommandIndexer pkgIndexer = IndexerFactory.getIndexer(

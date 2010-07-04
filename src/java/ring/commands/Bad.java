@@ -1,7 +1,5 @@
 package ring.commands;
 
-
-
 public class Bad implements Command {
 	public void execute(CommandSender sender, CommandArguments params) {
 		CommandResult res = new CommandResult();
@@ -15,6 +13,12 @@ public class Bad implements Command {
 	}
 
 	public void rollback() {
+		
+	}
+
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -47,4 +47,10 @@ public class Spot implements Command {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

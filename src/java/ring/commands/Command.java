@@ -31,4 +31,6 @@ public interface Command {
 	 * @return
 	 */
 	public String getCommandName();
+	
+	public void setCommandName(String name);
 }

@@ -84,7 +84,6 @@ public final class CommandHandler {
 			}
 			
 			if (containsCommand(cmd.getCommandName()) == false) {
-				
 				try {
 					CommandParser parser = new CommandParser(cmd);
 					commands.put(cmd.getCommandName(), cmd);
@@ -110,7 +109,7 @@ public final class CommandHandler {
 	 * populate the command map with.
 	 * @param cmd
 	 */
-	public static void addCommand(String cmdKey, Command cmd) {
+	public static void addCommand(Command cmd) {
 		try {
 			CommandParser parser = new CommandParser(cmd);
 			commands.put(cmd.getCommandName(), cmd);
@@ -120,7 +119,7 @@ public final class CommandHandler {
 			log.severe("Error parsing command forms: " + e.getMessage());
 		}
 	}
-	
+		
 	/**
 	 * Tells whether or not the command key is present in the shared command
 	 * map.

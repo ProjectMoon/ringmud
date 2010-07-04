@@ -50,5 +50,11 @@ public class Edump extends AbstractAdminCommand implements Command {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

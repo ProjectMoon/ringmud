@@ -25,7 +25,7 @@ public class CommandForm {
 			parse(form);
 		}
 		catch (FormParsingException e) {
-			throw new CommandException("There was a problem parsing a CommandForm.", e);
+			throw new CommandException("There was a problem parsing a CommandForm: " + e.getMessage(), e);
 		}
 	}
 	

@@ -36,4 +36,10 @@ public class South implements Command {
 
 	}
 
+	@Override
+	public void setCommandName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
