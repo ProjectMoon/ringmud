@@ -4,7 +4,9 @@ from ring.commands import CommandResult
 from ring.mobiles.senses.stimuli import AudioStimulus
 from ring.server import MUDConnectionManager as MCM
 
-@Template(Form(clause = "#text", bind = [ BindType() ]))
+from ring.world.Ticker import getTicker as WorldTicker
+
+@Template(Form(clause = "#text"))
 class Godvoice(AbstractCommand):
     def __init__(self):
         self.commandName = "godvoice"
@@ -30,4 +32,17 @@ class Godvoice(AbstractCommand):
     def rollback(self):
         pass
 
-x = Godvoice()
+@Template(Form())
+class TickerList(AbstractCommand):
+    def __init__(self):
+        self.commandName = "tickerlist"
+        
+    def execute(self, sender, args):        
+        res = CommandResult()
+        res.text = "[R][WHITE]Ticker Information for **WORLD TICKER**:\n"
+        res.text += WorldTicker().tickerList()
+        res.successful = True
+        res.send()
+    
+    def rollback(self):
+        pass
