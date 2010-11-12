@@ -16,10 +16,36 @@ import ring.persistence.ExistDB;
 import ring.system.PreferencesManager;
 
 public class UnixInstaller implements Installer {
+	private String DEFAULT_INSTALL_LOCATION = "/etc/ringmud/";
+	private String installLocation;
+	
+	@Override
+	public void createConfigDirectory() throws InstallationException {
+		System.out.print("Directory to install RingMUD [" + DEFAULT_INSTALL_LOCATION + "]: ");
+		installLocation = ensureSlash(readLine(DEFAULT_INSTALL_LOCATION));
+		
+		System.out.println("Setting up a new installation for a UNIX system.");
+		System.out.println("Configuration and data files will be stored in " + installLocation);
+		
+		File configPath = new File(installLocation);
+		
+		if (configPath.mkdirs()) {
+			System.out.println("Created " + installLocation);
+		}
+		else {
+			String msg = installLocation + " already exists, or you have insufficient permissions.\n" +
+			"Please delete the directory and make sure you can create it.";
+			
+			throw new InstallationException(msg);
+		}
+		
+	}
+	
 	@Override
 	public void copyDefaultConfig() throws InstallationException {
-		System.out.println("Extracting default mud.config");
-		File cfgFile = new File("/etc/ringmud/mud.config");
+		System.out.println("Copying default mud.config");	
+		File cfgFile = new File(installLocation + "mud.config");
+		
 		InputStream defaultCfgStream = this.getClass().getClassLoader().getResourceAsStream("ring/main/default-config.properties");
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(defaultCfgStream));
@@ -41,30 +67,12 @@ public class UnixInstaller implements Installer {
 		}		
 	}
 
-	@Override
-	public void createConfigDirectory() throws InstallationException {
-		System.out.println("Setting up a new configuration for a UNIX system.");
-		System.out.println("Configuration and data files will be stored in /etc/ringmud");
-		
-		File configPath = new File("/etc/ringmud/");
-		
-		if (configPath.mkdirs()) {
-			System.out.println("Created /etc/ringmud");
-		}
-		else {
-			String msg = "/etc/ringmud already exists, or you have insufficient permissions.\n" +
-			"Please delete the directory and make sure you can create it.\n" +
-			"You will probably need to run this as root to create the directory.";
-			
-			throw new InstallationException(msg);
-		}
-		
-	}
+
 
 	@Override
 	public void finish() throws InstallationException {
 		System.out.println("Finishing...");
-		PreferencesManager.set("ring.system.MUDConfig.configLocation", "/etc/ringmud/");
+		PreferencesManager.set("ring.system.MUDConfig.configLocation", installLocation);
 		
 	}
 
@@ -85,7 +93,7 @@ public class UnixInstaller implements Installer {
 			new ExistDB(uri, user, password).createRingDatabase();
 			
 			System.out.println("Database creation complete.");
-			System.out.println("NOTE: You will need to copy these values to mud.config!");
+			System.out.println("NOTE: You will need to copy the username/password to mud.config!");
 			System.out.println("The installer will NOT do it for you.");
 		} catch (XMLDBException e) {
 			// TODO Auto-generated catch block
@@ -94,4 +102,21 @@ public class UnixInstaller implements Installer {
 		return true;
 	}
 
+	private String readLine(String defaultValue) {
+		String result = System.console().readLine();
+		
+		if (result.equals("")) {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+	
+	private String ensureSlash(String path) {
+		if (!path.endsWith("/")) {
+			path += "/"; 
+		}
+		
+		return path;
+	}
 }

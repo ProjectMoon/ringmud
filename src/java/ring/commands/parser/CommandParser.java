@@ -54,7 +54,7 @@ public class CommandParser {
 				initialize(cmdTemplate);
 			}
 			else {
-				throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+				throw new IllegalArgumentException("Command \"" + command + "\" does not have a defined command Template!");
 			}
 		}
 	}
@@ -72,12 +72,12 @@ public class CommandParser {
 					initialize(cmdTemplate);
 				}
 				else {
-					throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+					throw new IllegalArgumentException("Command \"" + command + "\" does not have a defined command Template!");
 				}				
 			}
 			catch (PyException e) {
 				e.printStackTrace();
-				throw new IllegalArgumentException("The Command object does not have a defined command Template!");
+				throw new IllegalArgumentException("Command \"" + command + "\" does not have a defined command Template!");
 			}
 		}
 		else {
