@@ -321,6 +321,13 @@ public class Compiler implements RingModule {
 					mudFile.addEntry(entry);
 				}
 			}
+			else {
+				//Add every file but mud.properties
+				if (!file.getName().equals("mud.properties")) {
+					FileEntry entry = makeEntry(file);
+					mudFile.addEntry(entry);
+				}
+			}
 		}
 		
 		Properties props = new Properties();
@@ -340,13 +347,19 @@ public class Compiler implements RingModule {
 				entries.addAll(generateEntries(file));
 			}
 			else {
-				FileEntry entry = new FileEntry(file);
-				String prefix = file.getPath().substring(stripIndex);
-				entry.setEntryName(prefix);
+				FileEntry entry = makeEntry(file);
 				entries.add(entry);
 			}
 		}
 		
 		return entries;
+	}
+	
+	private FileEntry makeEntry(File file) throws IOException {
+		file = file.getCanonicalFile();
+		FileEntry entry = new FileEntry(file);
+		String prefix = file.getPath().substring(stripIndex);
+		entry.setEntryName(prefix);
+		return entry;
 	}
 }
