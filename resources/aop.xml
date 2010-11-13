@@ -1,6 +1,12 @@
 <aspectj>
 	<aspects>
+		<aspect name="ring.aspects.Commands" />
+		<aspect name="ring.aspects.CommunicatorRouting" />
 		<aspect name="ring.aspects.JythonCatcher" />
+		<aspect name="ring.aspects.MobileEvents" />
+		<aspect name="ring.aspects.MovementEvents" />
+		<aspect name="ring.aspects.ObjectIndexing" />
+		<aspect name="ring.aspects.SystemEvents" />
 	</aspects>
 
 	<weaver options="-nowarn" />

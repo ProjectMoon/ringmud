@@ -7,7 +7,18 @@ package ring.installer;
  *
  */
 public interface Installer {
+	/**
+	 * Performs the initial setup of where to put configuration data.
+	 * This method should ask the user where to install.
+	 * @throws InstallationException
+	 */
 	public void createConfigDirectory() throws InstallationException;
+	
+	/**
+	 * Copies the default configuration file from the jar to the location
+	 * determined in createConfigDirectory().
+	 * @throws InstallationException
+	 */
 	public void copyDefaultConfig() throws InstallationException;
 	
 	/**
@@ -18,5 +29,11 @@ public interface Installer {
 	 * @throws InstallationException
 	 */
 	public boolean setUpDatabase() throws InstallationException;
+	
+	/**
+	 * Performs any leftover steps, such as setting the preferences
+	 * manager location of the config.
+	 * @throws InstallationException
+	 */
 	public void finish() throws InstallationException;
 }
