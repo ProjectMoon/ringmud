@@ -1,6 +1,8 @@
 package ring.system;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBException;
@@ -11,6 +13,7 @@ import ring.commands.CommandHandler;
 import ring.commands.CommandIndexer;
 import ring.commands.IndexerFactory;
 import ring.daemons.Daemon;
+import ring.deployer.DeployedMUDFactory;
 import ring.events.EventLoader;
 import ring.intermud3.Intermud3Daemon;
 import ring.movement.WorldBuilder;
@@ -47,7 +50,7 @@ public class MUDBoot {
 		loadEventHandlers();
 		
 		//Synchronize with static
-		System.out.println("Synchronziing with STATIC...");
+		System.out.println("Synchronizing with STATIC...");
 		System.err.println("WARNING: Syncing not implemented yet.");
 		
 		//Restore world state from DB
@@ -56,7 +59,7 @@ public class MUDBoot {
 
 		//Load commands
 		System.out.println("Loading commands...");
-		loadCommands();
+		//loadCommands();
 
 		//Load effects
 
@@ -74,6 +77,7 @@ public class MUDBoot {
 		// Load NPCs
 
 		// Load the universe (world)
+		
 		System.out.println("Building world...");
 		try {
 			WorldBuilder.buildWorld();
@@ -89,7 +93,18 @@ public class MUDBoot {
 		}
 		
 		//Load i3, if it is there.
-		loadI3();
+		//loadI3();
+		
+		//Run MUD's main file.
+		try {
+			InputStream mudStream = DeployedMUDFactory.currentMUD().getMain();
+			Interpreter.INSTANCE.getInterpreter().execfile(mudStream);
+		}
+		catch (FileNotFoundException e) {
+			System.err.println("main.py not found for " + DeployedMUDFactory.currentMUD().getName() + ". Exiting.");
+			System.exit(1);
+		}
+		
 		
 		System.out.println("Done loading RingMUD.");
 	}

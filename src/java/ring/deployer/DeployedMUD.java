@@ -2,7 +2,9 @@ package ring.deployer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -55,5 +57,10 @@ public class DeployedMUD {
 	
 	public String getHash() {
 		return mudProperties.getProperty("hash");
+	}
+	
+	public InputStream getMain() throws FileNotFoundException {
+		InputStream stream = new FileInputStream(location + File.separator + "main.py");
+		return stream;
 	}
 }

@@ -35,15 +35,11 @@ public class XQueryModule implements RingModule {
 				xquery += line + "\n";
 			}
 			
-			System.out.println("Executing: " + xquery);
 			XQuery xq = new XQuery(xquery);
 			//xq.setLoadpoint(Loadpoint.STATIC);
 			ResourceList results = xq.execute();
 			
-			System.out.println("result size: " + results.size());
-			
 			for (Resource res : results) {
-				System.out.println(res.getId() + ":");
 				System.out.println(res.getContent());
 			}
 			
