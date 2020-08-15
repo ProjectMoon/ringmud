@@ -1,15 +1,11 @@
 package ring.players;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import ring.commands.CommandResult;
 import ring.commands.CommandSender;
 import ring.mobiles.Mobile;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 
-@XmlRootElement(name = "playerCharacter")
 /**
  * A class representing a PlayerCharacter in the world. This particular version
  * of Mobile implements client-server communication by having a Communicator.
@@ -29,7 +25,7 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 		super.getBaseModel().setName(pName);
 	}
 	
-	@XmlTransient
+	
 	public Player getPlayer() {
 		return controllingPlayer;
 	}
@@ -65,7 +61,7 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	 * Returns the prompt for this player.
 	 * @return The prompt.
 	 */
-	@XmlTransient
+	
 	public String getPrompt() {
 		return "\n\n[B][GREEN]HP: " + getCombatModel().getCurrentHPString() + "/"
 				+ getCombatModel().getMaxHPString() + " MV: " + getDynamicModel().getCurrentMV() + "/"
@@ -118,7 +114,7 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 		quitting = true;
 	}
 
-	@XmlTransient
+	
 	public boolean isQuitting() {
 		return quitting;
 	}
@@ -129,7 +125,7 @@ public class PlayerCharacter extends Mobile implements CommandSender, TickerList
 	 * 
 	 * @return The whotag.
 	 */
-	@XmlTransient
+	
 	public String getWhoTag() {
 		// "playername racename level classname zonename ethical moral <god status> <player set status> <admin set status>"
 		StringBuilder sb = new StringBuilder();

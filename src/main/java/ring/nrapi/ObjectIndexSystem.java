@@ -1,10 +1,9 @@
 package ring.nrapi;
 
-import java.io.IOException;
-import java.lang.ref.ReferenceQueue;
-
-import ring.daemons.DaemonThread;
 import ring.nrapi.business.BusinessObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that contains methods for starting and stopping the Object Index System.
@@ -12,41 +11,17 @@ import ring.nrapi.business.BusinessObject;
  *
  */
 public class ObjectIndexSystem {
-	private static ObjectIndex index;
-	private static DaemonThread daemonThread;
-	private static IndexCleanupDaemon cleanupDaemon;
-	private static boolean started;
-	
 	public static void start() {
-		ReferenceQueue<BusinessObject> refQueue = new ReferenceQueue<BusinessObject>();
-		
-		index = new ObjectIndex();
-		index.setReferenceQueue(refQueue);
-		
-		cleanupDaemon = new IndexCleanupDaemon(index);
-		cleanupDaemon.setReferenceQueue(refQueue);
-		
-		daemonThread = new DaemonThread(cleanupDaemon);
-		daemonThread.start();
-		
-		started = true;
+		throw new UnsupportedOperationException("Delete this method! (probably, because we will get rid of ObjectIndexSystem");
 	}
-	
-	public static void stop() throws InterruptedException, IOException {
-		daemonThread.join();
-	}
-	
-	public static boolean isStarted() {
-		return started;
-	}
-	
-	public static ObjectIndex getObjectIndex() {
-		return index;
-	}
-	
+
 	public static ObjectSearch newSearch() {
-		ObjectSearch search = new ObjectSearch();
-		search.setObjectIndex(index);
+		ObjectSearch search = new ObjectSearch() {
+			@Override
+			public List<BusinessObject> search(String xpath) {
+				return new ArrayList<>();
+			}
+		};
 		return search;
 	}
 }

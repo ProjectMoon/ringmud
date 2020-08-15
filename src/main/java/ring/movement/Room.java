@@ -1,38 +1,15 @@
 package ring.movement;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.movement.PortalNotFoundException;
-import ring.movement.LocationManager;
-import ring.movement.Portal;
-import ring.nrapi.business.BusinessObject;
 import ring.commands.WorldObjectSearch;
 import ring.entities.Entity;
 import ring.items.Item;
 import ring.mobiles.Mobile;
-import ring.persistence.RingConstants;
+import ring.nrapi.business.BusinessObject;
 import ring.world.WorldObject;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder= {
-	"model",
-	"zoneID",
-	"items",
-	"mobiles",
-	"entities"
-})
+import java.util.ArrayList;
+import java.util.List;
+
 public class Room extends BusinessObject {
 	private static final String NO_EXITS_STRING = "[B][RED]NO EXITS![R][WHITE]";
 	
@@ -43,7 +20,7 @@ public class Room extends BusinessObject {
 	private RoomModel model = new RoomModel();
 	private Zone zone;
 	
-	@XmlElement
+	
 	public RoomModel getModel() {
 		return model;
 	}
@@ -52,7 +29,7 @@ public class Room extends BusinessObject {
 		this.model = model;
 	}
 	
-	@XmlElement
+	
 	public String getZoneID() {
 		return "testID";
 		//return zone.getID();
@@ -64,7 +41,7 @@ public class Room extends BusinessObject {
 		//else load new zone corresponding to ID and attempt to set zone to that.		
 	}
 	
-	@XmlTransient
+	
 	public Zone getZone() {
 		return zone;
 	}
@@ -74,8 +51,6 @@ public class Room extends BusinessObject {
 		setZoneID(zone.getID());
 	}
 	
-	@XmlElementWrapper(name = "entities")
-	@XmlElement(name = "entity")
 	public List<Entity> getEntities() {
 		return entities;
 	}
@@ -84,8 +59,6 @@ public class Room extends BusinessObject {
 		this.entities = entities;
 	}	
 	
-	@XmlElementWrapper(name = "mobiles")
-	@XmlElement(name = "mobile")
 	public List<Mobile> getMobiles() {
 		return mobiles;
 	}
@@ -93,9 +66,7 @@ public class Room extends BusinessObject {
 	public void setMobiles(List<Mobile> mobiles) {
 		this.mobiles = mobiles;
 	}
-	
-	@XmlElementWrapper(name = "items")
-	@XmlElement(name = "item")
+
 	public List<Item> getItems() {
 		return items;
 	}

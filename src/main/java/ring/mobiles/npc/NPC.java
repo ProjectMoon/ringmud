@@ -1,15 +1,10 @@
 package ring.mobiles.npc;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import ring.commands.CommandSender;
-import ring.events.listeners.MobileListener;
 import ring.mobiles.Mobile;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 
-@XmlRootElement(name = "npc")
 public class NPC extends Mobile implements CommandSender, TickerListener {
 	public static final long serialVersionUID = 1;
 	
@@ -36,7 +31,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 		return super.getBaseModel().getName();
 	}
 	
-	@XmlTransient
+	
 	public MobAI getAI() {
 		return ai;
 	}
@@ -49,7 +44,7 @@ public class NPC extends Mobile implements CommandSender, TickerListener {
 	 * Overriden to not return race.
 	 */
 	@Override
-	@XmlTransient
+	
 	public String getShortDescription() {
 		String res = getBaseModel().getName();
 		String lastName = getBaseModel().getLastName();

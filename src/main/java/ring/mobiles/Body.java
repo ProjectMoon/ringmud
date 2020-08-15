@@ -1,15 +1,8 @@
 package ring.mobiles;
 
-import java.util.*;
 import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class defines a body and equipment slots. Numerous different body parts
@@ -19,13 +12,6 @@ import ring.persistence.RingConstants;
  * @author projectmoon
  *
  */
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder= {
-	"bodyParts"
-})
 public class Body implements Serializable {
 	public static final long serialVersionUID = 1;
 
@@ -77,8 +63,7 @@ public class Body implements Serializable {
 	public Body() {
 		bodyParts = new ArrayList<BodyPart>(20);
 	}
-	
-	@XmlElement(name = "part")
+
 	public List<BodyPart> getBodyParts() {
 		return bodyParts;
 	}

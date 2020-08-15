@@ -1,17 +1,5 @@
 package ring.mobiles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import ring.commands.CommandHandler;
 import ring.commands.CommandSender;
 import ring.commands.WorldObjectSearch;
@@ -22,14 +10,15 @@ import ring.items.Armor;
 import ring.items.Item;
 import ring.magic.SpellCaster;
 import ring.mobiles.backbone.Equipment;
-import ring.mobiles.npc.NPC;
 import ring.movement.Room;
-import ring.persistence.RingConstants;
-import ring.players.PlayerCharacter;
 import ring.world.TickerEvent;
 import ring.world.TickerListener;
 import ring.world.WorldObject;
 import ring.world.WorldObjectMetadata;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * The main business object for Mobiles. Aggregates all the mobile data models and
@@ -38,16 +27,6 @@ import ring.world.WorldObjectMetadata;
  *
  */
 
-@XmlSeeAlso({ NPC.class, PlayerCharacter.class })
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder= {
-	"baseModel",
-	"dynamicModel",
-	"combatModel"
-})
 public abstract class Mobile extends WorldObject implements CommandSender, TickerListener, SpellCaster {
 	public static final long serialVersionUID = 1;
 
@@ -86,7 +65,7 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		combatModel = combat;
 	}
 	
-	@XmlElement
+	
 	public MobileBaseModel getBaseModel() {
 		return baseModel;
 	}
@@ -95,7 +74,7 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		baseModel = model;
 	}
 	
-	@XmlElement
+	
 	public MobileDynamicModel getDynamicModel() {
 		return dynamicModel;
 	}
@@ -104,7 +83,7 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		dynamicModel = model;
 	}
 	
-	@XmlElement
+	
 	public MobileCombatModel getCombatModel() {
 		return combatModel;
 	}
@@ -139,7 +118,6 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	 * Checks to see if this Mobile is a player.
 	 * @return true or false
 	 */
-	@XmlTransient
 	public boolean isPlayer() {
 		//TODO implement isPlayer
 		//return this instanceof PlayerCharacter;
@@ -150,21 +128,18 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	 * Checks to see if this Mobile is an NPC.
 	 * @return true or false
 	 */
-	@XmlTransient
 	public boolean isNPC() {
 		//TODO implement isNPC
 		//return this instanceof NPC;
 		return false;
 	}
-	
-	@XmlTransient
+
 	public boolean isLocked() {
 		return isLocked;
 	}
  
 	// getLockTimeRemaining method.
 	// Returns the time left on this mob's locked status.
-	@XmlTransient
 	public int getLockTimeRemaining() {
 		return lockTimeRemaining;
 	}
@@ -411,7 +386,6 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 		}
 	}
 
-	@XmlTransient
 	public Room getLocation() {
 		return getDynamicModel().getCurrLocation();
 	}
@@ -453,7 +427,6 @@ public abstract class Mobile extends WorldObject implements CommandSender, Ticke
 	 * such as when a player looks into a room.
 	 * @return A short description.
 	 */
-	@XmlTransient
 	public String getShortDescription() {
 		String res = getBaseModel().getName();
 		String lastName = getBaseModel().getLastName();

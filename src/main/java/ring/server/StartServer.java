@@ -5,7 +5,6 @@ import java.io.IOException;
 import ring.deployer.DeployedMUD;
 import ring.deployer.DeployedMUDFactory;
 import ring.main.RingModule;
-import ring.persistence.ExistDB;
 import ring.server.telnet.TelnetServer;
 import ring.system.MUDBoot;
 
@@ -21,7 +20,6 @@ public class StartServer implements RingModule {
 		//Discover the mud we are to run.
 		DeployedMUD mud = DeployedMUDFactory.getMUD(args[0]);
 		if (mud != null) {
-			ExistDB.setRootURI(mud.getName());
 			
 			//Boot the mud
 			MUDBoot.boot();

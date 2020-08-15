@@ -1,20 +1,5 @@
 package ring.mobiles;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder = {
-	"name"
-})
 /**
  * This class represents an individual body part, such as a face, a finger, a
  * head, etc. There are a host of BodyPart constants in the Body class. An
@@ -42,8 +27,7 @@ public class BodyPart {
 	public BodyPart(BodyPart other) {
 		this.name = other.name;
 	}
-	
-	@XmlAttribute
+
 	public String getName() {
 		return name;
 	}

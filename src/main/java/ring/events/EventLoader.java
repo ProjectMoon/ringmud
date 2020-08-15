@@ -1,27 +1,12 @@
 package ring.events;
 
+import ring.deployer.DeployedMUDFactory;
+import ring.nrapi.business.BusinessObject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.xmldb.api.base.XMLDBException;
-
-import ring.deployer.DeployedMUDFactory;
-import ring.nrapi.business.BusinessObject;
-import ring.persistence.ExistDB;
-import ring.persistence.RingConstants;
-import ring.persistence.XQuery;
-import ring.system.MUDConfig;
 
 /**
  * Loads events at MUD startup.
@@ -39,14 +24,6 @@ public class EventLoader {
 	 * @author projectmoon
 	 *
 	 */
-	@XmlAccessorType(XmlAccessType.PROPERTY)
-	@XmlRootElement(name = "doc")
-	@XmlType(
-	namespace = RingConstants.RING_NAMESPACE,
-	propOrder= {
-		"documentName",
-		"codebehind"
-	})
 	public static class CodebehindEntry extends BusinessObject {
 		private String docName;
 		private String codebehind;
@@ -55,7 +32,6 @@ public class EventLoader {
 			this.docName = docName;
 		}
 		
-		@XmlAttribute(name = "name")
 		public String getDocumentName() {
 			return docName;
 		}
@@ -63,7 +39,7 @@ public class EventLoader {
 			this.codebehind = codebehind;
 		}
 		
-		@XmlElement
+		
 		public String getCodebehind() {
 			return codebehind;
 		}
@@ -72,19 +48,10 @@ public class EventLoader {
 	/**
 	 * Load and bind events.
 	 * @throws IOException
-	 * @throws XMLDBException
-	 * @throws JAXBException
 	 */
-	public void loadEvents() throws IOException, XMLDBException, JAXBException {
+	public void loadEvents() {
 		EventDispatcher.initialize();
-		InputStream xqStream = this.getClass().getClassLoader().getResourceAsStream("ring/events/eventloader.xq");
-		XQuery xq = new XQuery(xqStream);
-			
-		List<CodebehindEntry> results = xq.execute(CodebehindEntry.class);
-		
-		for (CodebehindEntry entry : results) {
-			load(entry);
-		}
+		throw new UnsupportedOperationException("Implement loadEvents");
 	}
 	
 	private void load(CodebehindEntry entry) {

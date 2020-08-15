@@ -1,26 +1,11 @@
 package ring.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
 import ring.world.WorldObject;
 import ring.world.WorldObjectMetadata;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder= {
-	"name",
-	"descriptor"
-})
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Entities are invisible objects that sit in Rooms that provide services or interaction
  * to the Room. For example, an respawn entity might respawn mobiles after a period of time
@@ -37,7 +22,6 @@ public class Entity extends WorldObject {
 		this.name = name;
 	}
 
-	@XmlElement
 	public String getName() {
 		return name;
 	}
@@ -46,7 +30,6 @@ public class Entity extends WorldObject {
 		this.descriptor = descriptor;
 	}
 
-	@XmlElement
 	public String getDescriptor() {
 		return descriptor;
 	}

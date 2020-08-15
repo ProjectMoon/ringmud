@@ -1,18 +1,12 @@
 package ring.players;
 
+import ring.nrapi.business.BusinessObject;
+import ring.persistence.DataStoreFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import ring.nrapi.business.BusinessObject;
-import ring.persistence.DataStoreFactory;
-
-@XmlRootElement
 /**
  * Class representing a player and their collection of characters.
  * This class holds information such as last logon date, password,
@@ -26,7 +20,6 @@ public class Player extends BusinessObject {
 	private Date lastLogon;
 	private List<String> charIDs = new ArrayList<String>();
 	
-	@XmlElement
 	public String getName() {
 		return name;
 	}
@@ -35,7 +28,6 @@ public class Player extends BusinessObject {
 		this.name = name;
 	}
 	
-	@XmlElement
 	public String getPassword() {
 		return password;
 	}
@@ -44,7 +36,6 @@ public class Player extends BusinessObject {
 		password = pw;
 	}
 	
-	@XmlElement
 	public Date getLastLogon() {
 		return lastLogon;
 	}
@@ -53,8 +44,6 @@ public class Player extends BusinessObject {
 		this.lastLogon = lastLogon;
 	}
 	
-	@XmlElementWrapper(name = "characters")
-	@XmlElement(name = "character")
 	public List<String> getCharacterIDs() {
 		return charIDs;
 	}

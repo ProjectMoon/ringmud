@@ -1,5 +1,8 @@
 package ring.deployer;
 
+import ring.main.RingModule;
+import ring.system.MUDConfig;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,13 +10,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipFile;
-
-import org.xml.sax.SAXException;
-import org.xmldb.api.base.XMLDBException;
-
-import ring.main.RingModule;
-import ring.persistence.ExistDB;
-import ring.system.MUDConfig;
 
 /**
  * Deploys a mud file. MUDs are deployed when changes to their codebase or data have occurred. This
@@ -28,7 +24,6 @@ public class DeployModule implements RingModule {
 	private DeployableMUDFile mudFile = null;
 	private boolean codeUpdates = false;
 	private boolean xmlUpdates = false;
-	private ExistDB db = null;
 	private String mudRoot;
 	private String mudPath;
 	
@@ -52,8 +47,7 @@ public class DeployModule implements RingModule {
 			mudPath = mudRoot + mudFile.getVersion();
 			
 			//Set up database object
-			ExistDB.setRootURI(mudFile.getName());
-			db = new ExistDB();
+			//TODO set up database object/connection here!
 						
 			//Create DeployedMUD from info found in mudFile.
 			DeployedMUD mud = DeployedMUDFactory.getMUD(mudFile.getName(), mudFile.getVersion());
@@ -75,12 +69,7 @@ public class DeployModule implements RingModule {
 			//	If endsWith .xml, delegate to deployXML.
 			//	Else, delegate to deploy.
 			for (DeployableFileEntry entry : mudFile.getEntries()) {
-				if (entry.getEntryName().endsWith(".xml") || entry.getEntryName().endsWith(".XML")) {
-					deployXMLDocument(entry);
-				}
-				else {
-					deploy(entry);
-				}
+				deploy(entry);
 			}
 			
 			//Call cleanUpDatabase() to remove broken references and un-necessary documents.
@@ -109,20 +98,13 @@ public class DeployModule implements RingModule {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		catch (XMLDBException e) {
-			e.printStackTrace();
-		}
-		catch (SAXException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
-	 * Discrete step for setting up the database for this deployal.
-	 * @throws XMLDBException
+	 * Discrete step for setting up the database for this deployment.
 	 */
-	private void createCollections() throws XMLDBException {
-		db.createRingDatabase();
+	private void createCollections() {
+		throw new UnsupportedOperationException("Create 'collections' or maybe we call them tables");
 	}
 
 	/**
@@ -136,22 +118,6 @@ public class DeployModule implements RingModule {
 		
 		if (f.mkdirs()) {
 			System.out.println("Creating directory " + mudPath);
-		}
-	}
-	
-	/**
-	 * Deploys an XML document. Delegates to XMLDeployer.
-	 * @param entry
-	 * @throws XMLDBException
-	 * @throws SAXException
-	 * @throws IOException
-	 */
-	private void deployXMLDocument(DeployableFileEntry entry) throws XMLDBException, SAXException, IOException {
-		deployedXMLDocuments.add(entry.getStrippedEntryName());
-		XMLDeployer deployer = new XMLDeployer(db, entry);
-		deployer.deploy();
-		if (!xmlUpdates) {
-			xmlUpdates = deployer.xmlUpdates();
 		}
 	}
 	
@@ -175,7 +141,7 @@ public class DeployModule implements RingModule {
 	 * Discrete step to clean up the database of deleted XML documents and
 	 * broken references.
 	 */
-	private void cleanUpDatabase() throws XMLDBException {
+	private void cleanUpDatabase() {
 		//Remove old documents:
 		//Delegate to DocumentCleanup.
 		DocumentCleanup cleanup = new DocumentCleanup(deployedXMLDocuments);

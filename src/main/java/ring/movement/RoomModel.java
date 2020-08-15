@@ -1,26 +1,5 @@
 package ring.movement;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
-
-
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder = {
-	"title",
-	"description",
-	"depth",
-	"width",
-	"length"
-	
-})
 /**
  * Class that represents a Room's model: its basic description, and internal game data.
  * This class serialise Mobile and Entity IDs to XML for persistent storage. Current
@@ -39,7 +18,7 @@ public class RoomModel {
 		this.depth = depth;
 	}
 
-	@XmlElement
+	
 	public int getDepth() {
 		return depth;
 	}
@@ -48,7 +27,7 @@ public class RoomModel {
 		this.width = width;
 	}
 
-	@XmlElement
+	
 	public int getWidth() {
 		return width;
 	}
@@ -57,7 +36,7 @@ public class RoomModel {
 		this.length = length;
 	}
 
-	@XmlElement
+	
 	public int getLength() {
 		return length;
 	}
@@ -66,7 +45,7 @@ public class RoomModel {
 		this.description = description;
 	}
 
-	@XmlElement
+	
 	public String getDescription() {
 		return description;
 	}
@@ -75,7 +54,7 @@ public class RoomModel {
 		this.title = title;
 	}
 
-	@XmlElement
+	
 	public String getTitle() {
 		return title;
 	}

@@ -12,16 +12,13 @@ import ring.entities.Entity;
 
 /**
  * The DataStore interface is the friendly entry point to RingMUD's backend
- * XML Native Database (XND). This allows saving of Persistable objects of
+ * database. This allows saving of Persistable objects of
  * all types, as well as loading of the default defined business objects
  * available in RingMUD. An object is always retrieved via its ID, which
- * is a unique string stored as an attribute in the root node of the object's
- * XML document.
+ * is a UUID stored by the object.
  * <br/><br/>
  * If you want to define extra types of retrieval methods for business objects
- * that you have created, extend this interface, and add your methods. Then
- * when you implement that interface, extend ExistDBStore and make use of its
- * protected access-level retrieveResource method.
+ * that you have created, extend this interface, and add your methods.
  * @author projectmoon
  *
  */

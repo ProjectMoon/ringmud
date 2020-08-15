@@ -43,21 +43,7 @@ public interface Persistable {
 	 * @param val
 	 */
 	public void setStoreAsUpdate(boolean val);
-	
-	/**
-	 * Transforms this Persistable into an XML fragment. It does not
-	 * contain the header information or the &lt;ring&gt; root element.
-	 * @return an XML String representation of this Persistable.
-	 */
-	public String toXML();
-	
-	/**
-	 * Transforms this Persistable into a full XML documemnt with a &lt;ring&gt;
-	 * root element.
-	 * @return The XML string.
-	 */
-	public String toXMLDocument();
-	
+
 	/**
 	 * Gets the parent object of this Persistable. If this Persistable is the
 	 * root of the hierarchy, this method returns null.

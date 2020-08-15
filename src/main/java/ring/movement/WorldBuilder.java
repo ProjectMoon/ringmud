@@ -1,18 +1,11 @@
 package ring.movement;
 
-import java.io.IOException;
+import ring.system.MUDConfig;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
-
-import org.xmldb.api.base.XMLDBException;
-
-import ring.persistence.Loadpoint;
-import ring.persistence.XQuery;
-import ring.system.MUDConfig;
 
 /**
  * Builds the world.
@@ -22,13 +15,11 @@ import ring.system.MUDConfig;
 public class WorldBuilder {
 	private static Map<String, Room> roomCache = new HashMap<String, Room>();
 	
-	public static void buildWorld() throws XMLDBException, JAXBException, IOException {
+	public static void buildWorld()  {
 		InputStream xqStream = WorldBuilder.class.getClassLoader().getResourceAsStream("ring/movement/worldbuilder.xq");
-		XQuery xq = new XQuery(xqStream);
-		xq.setLoadpoint(Loadpoint.STATIC);
-				
+
 		//Retrieve all locations in the static collection.
-		List<Location> locs = xq.execute(Location.class);
+		List<Location> locs = null; //Location.class
 		
 		//Add all the rooms to the cache beforehand.
 		//We must do this beforehand to get all room references.
@@ -46,6 +37,8 @@ public class WorldBuilder {
 				LocationManager.addToGrid(room, port);
 			}
 		}
+
+		throw new UnsupportedOperationException("Reimplement buildWorld");
 	}
 	
 	private static void attemptAddToCache(Room room) {

@@ -1,21 +1,10 @@
 package ring.mobiles.backbone;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import ring.items.Item;
 import ring.mobiles.BodyPart;
-import ring.persistence.RingConstants;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This class represents the equipment a mobile is currently wearing. Because
@@ -25,13 +14,6 @@ import ring.persistence.RingConstants;
  * @author projectmoon
  * 
  */
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder= {
-	"entries"
-})
 public class Equipment implements Iterable<Item>, Serializable {
 	public static final long serialVersionUID = 1;
 	
@@ -41,8 +23,6 @@ public class Equipment implements Iterable<Item>, Serializable {
 	 * @author projectmoon
 	 *
 	 */
-	@XmlAccessorType(XmlAccessType.PROPERTY)
-	@XmlType
 	public static class EquipmentTuple {
 		private BodyPart part;
 		private Item item;
@@ -52,12 +32,10 @@ public class Equipment implements Iterable<Item>, Serializable {
 			this.part = part;
 			this.item = item;
 		}
-		
-		@XmlElement
+
 		public BodyPart getBodyPart() { return part; }
 		public void setBodyPart(BodyPart part) { this.part = part; }
-		
-		@XmlElement
+
 		public Item getItem() { return item; }
 		public void setItem(Item item) { this.item = item; }
 	}
@@ -65,8 +43,7 @@ public class Equipment implements Iterable<Item>, Serializable {
 	protected HashMap<BodyPart, Item> equipment = new HashMap<BodyPart, Item>();
 
 	public Equipment() {}
-	
-	@XmlElement(name = "entry")
+
 	public List<EquipmentTuple> getEntries() {
 		List<EquipmentTuple> entries = new ArrayList<EquipmentTuple>(equipment.keySet().size());
 		for (BodyPart part : equipment.keySet()) {

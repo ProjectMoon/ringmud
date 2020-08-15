@@ -10,3 +10,4 @@ lib/cachedir/*
 .idea/
 *.iml
 target/
+todo.org

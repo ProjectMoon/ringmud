@@ -1,13 +1,5 @@
 package ring.movement;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
 import ring.util.TextParser;
 
 /**
@@ -20,15 +12,6 @@ import ring.util.TextParser;
  * @author jeff
  *
  */
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement(name = "exit")
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder = {
-	"destinationID",
-	"displayName",
-	"searchDC"
-})
 public class Portal {
 	//The place to go. This is not stored in XML.
 	private Room destination;
@@ -78,12 +61,10 @@ public class Portal {
 		this.interactiveName = TextParser.stripFormatting(displayName);
 	}
 
-	@XmlTransient
 	public boolean isHidden() {
 		return (searchDC > 0);
 	}
 	
-	@XmlAttribute
 	public int getSearchDC() {
 		return searchDC;
 	}	
@@ -92,7 +73,6 @@ public class Portal {
 		searchDC = dc;
 	}
 	
-	@XmlAttribute(name = "direction")
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -102,7 +82,6 @@ public class Portal {
 		setInteractiveName(TextParser.stripFormatting(name));
 	}
 	
-	@XmlTransient
 	public String getInteractiveName() {
 		return interactiveName;
 	}
@@ -111,7 +90,6 @@ public class Portal {
 		interactiveName = name;
 	}
 	
-	@XmlTransient
 	public Room getDestination() {
 		return destination;
 	}
@@ -121,7 +99,6 @@ public class Portal {
 		setDestinationID(loc.getID());
 	}
 	
-	@XmlAttribute(name = "destID")
 	public String getDestinationID() {
 		return destinationID;
 	}

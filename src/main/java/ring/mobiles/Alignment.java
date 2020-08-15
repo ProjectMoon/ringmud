@@ -1,24 +1,9 @@
 package ring.mobiles;
 
-import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ring.persistence.RingConstants;
 import ring.util.TextParser;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement
-@XmlType(
-namespace = RingConstants.RING_NAMESPACE,
-propOrder = {
-	"moral",
-	"ethical"
-})
+import java.io.Serializable;
+
 /**
  * Class that represents the alignment of something in the game. Generally,
  * this is a Mobile. However, sometimes items can have alignments.
@@ -30,7 +15,6 @@ public class Alignment implements Serializable {
 	/**
 	 * Enum describing ethical components: Lawful, Neutral, or Chaotic.
 	 */
-	@XmlType
 	public enum Ethical { 
 		LAWFUL("[B][WHITE]Lawful[R]"), NEUTRAL("[R][CYAN]Neutral[WHITE]"), CHAOTIC("[B][GREEN]Chaotic[R][WHITE]"); 
 		
@@ -44,7 +28,6 @@ public class Alignment implements Serializable {
 	/**
 	 * Enum describing moral components: Good, Neutral, or Evil.
 	 */
-	@XmlType
 	public enum Moral {
 		GOOD("[B][WHITE]Good[R]"), NEUTRAL("[R][CYAN]Neutral[WHITE]"), EVIL("[B][RED]Evil[R][WHITE]");
 		
@@ -107,7 +90,6 @@ public class Alignment implements Serializable {
 		return res;
 	}	
 
-	@XmlAttribute
 	public Ethical getEthical() {
 		return ethical;
 	}
@@ -116,7 +98,6 @@ public class Alignment implements Serializable {
 		this.ethical = ethical;
 	}
 
-	@XmlAttribute
 	public Moral getMoral() {
 		return moral;
 	}
