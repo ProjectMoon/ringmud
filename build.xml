@@ -1,210 +1,209 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RingMUD" basedir="." default="main">
-	<description>
-		Build system for the RingMUD engine. Type "ant" to build the whole thing.	
-	</description>
-	
-	<!-- List of properties. -->
-	<property name="app.version" value="0.1.0" />
-    <property name="src.dir"     value="./src"/>
-	<property name="lib.dir"	value="./lib"/>
-    <property name="build.dir"   value="./build"/>
-	<property name="res.dir" value="./resources" />
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="dist.dir" value	="./dist" />
-    <property name="jar.dir"     value="${dist.dir}/bin/jar"/>
-	<property name="dist.lib.dir"     value="${dist.dir}/lib"/>
-	<property name="dist.docs.dir" value="./docs" />
+  <description>
+    Build system for the RingMUD engine. Type "ant" to build the whole thing.
+  </description>
 
-	<!-- AspectJ iajc task -->
-	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
-		<classpath>
-			<pathelement path="${lib.dir}/aspectjtools.jar" />
-		</classpath>
-	</taskdef>
-	
-	<!-- A bunch of resource definitions for use below. -->
-	<fileset id="resources" dir="${src.dir}/ring/main/">
-		<include name="**/*.properties" />
-		<include name="**/*.txt" />
-		<include name="**/*.xml" />
-	</fileset>
-	
-	<fileset id="server-resources" dir="${src.dir}/ring/server/resources/">
-		<include name="**/*.properties" />
-		<include name="**/*.txt" />
-	</fileset>
-	
-	<fileset id="xml-resources" dir="${src.dir}/ring/nrapi/xml/">
-		<include name="**/*.xsd" />
-	</fileset>
-	
-	<!-- Where to find Java files -->
-	<fileset id="sources" dir="${src.dir}">
-		<include name="**/*.java" />
-	</fileset>
-	
-	<!-- Begin targets -->
-    <target name="clean" description="Deletes build and dist directories.">
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}" />
-    </target>
+  <!-- List of properties. -->
+  <property name="app.version" value="0.1.0" />
+  <property name="src.dir"     value="./src"/>
+  <property name="lib.dir"	value="./lib"/>
+  <property name="build.dir"   value="./build"/>
+  <property name="res.dir" value="./resources" />
+  <property name="classes.dir" value="${build.dir}/classes"/>
+  <property name="dist.dir" value	="./dist" />
+  <property name="jar.dir"     value="${dist.dir}/bin/jar"/>
+  <property name="dist.lib.dir"     value="${dist.dir}/lib"/>
+  <property name="dist.docs.dir" value="./docs" />
 
-    <target name="compile" description="Compiles all class files under src/ directory.">
-        <mkdir dir="${classes.dir}"/>
-    	<path id="project.class.path">
-    		<fileset dir="${lib.dir}" includes="**/*.jar" />	
-    	</path>
-        <!--
+  <!-- AspectJ iajc task -->
+  <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+    <classpath>
+      <pathelement path="${lib.dir}/aspectjtools.jar" />
+    </classpath>
+  </taskdef>
+
+  <!-- A bunch of resource definitions for use below. -->
+  <fileset id="resources" dir="${src.dir}/ring/main/">
+    <include name="**/*.properties" />
+    <include name="**/*.txt" />
+    <include name="**/*.xml" />
+  </fileset>
+
+  <fileset id="server-resources" dir="${src.dir}/ring/server/resources/">
+    <include name="**/*.properties" />
+    <include name="**/*.txt" />
+  </fileset>
+
+  <fileset id="xml-resources" dir="${src.dir}/ring/nrapi/xml/">
+    <include name="**/*.xsd" />
+  </fileset>
+
+  <!-- Where to find Java files -->
+  <fileset id="sources" dir="${src.dir}">
+    <include name="**/*.java" />
+  </fileset>
+
+  <!-- Begin targets -->
+  <target name="clean" description="Deletes build and dist directories.">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}" />
+  </target>
+
+  <target name="compile" description="Compiles all class files under src/ directory.">
+    <mkdir dir="${classes.dir}"/>
+    <path id="project.class.path">
+      <fileset dir="${lib.dir}" includes="**/*.jar" />
+    </path>
+    <!--
         <property name="build.compiler" value="org.aspectj.tools.ant.taskdefs.Ajc11CompilerAdapter" />
-        <javac 
-        	debug="true" 
-        	debuglevel="lines,vars,source"
-        	classpathref="project.class.path" 
-        	srcdir="${src.dir}" 
-        	destdir="${classes.dir}"
+        <javac
+        debug="true"
+        debuglevel="lines,vars,source"
+        classpathref="project.class.path"
+        srcdir="${src.dir}"
+        destdir="${classes.dir}"
     	/>
-    	-->
-        <iajc
-        	debug="true"
-        	debuglevel="lines,vars,source"
-            srcdir="${src.dir}"
-        	destDir="${classes.dir}"
-            classpathref="project.class.path"
-        	source="1.6"
-        	target="1.6"
-       	/>    	
-    </target>
-	
-	<target name="dist-stage" depends="compile">
-		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${dist.lib.dir}" />
-		<mkdir dir="${dist.dir}/bin" />
-		<mkdir dir="${dist.dir}/bin/jar" />
-	</target>
-	
-	<target name="jar-main" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/main/**"/>			
-		</jar>
-	</target>
-	
-	<target name="jar-aspects" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-aspects-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/aspects/**"/>
-		</jar>
-	</target>
-	
-	<target name="jar-compiler" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-compiler-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/compiler/**"/>			
-		</jar>
-	</target>
-	
-	<target name="jar-comms" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-comms-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/comms/**"/>
-		</jar>
-	</target>	
-	
-	<target name="jar-deployer" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-deployer-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/deployer/**"/>
-			<zipfileset dir="${src.dir}/ring/deployer/" includes="*.xsl" prefix="ring/deployer" />
-		</jar>
-	</target>
-	
-	<target name="jar-resources" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-resources-${app.version}.jar">
-			<zipfileset refid="resources" prefix="ring/main" />
-			<zipfileset refid="server-resources" prefix="ring/server/resources" />
-			<zipfileset refid="xml-resources" prefix="ring/nrapi/xml/" />
-		</jar>
-	</target>
+    -->
+    <iajc
+        debug="true"
+        debuglevel="lines,vars,source"
+        srcdir="${src.dir}"
+        destDir="${classes.dir}"
+        classpathref="project.class.path"
+        source="1.6"
+        target="1.6"
+       	/>
+  </target>
 
-	<target name="jar-core" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-core-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/daemons/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/effects/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/intermud3/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/python/**" />
-			<zipfileset dir="${src.dir}/ring/python/" includes="*.py" prefix="ring/python/" />
-			<zipfileset dir="${classes.dir}" includes="ring/system/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/util/**"/>
-			<zipfileset dir="${classes.dir}" includes="ring/world/**"/>
-		</jar>	
-	</target>
+  <target name="dist-stage" depends="compile">
+    <mkdir dir="${dist.dir}" />
+    <mkdir dir="${dist.lib.dir}" />
+    <mkdir dir="${dist.dir}/bin" />
+    <mkdir dir="${dist.dir}/bin/jar" />
+  </target>
 
-	<target name="jar-server" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-server-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/server/**"/>
-		</jar>			
-	</target>
-	
-	<target name="jar-commands" depends="compile">
-		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/ringmud-commands-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/commands/**" />
-			<zipfileset dir="${src.dir}/ring/commands/annotations/" includes="*.py" prefix="ring/commands/annotations" />
-		</jar>
-	</target>
-	
-	<target name="jar-persistence" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-persistence-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
-			<zipfileset dir="${src.dir}/ring/persistence/" includes="*.xq" prefix="ring/persistence/" />
-		</jar>
-	</target>
-	
-	<target name="jar-nrapi" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-nrapi-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/nrapi/**" />
-			<zipfileset dir="${src.dir}/ring/nrapi/" includes="*.xq" prefix="ring/nrapi/" />
-			<zipfileset dir="${classes.dir}" includes="ring/entities/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/items/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/magic/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/mobiles/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/movement/**" />
-			<zipfileset dir="${src.dir}/ring/movement/" includes="*.xq" prefix="ring/movement/" />
-			<zipfileset dir="${classes.dir}" includes="ring/players/**" />
-			<zipfileset dir="${classes.dir}" includes="ring/skills/**" />
-		</jar>
-	</target>
-	
-	<target name="jar-events" depends="compile">
-		<jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
-			<zipfileset dir="${classes.dir}" includes="ring/events/**" />
-			<zipfileset dir="${src.dir}/ring/events/" includes="*.xq" prefix="ring/events/" />
-		</jar>
-	</target>
-		
-    <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
-    		description="Performs full compilation and distribution.">
-    	<copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
-    	<copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
-    	
-    	<chmod file="${dist.dir}/bin/ringmud.sh" perm="755" />
-    	<chmod file="${dist.dir}/bin/rmc" perm="755" />
-    		
-    	<copy todir="${dist.lib.dir}">
-    		<fileset dir="${lib.dir}">
-    			<include name="**/*.jar" />
-    		</fileset>
-    	</copy>
-    </target>
-	 
- 	<target name="main" depends="clean,dist" description="Build the RingMUD engine." />
- 	
- 	<!-- Optional Javadoc task -->
- 	<target name="docs" description="Optional target to generate Javadocs.">
- 		<!--<javadoc destdir="${dist.docs.dir}" sourcepath="${src.dir}" />-->
-    	<path id="project.class.path">
-    		<fileset dir="${lib.dir}" includes="**/*.jar" />
-    	</path>
- 		<ajdoc destdir="${dist.docs.dir}" source="1.6" srcdir="${src.dir}" classpathref="project.class.path" />
- 		<delete dir="ajdocworkingdir" />
- 	</target>
+  <target name="jar-main" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/main/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-aspects" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-aspects-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/aspects/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-compiler" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-compiler-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/compiler/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-comms" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-comms-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/comms/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-deployer" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-deployer-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/deployer/**"/>
+      <zipfileset dir="${src.dir}/ring/deployer/" includes="*.xsl" prefix="ring/deployer" />
+    </jar>
+  </target>
+
+  <target name="jar-resources" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-resources-${app.version}.jar">
+      <zipfileset refid="resources" prefix="ring/main" />
+      <zipfileset refid="server-resources" prefix="ring/server/resources" />
+      <zipfileset refid="xml-resources" prefix="ring/nrapi/xml/" />
+    </jar>
+  </target>
+
+  <target name="jar-core" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-core-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/combat/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/daemons/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/effects/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/intermud3/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/installer/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/python/**" />
+      <zipfileset dir="${src.dir}/ring/python/" includes="*.py" prefix="ring/python/" />
+      <zipfileset dir="${classes.dir}" includes="ring/system/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/util/**"/>
+      <zipfileset dir="${classes.dir}" includes="ring/world/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-server" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-server-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/server/**"/>
+    </jar>
+  </target>
+
+  <target name="jar-commands" depends="compile">
+    <mkdir dir="${jar.dir}" />
+    <jar destfile="${jar.dir}/ringmud-commands-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/commands/**" />
+      <zipfileset dir="${src.dir}/ring/commands/annotations/" includes="*.py" prefix="ring/commands/annotations" />
+    </jar>
+  </target>
+
+  <target name="jar-persistence" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-persistence-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/persistence/**" />
+      <zipfileset dir="${src.dir}/ring/persistence/" includes="*.xq" prefix="ring/persistence/" />
+    </jar>
+  </target>
+
+  <target name="jar-nrapi" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-nrapi-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/nrapi/**" />
+      <zipfileset dir="${src.dir}/ring/nrapi/" includes="*.xq" prefix="ring/nrapi/" />
+      <zipfileset dir="${classes.dir}" includes="ring/entities/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/items/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/magic/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/mobiles/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/movement/**" />
+      <zipfileset dir="${src.dir}/ring/movement/" includes="*.xq" prefix="ring/movement/" />
+      <zipfileset dir="${classes.dir}" includes="ring/players/**" />
+      <zipfileset dir="${classes.dir}" includes="ring/skills/**" />
+    </jar>
+  </target>
+
+  <target name="jar-events" depends="compile">
+    <jar destfile="${jar.dir}/ringmud-events-${app.version}.jar">
+      <zipfileset dir="${classes.dir}" includes="ring/events/**" />
+      <zipfileset dir="${src.dir}/ring/events/" includes="*.xq" prefix="ring/events/" />
+    </jar>
+  </target>
+
+  <target name="dist" depends="dist-stage,jar-aspects,jar-main,jar-compiler,jar-comms,jar-deployer,jar-resources,jar-core,jar-server,jar-commands,jar-persistence,jar-nrapi,jar-events"
+    	  description="Performs full compilation and distribution.">
+    <copy file="${res.dir}/ringmud.sh" todir="${dist.dir}/bin" />
+    <copy file="${res.dir}/rmc" todir="${dist.dir}/bin" />
+
+    <chmod file="${dist.dir}/bin/ringmud.sh" perm="755" />
+    <chmod file="${dist.dir}/bin/rmc" perm="755" />
+
+    <copy todir="${dist.lib.dir}">
+      <fileset dir="${lib.dir}">
+    	<include name="**/*.jar" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="main" depends="clean,dist" description="Build the RingMUD engine." />
+
+  <!-- Optional Javadoc task -->
+  <target name="docs" description="Optional target to generate Javadocs.">
+    <!--<javadoc destdir="${dist.docs.dir}" sourcepath="${src.dir}" />-->
+    <path id="project.class.path">
+      <fileset dir="${lib.dir}" includes="**/*.jar" />
+    </path>
+    <ajdoc destdir="${dist.docs.dir}" source="1.6" srcdir="${src.dir}" classpathref="project.class.path" />
+    <delete dir="ajdocworkingdir" />
+  </target>
 </project>
-
