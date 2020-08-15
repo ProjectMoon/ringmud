@@ -134,7 +134,7 @@ public class PreferencesManager implements RingModule {
 			System.out.println("Set " + className + "." + prefName + " = " + prefValue);
 		} 
 		catch (BackingStoreException e) {
-			System.err.println("Error setting perference: " + e.getCause().getMessage());
+			System.err.println("Error setting preference: " + e.getCause().getMessage());
 		}
 		
 	}
@@ -149,7 +149,7 @@ public class PreferencesManager implements RingModule {
 			Preferences prefs = getPrefs(c);
 			return prefs.get(pref, null);
 		} catch (ClassNotFoundException e) {
-			System.err.println("PreferencesManager: Unrecgonized class component " + className);
+			System.err.println("PreferencesManager: Unrecognized class component " + className);
 			System.exit(1);
 			return null;
 		}
@@ -158,7 +158,7 @@ public class PreferencesManager implements RingModule {
 	}
 	
 	private static Preferences getPrefs(Class<?> c) {
-		return Preferences.systemNodeForPackage(c);
+		return Preferences.userNodeForPackage(c);
 	}
 	
 	private static Preferences getPrefs(String className) {

@@ -11,3 +11,4 @@ lib/cachedir/*
 *.iml
 target/
 todo.org
+sample/mud.properties
