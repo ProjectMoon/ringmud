@@ -44,9 +44,18 @@ public class Intermud3Daemon implements Daemon {
 		
 		Properties i3props = MUDConfig.getPluginProperties("i3");
 		if (i3props != null) {
-			host = i3props.getProperty("i3.host");
-			router = i3props.getProperty("i3.router");
-			port = Integer.parseInt(i3props.getProperty("i3.port"));
+			String enabled = i3props.getProperty("i3.enabled");
+			if (enabled == null) enabled = "false";
+
+			if (enabled.equalsIgnoreCase("true")) {
+				host = i3props.getProperty("i3.host");
+				router = i3props.getProperty("i3.router");
+				port = Integer.parseInt(i3props.getProperty("i3.port"));
+			}
+			else {
+				System.out.println("i3 is disabled. Not turning on Intermud3.");
+				return;
+			}
 		}
 		else {
 			//System.out.println(" No i3 configuration. Connecting to *i4 by default.");
