@@ -3,6 +3,7 @@ package ring.movement;
 import ring.system.MUDConfig;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class WorldBuilder {
 		InputStream xqStream = WorldBuilder.class.getClassLoader().getResourceAsStream("ring/movement/worldbuilder.xq");
 
 		//Retrieve all locations in the static collection.
-		List<Location> locs = null; //Location.class
+		List<Location> locs = new ArrayList<>(); //Location.class
 		
 		//Add all the rooms to the cache beforehand.
 		//We must do this beforehand to get all room references.
