@@ -11,7 +11,7 @@ public class DocumentCleanup {
 	}
 	
 	public void cleanup()  {
-		throw new UnsupportedOperationException("Implement 'document cleanup' by changing it to db cleanup and perhaps dropping tables or entire db?");
+		System.err.println("[FIXME] Implement 'document cleanup' by changing it to db cleanup and perhaps dropping tables or entire db?");
 	}
 	
 	public int getCleanupCount() {

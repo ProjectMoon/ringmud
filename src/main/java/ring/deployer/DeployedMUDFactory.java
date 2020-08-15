@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.zip.ZipFile;
 
 import ring.system.MUDConfig;
 
@@ -31,8 +32,17 @@ public class DeployedMUDFactory {
 	}
 	
 	public static DeployedMUD getMUD(String name) {
+		new DeployModule().execute(new String[]{name});
+		DeployableMUDFile mudFile = null;
+		try {
+			ZipFile zip = new ZipFile(name);
+			mudFile = new DeployableMUDFile(zip);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		String currentVersion = null;
-		String mudPath = MUDConfig.MUDROOT + File.separator + "muds" + File.separator + name;
+		String mudPath = MUDConfig.MUDROOT + File.separator + "muds" + File.separator + mudFile.getName();
 		String versionPath = mudPath + File.separator + "versions";
 		
 		Properties versionProps = new Properties();
@@ -61,6 +71,7 @@ public class DeployedMUDFactory {
 			}
 		}
 		else {
+			System.err.println("[ERROR] Could not find current mud version.");
 			return null;
 		}
 	}

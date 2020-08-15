@@ -12,3 +12,4 @@ lib/cachedir/*
 target/
 todo.org
 sample/mud.properties
+mudconfig/

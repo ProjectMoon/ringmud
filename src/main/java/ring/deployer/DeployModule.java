@@ -29,14 +29,7 @@ public class DeployModule implements RingModule {
 	
 	//Cleanup related variables
 	private List<String> deployedXMLDocuments = new ArrayList<String>();
-	
-	public static void main(String[] args) {
-		MUDConfig.loadProperties();
-		String[] args2 = new String[] { "/Users/projectmoon/Programs/git/ringmud/RingMUD-1.0.2.mud" };
-		new DeployModule().execute(args2);		
-	}
 
-	
 	@Override
 	public void execute(String[] args) {
 		try {
@@ -104,7 +97,7 @@ public class DeployModule implements RingModule {
 	 * Discrete step for setting up the database for this deployment.
 	 */
 	private void createCollections() {
-		throw new UnsupportedOperationException("Create 'collections' or maybe we call them tables");
+		System.err.println("[FIXME] Create 'collections' or maybe we call them tables");
 	}
 
 	/**
