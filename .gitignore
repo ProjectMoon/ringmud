@@ -7,3 +7,6 @@ lib/cachedir/*
 .pydevproject
 .settings/*
 *.mud
+.idea/
+*.iml
+target/
