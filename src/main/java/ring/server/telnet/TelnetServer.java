@@ -27,7 +27,7 @@ public class TelnetServer implements Daemon {
 	@Override
 	public void start() throws IOException {
 		Properties props = new Properties();
-		InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/server/resources/telnet.properties");
+		InputStream input = this.getClass().getClassLoader().getResourceAsStream("ring/server/telnet.properties");
 		props.load(input);
 		
 		//Replace whatever port is defined in the regular telnet properties with the one from mud.config

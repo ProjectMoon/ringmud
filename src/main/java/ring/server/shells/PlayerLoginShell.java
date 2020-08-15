@@ -53,7 +53,7 @@ public class PlayerLoginShell {
 		BufferedReader reader = null;
 	
 		try {
-			InputStream motd = this.getClass().getClassLoader().getResourceAsStream("ring/server/resources/motd.txt");
+			InputStream motd = this.getClass().getClassLoader().getResourceAsStream("ring/server/motd.txt");
 			reader = new BufferedReader(new InputStreamReader(motd));
 			String line = "";
 			while ((line = reader.readLine()) != null) {
