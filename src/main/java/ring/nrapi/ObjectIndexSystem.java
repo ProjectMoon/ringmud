@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ObjectIndexSystem {
 	public static void start() {
-		throw new UnsupportedOperationException("Delete this method! (probably, because we will get rid of ObjectIndexSystem");
+		System.err.println("[FIXME] Delete this method! (probably, because we will get rid of ObjectIndexSystem)");
 	}
 
 	public static ObjectSearch newSearch() {

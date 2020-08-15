@@ -51,7 +51,7 @@ public class EventLoader {
 	 */
 	public void loadEvents() {
 		EventDispatcher.initialize();
-		throw new UnsupportedOperationException("Implement loadEvents");
+		System.err.println("[FIXME] Implement loadEvents (from MUD file)");
 	}
 	
 	private void load(CodebehindEntry entry) {

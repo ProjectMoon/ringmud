@@ -29,7 +29,7 @@ public class MUDConfig {
         }
         catch (FileNotFoundException e) {
             System.out.println("[WARNING] Couldn't find the config file. Loading default values.");
-            loadDefaults();
+            config = loadDefaults();
         }
         catch (Exception e) {
             System.err.println("[ERROR] There was an error loading the program configuration:");

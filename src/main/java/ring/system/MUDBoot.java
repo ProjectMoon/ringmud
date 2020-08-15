@@ -8,7 +8,6 @@ import ring.events.EventLoader;
 import ring.intermud3.Intermud3Daemon;
 import ring.movement.WorldBuilder;
 import ring.nrapi.ObjectIndexSystem;
-import ring.python.Interpreter;
 import ring.world.Ticker;
 
 import java.io.IOException;
@@ -30,9 +29,6 @@ public class MUDBoot {
      */
     public static void boot() {
         System.out.println("Loading RingMUD.");
-
-        System.out.println("Loading Jython...");
-        Interpreter.INSTANCE.getInterpreter();
 
         //Load Object Index System
         System.out.println("Loading Object Index System...");
@@ -91,9 +87,7 @@ public class MUDBoot {
                 "ring.commands.PackageIndexer", pkgProps);
         CommandHandler.addCommands(pkgIndexer.getCommands());
 
-        CommandIndexer jythonIndexer = IndexerFactory.getIndexer(
-                "ring.commands.JythonIndexer");
-        CommandHandler.addCommands(jythonIndexer.getCommands());
+        System.err.println("[FIXME] Need replacement for jython command indexer!");
     }
 
     /**

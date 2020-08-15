@@ -1,16 +1,11 @@
 package ring.commands.parser;
 
+import ring.commands.annotations.Form;
+import ring.commands.annotations.Template;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import org.python.core.PyException;
-import org.python.core.PyObject;
-import org.python.core.PyTuple;
-import org.python.core.PyType;
-
-import ring.commands.annotations.Form;
-import ring.commands.annotations.Template;
 
 /**
  * The command parser receives a command template and parses commands given to it.
@@ -47,28 +42,7 @@ public class CommandParser {
 			throw new IllegalArgumentException("The Command object does not have a defined command Template!");
 		}
 	}
-	
-	public CommandParser(PyObject pyCommand) throws CommandParsingException {
-		if (isInstanceOfCommand(pyCommand)) {
-			try {
-				Template cmdTemplate = (Template)pyCommand.__getattr__("__template__").__tojava__(Template.class);
-				
-				if (cmdTemplate != null) {
-					initialize(cmdTemplate);
-				}
-				else {
-					throw new IllegalArgumentException("The Command object does not have a defined command Template!");
-				}				
-			}
-			catch (PyException e) {
-				throw new IllegalArgumentException("The Command object does not have a defined command Template!");
-			}
-		}
-		else {
-			throw new IllegalArgumentException("The passed Python must be a class object derived from ring.commands.parser.Command");
-		}
-	}
-	
+
 	/**
 	 * Delegate to this method for actual object initialization.
 	 * @param template
@@ -84,20 +58,7 @@ public class CommandParser {
 		}
 		forms = CommandForm.processForms(template.value());	
 	}
-	
-	private boolean isInstanceOfCommand(PyObject pyObj) {
-		if (pyObj instanceof PyType) {
-			PyTuple mro = (PyTuple)pyObj.__getattr__("__mro__");
-		
-			for (Object pyType : mro) {
-				if (pyType == Command.class) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
+
 	
 	public Command getCommand() {
 		return command;

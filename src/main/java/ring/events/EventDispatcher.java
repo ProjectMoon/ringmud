@@ -1,15 +1,12 @@
 package ring.events;
 
+import ring.persistence.Persistable;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.python.util.PythonInterpreter;
-
-import ring.persistence.Persistable;
-import ring.python.Interpreter;
 
 /**
  * Manages the storing and dispatching of events.
@@ -31,23 +28,17 @@ public class EventDispatcher {
 	
 	public static void initialize() {
 		if (!initialized) {
-			PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
-			InputStream stream = Interpreter.INSTANCE.getInternalScript("events.py");
-			interp.execfile(stream);
+			System.err.println("[FIXME] There was a jython init step here.");
 			initialized = true;
 		}
 	}
 	
 	public static void initializeEvents(String document, String filename) {
-		PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
-		interp.exec("__document__ = '" + document + "'");
-		interp.execfile(filename);
+		System.err.println("[FIXME] Reimplement initializeEvents(String, String)");
 	}
 	
 	public static void initializeEvents(String document, InputStream pyStream) {
-		PythonInterpreter interp = Interpreter.INSTANCE.getInterpreter();
-		interp.exec("__document__ = '" + document + "'");
-		interp.execfile(pyStream);
+		System.err.println("[FIXME] Reimplement initializeEvents(String, InputStream)");
 	}
 	
 	public static void addEvent(Event event) {

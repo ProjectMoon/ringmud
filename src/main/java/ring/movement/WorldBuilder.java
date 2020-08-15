@@ -38,7 +38,7 @@ public class WorldBuilder {
 			}
 		}
 
-		throw new UnsupportedOperationException("Reimplement buildWorld");
+		System.err.println("[FIXME] Reimplement buildWorld");
 	}
 	
 	private static void attemptAddToCache(Room room) {
@@ -50,10 +50,5 @@ public class WorldBuilder {
 	private static Room getRoom(String id) {
 		Room room = roomCache.get(id);		
 		return room;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		MUDConfig.loadProperties();
-		WorldBuilder.buildWorld();
 	}
 }
