@@ -1,9 +1,8 @@
 package ring.movement;
 
-import ring.system.MUDConfig;
+import ring.worldbuilder.WorldBuilderKt;
+import ring.worldbuilder.ZoneModel;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,11 @@ public class WorldBuilder {
 	private static Map<String, Room> roomCache = new HashMap<String, Room>();
 	
 	public static void buildWorld()  {
-		InputStream xqStream = WorldBuilder.class.getClassLoader().getResourceAsStream("ring/movement/worldbuilder.xq");
+		//Use new world building system to construct the world, but convert to
+		//objects we understand.
+		ZoneModel zone = WorldBuilderKt.buildTestWorld();
+		List<Location> locs = WorldBuilderKt.convertToOldSystem(zone);
 
-		//Retrieve all locations in the static collection.
-		List<Location> locs = new ArrayList<>(); //Location.class
-		
 		//Add all the rooms to the cache beforehand.
 		//We must do this beforehand to get all room references.
 		//Otherwise, we encounter exceptions.
