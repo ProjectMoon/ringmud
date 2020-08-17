@@ -3,10 +3,10 @@ package ring.worldbuilder
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
-import ring.movement.RoomModel as OldRoomModel
-import ring.movement.Room as OldRoom
-import ring.movement.Location as OldLocation
-import ring.movement.Portal as OldPortal
+import ring.movement.RoomModel as LegacyRoomModel
+import ring.movement.Room as LegacyRoom
+import ring.movement.Location as LegacyLocation
+import ring.movement.Portal as LegacyPortal
 
 //World Building DSL todo list
 // - DONE Add basics
@@ -178,9 +178,9 @@ fun buildTestWorld(): ZoneModel =
  * Convert a new RoomModel into an old ring.movement.Room.
  */
 fun RoomModel.toOldRoom() =
-        OldRoom().also {
+        LegacyRoom().also {
             it.id = this.id
-            it.model = OldRoomModel().also {
+            it.model = LegacyRoomModel().also {
                 it.title = this.title
                 it.description = this.description
                 it.depth = this.depth
@@ -193,13 +193,13 @@ fun RoomModel.toOldRoom() =
  * Convert a new ZoneModel built wth the DSL into the old domain objects for compatibility
  * with old systems.
  */
-fun convertToOldSystem(zone: ZoneModel): List<OldLocation> =
+fun convertToLegacyWorld(zone: ZoneModel): List<LegacyLocation> =
         zone.grid.map { gridEntry ->
             val originRoom = gridEntry.room.toOldRoom()
 
-            val backlinks = mutableMapOf<String, OldLocation>()
+            val backlinks = mutableMapOf<String, LegacyLocation>()
 
-            val portals: List<OldPortal> = gridEntry.portals.map { port ->
+            val portals: List<LegacyPortal> = gridEntry.portals.map { port ->
                 val destinationRoom = zone.rooms[port.destinationID]
                         ?: throw IllegalStateException("Could not find room ID ${port.destinationID} in zone when constructing exits.")
 
@@ -210,17 +210,17 @@ fun convertToOldSystem(zone: ZoneModel): List<OldLocation> =
                 // in case of multiple backlinks to one room.
                 if (port.backlink) {
                     val backlinkLocation = backlinks.getOrPut(destinationRoom.id) {
-                        OldLocation().apply { room = destinationOldRoom }
+                        LegacyLocation().apply { room = destinationOldRoom }
                     }
 
                     val oppositeDirection = CommonDirections.fromDisplayName(port.displayName).opposite().displayName
-                    backlinkLocation.exits.add(OldPortal(originRoom, oppositeDirection))
+                    backlinkLocation.exits.add(LegacyPortal(originRoom, oppositeDirection))
                 }
 
-                OldPortal(destinationOldRoom, port.displayName)
+                LegacyPortal(destinationOldRoom, port.displayName)
             }
 
-            val location = OldLocation().apply {
+            val location = LegacyLocation().apply {
                 room = originRoom
                 exits = portals
             }

@@ -57,7 +57,7 @@ class WorldBuilderLegacyCompatibilityTest {
     @Test
     fun `WorldBuilder should create backlinks for legacy Locations`() {
         val zone = createZone()
-        val locations = convertToOldSystem(zone)
+        val locations = convertToLegacyWorld(zone)
 
         assertEquals(2, locations.size)
         val location1 = locations.find { it.room.id == "room1" }
@@ -76,7 +76,7 @@ class WorldBuilderLegacyCompatibilityTest {
     @Test
     fun `WorldBuilder should not create duplicate Locations for one room with multiple backlinks`() {
         val zone = createZone(true)
-        val locations = convertToOldSystem(zone)
+        val locations = convertToLegacyWorld(zone)
 
         assertEquals(3, locations.size)
         val location1 = locations.find { it.room.id == "room1" }

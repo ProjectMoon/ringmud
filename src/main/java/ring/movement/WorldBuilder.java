@@ -19,7 +19,7 @@ public class WorldBuilder {
 		//Use new world building system to construct the world, but convert to
 		//objects we understand.
 		ZoneModel zone = WorldBuilderKt.buildTestWorld();
-		List<Location> locs = WorldBuilderKt.convertToOldSystem(zone);
+		List<Location> locs = WorldBuilderKt.convertToLegacyWorld(zone);
 
 		//Add all the rooms to the cache beforehand.
 		//We must do this beforehand to get all room references.
