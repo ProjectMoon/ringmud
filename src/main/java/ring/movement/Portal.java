@@ -2,6 +2,8 @@ package ring.movement;
 
 import ring.util.TextParser;
 
+import java.util.Objects;
+
 /**
  * This class represents an entrance to some Destination. A Portal in this
  * case is a generic direction to go towards or object to enter in order to
@@ -43,9 +45,9 @@ public class Portal {
 	 * @param interactiveName
 	 */
 	public Portal(Room dest, String displayName, String interactiveName) {
-		destination = dest;
-		this.displayName = displayName;
-		this.interactiveName = interactiveName;
+		setDestination(dest);
+		setDisplayName(displayName);
+		setInteractiveName(interactiveName);
 	}
 	
 	/**
@@ -56,9 +58,7 @@ public class Portal {
 	 * @param displayName
 	 */
 	public Portal(Room dest, String displayName) {
-		destination = dest;
-		this.displayName = displayName;
-		this.interactiveName = TextParser.stripFormatting(displayName);
+		this(dest, displayName, TextParser.stripFormatting(displayName));
 	}
 
 	public boolean isHidden() {
@@ -111,18 +111,21 @@ public class Portal {
 		return "Portal[displayname=" + displayName + ", interactivename=" + interactiveName
 			+ ", Destination=" + destination;
 	}
-	
-	/**
-	 * Returns true if the destinations of the two Portal objects point to the same Location object.
-	 * False otherwise.
-	 */
-	public boolean equals(Object other) {
-		if (other == null || (!(other instanceof Portal))) {
-			return false;
-		}
-		else {
-			Portal p = (Portal)other;
-			return (this.destination == p.destination);
-		}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Portal portal = (Portal) o;
+		return searchDC == portal.searchDC &&
+				Objects.equals(destination, portal.destination) &&
+				Objects.equals(destinationID, portal.destinationID) &&
+				Objects.equals(displayName, portal.displayName) &&
+				Objects.equals(interactiveName, portal.interactiveName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(destination, destinationID, displayName, interactiveName, searchDC);
 	}
 }

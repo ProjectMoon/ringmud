@@ -61,38 +61,41 @@ class LocationBuilder(private val roomID: String) {
 
     fun build() = DesiredGridEntry(roomID = roomID, portals = portals)
 
-    fun portal(destinationID: String, displayName: String, backlink: Boolean = true) =
+    private fun commonPortal(destinationID: String, displayName: String, backlink: Boolean = true) =
             portals.add(Portal(destinationID = destinationID, displayName = displayName, backlink = backlink))
 
+    fun portal(destinationID: String, displayName: String) =
+            commonPortal(destinationID, displayName, false)
+
     fun northTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "north", backlink)
+            commonPortal(destinationID, CommonDirections.NORTH.displayName, backlink)
 
     fun southTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "south", backlink)
+            commonPortal(destinationID, CommonDirections.SOUTH.displayName, backlink)
 
     fun westTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "west", backlink)
+            commonPortal(destinationID, CommonDirections.WEST.displayName, backlink)
 
     fun eastTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "east", backlink)
+            commonPortal(destinationID, CommonDirections.EAST.displayName, backlink)
 
     fun northwestTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "northwest", backlink)
+            commonPortal(destinationID, CommonDirections.NORTHWEST.displayName, backlink)
 
     fun northeastTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "northeast", backlink)
+            commonPortal(destinationID, CommonDirections.NORTHEAST.displayName, backlink)
 
     fun southwestTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "southwest", backlink)
+            commonPortal(destinationID, CommonDirections.SOUTHWEST.displayName, backlink)
 
     fun southeastTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "southeast", backlink)
+            commonPortal(destinationID, CommonDirections.SOUTHEAST.displayName, backlink)
 
     fun upTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "up", backlink)
+            commonPortal(destinationID, CommonDirections.UP.displayName, backlink)
 
     fun downTo(destinationID: String, backlink: Boolean = true) =
-            portal(destinationID, "down", backlink)
+            commonPortal(destinationID, CommonDirections.DOWN.displayName, backlink)
 }
 
 @WorldBuilderDsl
@@ -149,33 +152,34 @@ fun zone(builder: ZoneBuilder.() -> Unit): ZoneModel = ZoneBuilder().apply(build
  * Temporary method to build a very simple test world using the zone building DSL.
  */
 fun buildTestWorld(): ZoneModel =
-    zone {
-        name("The Realm of the Gods")
+        zone {
+            name("The Realm of the Gods")
 
-        rooms {
-            room("room1") {
-                title("The Nexus")
-                description("This is a room where the gods hang out.")
+            rooms {
+                room("room1") {
+                    title("The Nexus")
+                    description("This is a room where the gods hang out.")
+                }
+
+                room("room2") {
+                    title("Nexus East")
+                    description("The east room of the Nexus.")
+                }
             }
 
-            room("room2") {
-                title("Nexus East")
-                description("The east room of the Nexus.")
+            grid {
+                location("room1") {
+                    eastTo("room2")
+                }
             }
         }
-
-        grid {
-            location("room1") {
-                eastTo("room2")
-            }
-        }
-    }
 
 /**
  * Convert a new RoomModel into an old ring.movement.Room.
  */
 fun RoomModel.toOldRoom() =
         OldRoom().also {
+            it.id = this.id
             it.model = OldRoomModel().also {
                 it.title = this.title
                 it.description = this.description
@@ -193,18 +197,33 @@ fun convertToOldSystem(zone: ZoneModel): List<OldLocation> =
         zone.grid.map { gridEntry ->
             val originRoom = gridEntry.room.toOldRoom()
 
-            val portals: List<OldPortal> = gridEntry.portals.map {
-                val destinationRoom = zone.rooms[it.destinationID]?.toOldRoom()
+            val backlinks = mutableMapOf<String, OldLocation>()
 
-                if (destinationRoom != null) {
-                    OldPortal(destinationRoom, it.displayName)
-                } else {
-                    throw IllegalStateException("Could not find room ID ${it.destinationID} in zone when constructing exits.")
+            val portals: List<OldPortal> = gridEntry.portals.map { port ->
+                val destinationRoom = zone.rooms[port.destinationID]
+                        ?: throw IllegalStateException("Could not find room ID ${port.destinationID} in zone when constructing exits.")
+
+                val destinationOldRoom = destinationRoom.toOldRoom()
+
+                // If we have a backlink, we need to construct a location for the destination
+                // room with a portal pointing back to origin room. backlinks are stored in a map
+                // in case of multiple backlinks to one room.
+                if (port.backlink) {
+                    val backlinkLocation = backlinks.getOrPut(destinationRoom.id) {
+                        OldLocation().apply { room = destinationOldRoom }
+                    }
+
+                    val oppositeDirection = CommonDirections.fromDisplayName(port.displayName).opposite().displayName
+                    backlinkLocation.exits.add(OldPortal(originRoom, oppositeDirection))
                 }
+
+                OldPortal(destinationOldRoom, port.displayName)
             }
 
-            OldLocation().apply {
+            val location = OldLocation().apply {
                 room = originRoom
                 exits = portals
             }
-        }
+
+            setOf(location, *backlinks.values.toTypedArray())
+        }.flatten()

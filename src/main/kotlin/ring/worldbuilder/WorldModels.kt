@@ -11,6 +11,36 @@ data class RoomModel(
         val depth: Int
 )
 
+enum class CommonDirections(val displayName: String) {
+    NORTH("north"),
+    SOUTH("south"),
+    WEST("west"),
+    EAST("east"),
+    NORTHWEST("northwest"),
+    NORTHEAST("northeast"),
+    SOUTHWEST("southwest"),
+    SOUTHEAST("southeast"),
+    UP("up"),
+    DOWN("down");
+
+    companion object {
+        fun fromDisplayName(displayName: String): CommonDirections = valueOf(displayName.toUpperCase())
+    }
+
+    fun opposite() = when (this) {
+        NORTH -> SOUTH
+        SOUTH -> NORTH
+        WEST -> EAST
+        EAST -> WEST
+        NORTHWEST -> SOUTHEAST
+        NORTHEAST -> SOUTHWEST
+        SOUTHWEST -> NORTHEAST
+        SOUTHEAST -> NORTHWEST
+        UP -> DOWN
+        DOWN -> UP
+    }
+}
+
 data class Portal(val destinationID: String, val displayName: String, val searchDC: Int = 0, val backlink: Boolean = true) {
     val interactiveName: String
         get() = TextParser.stripFormatting(this.displayName)
